@@ -59,6 +59,7 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>${json.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -84,11 +85,10 @@
                                 <Import-Package>
                                     com.esb.foonnel.domain,
                                     org.osgi.framework,
-                                    javax.json,
-                                    javax.servlet,
+                                    org.osgi.service.cm,
+                                    org.json,
                                     org.slf4j,
-                                    org.slf4j.spi,
-                                    org.osgi.service.cm
+                                    org.slf4j.spi
                                 </Import-Package>
                             </instructions>
                         </configuration>
