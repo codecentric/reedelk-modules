@@ -1,6 +1,6 @@
 package com.esb.foonnel.admin.console.dev;
 
-import com.esb.foonnel.domain.ConfigService;
+import com.esb.foonnel.domain.SystemProperty;
 import org.json.JSONObject;
 import org.takes.Request;
 import org.takes.Response;
@@ -22,8 +22,8 @@ public class HealthResources implements Fork {
 
     private final FkRegex fkRegex;
 
-    HealthResources(ConfigService configService) {
-        String responseJson = buildResponse(configService);
+    HealthResources(SystemProperty systemProperty) {
+        String responseJson = buildResponse(systemProperty);
         fkRegex = new FkRegex(BASE_PATH, new TkFork(
                 new FkMethods(GET.name(),
                         new RsWithBody(
@@ -35,10 +35,10 @@ public class HealthResources implements Fork {
         return fkRegex.route(request);
     }
 
-    private String buildResponse(ConfigService configService) {
+    private String buildResponse(SystemProperty systemProperty) {
         // TODO: Wrap json object and add propertiesUse an object here
         JSONObject object = new JSONObject();
-        object.put("version", configService.getFoonnelVersion());
+        object.put("version", systemProperty.getFoonnelVersion());
         object.put("status", "UP");
         return object.toString(4);
     }

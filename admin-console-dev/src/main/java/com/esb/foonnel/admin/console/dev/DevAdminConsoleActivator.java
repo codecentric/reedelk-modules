@@ -1,8 +1,8 @@
 package com.esb.foonnel.admin.console.dev;
 
-import com.esb.foonnel.domain.ConfigService;
 import com.esb.foonnel.domain.ConfigurationService;
 import com.esb.foonnel.domain.DeploymentService;
+import com.esb.foonnel.domain.SystemProperty;
 import org.osgi.framework.BundleException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -28,11 +28,11 @@ public class DevAdminConsoleActivator {
     private static final String CONFIG_PID = "com.esb.foonnel.admin.console.dev";
 
     @Reference
+    public SystemProperty systemProperty;
+    @Reference
     public DeploymentService deploymentService;
     @Reference
     public ConfigurationService configurationService;
-    @Reference
-    public ConfigService configService;
 
     private DevAdminConsoleService service;
 
@@ -40,7 +40,7 @@ public class DevAdminConsoleActivator {
     public void activate() throws BundleException {
         int listeningPort = configurationService.getIntConfigProperty(CONFIG_PID, CONFIG_KEY_LISTENING_PORT, DEFAULT_LISTENING_PORT);
 
-        Fork healthResources = new HealthResources(configService);
+        Fork healthResources = new HealthResources(systemProperty);
         Fork deploymentResources = new DeploymentResources(deploymentService);
 
         service = new DevAdminConsoleService(listeningPort, healthResources, deploymentResources);
