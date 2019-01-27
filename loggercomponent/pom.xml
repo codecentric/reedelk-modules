@@ -61,6 +61,7 @@
                                 <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                                 <Embed-Transitive>true</Embed-Transitive>
                                 <Import-Package>com.esb.foonnel.domain,org.osgi.framework,org.slf4j</Import-Package>
+                                <Foonnel-Project>true</Foonnel-Project>
                             </instructions>
                         </configuration>
                     </plugin>
