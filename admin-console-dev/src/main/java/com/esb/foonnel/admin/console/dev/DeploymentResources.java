@@ -38,7 +38,7 @@ public class DeploymentResources implements Fork {
 
     private byte[] servicestatus(DeploymentService service) {
         DeploymentStatus status = service.status();
-        Set<Project> projects = status.getProjects();
+        Set<Project> projects = status.getStatus();
 
         JSONArray projectsStatus = new JSONArray();
         projects.forEach(project -> projectsStatus.put(create(project)));
