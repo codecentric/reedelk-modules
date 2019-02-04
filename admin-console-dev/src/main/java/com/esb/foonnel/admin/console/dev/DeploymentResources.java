@@ -75,13 +75,10 @@ public class DeploymentResources implements Fork {
         return fkRegex.route(request);
     }
     
-    private JSONArray serializeExceptions(Collection<Exception> exceptions) {
-        JSONArray exceptionsArray = new JSONArray();
-        List<String> exceptionsAsString = exceptions
+    private Collection<String> serializeExceptions(Collection<Exception> exceptions) {
+        return exceptions
                 .stream()
                 .map(ExceptionUtils::getStackTrace)
                 .collect(toList());
-        exceptionsArray.put(exceptionsAsString);
-        return exceptionsArray;
     }
 }
