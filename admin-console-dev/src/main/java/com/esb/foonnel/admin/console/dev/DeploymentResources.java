@@ -3,6 +3,7 @@ package com.esb.foonnel.admin.console.dev;
 import com.esb.foonnel.domain.DeploymentService;
 import com.esb.foonnel.domain.DeploymentStatus;
 import com.esb.foonnel.domain.Project;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.takes.Request;
@@ -16,10 +17,13 @@ import org.takes.rs.RsWithBody;
 import org.takes.rs.RsWithHeader;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static com.esb.foonnel.admin.console.dev.GenericHandler.handlerFor;
 import static com.esb.foonnel.admin.console.dev.HttpMethod.*;
+import static java.util.stream.Collectors.toList;
 
 public class DeploymentResources implements Fork {
 
@@ -59,14 +63,25 @@ public class DeploymentResources implements Fork {
         if (project.getUnresolvedComponents() != null) {
             projectStatus.put("unresolvedComponents", project.getUnresolvedComponents());
         }
-        if (project.getErrorMessage() != null) {
-            projectStatus.put("error", project.getErrorMessage());
+        if (project.getExceptions() != null) {
+            projectStatus.put("error", serializeExceptions(project.getExceptions()));
         }
         return projectStatus;
 
     }
+    
     @Override
     public Opt<Response> route(Request request) throws IOException {
         return fkRegex.route(request);
+    }
+    
+    private JSONArray serializeExceptions(Collection<Exception> exceptions) {
+        JSONArray exceptionsArray = new JSONArray();
+        List<String> exceptionsAsString = exceptions
+                .stream()
+                .map(ExceptionUtils::getStackTrace)
+                .collect(toList());
+        exceptionsArray.put(exceptionsAsString);
+        return exceptionsArray;
     }
 }
