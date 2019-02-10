@@ -63,7 +63,7 @@ public class DeploymentResources implements Fork {
         if (project.getUnresolvedComponents() != null) {
             projectStatus.put("unresolvedComponents", project.getUnresolvedComponents());
         }
-        if (project.getExceptions() != null) {
+        if (!project.getExceptions().isEmpty()) {
             projectStatus.put("error", serializeExceptions(project.getExceptions()));
         }
         return projectStatus;
