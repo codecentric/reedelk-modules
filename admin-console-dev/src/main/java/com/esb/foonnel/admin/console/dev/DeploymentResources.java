@@ -1,8 +1,8 @@
 package com.esb.foonnel.admin.console.dev;
 
-import com.esb.foonnel.domain.DeploymentService;
-import com.esb.foonnel.domain.DeploymentStatus;
-import com.esb.foonnel.domain.Project;
+import com.esb.foonnel.api.DeploymentService;
+import com.esb.foonnel.api.DeploymentStatus;
+import com.esb.foonnel.api.Project;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
