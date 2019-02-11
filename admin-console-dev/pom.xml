@@ -89,7 +89,8 @@
                                 <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                                 <Embed-Transitive>true</Embed-Transitive>
                                 <Import-Package>
-                                    com.esb.foonnel.domain,
+                                    com.esb.foonnel.api,
+                                    com.esb.foonnel.internal.api,
                                     org.osgi.framework,
                                     org.osgi.service.cm,
                                     org.json,
