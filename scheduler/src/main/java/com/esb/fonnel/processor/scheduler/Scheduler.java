@@ -1,8 +1,8 @@
 package com.esb.fonnel.processor.scheduler;
 
 
-import com.esb.foonnel.domain.AbstractInbound;
-import com.esb.foonnel.domain.Message;
+import com.esb.foonnel.api.AbstractInbound;
+import com.esb.foonnel.api.Message;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Timer;

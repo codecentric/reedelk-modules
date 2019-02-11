@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>com.foonnel</groupId>
-            <artifactId>interfaces</artifactId>
+            <artifactId>foonnel-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

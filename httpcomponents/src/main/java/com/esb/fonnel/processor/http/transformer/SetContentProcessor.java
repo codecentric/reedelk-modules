@@ -1,7 +1,7 @@
 package com.esb.fonnel.processor.http.transformer;
 
-import com.esb.foonnel.domain.Message;
-import com.esb.foonnel.domain.Processor;
+import com.esb.foonnel.api.Message;
+import com.esb.foonnel.api.Processor;
 import org.osgi.service.component.annotations.Component;
 
 @Component(immediate = true, service = SetContentProcessor.class)

@@ -1,7 +1,7 @@
 package com.esb.fonnel.processor.jms.inbound;
 
 
-import com.esb.foonnel.domain.AbstractInbound;
+import com.esb.foonnel.api.AbstractInbound;
 import org.osgi.service.component.annotations.Component;
 
 @Component
