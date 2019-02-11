@@ -18,7 +18,6 @@ import org.takes.rs.RsWithHeader;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import static com.esb.foonnel.admin.console.dev.GenericHandler.handlerFor;
