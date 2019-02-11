@@ -1,6 +1,6 @@
 package com.esb.foonnel.admin.console.dev;
 
-import com.esb.foonnel.api.SystemProperty;
+import com.esb.foonnel.internal.api.SystemProperty;
 import org.json.JSONObject;
 import org.takes.Request;
 import org.takes.Response;
