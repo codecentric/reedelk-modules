@@ -1,8 +1,8 @@
 package com.esb.foonnel.admin.console.dev;
 
 import com.esb.foonnel.api.ConfigurationService;
-import com.esb.foonnel.api.DeploymentService;
 import com.esb.foonnel.api.SystemProperty;
+import com.esb.foonnel.internal.api.DeploymentService;
 import org.osgi.framework.BundleException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

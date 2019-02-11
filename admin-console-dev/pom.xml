@@ -51,6 +51,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.foonnel</groupId>
+            <artifactId>foonnel-internal-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.takes</groupId>
             <artifactId>takes</artifactId>
             <version>1.13</version>
