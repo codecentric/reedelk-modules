@@ -1,4 +1,4 @@
-package com.esb.fonnel.processor.jms.inbound;
+package com.esb.foonnel.processor.jms.inbound;
 
 
 import com.esb.foonnel.api.AbstractInbound;

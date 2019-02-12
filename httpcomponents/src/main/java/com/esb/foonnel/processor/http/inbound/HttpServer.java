@@ -1,4 +1,4 @@
-package com.esb.fonnel.processor.http.inbound;
+package com.esb.foonnel.processor.http.inbound;
 
 import com.google.common.base.Preconditions;
 import io.netty.handler.codec.http.HttpMethod;

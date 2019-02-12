@@ -1,4 +1,4 @@
-package com.esb.fonnel.processor.scheduler;
+package com.esb.foonnel.processor.scheduler;
 
 
 import com.esb.foonnel.api.AbstractInbound;

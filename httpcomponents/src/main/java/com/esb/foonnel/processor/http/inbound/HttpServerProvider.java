@@ -1,4 +1,4 @@
-package com.esb.fonnel.processor.http.inbound;
+package com.esb.foonnel.processor.http.inbound;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.collections4.map.MultiKeyMap;
