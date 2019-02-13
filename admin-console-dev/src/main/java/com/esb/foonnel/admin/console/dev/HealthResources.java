@@ -1,7 +1,8 @@
 package com.esb.foonnel.admin.console.dev;
 
+import com.esb.foonnel.internal.api.API;
 import com.esb.foonnel.internal.api.SystemProperty;
-import org.json.JSONObject;
+import com.esb.foonnel.internal.api.health.v1.HealthGET;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.facets.fork.FkMethods;
@@ -36,10 +37,9 @@ public class HealthResources implements Fork {
     }
 
     private String buildResponse(SystemProperty systemProperty) {
-        // TODO: Wrap json object and add propertiesUse an object here
-        JSONObject object = new JSONObject();
-        object.put("version", systemProperty.getFoonnelVersion());
-        object.put("status", "UP");
-        return object.toString(4);
+        HealthGET health = new HealthGET();
+        health.setStatus("UP");
+        health.setVersion(systemProperty.getFoonnelVersion());
+        return API.Health.V1.GET.serializer().serialize(health);
     }
 }

@@ -1,8 +1,8 @@
 package com.esb.foonnel.admin.console.dev;
 
 import com.esb.foonnel.api.ConfigurationService;
-import com.esb.foonnel.internal.api.DeploymentService;
 import com.esb.foonnel.internal.api.SystemProperty;
+import com.esb.foonnel.internal.api.module.v1.ModuleService;
 import org.osgi.framework.BundleException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -30,7 +30,7 @@ public class DevAdminConsoleActivator {
     @Reference
     public SystemProperty systemProperty;
     @Reference
-    public DeploymentService deploymentService;
+    public ModuleService moduleService;
     @Reference
     public ConfigurationService configurationService;
 
@@ -41,7 +41,7 @@ public class DevAdminConsoleActivator {
         int listeningPort = configurationService.getIntConfigProperty(CONFIG_PID, CONFIG_KEY_LISTENING_PORT, DEFAULT_LISTENING_PORT);
 
         Fork healthResources = new HealthResources(systemProperty);
-        Fork deploymentResources = new DeploymentResources(deploymentService);
+        Fork deploymentResources = new ModuleResources(moduleService);
 
         service = new DevAdminConsoleService(listeningPort, healthResources, deploymentResources);
         service.start();
