@@ -1,4 +1,4 @@
-package com.esb.foonnel.admin.console.dev;
+package com.esb.foonnel.admin.console.dev.resources;
 
 import com.esb.foonnel.internal.api.API;
 import com.esb.foonnel.internal.api.module.v1.ModuleService;
@@ -15,7 +15,7 @@ import org.takes.rs.RsWithHeader;
 
 import java.io.IOException;
 
-import static com.esb.foonnel.admin.console.dev.GenericHandler.handlerFor;
+import static com.esb.foonnel.admin.console.dev.resources.GenericHandler.handlerFor;
 import static com.esb.foonnel.admin.console.dev.HttpMethod.*;
 
 public class ModuleResources implements Fork {

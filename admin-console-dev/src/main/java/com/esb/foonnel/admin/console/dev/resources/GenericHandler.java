@@ -1,4 +1,4 @@
-package com.esb.foonnel.admin.console.dev;
+package com.esb.foonnel.admin.console.dev.resources;
 
 import org.takes.Request;
 import org.takes.Response;

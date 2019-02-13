@@ -1,4 +1,4 @@
-package com.esb.foonnel.admin.console.dev;
+package com.esb.foonnel.admin.console.dev.resources;
 
 import com.esb.foonnel.internal.api.API;
 import com.esb.foonnel.internal.api.SystemProperty;
@@ -23,7 +23,7 @@ public class HealthResources implements Fork {
 
     private final FkRegex fkRegex;
 
-    HealthResources(SystemProperty systemProperty) {
+    public HealthResources(SystemProperty systemProperty) {
         String responseJson = buildResponse(systemProperty);
         fkRegex = new FkRegex(BASE_PATH, new TkFork(
                 new FkMethods(GET.name(),
