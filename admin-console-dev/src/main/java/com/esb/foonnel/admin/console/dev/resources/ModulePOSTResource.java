@@ -5,6 +5,7 @@ import com.esb.foonnel.internal.api.module.v1.ModulePOST;
 import com.esb.foonnel.internal.api.module.v1.ModuleService;
 import org.takes.Request;
 import org.takes.Response;
+import org.takes.rq.RqPrint;
 import org.takes.rs.RsWithStatus;
 
 import java.io.IOException;
