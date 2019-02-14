@@ -20,7 +20,7 @@ public class ModuleResources implements Fork {
     private final FkRegex fkRegex;
 
     public ModuleResources(ModuleService service) {
-        fkRegex = new FkRegex(BASE_PATH + "/.*", new TkFork(
+        fkRegex = new FkRegex(BASE_PATH, new TkFork(
                 new FkMethods(PUT.name(), new ModulePUTResource(service)),
                 new FkMethods(POST.name(), new ModulePOSTResource(service)),
                 new FkMethods(DELETE.name(), new ModuleDELETEResource(service)),
