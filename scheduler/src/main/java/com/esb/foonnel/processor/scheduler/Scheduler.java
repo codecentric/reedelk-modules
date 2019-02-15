@@ -18,13 +18,11 @@ public class Scheduler extends AbstractInbound {
     private long delay;
     private long period;
 
-    @Override
     public void onStart() {
         timer = new Timer();
         timer.scheduleAtFixedRate(new SendMessage(), delay, period);
     }
 
-    @Override
     public void onShutdown() {
         if (timer != null) {
             timer.cancel();
