@@ -2,7 +2,7 @@ package com.esb.foonnel.admin.console.dev.resources;
 
 import com.esb.foonnel.internal.api.InternalAPI;
 import com.esb.foonnel.internal.api.module.v1.ModuleService;
-import com.esb.foonnel.internal.api.module.v1.ModulesGET;
+import com.esb.foonnel.internal.api.module.v1.ModulesGETRes;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -25,7 +25,7 @@ public class ModuleGETResource implements Take {
     }
 
     private byte[] servicestatus(ModuleService service) {
-        ModulesGET modules = service.modules();
-        return InternalAPI.Module.V1.GET.serialize(modules).getBytes();
+        ModulesGETRes modules = service.modules();
+        return InternalAPI.Module.V1.GET.Res.serialize(modules).getBytes();
     }
 }

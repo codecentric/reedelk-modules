@@ -2,7 +2,7 @@ package com.esb.foonnel.admin.console.dev.resources;
 
 import com.esb.foonnel.internal.api.InternalAPI;
 import com.esb.foonnel.internal.api.SystemProperty;
-import com.esb.foonnel.internal.api.health.v1.HealthGET;
+import com.esb.foonnel.internal.api.health.v1.HealthGETRes;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.facets.fork.FkMethods;
@@ -37,9 +37,9 @@ public class HealthResources implements Fork {
     }
 
     private String buildResponse(SystemProperty systemProperty) {
-        HealthGET health = new HealthGET();
+        HealthGETRes health = new HealthGETRes();
         health.setStatus("UP");
         health.setVersion(systemProperty.getFoonnelVersion());
-        return InternalAPI.Health.V1.GET.serialize(health);
+        return InternalAPI.Health.V1.GET.Res.serialize(health);
     }
 }
