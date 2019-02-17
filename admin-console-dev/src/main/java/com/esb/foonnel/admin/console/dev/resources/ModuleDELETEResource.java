@@ -1,10 +1,13 @@
 package com.esb.foonnel.admin.console.dev.resources;
 
 import com.esb.foonnel.internal.api.InternalAPI;
-import com.esb.foonnel.internal.api.module.v1.ModuleDELETE;
+import com.esb.foonnel.internal.api.module.v1.ModuleDELETEReq;
+import com.esb.foonnel.internal.api.module.v1.ModuleDELETERes;
 import com.esb.foonnel.internal.api.module.v1.ModuleService;
 import org.takes.Request;
 import org.takes.Response;
+import org.takes.rs.RsWithBody;
+import org.takes.rs.RsWithHeader;
 import org.takes.rs.RsWithStatus;
 
 import java.io.IOException;
@@ -20,9 +23,16 @@ public class ModuleDELETEResource extends AbstractModuleMethod {
     @Override
     public Response act(Request request) throws IOException {
         String json = body(request);
-        ModuleDELETE deleteRequest = InternalAPI.Module.V1.DELETE.deserialize(json);
-        service.uninstall(deleteRequest.getModuleFilePath());
+        ModuleDELETEReq deleteRequest = InternalAPI.Module.V1.DELETE.Req.deserialize(json);
 
-        return new RsWithStatus(HTTP_OK);
+        long moduleId = service.uninstall(deleteRequest.getModuleFilePath());
+
+        ModuleDELETERes dto = new ModuleDELETERes();
+        dto.setModuleId(moduleId);
+
+        return new RsWithBody(
+                new RsWithStatus(
+                        new RsWithHeader("Content-Type", "application/json"), HTTP_OK),
+                InternalAPI.Module.V1.DELETE.Res.serialize(dto));
     }
 }
