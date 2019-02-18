@@ -17,11 +17,10 @@
 
     <modules>
         <module>admin-console-dev</module>
-       <!-- <module>httpcomponents</module> -->
-        <!-- <module>jmscomponents</module> -->
-         <module>loggercomponent</module>
-         <module>scheduler</module>
-     </modules>
+        <module>logger-module</module>
+        <module>scheduler-module</module>
+        <module>rest-module</module>
+    </modules>
 
 
- </project>
+</project>

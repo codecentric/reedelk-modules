@@ -1,4 +1,4 @@
-package com.esb.foonnel.processor.http.inbound;
+package com.esb.foonnel.rest.http;
 
 public class HttpServerConfiguration {
 
