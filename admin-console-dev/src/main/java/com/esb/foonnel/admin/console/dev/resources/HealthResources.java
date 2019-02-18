@@ -39,7 +39,7 @@ public class HealthResources implements Fork {
     private String buildResponse(SystemProperty systemProperty) {
         HealthGETRes health = new HealthGETRes();
         health.setStatus("UP");
-        health.setVersion(systemProperty.getFoonnelVersion());
+        health.setVersion(systemProperty.foonnelVersion());
         return InternalAPI.Health.V1.GET.Res.serialize(health);
     }
 }
