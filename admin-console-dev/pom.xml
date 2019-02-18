@@ -83,7 +83,6 @@
                             com.esb.foonnel.internal.api.health.v1,
                             org.osgi.framework,
                             org.osgi.service.cm,
-                            org.json,
                             org.slf4j,
                             org.slf4j.spi
                         </Import-Package>
