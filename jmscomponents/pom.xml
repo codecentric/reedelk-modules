@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.foonnel</groupId>
-        <artifactId>foonnel-project</artifactId>
+        <artifactId>foonnel-module</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -54,7 +54,7 @@
                                 <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                                 <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                                 <Embed-Transitive>true</Embed-Transitive>
-                                <Foonnel-Project>true</Foonnel-Project>
+                                <Foonnel-Module>true</Foonnel-Module>
                             </instructions>
                         </configuration>
                     </plugin>
