@@ -1,0 +1,14 @@
+{
+  "id": "45a5ce60-5c9d-4075-82a7-d3fa111aauuff98",
+  "flow": [
+    {
+      "component.name": "com.esb.foonnel.rest.RESTListener",
+      "port": 8811,
+      "host": "localhost"
+    },
+    {
+      "component.name": "com.esb.foonnel.processor.logger.LogComponent",
+      "level": "INFO"
+    }
+  ]
+}

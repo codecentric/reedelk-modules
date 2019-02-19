@@ -27,12 +27,15 @@
             <artifactId>netty-transport</artifactId>
             <version>4.1.33.Final</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+            <version>4.1.33.Final</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Foonnel core bundle required plugin -->
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -45,6 +48,19 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Foonnel-Module>true</Foonnel-Module>
+                        <Import-Package>
+                            com.esb.foonnel.api,
+                            javax.security.cert,
+                            org.apache.commons.logging,
+                            org.apache.log4j,
+                            org.apache.logging.log4j,
+                            org.apache.logging.log4j.message,
+                            org.apache.logging.log4j.spi,
+                            org.slf4j;version="[1.7,2)",
+                            org.slf4j.helpers;version="[1.7,2)",
+                            org.slf4j.spi;version="[1.7,2)",
+                            sun.misc
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -55,7 +71,7 @@
         <profile>
             <id>dev</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <!--  <activeByDefault>true</activeByDefault> -->
             </activation>
             <build>
                 <plugins>
