@@ -21,9 +21,9 @@ public class RESTServerHandler extends SimpleChannelInboundHandler<Object> {
     public static final String TYPE_JSON = "application/json; charset=UTF-8";
     public static final String SERVER_NAME = "Foonnel";
 
-    private final RESTRouteTable routeTable;
+    private final Routes routeTable;
 
-    public RESTServerHandler(RESTRouteTable routeTable) {
+    public RESTServerHandler(Routes routeTable) {
         this.routeTable = routeTable;
     }
 
@@ -39,7 +39,7 @@ public class RESTServerHandler extends SimpleChannelInboundHandler<Object> {
         final HttpMethod method = request.method();
         final String uri = request.uri();
 
-        final Optional<RESTRoute> route = routeTable.findRoute(method, uri);
+        final Optional<Route> route = routeTable.findRoute(method, uri);
         if (!route.isPresent()) {
             writeNotFound(ctx, request);
             return;

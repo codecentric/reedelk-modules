@@ -10,12 +10,14 @@ import io.netty.handler.codec.http.HttpMethod;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.*;
+
 public class RESTServer {
 
     private final int port;
     private final String hostname;
 
-    private final RESTRouteTable routeTable;
+    private final Routes routes;
 
     private ChannelFuture channelFuture;
     private NioEventLoopGroup bossGroup; // accepts incoming connections.
@@ -24,7 +26,7 @@ public class RESTServer {
     public RESTServer(int port, String hostname) {
         this.port = port;
         this.hostname = hostname;
-        this.routeTable = new RESTRouteTable();
+        this.routes = new Routes();
     }
 
     public void start() {
@@ -37,9 +39,9 @@ public class RESTServer {
             serverBootstrap
                     .group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, 128)          // (5)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true) // (6)
-                    .childHandler(new RESTServerInitializer());
+                    .option(ChannelOption.SO_BACKLOG, 128)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .childHandler(new RESTServerInitializer(routes));
 
             // This one can be called many times, with different ports and so on!
             channelFuture = serverBootstrap.bind(new InetSocketAddress(hostname, port));
@@ -49,8 +51,10 @@ public class RESTServer {
     }
 
     public void stop() throws InterruptedException {
-        bossGroup.shutdownGracefully(0, 1, TimeUnit.SECONDS).sync();
-        workerGroup.shutdownGracefully(0, 1, TimeUnit.SECONDS).sync();
+        if (!routes.isEmpty()) return;
+
+        bossGroup.shutdownGracefully(0, 1, SECONDS).sync();
+        workerGroup.shutdownGracefully(0, 1, SECONDS).sync();
         try {
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
@@ -62,14 +66,13 @@ public class RESTServer {
         }
     }
 
-    public RESTServer get(final String path, final Handler handler) {
-        this.routeTable.add(new RESTRoute(HttpMethod.GET, path, handler));
-        return this;
+    public void addRoute(String method, String path, Handler handler) {
+        routes.add(new Route(HttpMethod.valueOf(method), path, handler));
     }
 
-    public RESTServer post(final String path, final Handler handler) {
-        this.routeTable.add(new RESTRoute(HttpMethod.POST, path, handler));
-        return this;
+    public void removeRoute(String method, String path) {
+        routes
+                .findRoute(HttpMethod.valueOf(method), path)
+                .ifPresent(routes::remove);
     }
-
 }

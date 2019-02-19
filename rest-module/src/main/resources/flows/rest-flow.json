@@ -4,7 +4,14 @@
     {
       "component.name": "com.esb.foonnel.rest.RESTListener",
       "port": 8811,
-      "host": "localhost"
+      "host": "localhost",
+      "path": "/users",
+      "method": "GET",
+      "response": {
+        "status": 200,
+        "body": "hello spenk!",
+        "headers": ["Content-Type: application/json"]
+      }
     },
     {
       "component.name": "com.esb.foonnel.processor.logger.LogComponent",
