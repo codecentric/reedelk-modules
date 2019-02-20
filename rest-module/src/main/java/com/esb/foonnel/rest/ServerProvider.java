@@ -1,6 +1,6 @@
 package com.esb.foonnel.rest;
 
-import com.esb.foonnel.rest.http.Routes;
+import com.esb.foonnel.rest.route.Routes;
 import com.esb.foonnel.rest.http.Server;
 import com.esb.foonnel.rest.http.ServerChannelInitializer;
 import com.esb.foonnel.rest.http.ServerHandler;

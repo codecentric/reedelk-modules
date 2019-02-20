@@ -1,9 +1,7 @@
 package com.esb.foonnel.rest;
 
 import com.esb.foonnel.api.AbstractInbound;
-import com.esb.foonnel.api.Message;
 import com.esb.foonnel.rest.http.Server;
-import com.esb.foonnel.rest.http.Response;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -27,13 +25,7 @@ public class RESTListener extends AbstractInbound {
     @Override
     public void onStart() {
         Server server = provider.get(host, port);
-        server.addRoute(method, path, request -> {
-            String body = request.body();
-            Message message = new Message();
-            message.setContent(body);
-            Message output = onEvent(message);
-            return new Response(output.getContent());
-        });
+        server.addRoute(method, path, this::onEvent);
     }
 
     @Override

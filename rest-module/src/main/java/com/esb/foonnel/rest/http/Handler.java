@@ -1,8 +1,10 @@
 package com.esb.foonnel.rest.http;
 
 
+import com.esb.foonnel.api.Message;
+
 public interface Handler {
 
-    Response handle(Request request) throws Exception;
+    Message handle(Message request) throws Exception;
 
 }

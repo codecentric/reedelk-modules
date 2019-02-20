@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest.http;
+package com.esb.foonnel.rest.route;
 
 import io.netty.handler.codec.http.HttpMethod;
 
@@ -8,25 +8,24 @@ public class Routes {
 
     private final Collection<Route> routes = new ArrayList<>();
 
-    void add(Route route) {
+    public void add(Route route) {
         this.routes.add(route);
     }
 
-    Optional<Route> findRoute(final HttpMethod method, final String path) {
+    public Optional<Route> findRoute(final HttpMethod method, final String path) {
         for (final Route route : routes) {
             if (route.matches(method, path)) {
                 return Optional.of(route);
             }
         }
-
         return Optional.empty();
     }
 
-    void remove(Route route) {
+    public void remove(Route route) {
         routes.remove(route);
     }
 
-    boolean isEmpty() {
+    public boolean isEmpty() {
         return routes.isEmpty();
     }
 }

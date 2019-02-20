@@ -65,17 +65,12 @@
                         <Embed-Transitive>true</Embed-Transitive>
                         <Foonnel-Module>true</Foonnel-Module>
                         <Import-Package>
+                            sun.misc,
                             com.esb.foonnel.api,
                             javax.security.cert,
-                            org.apache.commons.logging,
-                            org.apache.log4j,
-                            org.apache.logging.log4j,
-                            org.apache.logging.log4j.message,
-                            org.apache.logging.log4j.spi,
                             org.slf4j;version="[1.7,2)",
                             org.slf4j.helpers;version="[1.7,2)",
-                            org.slf4j.spi;version="[1.7,2)",
-                            sun.misc
+                            org.slf4j.spi;version="[1.7,2)"
                         </Import-Package>
                     </instructions>
                 </configuration>
