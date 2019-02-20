@@ -1,21 +1,25 @@
 package com.esb.foonnel.rest.http;
 
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpMethod;
+import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class Server {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
+    private static final int SHUTDOWN_TIMEOUT = 1;
 
     private final int port;
     private final String hostname;
@@ -48,20 +52,20 @@ public class Server {
 
     public void start() {
         try {
-            // This one can be called many times, with different ports and so on!
-            channelFuture = serverBootstrap.bind(new InetSocketAddress(hostname, port));
+            SocketAddress address = new InetSocketAddress(hostname, port);
+            channelFuture = serverBootstrap.bind(address);
         } catch (Exception e) {
-            logger.error("Server Start", e);
+            logger.error("server start error", e);
         }
     }
 
     public void stop() throws InterruptedException {
-        bossGroup.shutdownGracefully(0, 1, SECONDS).sync();
-        workerGroup.shutdownGracefully(0, 1, SECONDS).sync();
+        shutdownGracefully(bossGroup);
+        shutdownGracefully(workerGroup);
         try {
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            logger.error("Server Stop", e);
+            logger.error("server stop error", e);
         } finally {
             bossGroup = null;
             workerGroup = null;
@@ -80,5 +84,13 @@ public class Server {
 
     public boolean emptyRoutes() {
         return routes.isEmpty();
+    }
+
+    private void shutdownGracefully(EventExecutorGroup executionGroup) {
+        try {
+            executionGroup.shutdownGracefully(0, SHUTDOWN_TIMEOUT, SECONDS).sync();
+        } catch (InterruptedException e) {
+            logger.error("Executor Group Shutdown Error", e);
+        }
     }
 }
