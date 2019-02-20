@@ -7,11 +7,11 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 
-public class RESTServerInitializer extends ChannelInitializer<SocketChannel> {
+public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private final Routes routeTable;
 
-    public RESTServerInitializer(Routes routeTable) {
+    public ServerChannelInitializer(Routes routeTable) {
         this.routeTable = routeTable;
     }
 
@@ -21,6 +21,6 @@ public class RESTServerInitializer extends ChannelInitializer<SocketChannel> {
         p.addLast(new HttpRequestDecoder(4096, 8192, 8192, false));
         p.addLast(new HttpObjectAggregator(100 * 1024 * 1024));
         p.addLast(new HttpResponseEncoder());
-        p.addLast(new RESTServerHandler(routeTable));
+        p.addLast(new ServerHandler(routeTable));
     }
 }

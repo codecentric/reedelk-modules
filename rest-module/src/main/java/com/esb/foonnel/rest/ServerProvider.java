@@ -1,6 +1,6 @@
 package com.esb.foonnel.rest;
 
-import com.esb.foonnel.rest.http.RESTServer;
+import com.esb.foonnel.rest.http.Server;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;
@@ -12,19 +12,19 @@ import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
 @Component(service = ServerProvider.class, scope = SINGLETON)
 public class ServerProvider {
 
-    private Map<KeyEntry, RESTServer> serverMap = new ConcurrentHashMap<>();
+    private Map<KeyEntry, Server> serverMap = new ConcurrentHashMap<>();
 
-    public RESTServer get(String hostname, int port) {
+    public Server get(String hostname, int port) {
         KeyEntry key = new KeyEntry(hostname, port);
         if (!serverMap.containsKey(key)) {
-            RESTServer server = new RESTServer(port, hostname);
+            Server server = new Server(port, hostname);
             server.start();
             serverMap.put(key, server);
         }
         return serverMap.get(key);
     }
 
-    public void release(RESTServer server) throws InterruptedException {
+    public void release(Server server) throws InterruptedException {
         if (server.emptyRoutes()) {
             server.stop();
         }

@@ -15,7 +15,7 @@ import java.util.Optional;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
-public class RESTServerHandler extends SimpleChannelInboundHandler<Object> {
+public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 
     public static final String TYPE_PLAIN = "text/plain; charset=UTF-8";
     public static final String TYPE_JSON = "application/json; charset=UTF-8";
@@ -23,7 +23,7 @@ public class RESTServerHandler extends SimpleChannelInboundHandler<Object> {
 
     private final Routes routeTable;
 
-    public RESTServerHandler(Routes routeTable) {
+    public ServerHandler(Routes routeTable) {
         this.routeTable = routeTable;
     }
 

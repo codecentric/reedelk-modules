@@ -8,11 +8,10 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpMethod;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.*;
 
-public class RESTServer {
+public class Server {
 
     private final int port;
     private final String hostname;
@@ -25,7 +24,7 @@ public class RESTServer {
     private NioEventLoopGroup bossGroup; // accepts incoming connections.
     private NioEventLoopGroup workerGroup; // handles the traffic of the accepted connection once the boss accepts the connection and registers the accepted connection to the worker.
 
-    public RESTServer(int port, String hostname) {
+    public Server(int port, String hostname) {
         this.port = port;
         this.hostname = hostname;
         this.routes = new Routes();
@@ -39,7 +38,7 @@ public class RESTServer {
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childHandler(new RESTServerInitializer(routes));
+                .childHandler(new ServerChannelInitializer(routes));
     }
 
 
