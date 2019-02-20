@@ -6,12 +6,16 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
-import static java.util.concurrent.TimeUnit.*;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class Server {
+
+    private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
     private final int port;
     private final String hostname;
@@ -24,10 +28,10 @@ public class Server {
     private NioEventLoopGroup bossGroup; // accepts incoming connections.
     private NioEventLoopGroup workerGroup; // handles the traffic of the accepted connection once the boss accepts the connection and registers the accepted connection to the worker.
 
-    public Server(int port, String hostname) {
+    public Server(int port, String hostname, ServerChannelInitializer serverChannelInitializer, Routes routes) {
         this.port = port;
+        this.routes = routes;
         this.hostname = hostname;
-        this.routes = new Routes();
 
         this.bossGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
@@ -38,7 +42,7 @@ public class Server {
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childHandler(new ServerChannelInitializer(routes));
+                .childHandler(serverChannelInitializer);
     }
 
 
@@ -47,7 +51,7 @@ public class Server {
             // This one can be called many times, with different ports and so on!
             channelFuture = serverBootstrap.bind(new InetSocketAddress(hostname, port));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Server Start", e);
         }
     }
 
@@ -57,7 +61,7 @@ public class Server {
         try {
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Server Stop", e);
         } finally {
             bossGroup = null;
             workerGroup = null;

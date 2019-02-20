@@ -9,10 +9,10 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-    private final Routes routeTable;
+    private final ServerHandler serverHandler;
 
-    public ServerChannelInitializer(Routes routeTable) {
-        this.routeTable = routeTable;
+    public ServerChannelInitializer(ServerHandler serverHandler) {
+        this.serverHandler = serverHandler;
     }
 
     @Override
@@ -21,6 +21,6 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
         p.addLast(new HttpRequestDecoder(4096, 8192, 8192, false));
         p.addLast(new HttpObjectAggregator(100 * 1024 * 1024));
         p.addLast(new HttpResponseEncoder());
-        p.addLast(new ServerHandler(routeTable));
+        p.addLast(serverHandler);
     }
 }

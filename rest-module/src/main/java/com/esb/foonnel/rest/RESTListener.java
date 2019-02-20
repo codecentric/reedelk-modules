@@ -43,7 +43,7 @@ public class RESTListener extends AbstractInbound {
         try {
             provider.release(server);
         } catch (InterruptedException e) {
-            logger.error("Error while stopping RESTListener", e);
+            logger.error("Shutdown RESTListener", e);
         }
     }
 

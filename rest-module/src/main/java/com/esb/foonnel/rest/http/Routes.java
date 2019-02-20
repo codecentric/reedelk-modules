@@ -4,7 +4,7 @@ import io.netty.handler.codec.http.HttpMethod;
 
 import java.util.*;
 
-class Routes {
+public class Routes {
 
     private final Collection<Route> routes = new ArrayList<>();
 

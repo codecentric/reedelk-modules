@@ -3,6 +3,7 @@ package com.esb.foonnel.rest.http;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
+@ChannelHandler.Sharable
 public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 
     public static final String TYPE_PLAIN = "text/plain; charset=UTF-8";
