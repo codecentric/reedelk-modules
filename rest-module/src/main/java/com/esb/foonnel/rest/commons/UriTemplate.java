@@ -17,7 +17,7 @@ public class UriTemplate {
     public boolean matches(String uri) {
         if (uri == null) return false;
 
-        Matcher matcher = this.uriTemplateStructure.getPattern().matcher(uri);
+        Matcher matcher = uriTemplateStructure.getPattern().matcher(uri);
         return matcher.matches();
     }
 
