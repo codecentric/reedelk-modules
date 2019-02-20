@@ -6,12 +6,7 @@
       "port": 8811,
       "host": "localhost",
       "path": "/users",
-      "method": "GET",
-      "response": {
-        "status": 200,
-        "body": "hello spenk!",
-        "headers": ["Content-Type: application/json"]
-      }
+      "method": "GET"
     },
     {
       "component.name": "com.esb.foonnel.processor.logger.LogComponent",

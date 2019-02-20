@@ -1,18 +1,33 @@
-package com.esb.foonnel.rest.http;
+package com.esb.foonnel.rest;
+
+import com.esb.foonnel.rest.http.RESTServer;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Provides a server for the given host and port.
- */
+import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
+
+@Component(service = ServerProvider.class, scope = SINGLETON)
 public class ServerProvider {
 
-    private Map<KeyEntry,RESTServer> serverMap = new ConcurrentHashMap<>();
+    private Map<KeyEntry, RESTServer> serverMap = new ConcurrentHashMap<>();
 
     public RESTServer get(String hostname, int port) {
-        return serverMap.getOrDefault(new KeyEntry(hostname, port), new RESTServer(port, hostname));
+        KeyEntry key = new KeyEntry(hostname, port);
+        if (!serverMap.containsKey(key)) {
+            RESTServer server = new RESTServer(port, hostname);
+            server.start();
+            serverMap.put(key, server);
+        }
+        return serverMap.get(key);
+    }
+
+    public void release(RESTServer server) throws InterruptedException {
+        if (server.emptyRoutes()) {
+            server.stop();
+        }
     }
 
     private class KeyEntry {
@@ -38,4 +53,5 @@ public class ServerProvider {
             return Objects.hash(hostname, port);
         }
     }
+
 }

@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static io.netty.handler.codec.http.HttpVersion.*;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public class RESTServerHandler extends SimpleChannelInboundHandler<Object> {
 
@@ -34,8 +34,6 @@ public class RESTServerHandler extends SimpleChannelInboundHandler<Object> {
         }
 
         final FullHttpRequest request = (FullHttpRequest) msg;
-
-
         final HttpMethod method = request.method();
         final String uri = request.uri();
 
@@ -47,9 +45,10 @@ public class RESTServerHandler extends SimpleChannelInboundHandler<Object> {
 
         try {
             final Request requestWrapper = new Request(request);
-            final Object obj = route.get().getHandler().handle(requestWrapper, null);
-            final String content = obj == null ? "" : obj.toString();
-            writeResponse(ctx, request, OK, TYPE_PLAIN, content);
+            final Response response = route.get().getHandler().handle(requestWrapper);
+            String content = response.response.content().toString(StandardCharsets.UTF_8);
+
+            writeResponse(ctx, request, OK, TYPE_JSON, content);
         } catch (final Exception ex) {
             ex.printStackTrace();
             writeInternalServerError(ctx, request);
@@ -74,20 +73,11 @@ public class RESTServerHandler extends SimpleChannelInboundHandler<Object> {
         writeErrorResponse(ctx, request, INTERNAL_SERVER_ERROR);
     }
 
-    private static void writeErrorResponse(
-            final ChannelHandlerContext ctx,
-            final FullHttpRequest request,
-            final HttpResponseStatus status) {
+    private static void writeErrorResponse(ChannelHandlerContext ctx, FullHttpRequest request, HttpResponseStatus status) {
         writeResponse(ctx, request, status, TYPE_PLAIN, status.reasonPhrase());
     }
 
-    private static void writeResponse(
-            final ChannelHandlerContext ctx,
-            final FullHttpRequest request,
-            final HttpResponseStatus status,
-            final CharSequence contentType,
-            final String content) {
-
+    private static void writeResponse(ChannelHandlerContext ctx,FullHttpRequest request, HttpResponseStatus status, CharSequence contentType, String content) {
         final byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
         final ByteBuf entity = Unpooled.wrappedBuffer(bytes);
         writeResponse(ctx, request, status, entity, contentType, bytes.length);

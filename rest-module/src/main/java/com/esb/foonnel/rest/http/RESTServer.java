@@ -17,6 +17,8 @@ public class RESTServer {
     private final int port;
     private final String hostname;
 
+    private final ServerBootstrap serverBootstrap;
+
     private final Routes routes;
 
     private ChannelFuture channelFuture;
@@ -27,22 +29,22 @@ public class RESTServer {
         this.port = port;
         this.hostname = hostname;
         this.routes = new Routes();
+
+        this.bossGroup = new NioEventLoopGroup();
+        this.workerGroup = new NioEventLoopGroup();
+
+        this.serverBootstrap = new ServerBootstrap();
+        this.serverBootstrap
+                .group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .option(ChannelOption.SO_BACKLOG, 128)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childHandler(new RESTServerInitializer(routes));
     }
 
+
     public void start() {
-        bossGroup = new NioEventLoopGroup();
-        workerGroup = new NioEventLoopGroup();
-
         try {
-            // This is generic and should be extracted into a pool
-            ServerBootstrap serverBootstrap = new ServerBootstrap();
-            serverBootstrap
-                    .group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, 128)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true)
-                    .childHandler(new RESTServerInitializer(routes));
-
             // This one can be called many times, with different ports and so on!
             channelFuture = serverBootstrap.bind(new InetSocketAddress(hostname, port));
         } catch (Exception e) {
@@ -51,8 +53,6 @@ public class RESTServer {
     }
 
     public void stop() throws InterruptedException {
-        if (!routes.isEmpty()) return;
-
         bossGroup.shutdownGracefully(0, 1, SECONDS).sync();
         workerGroup.shutdownGracefully(0, 1, SECONDS).sync();
         try {
@@ -71,8 +71,11 @@ public class RESTServer {
     }
 
     public void removeRoute(String method, String path) {
-        routes
-                .findRoute(HttpMethod.valueOf(method), path)
+        routes.findRoute(HttpMethod.valueOf(method), path)
                 .ifPresent(routes::remove);
+    }
+
+    public boolean emptyRoutes() {
+        return routes.isEmpty();
     }
 }

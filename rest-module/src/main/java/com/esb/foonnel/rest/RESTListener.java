@@ -4,8 +4,10 @@ import com.esb.foonnel.api.AbstractInbound;
 import com.esb.foonnel.api.Message;
 import com.esb.foonnel.rest.http.Handler;
 import com.esb.foonnel.rest.http.RESTServer;
-import com.esb.foonnel.rest.http.ServerProvider;
+import com.esb.foonnel.rest.http.Request;
+import com.esb.foonnel.rest.http.Response;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,37 +18,32 @@ public class RESTListener extends AbstractInbound {
 
     private static final Logger logger = LoggerFactory.getLogger(RESTListener.class);
 
+    @Reference
+    private ServerProvider provider;
+
     private int port;
     private String host;
     private String path;
     private String method;
 
-    private static ServerProvider provider = new ServerProvider();
-
-
-    private ServerProvider serverProvider() {
-        return provider;
-    }
-
     @Override
     public void onStart() {
-
-        RESTServer server = serverProvider().get(host, port);
-        server.addRoute(method, path, defaultHandler);
-
-        try {
-            server.start();
-        } catch (Exception e) {
-            logger.error("Error while starting RESTListener", e);
-        }
+        RESTServer server = provider.get(host, port);
+        server.addRoute(method, path, request -> {
+            String body = request.body();
+            Message message = new Message();
+            message.setContent(body);
+            Message output = onEvent(message);
+            return new Response(output.getContent());
+        });
     }
 
     @Override
     public void onShutdown() {
-        RESTServer server = serverProvider().get(host, port);
+        RESTServer server = provider.get(host, port);
         server.removeRoute(method, path);
         try {
-            server.stop();
+            provider.release(server);
         } catch (InterruptedException e) {
             logger.error("Error while stopping RESTListener", e);
         }
@@ -84,10 +81,4 @@ public class RESTListener extends AbstractInbound {
         this.method = method;
     }
 
-    private final Handler defaultHandler = (request, response) -> {
-        String body = request.body();
-        Message message = new Message();
-        message.setContent(body);
-        return onEvent(message);
-    };
 }
