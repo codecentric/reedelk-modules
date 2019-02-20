@@ -8,9 +8,12 @@ import java.util.regex.Pattern;
 public class UriTemplateStructure {
 
     private static final String EMPTY = "";
+    private static final String DEFAULT_REGEXP = "([^/]*)";
+
     private static final char END_VARIABLE = '}';
     private static final char BEGIN_VARIABLE = '{';
-    private static final String DEFAULT_REGEXP = "([^/]*)";
+    private static final char END_REGEXP = ')';
+    private static final char BEGIN_REGEXP = '(';
 
     private final List<String> variableNames;
     private final Pattern pattern;
@@ -61,9 +64,9 @@ public class UriTemplateStructure {
                                     "custom regular expression must be specified after ':' for variable named \"" + variable + "\"");
                         }
                         String regex = variable.substring(idx + 1);
-                        pattern.append('(');
+                        pattern.append(BEGIN_REGEXP);
                         pattern.append(regex);
-                        pattern.append(')');
+                        pattern.append(END_REGEXP);
                         variableNames.add(variable.substring(0, idx));
                     }
                     builder = new StringBuilder();
