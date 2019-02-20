@@ -1,27 +1,26 @@
 package com.esb.foonnel.rest.commons;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class UriTemplateStructure {
 
     private static final String EMPTY = "";
-    private static final char END_VAR = '}';
-    private static final char BEGIN_VAR = '{';
+    private static final char END_VARIABLE = '}';
+    private static final char BEGIN_VARIABLE = '{';
     private static final String DEFAULT_REGEXP = "([^/]*)";
 
-    private final Collection<String> variableNames;
+    private final List<String> variableNames;
     private final Pattern pattern;
 
-    private UriTemplateStructure(Collection<String> variableNames, Pattern pattern) {
+    private UriTemplateStructure(List<String> variableNames, Pattern pattern) {
         this.variableNames = variableNames;
         this.pattern = pattern;
     }
 
-    public Collection<String> getVariableNames() {
+    public List<String> getVariableNames() {
         return variableNames;
     }
 
@@ -31,13 +30,13 @@ public class UriTemplateStructure {
 
     public static UriTemplateStructure from(String template) {
         int depth = 0;
-        List<String> variableNames = new ArrayList<>();
+        List<String> variableNames = new LinkedList<>();
         StringBuilder pattern = new StringBuilder();
         StringBuilder builder = new StringBuilder();
         for (int i = 0 ; i < template.length(); i++) {
             char c = template.charAt(i);
 
-            if (c == BEGIN_VAR) {
+            if (c == BEGIN_VARIABLE) {
                 depth++;
                 if (depth == 1) {
                     // beginning of a defined URI variable
@@ -46,7 +45,7 @@ public class UriTemplateStructure {
                     continue;
                 }
 
-            } else if (c == END_VAR) {
+            } else if (c == END_VARIABLE) {
                 depth--;
                 if (depth == 0) {
                     // end of a defined URI variable
