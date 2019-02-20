@@ -41,7 +41,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext context, Object msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext context, Object msg) {
         if (!(msg instanceof FullHttpRequest)) {
             return;
         }
@@ -69,9 +69,9 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 
             Message outMessage = route.get().getHandler().handle(message);
             int httpStatus = outMessage.getHttpStatus();
-            boolean hasContentType = outMessage.getResponseHttpHeaders().keySet().contains(CONTENT_TYPE);
+            boolean hasContentType = outMessage.getResponseHttpHeaders().keySet().contains(CONTENT_TYPE.toString());
 
-            CharSequence contentType = hasContentType ? outMessage.getResponseHttpHeaders().get(CONTENT_TYPE) : TEXT_PLAIN;
+            CharSequence contentType = hasContentType ? outMessage.getResponseHttpHeaders().get(CONTENT_TYPE.toString()) : TEXT_PLAIN;
             writeResponse(context, valueOf(httpStatus), outMessage.getContent().getBytes(UTF_8), contentType);
 
         } catch (final Exception exception) {

@@ -1,0 +1,29 @@
+{
+  "id": "45a5ce60-5c9d-4115-12a7-d3f2234aafbbf98",
+  "flow": [
+    {
+      "component.name": "com.esb.foonnel.rest.RESTListener",
+      "port": 8811,
+      "host": "localhost",
+      "path": "/customer",
+      "method": "POST"
+    },
+    {
+      "component.name": "com.esb.foonnel.processor.logger.LogComponent",
+      "level": "INFO"
+    },
+    {
+      "component.name": "com.esb.foonnel.rest.SetStatus",
+      "status": 201
+    },
+    {
+      "component.name": "com.esb.foonnel.rest.SetHeader",
+      "name": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "component.name": "com.esb.foonnel.rest.SetPayload",
+      "payload": "{ \"customerId\": \"afffuu1232323\" }"
+    }
+  ]
+}
