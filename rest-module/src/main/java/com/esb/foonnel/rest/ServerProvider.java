@@ -31,6 +31,12 @@ public class ServerProvider {
     public void release(Server server) throws InterruptedException {
         if (server.emptyRoutes()) {
             server.stop();
+
+            // TODO: Bleah!
+            int port = server.getPort();
+            String hostname = server.getHostname();
+            KeyEntry key = new KeyEntry(hostname, port);
+            serverMap.remove(key);
         }
     }
 

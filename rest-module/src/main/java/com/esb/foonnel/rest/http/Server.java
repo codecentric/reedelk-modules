@@ -94,4 +94,12 @@ public class Server {
             logger.error("Executor Group Shutdown Error", e);
         }
     }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
 }

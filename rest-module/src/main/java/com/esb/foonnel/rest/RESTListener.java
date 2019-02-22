@@ -16,10 +16,10 @@ public class RESTListener extends AbstractInbound {
 
     @Reference
     private ServerProvider provider;
-    private RESTConnectionConfiguration configuration;
 
     private String path;
     private String method;
+    private RESTConnectionConfiguration configuration;
 
 
     @Override
