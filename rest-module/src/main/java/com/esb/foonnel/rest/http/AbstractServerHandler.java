@@ -6,16 +6,22 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.util.ReferenceCountUtil;
 
 @ChannelHandler.Sharable
 public abstract class AbstractServerHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext context, Object msg) {
-        if (msg instanceof FullHttpRequest) {
-            FullHttpRequest request = (FullHttpRequest) msg;
-            FullHttpResponse response = handle(request);
-            context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        try {
+            if (msg instanceof FullHttpRequest) {
+                FullHttpRequest request = (FullHttpRequest) msg;
+                FullHttpResponse response = handle(request);
+                context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+            }
+        } catch (Exception e) {
+            // Always release the original message!
+            ReferenceCountUtil.release(msg);
         }
     }
 
