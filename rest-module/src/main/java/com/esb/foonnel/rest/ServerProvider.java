@@ -1,9 +1,10 @@
 package com.esb.foonnel.rest;
 
-import com.esb.foonnel.rest.route.Routes;
+import com.esb.foonnel.rest.http.AbstractServerHandler;
 import com.esb.foonnel.rest.http.Server;
 import com.esb.foonnel.rest.http.ServerChannelInitializer;
 import com.esb.foonnel.rest.http.ServerHandler;
+import com.esb.foonnel.rest.route.Routes;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;
@@ -35,7 +36,7 @@ public class ServerProvider {
 
     private Server newServer(int port, String hostname) {
         Routes routes = new Routes();
-        ServerHandler serverHandler = new ServerHandler(routes);
+        AbstractServerHandler serverHandler = new ServerHandler(routes);
         ServerChannelInitializer channelInitializer = new ServerChannelInitializer(serverHandler);
         return new Server(port, hostname, channelInitializer, routes);
     }

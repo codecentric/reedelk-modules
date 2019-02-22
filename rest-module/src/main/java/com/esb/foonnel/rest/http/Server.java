@@ -8,7 +8,6 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpMethod;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,11 +75,11 @@ public class Server {
     }
 
     public void addRoute(String method, String path, Handler handler) {
-        routes.add(new Route(HttpMethod.valueOf(method), path, handler));
+        routes.add(new Route(method, path, handler));
     }
 
     public void removeRoute(String method, String path) {
-        routes.findRoute(HttpMethod.valueOf(method), path)
+        routes.findRoute(method, path)
                 .ifPresent(routes::remove);
     }
 

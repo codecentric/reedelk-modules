@@ -1,8 +1,8 @@
 package com.esb.foonnel.rest.route;
 
-import io.netty.handler.codec.http.HttpMethod;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
 
 public class Routes {
 
@@ -12,7 +12,7 @@ public class Routes {
         this.routes.add(route);
     }
 
-    public Optional<Route> findRoute(final HttpMethod method, final String path) {
+    public Optional<Route> findRoute(final String method, final String path) {
         for (final Route route : routes) {
             if (route.matches(method, path)) {
                 return Optional.of(route);

@@ -1,10 +1,12 @@
 package com.esb.foonnel.rest.commons;
 
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 
-import static com.esb.foonnel.rest.commons.Preconditions.*;
+import static com.esb.foonnel.rest.commons.Preconditions.isNotNull;
 
 public class UriTemplate {
 

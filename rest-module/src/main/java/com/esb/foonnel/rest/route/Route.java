@@ -2,25 +2,31 @@ package com.esb.foonnel.rest.route;
 
 import com.esb.foonnel.rest.commons.UriTemplate;
 import com.esb.foonnel.rest.http.Handler;
-import io.netty.handler.codec.http.HttpMethod;
 
+import java.util.Map;
 import java.util.Objects;
+
+import static com.esb.foonnel.rest.commons.Preconditions.isNotNull;
 
 public class Route {
 
     private final String path;
+    private final String method;
     private final Handler handler;
-    private final HttpMethod method;
     private final UriTemplate uriTemplate;
 
-    public Route(HttpMethod method, String uriTemplate, Handler handler) {
+    public Route(String method, String uriTemplate, Handler handler) {
+        isNotNull(method, "method");
+        isNotNull(uriTemplate, "uriTemplate");
+        isNotNull(handler, "handler");
+
         this.method = method;
         this.path = uriTemplate;
         this.handler = handler;
         this.uriTemplate = new UriTemplate(uriTemplate);
     }
 
-    public HttpMethod getMethod() {
+    public String getMethod() {
         return method;
     }
 
@@ -28,12 +34,16 @@ public class Route {
         return path;
     }
 
-    public Handler getHandler() {
+    public Handler handler() {
         return handler;
     }
 
-    public boolean matches(HttpMethod method, String path) {
+    public boolean matches(String method, String path) {
         return this.method.equals(method) && this.uriTemplate.matches(path);
+    }
+
+    public Map<String,String> bindPathParams(String requestUri) {
+        return this.uriTemplate.bind(requestUri);
     }
 
     @Override

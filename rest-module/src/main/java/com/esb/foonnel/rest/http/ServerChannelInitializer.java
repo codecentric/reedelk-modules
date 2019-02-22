@@ -9,9 +9,9 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-    private final ServerHandler serverHandler;
+    private final AbstractServerHandler serverHandler;
 
-    public ServerChannelInitializer(ServerHandler serverHandler) {
+    public ServerChannelInitializer(AbstractServerHandler serverHandler) {
         this.serverHandler = serverHandler;
     }
 
