@@ -31,10 +31,10 @@ public class ServerHandler extends AbstractServerHandler {
     private final Mapper<FullHttpRequest,Message> httpRequestMessageMapper = new HttpRequestToMessage();
     private final Mapper<Message, FullHttpResponse> messageHttpResponseMapper = new MessageToHttpResponse();
 
-    private final Routes routeTable;
+    private final Routes routesRegistry;
 
-    public ServerHandler(Routes routeTable) {
-        this.routeTable = routeTable;
+    public ServerHandler(Routes routesRegistry) {
+        this.routesRegistry = routesRegistry;
     }
 
 
@@ -43,7 +43,7 @@ public class ServerHandler extends AbstractServerHandler {
 
         Message inMessage = httpRequestMessageMapper.map(request);
 
-        Optional<Route> route = routeTable.findRoute(inMessage.getRequestMethod(), inMessage.getRequestPath());
+        Optional<Route> route = routesRegistry.findRoute(inMessage.getRequestMethod(), inMessage.getRequestPath());
 
         if (!route.isPresent()) return responseWith(NOT_FOUND);
 
