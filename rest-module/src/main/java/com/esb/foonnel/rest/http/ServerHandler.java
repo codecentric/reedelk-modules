@@ -9,7 +9,6 @@ import com.esb.foonnel.rest.route.Routes;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
-import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
@@ -41,30 +41,27 @@ public class ServerHandler extends AbstractServerHandler {
     @Override
     protected FullHttpResponse handle(FullHttpRequest request) {
 
-        Message requestMessage = httpRequestMessageMapper.map(request);
+        Message inMessage = httpRequestMessageMapper.map(request);
 
-        Optional<Route> route = routeTable.findRoute(
-                requestMessage.getRequestMethod(),
-                requestMessage.getRequestPath());
+        Optional<Route> route = routeTable.findRoute(inMessage.getRequestMethod(), inMessage.getRequestPath());
 
         if (!route.isPresent()) return responseWith(NOT_FOUND);
 
         Route matchingRoute = route.get();
 
-        QueryStringDecoder decoder = new QueryStringDecoder(requestMessage.getRequestPath());
+        QueryStringDecoder decoder = new QueryStringDecoder(inMessage.getRequestPath());
         Map<String, List<String>> requestQueryParams = decoder.parameters();
-        requestMessage.setRequestQueryParams(requestQueryParams);
+        inMessage.setRequestQueryParams(requestQueryParams);
 
-        Map<String, String> requestPathParams = matchingRoute.bindPathParams(requestMessage.getRequestPath());
-        requestMessage.setRequestPathParams(requestPathParams);
-
+        Map<String, String> requestPathParams = matchingRoute.bindPathParams(inMessage.getRequestPath());
+        inMessage.setRequestPathParams(requestPathParams);
 
         try {
             // Foonnel Runtime Executes the graph
-            Message outMessage = matchingRoute.handler().handle(requestMessage);
+            Message outMessage = matchingRoute.handler().handle(inMessage);
             return messageHttpResponseMapper.map(outMessage);
 
-        } catch (final Exception exception) {
+        } catch (Exception exception) {
             logger.error("REST Listener", exception);
             return responseWith(INTERNAL_SERVER_ERROR);
         }
@@ -72,10 +69,13 @@ public class ServerHandler extends AbstractServerHandler {
 
     private FullHttpResponse responseWith(HttpResponseStatus status) {
         String content = status.reasonPhrase();
-        ByteBuf entity = Unpooled.wrappedBuffer(content.getBytes(UTF_8));
+        byte[] bytes = content.getBytes(UTF_8);
+        ByteBuf entity = Unpooled.wrappedBuffer(bytes);
 
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status, entity);
-        response.headers().add(CONTENT_TYPE, TEXT_PLAIN);
+        HttpHeaders headers = response.headers();
+        headers.add(CONTENT_TYPE, TEXT_PLAIN);
+        headers.add(CONTENT_LENGTH, bytes.length);
         return response;
     }
 
