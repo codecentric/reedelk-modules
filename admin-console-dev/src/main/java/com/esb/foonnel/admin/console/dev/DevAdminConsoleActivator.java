@@ -54,7 +54,7 @@ public class DevAdminConsoleActivator {
             public void run() {
                 logger.info(String.format("Dev Admin Console listening on port %d", listeningPort));
             }
-        }, 2000);
+        }, 500);
     }
 
     @Deactivate
