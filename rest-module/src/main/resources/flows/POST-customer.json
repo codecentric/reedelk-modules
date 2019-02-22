@@ -3,8 +3,7 @@
   "flow": [
     {
       "implementor.name": "com.esb.foonnel.rest.RESTListener",
-      "port": 8811,
-      "host": "localhost",
+      "configRef": "customer-api-connection-config",
       "path": "/customer",
       "method": "POST"
     },

@@ -16,22 +16,21 @@ public class RESTListener extends AbstractInbound {
 
     @Reference
     private ServerProvider provider;
+    private RESTConnectionConfiguration configuration;
 
-    private int port;
-    private String host;
     private String path;
     private String method;
 
 
     @Override
     public void onStart() {
-        Server server = provider.get(host, port);
+        Server server = provider.get(configuration.getHostname(), configuration.getPort());
         server.addRoute(method, path, this::onEvent);
     }
 
     @Override
     public void onShutdown() {
-        Server server = provider.get(host, port);
+        Server server = provider.get(configuration.getHostname(), configuration.getPort());
         server.removeRoute(method, path);
         try {
             provider.release(server);
@@ -40,36 +39,15 @@ public class RESTListener extends AbstractInbound {
         }
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getMethod() {
-        return method;
     }
 
     public void setMethod(String method) {
         this.method = method;
     }
 
+    public void setConfiguration(RESTConnectionConfiguration configuration) {
+        this.configuration = configuration;
+    }
 }
