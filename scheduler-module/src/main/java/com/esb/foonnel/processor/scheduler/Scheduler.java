@@ -5,27 +5,38 @@ import com.esb.foonnel.api.AbstractInbound;
 import com.esb.foonnel.api.Message;
 import org.osgi.service.component.annotations.Component;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @Component(service = Scheduler.class, scope = PROTOTYPE)
 public class Scheduler extends AbstractInbound {
 
-    private Timer timer;
+    private ScheduledExecutorService scheduledService = Executors.newScheduledThreadPool(1);
 
     private long delay;
     private long period;
 
+    private ScheduledFuture<?> scheduledFuture;
+
     public void onStart() {
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new SendMessage(), delay, period);
+        this.scheduledFuture = scheduledService.scheduleAtFixedRate(() -> {
+            Message emptyMessage = new Message();
+            onEvent(emptyMessage);
+
+        }, delay, period, TimeUnit.MILLISECONDS);
     }
 
     public void onShutdown() {
-        if (timer != null) {
-            timer.cancel();
+        scheduledFuture.cancel(false);
+        scheduledService.shutdown();
+        try {
+            scheduledService.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            // nothing to do
         }
     }
 
@@ -45,11 +56,4 @@ public class Scheduler extends AbstractInbound {
         this.period = period;
     }
 
-    class SendMessage extends TimerTask {
-        @Override
-        public void run() {
-            Message emptyMessage = new Message();
-            onEvent(emptyMessage);
-        }
-    }
 }
