@@ -18,9 +18,10 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         final ChannelPipeline p = ch.pipeline();
+        // TODO: Check these values!!!!
         p.addLast(new HttpRequestDecoder(4096, 8192, 8192, false));
-        p.addLast(new HttpObjectAggregator(100 * 1024 * 1024));
         p.addLast(new HttpResponseEncoder());
+        p.addLast(new HttpObjectAggregator(100 * 1024 * 1024));
         p.addLast(serverHandler);
     }
 }

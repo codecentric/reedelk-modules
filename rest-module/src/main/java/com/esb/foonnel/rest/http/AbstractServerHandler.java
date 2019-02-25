@@ -1,27 +1,31 @@
 package com.esb.foonnel.rest.http;
 
+import com.esb.foonnel.rest.RESTListener;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.util.ReferenceCountUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@ChannelHandler.Sharable
-public abstract class AbstractServerHandler extends SimpleChannelInboundHandler<Object> {
+import static io.netty.channel.ChannelHandler.Sharable;
+
+@Sharable
+public abstract class AbstractServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+
+    private static final Logger logger = LoggerFactory.getLogger(RESTListener.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext context, Object msg) {
+    protected void channelRead0(ChannelHandlerContext context, FullHttpRequest request) {
         try {
-            if (msg instanceof FullHttpRequest) {
-                FullHttpRequest request = (FullHttpRequest) msg;
-                FullHttpResponse response = handle(request);
-                context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-            }
+            FullHttpResponse response = handle(request);
+            context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         } catch (Exception e) {
-            // Always release the original message!
-            ReferenceCountUtil.release(msg);
+            logger.error("Read message: ", e);
+            // The request must always be released.
+            ReferenceCountUtil.release(request);
         }
     }
 

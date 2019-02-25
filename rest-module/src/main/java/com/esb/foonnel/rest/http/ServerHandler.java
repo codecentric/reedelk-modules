@@ -1,9 +1,7 @@
 package com.esb.foonnel.rest.http;
 
 import com.esb.foonnel.api.Message;
-import com.esb.foonnel.rest.mapper.HttpRequestToMessage;
-import com.esb.foonnel.rest.mapper.Mapper;
-import com.esb.foonnel.rest.mapper.MessageToHttpResponse;
+import com.esb.foonnel.rest.http.strategies.HttpStrategy;
 import com.esb.foonnel.rest.route.Route;
 import com.esb.foonnel.rest.route.Routes;
 import io.netty.buffer.ByteBuf;
@@ -12,15 +10,12 @@ import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
-import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
-import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -28,38 +23,35 @@ public class ServerHandler extends AbstractServerHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerHandler.class);
 
-    private final Mapper<FullHttpRequest,Message> httpRequestMessageMapper = new HttpRequestToMessage();
-    private final Mapper<Message, FullHttpResponse> messageHttpResponseMapper = new MessageToHttpResponse();
+    private final Routes routes;
 
-    private final Routes routesRegistry;
-
-    public ServerHandler(Routes routesRegistry) {
-        this.routesRegistry = routesRegistry;
+    public ServerHandler(Routes routes) {
+        this.routes = routes;
     }
-
 
     @Override
     protected FullHttpResponse handle(FullHttpRequest request) {
 
-        Message inMessage = httpRequestMessageMapper.map(request);
+        HttpMethod method = request.method();
+        String uri = request.uri();
 
-        Optional<Route> route = routesRegistry.findRoute(inMessage.getRequestMethod(), inMessage.getRequestPath());
+        Optional<Route> optionalMatchingPath = routes.findRoute(method.name(), uri);
 
-        if (!route.isPresent()) return responseWith(NOT_FOUND);
+        if (!optionalMatchingPath.isPresent()) {
+            return responseWith(NOT_FOUND);
+        }
 
-        Route matchingRoute = route.get();
-
-        QueryStringDecoder decoder = new QueryStringDecoder(inMessage.getRequestPath());
-        Map<String, List<String>> requestQueryParams = decoder.parameters();
-        inMessage.setRequestQueryParams(requestQueryParams);
-
-        Map<String, String> requestPathParams = matchingRoute.bindPathParams(inMessage.getRequestPath());
-        inMessage.setRequestPathParams(requestPathParams);
+        Route matchingPath = optionalMatchingPath.get();
 
         try {
-            // Foonnel Runtime Executes the graph
-            Message outMessage = matchingRoute.handler().handle(inMessage);
-            return messageHttpResponseMapper.map(outMessage);
+            // Build Foonnel according to the HTTP strategy.
+            Message inMessage = HttpStrategy.from(request).handle(request, matchingPath);
+
+            // Run through the Foonnel flow the message
+            Message outMessage = matchingPath.handler().handle(inMessage);
+
+            // Map the returned (processed) message to be sent back as HTTP Response.
+            return asHttpResponse(outMessage);
 
         } catch (Exception exception) {
             logger.error("REST Listener", exception);
@@ -76,6 +68,31 @@ public class ServerHandler extends AbstractServerHandler {
         HttpHeaders headers = response.headers();
         headers.add(CONTENT_TYPE, TEXT_PLAIN);
         headers.add(CONTENT_LENGTH, bytes.length);
+        return response;
+    }
+
+    private FullHttpResponse asHttpResponse(Message outMessage) {
+        int httpStatus = outMessage.getHttpStatus();
+
+
+        byte[] bytes = new byte[0];
+        if (outMessage.getContent() instanceof Byte[]) {
+            if (outMessage.getContent() instanceof String) {
+                bytes = ((String) outMessage.getContent()).getBytes();
+            }
+        }
+
+        ByteBuf entity = Unpooled.wrappedBuffer(bytes);
+
+        boolean hasContentType = outMessage.getResponseHttpHeaders().keySet().contains(CONTENT_TYPE.toString());
+        CharSequence contentType = hasContentType ? outMessage.getResponseHttpHeaders().get(CONTENT_TYPE.toString()) : TEXT_PLAIN;
+
+        DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, valueOf(httpStatus), entity);
+
+        HttpHeaders headers = response.headers();
+        headers.add(CONTENT_TYPE, contentType);
+        headers.add(CONTENT_LENGTH, bytes.length);
+
         return response;
     }
 
