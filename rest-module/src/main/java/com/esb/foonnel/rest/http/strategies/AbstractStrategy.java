@@ -2,6 +2,7 @@ package com.esb.foonnel.rest.http.strategies;
 
 import com.esb.foonnel.api.Message;
 import com.esb.foonnel.rest.commons.HeadersUtils;
+import com.esb.foonnel.rest.http.InboundProperty;
 import com.esb.foonnel.rest.route.Route;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
@@ -15,19 +16,18 @@ public abstract class AbstractStrategy implements RequestStrategy {
     public Message handle(FullHttpRequest request, Route matchingRoute) throws Exception {
         Message inMessage = new Message();
 
-        // Base Message properties
-        inMessage.setRequestPath(request.uri());
-        inMessage.setRequestMethod(request.method().name());
-        inMessage.setRequestHttpHeaders(HeadersUtils.toMap(request.headers()));
-
-        // Query Params
-        QueryStringDecoder decoder = new QueryStringDecoder(inMessage.getRequestPath());
-        Map<String, List<String>> requestQueryParams = decoder.parameters();
-        inMessage.setRequestQueryParams(requestQueryParams);
+        InboundProperty.PATH.set(inMessage, request.uri()); //TODO: Request path not request.uri
+        InboundProperty.METHOD.set(inMessage, request.method().name());
+        InboundProperty.HEADERS.set(inMessage, HeadersUtils.toMap(request.headers()));
 
         // Path Params
-        Map<String, String> pathParams = matchingRoute.bindPathParams(inMessage.getRequestPath());
-        inMessage.setRequestPathParams(pathParams);
+        Map<String, String> pathParams = matchingRoute.bindPathParams(request.uri());
+        InboundProperty.PATH_PARAMS.set(inMessage, pathParams);
+
+        // Query Params
+        QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
+        Map<String, List<String>> queryParams = decoder.parameters();
+        InboundProperty.QUERY_PARAMS.set(inMessage, queryParams);
 
         return handle0(inMessage, request);
     }

@@ -10,6 +10,7 @@ import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
@@ -72,8 +73,7 @@ public class ServerHandler extends AbstractServerHandler {
     }
 
     private FullHttpResponse asHttpResponse(Message outMessage) {
-        int httpStatus = outMessage.getHttpStatus();
-
+        int httpStatus = OutboundProperty.STATUS.getInt(outMessage);
 
         byte[] bytes = new byte[0];
         if (outMessage.getContent() instanceof Byte[]) {
@@ -84,14 +84,19 @@ public class ServerHandler extends AbstractServerHandler {
 
         ByteBuf entity = Unpooled.wrappedBuffer(bytes);
 
-        boolean hasContentType = outMessage.getResponseHttpHeaders().keySet().contains(CONTENT_TYPE.toString());
-        CharSequence contentType = hasContentType ? outMessage.getResponseHttpHeaders().get(CONTENT_TYPE.toString()) : TEXT_PLAIN;
+        Map<String, String> outboundHeaders = OutboundProperty.HEADERS.getMap(outMessage);
+        boolean hasContentType = outboundHeaders.containsKey(CONTENT_TYPE.toString());
+        CharSequence contentType = hasContentType ? outboundHeaders.get(CONTENT_TYPE.toString()) : TEXT_PLAIN;
 
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, valueOf(httpStatus), entity);
 
         HttpHeaders headers = response.headers();
         headers.add(CONTENT_TYPE, contentType);
         headers.add(CONTENT_LENGTH, bytes.length);
+
+        for (Map.Entry<String,String> header : outboundHeaders.entrySet()) {
+            headers.add(header.getKey(), header.getValue());
+        }
 
         return response;
     }

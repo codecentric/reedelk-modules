@@ -1,10 +1,10 @@
 package com.esb.foonnel.rest;
 
 import com.esb.foonnel.api.Message;
+import com.esb.foonnel.api.OutboundProperties;
 import com.esb.foonnel.api.Processor;
 import org.osgi.service.component.annotations.Component;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -17,10 +17,9 @@ public class SetHeader implements Processor {
 
     @Override
     public Message apply(Message message) {
-        Map<String, String> responseHttpHeaders = message.getResponseHttpHeaders();
-        Map<String, String> newResponseHttpHeaders = new HashMap<>(responseHttpHeaders);
-        newResponseHttpHeaders.put(name, value);
-        message.setResponseHttpHeaders(newResponseHttpHeaders);
+        OutboundProperties outboundProperties = message.getOutboundProperties();
+        Map<String,Object> headers = (Map<String, Object>) outboundProperties.getProperty("headers");
+        headers.put(name, value);
         return message;
     }
 
