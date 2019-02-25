@@ -17,7 +17,7 @@ public enum OutboundProperty {
     }
 
     public int getInt(Message message) {
-        return Integer.valueOf(getString(message));
+        return (Integer) get(message);
     }
 
     public String getString(Message message) {
