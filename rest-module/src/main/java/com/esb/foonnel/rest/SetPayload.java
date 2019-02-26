@@ -12,7 +12,7 @@ public class SetPayload implements Processor {
 
     @Override
     public Message apply(Message message) {
-        TypedContent<String> content = new TypedContent<>(
+        TypedContent<String> content = new MemoryTypedContent<>(
                 payload,
                 new ContentType(MimeType.TEXT, String.class));
         message.setContent(content);
