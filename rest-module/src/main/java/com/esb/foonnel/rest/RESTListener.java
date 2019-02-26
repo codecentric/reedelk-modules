@@ -34,7 +34,7 @@ public class RESTListener extends AbstractInbound {
         server.removeRoute(method, path);
         try {
             provider.release(server);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             logger.error("Shutdown RESTListener", e);
         }
     }

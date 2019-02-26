@@ -1,6 +1,7 @@
 package com.esb.foonnel.rest.http;
 
 
+import com.esb.foonnel.rest.RESTConnectionConfiguration;
 import com.esb.foonnel.rest.route.Route;
 import com.esb.foonnel.rest.route.Routes;
 import io.netty.bootstrap.ServerBootstrap;
@@ -15,29 +16,30 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
+import static io.netty.channel.ChannelOption.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class Server {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
+
     private static final int SHUTDOWN_TIMEOUT = 1;
 
     private final int port;
     private final String hostname;
-
+    private final Routes routes = new Routes();
     private final ServerBootstrap serverBootstrap;
-
-    private final Routes routes;
 
     private ChannelFuture channelFuture;
     private NioEventLoopGroup bossGroup; // accepts incoming connections.
     private NioEventLoopGroup workerGroup; // handles the traffic of the accepted connection once the boss accepts the connection and registers the accepted connection to the worker.
 
-    public Server(int port, String hostname, ServerChannelInitializer serverChannelInitializer, Routes routes) {
-        this.port = port;
-        this.routes = routes;
-        this.hostname = hostname;
+    public Server(RESTConnectionConfiguration configuration) {
+        ServerHandler serverHandler = new ServerHandler(configuration.getProtocol(), routes);
+        ServerChannelInitializer channelInitializer = new ServerChannelInitializer(serverHandler, configuration);
 
+        this.port = configuration.getPort();
+        this.hostname = configuration.getHostname();
         this.bossGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
 
@@ -45,11 +47,24 @@ public class Server {
         this.serverBootstrap
                 .group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childHandler(serverChannelInitializer);
+                .childHandler(channelInitializer);
+
+        setChannelOption(SO_BACKLOG, configuration.getSocketBacklog());
+        setChannelOption(CONNECT_TIMEOUT_MILLIS, configuration.getConnectionTimeoutMillis());
+        setChannelChildOption(SO_KEEPALIVE, configuration.getKeepAlive());
     }
 
+    private <T> void setChannelOption(ChannelOption<T> channelOption, T value) {
+        if (value != null) {
+            serverBootstrap.option(channelOption, value);
+        }
+    }
+
+    private <T> void setChannelChildOption(ChannelOption<T> channelOption, T value) {
+        if (value != null) {
+            serverBootstrap.childOption(channelOption, value);
+        }
+    }
 
     public void start() {
         try {
@@ -60,7 +75,7 @@ public class Server {
         }
     }
 
-    public void stop() throws InterruptedException {
+    public void stop() {
         shutdownGracefully(bossGroup);
         shutdownGracefully(workerGroup);
         try {
@@ -102,4 +117,5 @@ public class Server {
     public String getHostname() {
         return hostname;
     }
+
 }
