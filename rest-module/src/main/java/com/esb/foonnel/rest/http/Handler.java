@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest.http;
 
 
-import com.esb.foonnel.api.Message;
+import com.esb.foonnel.api.message.Message;
 
 public interface Handler {
 

@@ -1,7 +1,7 @@
 package com.esb.foonnel.processor.logger;
 
-import com.esb.foonnel.api.Message;
-import com.esb.foonnel.api.Processor;
+import com.esb.foonnel.api.component.Processor;
+import com.esb.foonnel.api.message.Message;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,12 +1,13 @@
 package com.esb.foonnel.rest.http.strategies;
 
-import com.esb.foonnel.api.Message;
+import com.esb.foonnel.api.message.Message;
 import com.esb.foonnel.rest.commons.HeadersUtils;
 import com.esb.foonnel.rest.http.InboundProperty;
 import com.esb.foonnel.rest.route.Route;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public abstract class AbstractStrategy implements RequestStrategy {
         return handle0(inMessage, request);
     }
 
-    protected Message handle0(Message inMessage, FullHttpRequest request) {
+    protected Message handle0(Message inMessage, FullHttpRequest request) throws IOException {
         return inMessage;
     }
 

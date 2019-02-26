@@ -43,15 +43,15 @@ public class Server {
         this.bossGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
 
-        this.serverBootstrap = new ServerBootstrap();
-        this.serverBootstrap
+        ServerBootstrap serverBootstrap = new ServerBootstrap()
                 .group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .childHandler(channelInitializer);
-
         setChannelOption(SO_BACKLOG, configuration.getSocketBacklog());
         setChannelOption(CONNECT_TIMEOUT_MILLIS, configuration.getConnectionTimeoutMillis());
         setChannelChildOption(SO_KEEPALIVE, configuration.getKeepAlive());
+
+        this.serverBootstrap = serverBootstrap;
     }
 
     private <T> void setChannelOption(ChannelOption<T> channelOption, T value) {

@@ -1,6 +1,7 @@
 package com.esb.foonnel.rest.http.strategies;
 
-import com.esb.foonnel.api.*;
+
+import com.esb.foonnel.api.message.*;
 import com.esb.foonnel.rest.http.InboundProperty;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;

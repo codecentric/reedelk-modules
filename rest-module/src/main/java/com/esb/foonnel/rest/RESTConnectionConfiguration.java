@@ -1,6 +1,6 @@
 package com.esb.foonnel.rest;
 
-import com.esb.foonnel.api.Implementor;
+import com.esb.foonnel.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;

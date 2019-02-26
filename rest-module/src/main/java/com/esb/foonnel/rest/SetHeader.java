@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest;
 
-import com.esb.foonnel.api.Message;
-import com.esb.foonnel.api.Processor;
+import com.esb.foonnel.api.component.Processor;
+import com.esb.foonnel.api.message.Message;
 import com.esb.foonnel.rest.http.OutboundProperty;
 import org.osgi.service.component.annotations.Component;
 

@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest.http;
 
-import com.esb.foonnel.api.InboundProperties;
-import com.esb.foonnel.api.Message;
+import com.esb.foonnel.api.message.InboundProperties;
+import com.esb.foonnel.api.message.Message;
 import io.netty.handler.codec.http.HttpHeaderNames;
 
 import java.util.Map;
@@ -11,8 +11,8 @@ public enum InboundProperty {
     PATH("path"),
     METHOD("method"),
     HEADERS("headers"),
-    QUERY_PARAMS("queryParams"),
-    PATH_PARAMS("pathParams");
+    PATH_PARAMS("pathParams"),
+    QUERY_PARAMS("queryParams");
 
     String name;
 

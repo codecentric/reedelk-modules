@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest.http;
 
-import com.esb.foonnel.api.Message;
-import com.esb.foonnel.api.OutboundProperties;
+import com.esb.foonnel.api.message.Message;
+import com.esb.foonnel.api.message.OutboundProperties;
 
 import java.util.Map;
 
@@ -18,10 +18,6 @@ public enum OutboundProperty {
 
     public int getInt(Message message) {
         return (Integer) get(message);
-    }
-
-    public String getString(Message message) {
-        return (String) get(message);
     }
 
     public Map<String,String> getMap(Message message) {

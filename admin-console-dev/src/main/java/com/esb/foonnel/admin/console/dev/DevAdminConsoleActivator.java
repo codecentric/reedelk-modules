@@ -2,7 +2,7 @@ package com.esb.foonnel.admin.console.dev;
 
 import com.esb.foonnel.admin.console.dev.resources.HealthResources;
 import com.esb.foonnel.admin.console.dev.resources.ModuleResources;
-import com.esb.foonnel.api.ConfigurationService;
+import com.esb.foonnel.api.service.ConfigurationService;
 import com.esb.foonnel.internal.api.SystemProperty;
 import com.esb.foonnel.internal.api.module.v1.ModuleService;
 import org.osgi.framework.BundleException;

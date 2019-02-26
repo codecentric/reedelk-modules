@@ -1,8 +1,8 @@
 package com.esb.foonnel.processor.scheduler;
 
 
-import com.esb.foonnel.api.AbstractInbound;
-import com.esb.foonnel.api.Message;
+import com.esb.foonnel.api.component.AbstractInbound;
+import com.esb.foonnel.api.message.Message;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.concurrent.Executors;
