@@ -18,10 +18,12 @@ public class ServerProvider {
 
     private Map<KeyEntry, Server> serverMap = new ConcurrentHashMap<>();
 
-    public Server get(String hostname, int port) {
+    public Server get(RESTConnectionConfiguration configuration) {
+        String hostname = configuration.getHostname();
+        int port = configuration.getPort();
         KeyEntry key = new KeyEntry(hostname, port);
         if (!serverMap.containsKey(key)) {
-            Server server = newServer(port, hostname);
+            Server server = newServer(configuration);
             server.start();
             serverMap.put(key, server);
         }
@@ -32,19 +34,20 @@ public class ServerProvider {
         if (server.emptyRoutes()) {
             server.stop();
 
-            // TODO: Bleah!
             int port = server.getPort();
             String hostname = server.getHostname();
             KeyEntry key = new KeyEntry(hostname, port);
+
+
             serverMap.remove(key);
         }
     }
 
-    private Server newServer(int port, String hostname) {
+    private Server newServer(RESTConnectionConfiguration configuration) {
         Routes routes = new Routes();
-        AbstractServerHandler serverHandler = new ServerHandler(routes);
+        AbstractServerHandler serverHandler = new ServerHandler(configuration.getProtocol(), routes);
         ServerChannelInitializer channelInitializer = new ServerChannelInitializer(serverHandler);
-        return new Server(port, hostname, channelInitializer, routes);
+        return new Server(configuration.getPort(), configuration.getHostname(), channelInitializer, routes);
     }
 
     private class KeyEntry {

@@ -17,7 +17,6 @@ import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ServerHandler extends AbstractServerHandler {
@@ -25,9 +24,11 @@ public class ServerHandler extends AbstractServerHandler {
     private static final Logger logger = LoggerFactory.getLogger(ServerHandler.class);
 
     private final Routes routes;
+    private final HttpVersion httpVersion;
 
-    public ServerHandler(Routes routes) {
+    public ServerHandler(String protocol, Routes routes) {
         this.routes = routes;
+        this.httpVersion = HttpVersion.valueOf(protocol);
     }
 
     @Override
@@ -65,7 +66,8 @@ public class ServerHandler extends AbstractServerHandler {
         byte[] bytes = content.getBytes(UTF_8);
         ByteBuf entity = Unpooled.wrappedBuffer(bytes);
 
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status, entity);
+        DefaultFullHttpResponse response = new DefaultFullHttpResponse(httpVersion, status, entity);
+
         HttpHeaders headers = response.headers();
         headers.add(CONTENT_TYPE, TEXT_PLAIN);
         headers.add(CONTENT_LENGTH, bytes.length);
@@ -77,9 +79,10 @@ public class ServerHandler extends AbstractServerHandler {
 
         byte[] bytes = new byte[0];
         if (outMessage.getContent() instanceof Byte[]) {
-            if (outMessage.getContent() instanceof String) {
-                bytes = ((String) outMessage.getContent()).getBytes();
-            }
+            bytes = (byte[]) outMessage.getContent();
+        }
+        if (outMessage.getContent() instanceof String) {
+            bytes = ((String) outMessage.getContent()).getBytes();
         }
 
         ByteBuf entity = Unpooled.wrappedBuffer(bytes);
@@ -88,7 +91,7 @@ public class ServerHandler extends AbstractServerHandler {
         boolean hasContentType = outboundHeaders.containsKey(CONTENT_TYPE.toString());
         CharSequence contentType = hasContentType ? outboundHeaders.get(CONTENT_TYPE.toString()) : TEXT_PLAIN;
 
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, valueOf(httpStatus), entity);
+        DefaultFullHttpResponse response = new DefaultFullHttpResponse(httpVersion, valueOf(httpStatus), entity);
 
         HttpHeaders headers = response.headers();
         headers.add(CONTENT_TYPE, contentType);

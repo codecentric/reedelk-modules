@@ -24,13 +24,13 @@ public class RESTListener extends AbstractInbound {
 
     @Override
     public void onStart() {
-        Server server = provider.get(configuration.getHostname(), configuration.getPort());
+        Server server = provider.get(configuration);
         server.addRoute(method, path, this::onEvent);
     }
 
     @Override
     public void onShutdown() {
-        Server server = provider.get(configuration.getHostname(), configuration.getPort());
+        Server server = provider.get(configuration);
         server.removeRoute(method, path);
         try {
             provider.release(server);
