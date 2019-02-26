@@ -71,7 +71,7 @@
                         <Foonnel-Module>true</Foonnel-Module>
                         <Import-Package>
                             sun.misc,
-                            com.esb.foonnel.api,
+                            com.esb.foonnel.api.*,
                             javax.security.cert,
                             org.slf4j;version="[1.7,2)",
                             org.slf4j.helpers;version="[1.7,2)",

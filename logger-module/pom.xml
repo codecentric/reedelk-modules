@@ -25,8 +25,11 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Import-Package>com.esb.foonnel.api,org.osgi.framework,org.slf4j</Import-Package>
                         <Foonnel-Module>true</Foonnel-Module>
+                        <Import-Package>
+                            com.esb.foonnel.api.*,
+                            org.osgi.framework,
+                            org.slf4j</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
