@@ -1,7 +1,6 @@
 package com.esb.foonnel.rest;
 
-import com.esb.foonnel.api.Message;
-import com.esb.foonnel.api.Processor;
+import com.esb.foonnel.api.*;
 import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -13,7 +12,10 @@ public class SetPayload implements Processor {
 
     @Override
     public Message apply(Message message) {
-        message.setContent(payload);
+        TypedContent<String> content = new TypedContent<>(
+                payload,
+                new ContentType(MimeType.TEXT, String.class));
+        message.setContent(content);
         return message;
     }
 

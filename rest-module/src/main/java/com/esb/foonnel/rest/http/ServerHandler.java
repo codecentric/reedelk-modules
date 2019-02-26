@@ -78,11 +78,11 @@ public class ServerHandler extends AbstractServerHandler {
         int httpStatus = OutboundProperty.STATUS.getInt(outMessage);
 
         byte[] bytes = new byte[0];
-        if (outMessage.getContent() instanceof Byte[]) {
-            bytes = (byte[]) outMessage.getContent();
+        if (outMessage.getContent().getType().getTypeClass().isAssignableFrom(byte[].class)) {
+            bytes = (byte[]) outMessage.getContent().getContent();
         }
-        if (outMessage.getContent() instanceof String) {
-            bytes = ((String) outMessage.getContent()).getBytes();
+        if (outMessage.getContent().getType().getTypeClass().isAssignableFrom(String.class)) {
+            bytes = ((String) outMessage.getContent().getContent()).getBytes();
         }
 
         ByteBuf entity = Unpooled.wrappedBuffer(bytes);

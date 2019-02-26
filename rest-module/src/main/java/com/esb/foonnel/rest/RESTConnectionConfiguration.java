@@ -8,6 +8,10 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = RESTConnectionConfiguration.class, scope = PROTOTYPE)
 public class RESTConnectionConfiguration implements Implementor {
 
+    private String id;
+    private String hostname;
+    private String protocol = "HTTP/1.1";
+
     private Integer socketBacklog = 128;
     private Integer maxChunkSize = 8192; // in bytes
     private Integer maxInitialLineLength = 4096; // in bytes
@@ -21,8 +25,14 @@ public class RESTConnectionConfiguration implements Implementor {
     private Boolean keepAlive = true;
     private Boolean validateHeaders = false;
 
-    private String hostname;
-    private String protocol = "HTTP/1.1";
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Integer getPort() {
         return port;

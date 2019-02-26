@@ -1,6 +1,10 @@
 package com.esb.foonnel.rest.http.strategies;
 
+import com.esb.foonnel.api.ContentType;
 import com.esb.foonnel.api.Message;
+import com.esb.foonnel.api.MimeType;
+import com.esb.foonnel.api.TypedContent;
+import com.esb.foonnel.rest.http.InboundProperty;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
 
@@ -11,20 +15,21 @@ public class GETRequestStrategy extends AbstractStrategy {
 
         ByteBuf buf = request.content();
         byte[] bytes;
-        int offset;
+
         int length = buf.readableBytes();
 
         if (buf.hasArray()) {
             bytes = buf.array();
-            offset = buf.arrayOffset();
         } else {
             bytes = new byte[length];
             buf.getBytes(buf.readerIndex(), bytes);
-            offset = 0;
         }
 
+        String contentType = InboundProperty.Headers.CONTENT_TYPE.get(inMessage);
 
-        inMessage.setContent(bytes);
+        ContentType type = new ContentType(MimeType.parse(contentType), byte[].class);
+        TypedContent<byte[]> content = new TypedContent<>(bytes, type);
+        inMessage.setContent(content);
         return inMessage;
     }
 }
