@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest.http.server;
 
 
-import com.esb.foonnel.rest.RestListenerConfig;
+import com.esb.foonnel.rest.RestListenerConfiguration;
 import com.esb.foonnel.rest.http.server.route.Route;
 import com.esb.foonnel.rest.http.server.route.RouteHandler;
 import com.esb.foonnel.rest.http.server.route.Routes;
@@ -35,7 +35,7 @@ public class Server {
     private NioEventLoopGroup workerGroup; // handles the traffic of the accepted connection once the boss accepts the connection and registers the accepted connection to the worker.
 
 
-    public Server(RestListenerConfig configuration) {
+    public Server(RestListenerConfiguration configuration) {
         ServerChannelHandler serverHandler = new ServerChannelHandler(configuration.getProtocol(), routes);
         ServerChannelInitializer channelInitializer = new ServerChannelInitializer(serverHandler, configuration);
 

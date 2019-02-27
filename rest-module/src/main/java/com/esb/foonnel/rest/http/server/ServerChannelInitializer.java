@@ -1,6 +1,6 @@
 package com.esb.foonnel.rest.http.server;
 
-import com.esb.foonnel.rest.RestListenerConfig;
+import com.esb.foonnel.rest.RestListenerConfiguration;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -14,9 +14,9 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private final ServerChannelHandler serverHandler;
-    private final RestListenerConfig configuration;
+    private final RestListenerConfiguration configuration;
 
-    public ServerChannelInitializer(ServerChannelHandler serverHandler, RestListenerConfig configuration) {
+    public ServerChannelInitializer(ServerChannelHandler serverHandler, RestListenerConfiguration configuration) {
         this.serverHandler = serverHandler;
         this.configuration = configuration;
     }

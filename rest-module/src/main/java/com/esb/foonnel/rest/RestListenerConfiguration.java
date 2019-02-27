@@ -5,8 +5,8 @@ import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@Component(service = RestListenerConfig.class, scope = PROTOTYPE)
-public class RestListenerConfig implements Implementor {
+@Component(service = RestListenerConfiguration.class, scope = PROTOTYPE)
+public class RestListenerConfiguration implements Implementor {
 
     private String id;
     private String hostname;
