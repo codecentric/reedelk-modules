@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest.http;
 
-import com.esb.foonnel.api.message.InboundProperties;
 import com.esb.foonnel.api.message.Message;
+import com.esb.foonnel.api.message.MessageProperties;
 import io.netty.handler.codec.http.HttpHeaderNames;
 
 import java.util.Map;
@@ -21,10 +21,11 @@ public enum InboundProperty {
     }
 
     public void set(Message message, Object value) {
-        InboundProperties inboundProperties = message.getInboundProperties();
+        MessageProperties inboundProperties = message.getInboundProperties();
         inboundProperties.setProperty(name, value);
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String,String> getMap(Message message) {
         return (Map<String,String>) message.getInboundProperties().getProperty(name);
     }
