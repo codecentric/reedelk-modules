@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest.route;
 
 import com.esb.foonnel.rest.commons.UriTemplate;
-import com.esb.foonnel.rest.http.Handler;
+import com.esb.foonnel.rest.http.RouteHandler;
 
 import java.util.Map;
 import java.util.Objects;
@@ -12,17 +12,17 @@ public class Route {
 
     private final String path;
     private final String method;
-    private final Handler handler;
+    private final RouteHandler routeHandler;
     private final UriTemplate uriTemplate;
 
-    public Route(String method, String uriTemplate, Handler handler) {
+    public Route(String method, String uriTemplate, RouteHandler routeHandler) {
         isNotNull(method, "method");
         isNotNull(uriTemplate, "uriTemplate");
-        isNotNull(handler, "handler");
+        isNotNull(routeHandler, "routeHandler");
 
         this.method = method;
         this.path = uriTemplate;
-        this.handler = handler;
+        this.routeHandler = routeHandler;
         this.uriTemplate = new UriTemplate(uriTemplate);
     }
 
@@ -34,8 +34,8 @@ public class Route {
         return path;
     }
 
-    public Handler handler() {
-        return handler;
+    public RouteHandler handler() {
+        return routeHandler;
     }
 
     public boolean matches(String method, String path) {

@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest.http.strategies;
+package com.esb.foonnel.rest.http.request.method;
 
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;

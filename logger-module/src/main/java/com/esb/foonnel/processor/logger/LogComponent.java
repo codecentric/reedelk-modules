@@ -2,6 +2,7 @@ package com.esb.foonnel.processor.logger;
 
 import com.esb.foonnel.api.component.Processor;
 import com.esb.foonnel.api.message.Message;
+import com.esb.foonnel.api.message.TypedContent;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,12 @@ public class LogComponent implements Processor {
 
     @Override
     public Message apply(Message input) {
-        LogLevel.from(level).log(input.getContent());
+        TypedContent content = input.getContent();
+        if (content != null) {
+            LogLevel.from(level).log(content.getContent());
+        } else {
+            LogLevel.from(level).log(null);
+        }
         return input;
     }
 

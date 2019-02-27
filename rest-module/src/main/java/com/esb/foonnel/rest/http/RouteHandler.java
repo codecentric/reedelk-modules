@@ -3,7 +3,7 @@ package com.esb.foonnel.rest.http;
 
 import com.esb.foonnel.api.message.Message;
 
-public interface Handler {
+public interface RouteHandler {
 
     Message handle(Message request) throws Exception;
 

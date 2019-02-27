@@ -77,8 +77,8 @@ public class Server {
         }
     }
 
-    public void addRoute(String method, String path, Handler handler) {
-        routes.add(new Route(method, path, handler));
+    public void addRoute(String method, String path, RouteHandler routeHandler) {
+        routes.add(new Route(method, path, routeHandler));
     }
 
     public void removeRoute(String method, String path) {

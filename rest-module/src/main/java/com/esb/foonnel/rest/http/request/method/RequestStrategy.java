@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest.http.strategies;
+package com.esb.foonnel.rest.http.request.method;
 
 import com.esb.foonnel.api.message.Message;
 import com.esb.foonnel.rest.route.Route;

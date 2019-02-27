@@ -1,8 +1,8 @@
 package com.esb.foonnel.rest.http;
 
 import com.esb.foonnel.api.message.Message;
-import com.esb.foonnel.rest.http.strategies.HttpStrategy;
-import com.esb.foonnel.rest.http.strategies.RequestStrategy;
+import com.esb.foonnel.rest.http.request.method.HttpStrategy;
+import com.esb.foonnel.rest.http.request.method.RequestStrategy;
 import com.esb.foonnel.rest.route.Route;
 import com.esb.foonnel.rest.route.Routes;
 import io.netty.buffer.ByteBuf;

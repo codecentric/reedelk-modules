@@ -1,9 +1,10 @@
-package com.esb.foonnel.rest.http.strategies;
+package com.esb.foonnel.rest.http.request.method;
 
-import com.esb.foonnel.api.message.Message;
+import com.esb.foonnel.api.message.*;
 import com.esb.foonnel.rest.commons.HeadersUtils;
 import com.esb.foonnel.rest.http.InboundProperty;
 import com.esb.foonnel.rest.route.Route;
+import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
@@ -36,6 +37,25 @@ public abstract class AbstractStrategy implements RequestStrategy {
 
     protected Message handle0(Message inMessage, FullHttpRequest request) throws IOException {
         return inMessage;
+    }
+
+    protected TypedContent<byte[]> extractBodyContent(Message inMessage, FullHttpRequest request) {
+        ByteBuf buf = request.content();
+        byte[] bytes;
+
+        int length = buf.readableBytes();
+
+        if (buf.hasArray()) {
+            bytes = buf.array();
+        } else {
+            bytes = new byte[length];
+            buf.getBytes(buf.readerIndex(), bytes);
+        }
+
+        String contentType = InboundProperty.Headers.CONTENT_TYPE.get(inMessage);
+
+        Type type = new Type(MimeType.parse(contentType), byte[].class);
+        return new MemoryTypedContent<>(bytes, type);
     }
 
 }
