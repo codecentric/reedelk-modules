@@ -2,7 +2,7 @@
   "id": "45a5ce60-5c9d-4115-12a7-d3f2234aafbbf98",
   "flow": [
     {
-      "implementor.name": "com.esb.foonnel.rest.RESTListener",
+      "implementor.name": "com.esb.foonnel.rest.component.RestListener",
       "configRef": "customer-api-connection-config",
       "path": "/customer",
       "method": "POST"
@@ -12,16 +12,16 @@
       "level": "INFO"
     },
     {
-      "implementor.name": "com.esb.foonnel.rest.SetStatus",
+      "implementor.name": "com.esb.foonnel.rest.component.SetStatus",
       "status": 201
     },
     {
-      "implementor.name": "com.esb.foonnel.rest.SetHeader",
+      "implementor.name": "com.esb.foonnel.rest.component.SetHeader",
       "name": "Content-Type",
       "value": "application/json"
     },
     {
-      "implementor.name": "com.esb.foonnel.rest.SetPayload",
+      "implementor.name": "com.esb.foonnel.rest.component.SetPayload",
       "payload": "{ \"customerId\": \"afffuu1232323\" }"
     }
   ]
