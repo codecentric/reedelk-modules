@@ -6,6 +6,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
 
 public interface RequestStrategy {
 
-    Message handle(FullHttpRequest request, Route matchingRoute) throws Exception;
+    Message execute(FullHttpRequest request, Route matchingRoute) throws Exception;
 
 }

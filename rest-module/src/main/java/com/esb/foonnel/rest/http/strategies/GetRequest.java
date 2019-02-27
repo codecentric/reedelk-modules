@@ -6,7 +6,7 @@ import com.esb.foonnel.rest.http.InboundProperty;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
 
-public class GETRequestStrategy extends AbstractStrategy {
+public class GetRequest extends AbstractStrategy {
 
     @Override
     protected Message handle0(Message inMessage, FullHttpRequest request) {
@@ -25,6 +25,7 @@ public class GETRequestStrategy extends AbstractStrategy {
 
         String contentType = InboundProperty.Headers.CONTENT_TYPE.get(inMessage);
 
+        // TODO: The type can be inferred from the content.
         Type type = new Type(MimeType.parse(contentType), byte[].class);
         TypedContent<byte[]> content = new MemoryTypedContent<>(bytes, type);
 

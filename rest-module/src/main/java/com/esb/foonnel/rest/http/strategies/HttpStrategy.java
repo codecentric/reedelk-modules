@@ -14,10 +14,10 @@ public class HttpStrategy {
 
     static {
         strategyMap = new HashMap<>();
-        strategyMap.put(GET, new GETRequestStrategy());
-        strategyMap.put(PUT, new PUTRequestStrategy());
-        strategyMap.put(POST, new POSTRequestStrategy());
-        strategyMap.put(DELETE, new DELETERequestStrategy());
+        strategyMap.put(GET, new GetRequest());
+        strategyMap.put(PUT, new PutRequest());
+        strategyMap.put(POST, new PostRequest());
+        strategyMap.put(DELETE, new DeleteRequest());
     }
 
     public static RequestStrategy from(HttpRequest request) {

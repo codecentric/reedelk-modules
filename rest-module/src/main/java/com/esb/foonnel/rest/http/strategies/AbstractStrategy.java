@@ -14,7 +14,7 @@ import java.util.Map;
 public abstract class AbstractStrategy implements RequestStrategy {
 
     @Override
-    public Message handle(FullHttpRequest request, Route matchingRoute) throws Exception {
+    public Message execute(FullHttpRequest request, Route matchingRoute) throws Exception {
         Message inMessage = new Message();
 
         // Path, Method and Headers

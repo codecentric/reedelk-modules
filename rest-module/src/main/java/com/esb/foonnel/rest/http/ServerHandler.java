@@ -2,6 +2,7 @@ package com.esb.foonnel.rest.http;
 
 import com.esb.foonnel.api.message.Message;
 import com.esb.foonnel.rest.http.strategies.HttpStrategy;
+import com.esb.foonnel.rest.http.strategies.RequestStrategy;
 import com.esb.foonnel.rest.route.Route;
 import com.esb.foonnel.rest.route.Routes;
 import io.netty.buffer.ByteBuf;
@@ -47,7 +48,8 @@ public class ServerHandler extends AbstractServerHandler {
 
         try {
             // Build Foonnel according to the HTTP strategy.
-            Message inMessage = HttpStrategy.from(request).handle(request, matchingPath);
+            RequestStrategy strategy = HttpStrategy.from(request);
+            Message inMessage = strategy.execute(request, matchingPath);
 
             // Run through the Foonnel flow the message
             Message outMessage = matchingPath.handler().handle(inMessage);
