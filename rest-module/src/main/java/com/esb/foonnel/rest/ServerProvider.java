@@ -14,7 +14,7 @@ public class ServerProvider {
 
     private Map<HostNamePortKey, Server> serverMap = new ConcurrentHashMap<>();
 
-    public Server get(RESTConnectionConfiguration configuration) {
+    public Server get(RestListenerConfig configuration) {
         HostNamePortKey key = new HostNamePortKey(configuration.getHostname(), configuration.getPort());
         if (!serverMap.containsKey(key)) {
             Server server = new Server(configuration);

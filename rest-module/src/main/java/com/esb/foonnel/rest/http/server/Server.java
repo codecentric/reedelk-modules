@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest.http.server;
 
 
-import com.esb.foonnel.rest.RESTConnectionConfiguration;
+import com.esb.foonnel.rest.RestListenerConfig;
 import com.esb.foonnel.rest.http.server.route.Route;
 import com.esb.foonnel.rest.http.server.route.RouteHandler;
 import com.esb.foonnel.rest.http.server.route.Routes;
@@ -22,9 +22,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class Server {
 
-    private static final Logger logger = LoggerFactory.getLogger(Server.class);
-
     private static final int SHUTDOWN_TIMEOUT = 1;
+    private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
     private final int port;
     private final String hostname;
@@ -35,7 +34,8 @@ public class Server {
     private NioEventLoopGroup bossGroup; // accepts incoming connections.
     private NioEventLoopGroup workerGroup; // handles the traffic of the accepted connection once the boss accepts the connection and registers the accepted connection to the worker.
 
-    public Server(RESTConnectionConfiguration configuration) {
+
+    public Server(RestListenerConfig configuration) {
         ServerChannelHandler serverHandler = new ServerChannelHandler(configuration.getProtocol(), routes);
         ServerChannelInitializer channelInitializer = new ServerChannelInitializer(serverHandler, configuration);
 

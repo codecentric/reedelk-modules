@@ -1,6 +1,6 @@
 package com.esb.foonnel.rest.http.server;
 
-import com.esb.foonnel.rest.RESTListener;
+import com.esb.foonnel.rest.RestListenerCom;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -15,7 +15,7 @@ import static io.netty.channel.ChannelHandler.Sharable;
 @Sharable
 public abstract class AbstractServerChannelHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-    private static final Logger logger = LoggerFactory.getLogger(RESTListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestListenerCom.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext context, FullHttpRequest request) {

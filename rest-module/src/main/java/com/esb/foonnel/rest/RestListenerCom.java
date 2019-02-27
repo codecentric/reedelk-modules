@@ -9,17 +9,17 @@ import org.slf4j.LoggerFactory;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@Component(service = RESTListener.class, scope = PROTOTYPE)
-public class RESTListener extends AbstractInbound {
+@Component(service = RestListenerCom.class, scope = PROTOTYPE)
+public class RestListenerCom extends AbstractInbound {
 
-    private static final Logger logger = LoggerFactory.getLogger(RESTListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestListenerCom.class);
 
     @Reference
     private ServerProvider provider;
 
     private String path;
     private String method;
-    private RESTConnectionConfiguration configuration;
+    private RestListenerConfig configuration;
 
 
     @Override
@@ -47,7 +47,7 @@ public class RESTListener extends AbstractInbound {
         this.method = method;
     }
 
-    public void setConfiguration(RESTConnectionConfiguration configuration) {
+    public void setConfiguration(RestListenerConfig configuration) {
         this.configuration = configuration;
     }
 }

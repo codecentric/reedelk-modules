@@ -5,6 +5,7 @@ import com.esb.foonnel.rest.commons.OutboundProperty;
 import com.esb.foonnel.rest.http.server.request.method.HttpStrategy;
 import com.esb.foonnel.rest.http.server.request.method.RequestStrategy;
 import com.esb.foonnel.rest.http.server.route.Route;
+import com.esb.foonnel.rest.http.server.route.RouteHandler;
 import com.esb.foonnel.rest.http.server.route.Routes;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -46,14 +47,14 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
         }
 
         Route matchingPath = optionalMatchingPath.get();
-
+        RouteHandler routeHandler = matchingPath.handler();
         try {
-            // Build Foonnel according to the HTTP strategy.
+            // Build Foonnel Message according to the method and content type (http strategy)
             RequestStrategy strategy = HttpStrategy.from(request);
             Message inMessage = strategy.execute(request, matchingPath);
 
-            // Run through the Foonnel flow the message
-            Message outMessage = matchingPath.handler().handle(inMessage);
+            // Call the Route handler for this Message.
+            Message outMessage = routeHandler.handle(inMessage);
 
             // Map the returned (processed) message to be sent back as HTTP Response.
             return asHttpResponse(outMessage);
@@ -64,6 +65,7 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
         }
     }
 
+    // Response Mapper
     private FullHttpResponse responseWith(HttpResponseStatus status) {
         String content = status.reasonPhrase();
         byte[] bytes = content.getBytes(UTF_8);
@@ -77,6 +79,7 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
         return response;
     }
 
+    // Response Mapper
     private FullHttpResponse asHttpResponse(Message outMessage) {
         int httpStatus = OutboundProperty.STATUS.getInt(outMessage);
 
