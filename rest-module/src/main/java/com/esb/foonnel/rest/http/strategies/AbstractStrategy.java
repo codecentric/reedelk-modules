@@ -17,6 +17,7 @@ public abstract class AbstractStrategy implements RequestStrategy {
     public Message handle(FullHttpRequest request, Route matchingRoute) throws Exception {
         Message inMessage = new Message();
 
+        // Path, Method and Headers
         InboundProperty.PATH.set(inMessage, request.uri()); //TODO: Request path not request.uri
         InboundProperty.METHOD.set(inMessage, request.method().name());
         InboundProperty.HEADERS.set(inMessage, HeadersUtils.toMap(request.headers()));
