@@ -13,10 +13,10 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-    private final ServerHandler serverHandler;
+    private final ServerChannelHandler serverHandler;
     private final RESTConnectionConfiguration configuration;
 
-    public ServerChannelInitializer(ServerHandler serverHandler, RESTConnectionConfiguration configuration) {
+    public ServerChannelInitializer(ServerChannelHandler serverHandler, RESTConnectionConfiguration configuration) {
         this.serverHandler = serverHandler;
         this.configuration = configuration;
     }

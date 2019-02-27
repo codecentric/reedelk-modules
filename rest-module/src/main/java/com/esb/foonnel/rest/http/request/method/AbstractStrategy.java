@@ -2,8 +2,8 @@ package com.esb.foonnel.rest.http.request.method;
 
 import com.esb.foonnel.api.message.*;
 import com.esb.foonnel.rest.commons.HeadersUtils;
-import com.esb.foonnel.rest.http.InboundProperty;
-import com.esb.foonnel.rest.route.Route;
+import com.esb.foonnel.rest.commons.InboundProperty;
+import com.esb.foonnel.rest.http.route.Route;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;

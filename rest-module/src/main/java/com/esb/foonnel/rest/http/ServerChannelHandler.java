@@ -1,10 +1,11 @@
 package com.esb.foonnel.rest.http;
 
 import com.esb.foonnel.api.message.Message;
+import com.esb.foonnel.rest.commons.OutboundProperty;
 import com.esb.foonnel.rest.http.request.method.HttpStrategy;
 import com.esb.foonnel.rest.http.request.method.RequestStrategy;
-import com.esb.foonnel.rest.route.Route;
-import com.esb.foonnel.rest.route.Routes;
+import com.esb.foonnel.rest.http.route.Route;
+import com.esb.foonnel.rest.http.route.Routes;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
@@ -20,14 +21,14 @@ import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ServerHandler extends AbstractServerHandler {
+public class ServerChannelHandler extends AbstractServerChannelHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServerHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServerChannelHandler.class);
 
     private final Routes routes;
     private final HttpVersion httpVersion;
 
-    public ServerHandler(String protocol, Routes routes) {
+    public ServerChannelHandler(String protocol, Routes routes) {
         this.routes = routes;
         this.httpVersion = HttpVersion.valueOf(protocol);
     }

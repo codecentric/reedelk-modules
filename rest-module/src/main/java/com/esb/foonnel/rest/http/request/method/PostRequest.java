@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest.http.request.method;
 
 import com.esb.foonnel.api.message.*;
-import com.esb.foonnel.rest.http.InboundProperty;
+import com.esb.foonnel.rest.commons.InboundProperty;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.multipart.Attribute;

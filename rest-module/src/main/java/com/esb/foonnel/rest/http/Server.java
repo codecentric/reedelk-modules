@@ -2,8 +2,9 @@ package com.esb.foonnel.rest.http;
 
 
 import com.esb.foonnel.rest.RESTConnectionConfiguration;
-import com.esb.foonnel.rest.route.Route;
-import com.esb.foonnel.rest.route.Routes;
+import com.esb.foonnel.rest.http.route.Route;
+import com.esb.foonnel.rest.http.route.RouteHandler;
+import com.esb.foonnel.rest.http.route.Routes;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -35,7 +36,7 @@ public class Server {
     private NioEventLoopGroup workerGroup; // handles the traffic of the accepted connection once the boss accepts the connection and registers the accepted connection to the worker.
 
     public Server(RESTConnectionConfiguration configuration) {
-        ServerHandler serverHandler = new ServerHandler(configuration.getProtocol(), routes);
+        ServerChannelHandler serverHandler = new ServerChannelHandler(configuration.getProtocol(), routes);
         ServerChannelInitializer channelInitializer = new ServerChannelInitializer(serverHandler, configuration);
 
         this.port = configuration.getPort();

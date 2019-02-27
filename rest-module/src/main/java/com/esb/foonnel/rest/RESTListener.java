@@ -25,7 +25,7 @@ public class RESTListener extends AbstractInbound {
     @Override
     public void onStart() {
         Server server = provider.get(configuration);
-        server.addRoute(method, path, this::onEvent);
+        server.addRoute(method, path, request -> onEvent(request));
     }
 
     @Override

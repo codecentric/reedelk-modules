@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest.route;
+package com.esb.foonnel.rest.http.route;
 
 import java.util.ArrayList;
 import java.util.Collection;

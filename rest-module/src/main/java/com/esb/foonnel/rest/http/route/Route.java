@@ -1,7 +1,6 @@
-package com.esb.foonnel.rest.route;
+package com.esb.foonnel.rest.http.route;
 
 import com.esb.foonnel.rest.commons.UriTemplate;
-import com.esb.foonnel.rest.http.RouteHandler;
 
 import java.util.Map;
 import java.util.Objects;

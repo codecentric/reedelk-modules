@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest.http;
+package com.esb.foonnel.rest.commons;
 
 import com.esb.foonnel.api.message.Message;
 import com.esb.foonnel.api.message.MessageProperties;

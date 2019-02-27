@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import static io.netty.channel.ChannelHandler.Sharable;
 
 @Sharable
-public abstract class AbstractServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public abstract class AbstractServerChannelHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private static final Logger logger = LoggerFactory.getLogger(RESTListener.class);
 
