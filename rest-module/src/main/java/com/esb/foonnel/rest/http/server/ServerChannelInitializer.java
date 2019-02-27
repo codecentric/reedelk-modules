@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest.http;
+package com.esb.foonnel.rest.http.server;
 
 import com.esb.foonnel.rest.RESTConnectionConfiguration;
 import io.netty.channel.ChannelInitializer;

@@ -1,10 +1,10 @@
-package com.esb.foonnel.rest.http;
+package com.esb.foonnel.rest.http.server;
 
 
 import com.esb.foonnel.rest.RESTConnectionConfiguration;
-import com.esb.foonnel.rest.http.route.Route;
-import com.esb.foonnel.rest.http.route.RouteHandler;
-import com.esb.foonnel.rest.http.route.Routes;
+import com.esb.foonnel.rest.http.server.route.Route;
+import com.esb.foonnel.rest.http.server.route.RouteHandler;
+import com.esb.foonnel.rest.http.server.route.Routes;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;

@@ -1,11 +1,11 @@
-package com.esb.foonnel.rest.http;
+package com.esb.foonnel.rest.http.server;
 
 import com.esb.foonnel.api.message.Message;
 import com.esb.foonnel.rest.commons.OutboundProperty;
-import com.esb.foonnel.rest.http.request.method.HttpStrategy;
-import com.esb.foonnel.rest.http.request.method.RequestStrategy;
-import com.esb.foonnel.rest.http.route.Route;
-import com.esb.foonnel.rest.http.route.Routes;
+import com.esb.foonnel.rest.http.server.request.method.HttpStrategy;
+import com.esb.foonnel.rest.http.server.request.method.RequestStrategy;
+import com.esb.foonnel.rest.http.server.route.Route;
+import com.esb.foonnel.rest.http.server.route.Routes;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;

@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest.http;
+package com.esb.foonnel.rest.http.server;
 
 import com.esb.foonnel.rest.RESTListener;
 import io.netty.channel.ChannelFutureListener;

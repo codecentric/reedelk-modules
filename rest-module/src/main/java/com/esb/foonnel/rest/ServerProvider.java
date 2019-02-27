@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest;
 
 import com.esb.foonnel.rest.commons.HostNamePortKey;
-import com.esb.foonnel.rest.http.Server;
+import com.esb.foonnel.rest.http.server.Server;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;

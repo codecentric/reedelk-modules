@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest.http.route;
+package com.esb.foonnel.rest.http.server.route;
 
 import com.esb.foonnel.rest.commons.UriTemplate;
 
