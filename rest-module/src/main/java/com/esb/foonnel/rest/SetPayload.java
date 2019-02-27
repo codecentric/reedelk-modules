@@ -15,7 +15,7 @@ public class SetPayload implements Processor {
     public Message apply(Message message) {
         TypedContent<String> content = new MemoryTypedContent<>(
                 payload,
-                new ContentType(MimeType.TEXT, String.class));
+                new Type(MimeType.TEXT, String.class));
         message.setContent(content);
         return message;
     }

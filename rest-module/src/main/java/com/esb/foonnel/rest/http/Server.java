@@ -47,23 +47,11 @@ public class Server {
                 .group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .childHandler(channelInitializer);
-        setChannelOption(SO_BACKLOG, configuration.getSocketBacklog());
-        setChannelOption(CONNECT_TIMEOUT_MILLIS, configuration.getConnectionTimeoutMillis());
-        setChannelChildOption(SO_KEEPALIVE, configuration.getKeepAlive());
+        setChannelOption(serverBootstrap, SO_BACKLOG, configuration.getSocketBacklog());
+        setChannelOption(serverBootstrap, CONNECT_TIMEOUT_MILLIS, configuration.getConnectionTimeoutMillis());
+        setChannelChildOption(serverBootstrap, SO_KEEPALIVE, configuration.getKeepAlive());
 
         this.serverBootstrap = serverBootstrap;
-    }
-
-    private <T> void setChannelOption(ChannelOption<T> channelOption, T value) {
-        if (value != null) {
-            serverBootstrap.option(channelOption, value);
-        }
-    }
-
-    private <T> void setChannelChildOption(ChannelOption<T> channelOption, T value) {
-        if (value != null) {
-            serverBootstrap.childOption(channelOption, value);
-        }
     }
 
     public void start() {
@@ -116,6 +104,18 @@ public class Server {
 
     public String getHostname() {
         return hostname;
+    }
+
+    private static <T> void setChannelOption(ServerBootstrap serverBootstrap, ChannelOption<T> channelOption, T value) {
+        if (value != null) {
+            serverBootstrap.option(channelOption, value);
+        }
+    }
+
+    private static <T> void setChannelChildOption(ServerBootstrap serverBootstrap, ChannelOption<T> channelOption, T value) {
+        if (value != null) {
+            serverBootstrap.childOption(channelOption, value);
+        }
     }
 
 }

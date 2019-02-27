@@ -24,10 +24,15 @@ public class GETRequestStrategy extends AbstractStrategy {
         }
 
         String contentType = InboundProperty.Headers.CONTENT_TYPE.get(inMessage);
+        try {
+            Type type = new Type(MimeType.parse(contentType), byte[].class);
+            TypedContent<byte[]> content = new MemoryTypedContent<>(bytes, type);
+            inMessage.setContent(content);
+            return inMessage;
+        } catch (NoClassDefFoundError e) {
+            e.printStackTrace();
+            return inMessage;
+        }
 
-        ContentType type = new ContentType(MimeType.parse(contentType), byte[].class);
-        TypedContent<byte[]> content = new MemoryTypedContent<>(bytes, type);
-        inMessage.setContent(content);
-        return inMessage;
     }
 }

@@ -59,7 +59,7 @@ public class POSTRequestStrategy extends AbstractStrategy {
         String contentTransferEncoding = fileUpload.getContentTransferEncoding();
         boolean inMemory = fileUpload.isInMemory();
 
-        ContentType contentType = new ContentType(MimeType.parse(fileUpload.getContentType()), byte[].class);
+        Type contentType = new Type(MimeType.parse(fileUpload.getContentType()), byte[].class);
         MemoryTypedContent<byte[]> content = new MemoryTypedContent<>(bytes, contentType);
         Part part = new Part(content);
 
