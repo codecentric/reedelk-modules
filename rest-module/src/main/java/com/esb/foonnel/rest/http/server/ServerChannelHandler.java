@@ -29,7 +29,7 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
     public ServerChannelHandler(String protocol, Routes routes) {
         this.routes = routes;
         this.httpVersion = HttpVersion.valueOf(protocol);
-        this.responseMapper = new HttpResponseMapper();
+        this.responseMapper = new HttpResponseMapper(httpVersion);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
         Optional<Route> optionalMatchingPath = routes.findRoute(method.name(), uri);
 
         if (!optionalMatchingPath.isPresent()) {
-            return responseMapper.fromHttpStatus(httpVersion, NOT_FOUND);
+            return responseMapper.fromStatus(NOT_FOUND);
         }
 
         Route matchingPath = optionalMatchingPath.get();
@@ -52,15 +52,15 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
             MethodStrategy strategy = MethodStrategyBuilder.from(request);
             Message inMessage = strategy.execute(request, matchingPath);
 
-            // Call the Route handler for this Message.
+            // invoke the RouteHandler for this Message.
             Message outMessage = routeHandler.handle(inMessage);
 
-            // Map the returned (processed) message to be sent back as HTTP Response.
-            return responseMapper.map(httpVersion, outMessage);
+            // Map Message to HTTP Response.
+            return responseMapper.map(outMessage);
 
         } catch (Exception exception) {
             logger.error("REST Listener", exception);
-            return responseMapper.fromHttpStatus(httpVersion, INTERNAL_SERVER_ERROR);
+            return responseMapper.fromStatus(INTERNAL_SERVER_ERROR);
         }
     }
 

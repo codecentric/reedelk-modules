@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
 
+import java.util.Collections;
 import java.util.Map;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
@@ -14,9 +15,15 @@ import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class HttpResponseMapper {
+class HttpResponseMapper {
 
-    public FullHttpResponse map(HttpVersion httpVersion, Message message) {
+    private final HttpVersion httpVersion;
+
+    HttpResponseMapper(HttpVersion httpVersion) {
+        this.httpVersion = httpVersion;
+    }
+
+    FullHttpResponse map(Message message) {
 
         byte[] bytes = new byte[0];
         if (message.getContent().getType().getTypeClass().isAssignableFrom(byte[].class)) {
@@ -30,9 +37,12 @@ public class HttpResponseMapper {
 
         Map<String, String> outboundHeaders = OutboundProperty.HEADERS.getMap(message);
         boolean hasContentType = outboundHeaders.containsKey(CONTENT_TYPE.toString());
-        CharSequence contentType = hasContentType ? outboundHeaders.get(CONTENT_TYPE.toString()) : TEXT_PLAIN;
+        String contentType = hasContentType ? outboundHeaders.get(CONTENT_TYPE.toString()) : TEXT_PLAIN.toString();
 
         HttpResponseStatus httpStatus = valueOf(OutboundProperty.STATUS.getInt(message));
+
+        buildResponse(entity, httpStatus, contentType, bytes.length, outboundHeaders);
+
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(httpVersion, httpStatus, entity);
 
         HttpHeaders headers = response.headers();
@@ -46,16 +56,23 @@ public class HttpResponseMapper {
         return response;
     }
 
-    public FullHttpResponse fromHttpStatus(HttpVersion httpVersion, HttpResponseStatus status) {
+    FullHttpResponse fromStatus(HttpResponseStatus status) {
         String content = status.reasonPhrase();
         byte[] bytes = content.getBytes(UTF_8);
         ByteBuf entity = Unpooled.wrappedBuffer(bytes);
+        return buildResponse(entity, status, TEXT_PLAIN.toString(), bytes.length, Collections.emptyMap());
+    }
 
+    private FullHttpResponse buildResponse(ByteBuf entity, HttpResponseStatus status, String contentType, int length, Map<String, String> additionalHeaders) {
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(httpVersion, status, entity);
-
         HttpHeaders headers = response.headers();
-        headers.add(CONTENT_TYPE, TEXT_PLAIN);
-        headers.add(CONTENT_LENGTH, bytes.length);
+        headers.add(CONTENT_TYPE, contentType);
+        headers.add(CONTENT_LENGTH, length);
+
+        for (Map.Entry<String,String> header : additionalHeaders.entrySet()) {
+            headers.add(header.getKey(), header.getValue());
+        }
+
         return response;
     }
 }

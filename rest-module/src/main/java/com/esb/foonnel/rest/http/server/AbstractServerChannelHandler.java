@@ -22,8 +22,8 @@ public abstract class AbstractServerChannelHandler extends SimpleChannelInboundH
         try {
             FullHttpResponse response = handle(request);
             context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-        } catch (Exception e) {
-            logger.error("Read message: ", e);
+        } catch (Exception exception) {
+            logger.error("Read message: ", exception);
             // The request must always be released.
             ReferenceCountUtil.release(request);
         }
