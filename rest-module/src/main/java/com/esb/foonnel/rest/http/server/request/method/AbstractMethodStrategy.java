@@ -7,7 +7,6 @@ import com.esb.foonnel.rest.http.server.route.Route;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -31,10 +30,6 @@ abstract class AbstractMethodStrategy implements MethodStrategy {
         Map<String, List<String>> queryParams = decoder.parameters();
         InboundProperty.QUERY_PARAMS.set(inMessage, queryParams);
 
-        return handle0(inMessage, request);
-    }
-
-    protected Message handle0(Message inMessage, FullHttpRequest request) throws IOException {
         return inMessage;
     }
 

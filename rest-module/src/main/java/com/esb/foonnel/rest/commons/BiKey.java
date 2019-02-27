@@ -25,4 +25,12 @@ public abstract class BiKey<T1,T2> {
     public int hashCode() {
         return Objects.hash(value1, value2);
     }
+
+    public T1 getValue1() {
+        return value1;
+    }
+
+    public T2 getValue2() {
+        return value2;
+    }
 }

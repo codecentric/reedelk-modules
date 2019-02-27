@@ -9,10 +9,10 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 
 import java.util.Collections;
 
-public class Default implements BodyStrategy {
+public class Default implements BodyStrategy<byte[]> {
 
     @Override
-    public BodyStrategyResult execute(FullHttpRequest request) throws Exception {
+    public BodyStrategyResult<byte[]> execute(FullHttpRequest request) {
         ByteBuf buf = request.content();
         byte[] bytes;
 

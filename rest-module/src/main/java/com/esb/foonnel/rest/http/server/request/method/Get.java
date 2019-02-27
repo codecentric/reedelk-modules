@@ -2,16 +2,23 @@ package com.esb.foonnel.rest.http.server.request.method;
 
 
 import com.esb.foonnel.api.message.Message;
-import com.esb.foonnel.api.message.TypedContent;
+import com.esb.foonnel.rest.http.server.request.body.BodyStrategyBuilder;
+import com.esb.foonnel.rest.http.server.request.body.BodyStrategyResult;
+import com.esb.foonnel.rest.http.server.route.Route;
 import io.netty.handler.codec.http.FullHttpRequest;
 
-public class Get extends AbstractMethodStrategy {
+class Get<T> extends AbstractMethodStrategy {
 
     @Override
-    protected Message handle0(Message inMessage, FullHttpRequest request) {
-        TypedContent<byte[]> content = extractBodyContent(inMessage, request);
-        inMessage.setContent(content);
-        return inMessage;
+    public Message execute(FullHttpRequest request, Route matchingRoute) throws Exception {
+        Message message = super.execute(request, matchingRoute);
+
+        BodyStrategyResult<byte[]> compoundBodyContent = BodyStrategyBuilder
+                .from(byte[].class, request)
+                .execute(request);
+
+        message.setContent(compoundBodyContent.getContent());
+        return message;
     }
 
 }

@@ -2,8 +2,8 @@ package com.esb.foonnel.rest.http.server.request.body;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 
-public interface BodyStrategy {
+public interface BodyStrategy<T> {
 
-    BodyStrategyResult execute(FullHttpRequest request) throws Exception;
+    BodyStrategyResult<T> execute(FullHttpRequest request) throws Exception;
 
 }
