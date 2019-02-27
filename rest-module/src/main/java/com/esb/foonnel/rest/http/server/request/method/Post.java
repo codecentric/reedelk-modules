@@ -21,9 +21,9 @@ import static com.esb.foonnel.api.message.MimeType.ANY;
 import static com.esb.foonnel.api.message.MimeType.parse;
 import static io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 
-public class PostRequest extends AbstractStrategy {
+public class Post extends AbstractMethodStrategy {
 
-    private static final Logger logger = LoggerFactory.getLogger(PostRequest.class);
+    private static final Logger logger = LoggerFactory.getLogger(Post.class);
 
     @Override
     protected Message handle0(Message inMessage, FullHttpRequest request) throws IOException {

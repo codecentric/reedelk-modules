@@ -5,7 +5,7 @@ import com.esb.foonnel.api.message.Message;
 import com.esb.foonnel.api.message.TypedContent;
 import io.netty.handler.codec.http.FullHttpRequest;
 
-public class GetRequest extends AbstractStrategy {
+public class Get extends AbstractMethodStrategy {
 
     @Override
     protected Message handle0(Message inMessage, FullHttpRequest request) {

@@ -4,7 +4,7 @@ import com.esb.foonnel.api.message.Message;
 import com.esb.foonnel.rest.http.server.route.Route;
 import io.netty.handler.codec.http.FullHttpRequest;
 
-public interface RequestStrategy {
+public interface MethodStrategy {
 
     Message execute(FullHttpRequest request, Route matchingRoute) throws Exception;
 

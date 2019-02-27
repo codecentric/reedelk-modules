@@ -8,19 +8,19 @@ import java.util.Map;
 
 import static io.netty.handler.codec.http.HttpMethod.*;
 
-public class HttpStrategy {
+public class MethodStrategyBuilder {
 
-    private static final Map<HttpMethod, RequestStrategy> STRATEGIES;
+    private static final Map<HttpMethod, MethodStrategy> STRATEGIES;
 
     static {
         STRATEGIES = new HashMap<>();
-        STRATEGIES.put(GET, new GetRequest());
-        STRATEGIES.put(PUT, new PutRequest());
-        STRATEGIES.put(POST, new PostRequest());
-        STRATEGIES.put(DELETE, new DeleteRequest());
+        STRATEGIES.put(GET, new Get());
+        STRATEGIES.put(PUT, new Put());
+        STRATEGIES.put(POST, new Post());
+        STRATEGIES.put(DELETE, new Delete());
     }
 
-    public static RequestStrategy from(HttpRequest request) {
+    public static MethodStrategy from(HttpRequest request) {
         if (!STRATEGIES.containsKey(request.method())) {
             throw new IllegalStateException("Could not find strategy for: " + request.method());
         }
