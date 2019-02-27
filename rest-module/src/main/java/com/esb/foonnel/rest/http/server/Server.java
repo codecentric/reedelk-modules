@@ -48,6 +48,7 @@ public class Server {
                 .group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .childHandler(channelInitializer);
+
         setChannelOption(serverBootstrap, SO_BACKLOG, configuration.getSocketBacklog());
         setChannelOption(serverBootstrap, CONNECT_TIMEOUT_MILLIS, configuration.getConnectionTimeoutMillis());
         setChannelChildOption(serverBootstrap, SO_KEEPALIVE, configuration.getKeepAlive());

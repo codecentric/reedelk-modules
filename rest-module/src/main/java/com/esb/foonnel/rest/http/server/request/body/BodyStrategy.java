@@ -1,5 +1,6 @@
-package com.esb.foonnel.rest.http.server.request.method;
+package com.esb.foonnel.rest.http.server.request.body;
 
+import com.esb.foonnel.rest.http.server.request.method.*;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 
@@ -7,8 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.netty.handler.codec.http.HttpMethod.*;
+import static io.netty.handler.codec.http.HttpMethod.DELETE;
 
-public class HttpStrategy {
+public class BodyStrategy {
 
     private static final Map<HttpMethod, RequestStrategy> STRATEGIES;
 

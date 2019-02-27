@@ -15,7 +15,7 @@ public class ServerProvider {
     private Map<HostNamePortKey, Server> serverMap = new ConcurrentHashMap<>();
 
     public Server get(RESTConnectionConfiguration configuration) {
-        HostNamePortKey key = HostNamePortKey.get(configuration.getHostname(), configuration.getPort());
+        HostNamePortKey key = new HostNamePortKey(configuration.getHostname(), configuration.getPort());
         if (!serverMap.containsKey(key)) {
             Server server = new Server(configuration);
             server.start();
@@ -27,7 +27,7 @@ public class ServerProvider {
     void release(Server server) {
         if (server.emptyRoutes()) {
             server.stop();
-            HostNamePortKey key = HostNamePortKey.get(server.getHostname(), server.getPort());
+            HostNamePortKey key = new HostNamePortKey(server.getHostname(), server.getPort());
             serverMap.remove(key);
         }
     }
