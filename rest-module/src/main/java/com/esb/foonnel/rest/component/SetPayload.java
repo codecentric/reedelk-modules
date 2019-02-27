@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest;
+package com.esb.foonnel.rest.component;
 
 import com.esb.foonnel.api.component.Processor;
 import com.esb.foonnel.api.message.*;

@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest;
+package com.esb.foonnel.rest.component;
 
 import com.esb.foonnel.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;

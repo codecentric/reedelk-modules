@@ -1,7 +1,7 @@
 package com.esb.foonnel.rest.http.server;
 
 
-import com.esb.foonnel.rest.RestListenerConfiguration;
+import com.esb.foonnel.rest.component.RestListenerConfiguration;
 import com.esb.foonnel.rest.http.server.route.Route;
 import com.esb.foonnel.rest.http.server.route.RouteHandler;
 import com.esb.foonnel.rest.http.server.route.Routes;

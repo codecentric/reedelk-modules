@@ -1,6 +1,6 @@
 package com.esb.foonnel.rest.http.server;
 
-import com.esb.foonnel.rest.RestListenerConfiguration;
+import com.esb.foonnel.rest.component.RestListenerConfiguration;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

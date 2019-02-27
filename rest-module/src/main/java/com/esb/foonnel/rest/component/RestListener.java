@@ -1,7 +1,8 @@
-package com.esb.foonnel.rest;
+package com.esb.foonnel.rest.component;
 
 import com.esb.foonnel.api.component.AbstractInbound;
 import com.esb.foonnel.rest.http.server.Server;
+import com.esb.foonnel.rest.http.server.ServerProvider;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;

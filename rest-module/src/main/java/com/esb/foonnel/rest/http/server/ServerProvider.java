@@ -1,7 +1,7 @@
-package com.esb.foonnel.rest;
+package com.esb.foonnel.rest.http.server;
 
+import com.esb.foonnel.rest.component.RestListenerConfiguration;
 import com.esb.foonnel.rest.commons.HostNamePortKey;
-import com.esb.foonnel.rest.http.server.Server;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;
@@ -24,7 +24,7 @@ public class ServerProvider {
         return serverMap.get(key);
     }
 
-    void release(Server server) {
+    public void release(Server server) {
         if (server.emptyRoutes()) {
             server.stop();
             HostNamePortKey key = new HostNamePortKey(server.getHostname(), server.getPort());
