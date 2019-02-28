@@ -17,7 +17,7 @@
       "value": "application/json"
     },
     {
-      "implementor.name": "com.esb.foonnel.rest.component.SetPayload",
+      "implementor.name": "com.esb.foonnel.core.component.SetPayload",
       "payload": "{ \"name\": \"Mark\", \"surname\": \"Franz\"}"
     },
     {

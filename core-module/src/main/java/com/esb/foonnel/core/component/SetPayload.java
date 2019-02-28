@@ -1,4 +1,4 @@
-package com.esb.foonnel.rest.component;
+package com.esb.foonnel.core.component;
 
 import com.esb.foonnel.api.component.Processor;
 import com.esb.foonnel.api.message.*;
@@ -13,9 +13,7 @@ public class SetPayload implements Processor {
 
     @Override
     public Message apply(Message message) {
-        TypedContent<String> content = new MemoryTypedContent<>(
-                payload,
-                new Type(MimeType.TEXT, String.class));
+        TypedContent<String> content = new MemoryTypedContent<>(payload, new Type(MimeType.TEXT, String.class));
         message.setTypedContent(content);
         return message;
     }
@@ -28,3 +26,4 @@ public class SetPayload implements Processor {
         return payload;
     }
 }
+

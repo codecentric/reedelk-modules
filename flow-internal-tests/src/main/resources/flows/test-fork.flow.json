@@ -16,7 +16,7 @@
               "implementor.name": "com.foonnel.tests.flows.CustomWaiter"
             },
             {
-              "implementor.name": "com.esb.foonnel.rest.component.SetPayload",
+              "implementor.name": "com.esb.foonnel.core.component.SetPayload",
               "payload": "Payload3 Content"
             },
             {
@@ -28,7 +28,7 @@
         {
           "next": [
             {
-              "implementor.name": "com.esb.foonnel.rest.component.SetPayload",
+              "implementor.name": "com.esb.foonnel.core.component.SetPayload",
               "payload": "Payload4 Content"
             },
             {
@@ -39,7 +39,7 @@
         }
       ],
       "join": {
-        "implementor.name": "com.esb.foonnel.component.JoinPayloadConcatenate",
+        "implementor.name": "com.esb.foonnel.core.component.JoinPayload",
         "delimeter": " -> "
       }
     },
