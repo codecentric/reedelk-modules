@@ -1,4 +1,4 @@
-package com.esb.foonnel.processor.logger;
+package com.esb.foonnel.logger.component;
 
 import com.esb.foonnel.api.component.Processor;
 import com.esb.foonnel.api.message.Message;

@@ -8,7 +8,7 @@
       "method": "POST"
     },
     {
-      "implementor.name": "com.esb.foonnel.processor.logger.LogComponent",
+      "implementor.name": "com.esb.foonnel.logger.component.LogComponent",
       "level": "INFO"
     },
     {
