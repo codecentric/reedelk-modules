@@ -1,0 +1,22 @@
+{
+  "id": "6825721f-cf69-47c7-ab7c-2a6e3df01c23",
+  "flow": [
+    {
+      "implementor.name": "com.esb.foonnel.processor.scheduler.Scheduler",
+      "delay": 0,
+      "period": 1000
+    },
+    {
+      "implementor.name": "com.esb.foonnel.component.FlowReference",
+      "ref": "759794c8-d024-458e-b614-196eabccb8da"
+    },
+    {
+      "implementor.name": "com.esb.foonnel.rest.component.SetPayload",
+      "payload": "Main flow continuation"
+    },
+    {
+      "implementor.name": "com.esb.foonnel.processor.logger.LogComponent",
+      "level": "INFO"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "415a80b8-c76c-4941-87a8-e5d70eb07252",
+  "flow": [
+    {
+      "implementor.name": "com.esb.foonnel.processor.scheduler.Scheduler",
+      "delay": 0,
+      "period": 2000
+    },
+    {
+      "implementor.name": "com.esb.foonnel.component.Fork",
+      "threadPoolSize": 3,
+      "fork": [
+        {
+          "next": [
+            {
+              "implementor.name": "com.foonnel.tests.flows.CustomWaiter"
+            },
+            {
+              "implementor.name": "com.esb.foonnel.rest.component.SetPayload",
+              "content": "Payload3 Content"
+            },
+            {
+              "implementor.name": "com.esb.foonnel.processor.logger.LogComponent",
+              "level": "INFO"
+            }
+          ]
+        },
+        {
+          "next": [
+            {
+              "implementor.name": "com.esb.foonnel.rest.component.SetPayload",
+              "content": "Payload4 Content"
+            },
+            {
+              "implementor.name": "com.esb.foonnel.processor.logger.LogComponent",
+              "level": "DEBUG"
+            }
+          ]
+        }
+      ],
+      "join": {
+        "implementor.name": "com.esb.foonnel.component.JoinPayloadConcatenate",
+        "delimeter": " -> "
+      }
+    },
+    {
+      "implementor.name": "com.esb.foonnel.processor.logger.LogComponent",
+      "level": "DEBUG"
+    }
+  ]
+}
