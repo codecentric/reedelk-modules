@@ -30,6 +30,3 @@ testdir/
 hostkey.ser
 *.h2.db
 *.factorypath
-
-
-flow-internal-tests/
