@@ -2,7 +2,7 @@
   "id": "415a80b8-c76c-4941-87a8-e5d70eb07252",
   "flow": [
     {
-      "implementor.name": "com.esb.foonnel.processor.scheduler.Scheduler",
+      "implementor.name": "com.esb.foonnel.scheduler.component.Scheduler",
       "delay": 0,
       "period": 2000
     },
