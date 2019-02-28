@@ -20,6 +20,7 @@
         <module>logger-module</module>
         <module>scheduler-module</module>
         <module>rest-module</module>
+        <module>flow-internal-tests</module>
     </modules>
 
 

@@ -22,8 +22,8 @@
             <maven.compiler.source>1.8</maven.compiler.source>
         </properties>
 
-    <name>Flows internal tests</name>
-    <description>Tests</description>
+    <name>foonnel internal tests</name>
+    <description>Test project for internal testing</description>
 
     <dependencies>
     </dependencies>
