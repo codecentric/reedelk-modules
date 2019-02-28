@@ -95,7 +95,7 @@
                         <artifactId>maven-antrun-plugin</artifactId>
                         <configuration>
                             <tasks>
-                                <copy todir="../../foonnel-core/runtime/modules">
+                                <copy todir="../../foonnel-esb/runtime/modules">
                                   <fileset dir="target" includes="*.jar"/>
                                 </copy>
                             </tasks>
