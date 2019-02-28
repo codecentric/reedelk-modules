@@ -87,7 +87,7 @@
         <profile>
             <id>dev</id>
             <activation>
-                <!--  <activeByDefault>true</activeByDefault> -->
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -96,7 +96,7 @@
                         <configuration>
                             <tasks>
                                 <copy todir="../../foonnel-core/runtime/modules">
-                                  <!--  <fileset dir="target" includes="*.jar"/> -->
+                                  <fileset dir="target" includes="*.jar"/>
                                 </copy>
                             </tasks>
                         </configuration>
