@@ -18,7 +18,7 @@ class Post extends AbstractMethodStrategy {
                 .from(Map.class, request)
                 .execute(request);
 
-        message.setContent(compoundBodyContent.getContent());
+        message.setTypedContent(compoundBodyContent.getContent());
         message.setParts(compoundBodyContent.getParts());
 
         return message;

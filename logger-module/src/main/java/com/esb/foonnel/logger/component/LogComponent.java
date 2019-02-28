@@ -18,7 +18,7 @@ public class LogComponent implements Processor {
 
     @Override
     public Message apply(Message input) {
-        TypedContent content = input.getContent();
+        TypedContent content = input.getTypedContent();
         if (content != null) {
             LogLevel.from(level).log(content.getContent());
         } else {

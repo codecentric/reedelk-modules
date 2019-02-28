@@ -17,7 +17,7 @@ class Get<T> extends AbstractMethodStrategy {
                 .from(byte[].class, request)
                 .execute(request);
 
-        message.setContent(compoundBodyContent.getContent());
+        message.setTypedContent(compoundBodyContent.getContent());
         return message;
     }
 
