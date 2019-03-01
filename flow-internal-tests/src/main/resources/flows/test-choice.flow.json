@@ -15,7 +15,7 @@
           "next": [
             {
               "implementor.name": "com.esb.foonnel.core.component.SetPayload",
-              "payload": "Choice1"
+              "payload": "{\"result\":\"Choice1\"}"
             }
           ]
         },
@@ -24,7 +24,7 @@
           "next": [
             {
               "implementor.name": "com.esb.foonnel.core.component.SetPayload",
-              "payload": "Choice2"
+              "payload": "{\"result\":\"Choice2\"}"
             }
           ]
         }
@@ -32,9 +32,18 @@
       "otherwise": [
         {
           "implementor.name": "com.esb.foonnel.core.component.SetPayload",
-          "payload": "Choice Otherwise"
+          "payload": "{\"result\":\"Otherwise\"}"
         }
       ]
+    },
+    {
+      "implementor.name": "com.esb.foonnel.rest.component.SetHeader",
+      "name": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "implementor.name": "com.esb.foonnel.rest.component.SetStatus",
+      "status": 200
     },
     {
       "implementor.name": "com.esb.foonnel.logger.component.LogComponent",
