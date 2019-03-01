@@ -16,10 +16,10 @@
 
     <packaging>bundle</packaging>
 
-        <properties>
-            <maven.compiler.target>1.8</maven.compiler.target>
-            <maven.compiler.source>1.8</maven.compiler.source>
-        </properties>
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+    </properties>
 
     <name>Foonnel internal tests</name>
     <description>Test project for internal testing</description>
@@ -29,22 +29,48 @@
 
     <build>
         <plugins>
-                <!-- Foonnel core bundle required plugin -->
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <version>4.1.0</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <instructions>
-                            <Bundle-Name>${project.name}</Bundle-Name>
-                            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                            <Embed-Transitive>true</Embed-Transitive>
-                            <Foonnel-Module>true</Foonnel-Module>
-                        </instructions>
-                    </configuration>
-                </plugin>
+            <!-- Foonnel core bundle required plugin -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>4.1.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <Foonnel-Module>true</Foonnel-Module>
+                    </instructions>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <executions>
+                    <execution><!-- Run our version calculation script -->
+                        <id>Upload</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>curl</executable>
+                            <arguments>
+                                <argument>-H</argument>
+                                <argument>'Content-Type: application/json'</argument>
+                                <argument>--request</argument>
+                                <argument>POST</argument>
+                                <argument>--data</argument>
+                                <argument>{"moduleFilePath":"file:${build.directory}/flow-internal-tests-1.0.0-SNAPSHOT.jar"}'</argument>
+                                <argument>http://localhost:9988/module</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
