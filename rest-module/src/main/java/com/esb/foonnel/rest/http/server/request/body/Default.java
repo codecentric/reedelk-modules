@@ -7,12 +7,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-public class Default implements BodyStrategy<byte[]> {
+public class Default implements BodyStrategy {
 
     @Override
-    public BodyStrategyResult<byte[]> execute(FullHttpRequest request) {
+    public BodyStrategyResult execute(FullHttpRequest request) {
         ByteBuf buf = request.content();
         byte[] bytes;
 
@@ -27,10 +28,20 @@ public class Default implements BodyStrategy<byte[]> {
 
         String contentType = request.headers().get(HttpHeaderNames.CONTENT_TYPE);
 
-        Type type = new Type(MimeType.parse(contentType), byte[].class);
-        MemoryTypedContent<byte[]> memoryTypedContent = new MemoryTypedContent<>(bytes, type);
+        MimeType payloadMimeType = MimeType.parse(contentType);
+        if (payloadMimeType.equals(MimeType.APPLICATION_JSON)) {
+            // Payload is string
+            Type type = new Type(payloadMimeType, String.class);
+            // The charset should be fixed.
+            MemoryTypedContent<String> memoryTypedContent = new MemoryTypedContent<>(new String(bytes, StandardCharsets.UTF_8), type);
+            return new BodyStrategyResult<>(memoryTypedContent, Collections.emptyList());
 
-        return new BodyStrategyResult<>(memoryTypedContent, Collections.emptyList());
+
+        } else {
+            Type type = new Type(payloadMimeType, byte[].class);
+            MemoryTypedContent<byte[]> memoryTypedContent = new MemoryTypedContent<>(bytes, type);
+            return new BodyStrategyResult<>(memoryTypedContent, Collections.emptyList());
+        }
     }
 
 }
