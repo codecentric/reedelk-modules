@@ -1,18 +1,13 @@
 function listModules() {
     $.get("/module", function (data) {
-        $('#deployed-modules').bootstrapTable({
-            data: data.modules,
-            onClickRow: function (row, $element) {
-                updateModule(row.name, row.moduleFilePath);
-            }
-        });
+        $('#deployed-modules').bootstrapTable('load', data.modules);
     });
 }
 
 function updateModule(name, moduleFilePath) {
     $.post("/module", JSON.stringify({moduleFilePath: moduleFilePath}), function () {
         toastr.success('Successfully updated module "' + name + '"');
-        listModules();
+        setTimeout(listModules, 1000);
     }, "json").fail(function (error) {
         toastr.error('Could not updated module "' + name + '"');
         console.log(error);

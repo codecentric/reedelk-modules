@@ -1,7 +1,18 @@
-.container {
-    padding-top: 30px;
-}
 
 .table tr {
     cursor: pointer;
+}
+
+.deployed-modules {
+    padding: 10px;
+}
+
+.table {
+    font-size: 13px;
+    line-height: 1.428;
+}
+
+.text-input {
+    font-size: 13px;
+    line-height: 1.428;
 }
