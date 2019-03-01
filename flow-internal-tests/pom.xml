@@ -21,9 +21,6 @@
         <maven.compiler.source>1.8</maven.compiler.source>
     </properties>
 
-    <name>Foonnel internal tests</name>
-    <description>Test project for internal testing</description>
-
     <dependencies>
     </dependencies>
 
@@ -64,7 +61,8 @@
                                 <argument>--request</argument>
                                 <argument>POST</argument>
                                 <argument>--data</argument>
-                                <argument>{"moduleFilePath":"file:${build.directory}/flow-internal-tests-1.0.0-SNAPSHOT.jar"}'</argument>
+                                <argument>{"moduleFilePath":"file:${build.directory}/${artifactId}-${version}.jar"}'
+                                </argument>
                                 <argument>http://localhost:9988/module</argument>
                             </arguments>
                         </configuration>

@@ -43,7 +43,7 @@
     },
     {
       "implementor.name": "com.esb.foonnel.rest.component.SetStatus",
-      "status": 200
+      "status": 201
     },
     {
       "implementor.name": "com.esb.foonnel.logger.component.LogComponent",
