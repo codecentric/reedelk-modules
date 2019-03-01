@@ -6,28 +6,17 @@ import org.takes.Take;
 import org.takes.rq.RqPrint;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.util.Scanner;
 
 abstract class AbstractModuleMethod implements Take {
 
-    protected final ModuleService service;
+    final ModuleService service;
 
     AbstractModuleMethod(ModuleService service) {
         this.service = service;
     }
 
-    protected static String decode(String value) {
-        try {
-            return URLDecoder.decode(value, Charset.defaultCharset().name());
-        } catch (UnsupportedEncodingException var2) {
-            throw new IllegalStateException(var2);
-        }
-    }
-
-    protected static String body(Request request) throws IOException {
+    static String body(Request request) throws IOException {
         String body = new RqPrint(request).printBody();
         Scanner s = new Scanner(body).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";

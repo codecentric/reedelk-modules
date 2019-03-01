@@ -1,7 +1,6 @@
 package com.esb.foonnel.admin.console.dev;
 
-import com.esb.foonnel.admin.console.dev.resources.HealthResources;
-import com.esb.foonnel.admin.console.dev.resources.ModuleResources;
+import com.esb.foonnel.admin.console.dev.resources.*;
 import com.esb.foonnel.api.service.ConfigurationService;
 import com.esb.foonnel.internal.api.SystemProperty;
 import com.esb.foonnel.internal.api.module.v1.ModuleService;
@@ -42,10 +41,14 @@ public class DevAdminConsoleActivator {
     public void activate() throws BundleException {
         int listeningPort = configurationService.getIntConfigProperty(CONFIG_PID, CONFIG_KEY_LISTENING_PORT, DEFAULT_LISTENING_PORT);
 
-        Fork healthResources = new HealthResources(systemProperty);
-        Fork deploymentResources = new ModuleResources(moduleService);
 
-        service = new DevAdminConsoleService(listeningPort, healthResources, deploymentResources);
+        service = new DevAdminConsoleService(listeningPort,
+                new HealthResources(systemProperty),
+                new ModuleResources(moduleService),
+                new ConsoleCSSResource(),
+                new ConsoleHTMLResource(),
+                new ConsoleJavascriptResource(),
+                new ConsoleIndexResource());
         service.start();
 
         // TODO: Fix this logger. Configuration should wait until completed.

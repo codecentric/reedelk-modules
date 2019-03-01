@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>ESB</title>
+
+    <link href="/console/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/console/css/console-style.css" rel="stylesheet">
+    <link href="/console/css/toastr.min.css" rel="stylesheet"/>
+
+
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+</head>
+
+<body>
+
+<!-- Fixed navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">ESB Console</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</nav>
+
+<div class="container">
+
+    <div class="row">
+        <h5><i class="fas fa-cubes"></i>&nbsp;&nbsp;Deployed Modules</h5>
+    </div>
+    <div class="row">
+
+        <table class="table" id="deployed-modules">
+            <thead>
+            <tr>
+                <th data-field="moduleId" scope="col">#</th>
+                <th data-field="name" scope="col">Name</th>
+                <th data-field="version" scope="col">Version</th>
+                <th data-field="moduleFilePath" scope="col">Path</th>
+                <th data-field="state" scope="col">State</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+</div>
+
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="/console/js/bootstrap.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="/console/js/ie10-viewport-bug-workaround.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.js"></script>
+<script src="/console/js/deployment-controller.js"></script>
+<script src="/console/js/toastr.min.js"></script>
+
+<script>
+    listModules();
+</script>
+
+</body>
+</html>

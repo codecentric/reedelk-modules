@@ -15,7 +15,7 @@ public class ModuleGETResource implements Take {
 
     private final ModuleService service;
 
-    public ModuleGETResource(ModuleService service) {
+    ModuleGETResource(ModuleService service) {
         this.service = service;
     }
 
