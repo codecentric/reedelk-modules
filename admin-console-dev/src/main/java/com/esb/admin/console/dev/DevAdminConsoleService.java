@@ -1,7 +1,7 @@
 package com.esb.admin.console.dev;
 
 
-import com.esb.foonnel.api.exception.FoonnelException;
+import com.esb.api.exception.FoonnelException;
 import org.takes.facets.fork.Fork;
 import org.takes.facets.fork.TkFork;
 import org.takes.http.Exit;
