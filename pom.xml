@@ -10,8 +10,7 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../commons/module-parent</relativePath>
     </parent>
-    
-    <groupId>com.esb</groupId>
+
     <artifactId>modules</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
