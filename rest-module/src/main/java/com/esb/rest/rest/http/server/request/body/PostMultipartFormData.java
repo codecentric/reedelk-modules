@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.esb.foonnel.api.message.MimeType.ANY;
-import static com.esb.foonnel.api.message.MimeType.parse;
+import static com.esb.api.message.MimeType.ANY;
+import static com.esb.api.message.MimeType.parse;
 import static io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 
 class PostMultipartFormData implements BodyStrategy<Map<String,String>> {
