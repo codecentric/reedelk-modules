@@ -58,7 +58,14 @@
                             </execution>
                         </executions>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
 
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
                     <plugin>
                         <artifactId>exec-maven-plugin</artifactId>
                         <groupId>org.codehaus.mojo</groupId>
@@ -77,7 +84,8 @@
                                         <argument>--request</argument>
                                         <argument>POST</argument>
                                         <argument>--data</argument>
-                                        <argument>{"moduleFilePath":"file:${build.directory}/${artifactId}-${version}.jar"}'
+                                        <argument>
+                                            {"moduleFilePath":"file:${build.directory}/${artifactId}-${version}.jar"}'
                                         </argument>
                                         <argument>http://localhost:9988/module</argument>
                                     </arguments>
@@ -85,7 +93,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
