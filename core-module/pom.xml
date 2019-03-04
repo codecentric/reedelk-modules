@@ -7,14 +7,12 @@
 
     <parent>
         <groupId>com.esb</groupId>
-        <artifactId>module-parent</artifactId>
+        <artifactId>modules</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.esb.core</groupId>
     <artifactId>core-module</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-
     <packaging>bundle</packaging>
 
     <properties>

@@ -7,13 +7,12 @@
 
     <parent>
         <groupId>com.esb</groupId>
-        <artifactId>module-parent</artifactId>
+        <artifactId>modules</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>rest-module</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-
     <packaging>bundle</packaging>
 
     <properties>
