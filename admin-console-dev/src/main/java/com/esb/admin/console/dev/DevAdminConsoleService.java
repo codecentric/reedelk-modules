@@ -1,7 +1,7 @@
 package com.esb.admin.console.dev;
 
 
-import com.esb.api.exception.FoonnelException;
+import com.esb.api.exception.ESBException;
 import org.takes.facets.fork.Fork;
 import org.takes.facets.fork.TkFork;
 import org.takes.http.Exit;
@@ -63,7 +63,7 @@ class DevAdminConsoleService {
                 server = new FtBasic(routes, port);
                 server.start(exit);
             } catch (IOException e) {
-                throw new FoonnelException(e);
+                throw new ESBException(e);
             }
         }
     }
