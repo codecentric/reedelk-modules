@@ -1,8 +1,8 @@
-package com.esb.foonnel.admin.console.dev.resources;
+package com.esb.admin.console.dev.resources;
 
-import com.esb.foonnel.internal.api.InternalAPI;
-import com.esb.foonnel.internal.api.SystemProperty;
-import com.esb.foonnel.internal.api.health.v1.HealthGETRes;
+import com.esb.internal.api.InternalAPI;
+import com.esb.internal.api.SystemProperty;
+import com.esb.internal.api.health.v1.HealthGETRes;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.facets.fork.FkMethods;
@@ -15,7 +15,7 @@ import org.takes.rs.RsWithHeader;
 
 import java.io.IOException;
 
-import static com.esb.foonnel.admin.console.dev.HttpMethod.GET;
+import static com.esb.admin.console.dev.HttpMethod.GET;
 
 public class HealthResources implements Fork {
 

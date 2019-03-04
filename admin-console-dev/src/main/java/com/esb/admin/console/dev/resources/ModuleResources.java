@@ -1,6 +1,6 @@
-package com.esb.foonnel.admin.console.dev.resources;
+package com.esb.admin.console.dev.resources;
 
-import com.esb.foonnel.internal.api.module.v1.ModuleService;
+import com.esb.internal.api.module.v1.ModuleService;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.facets.fork.FkMethods;
@@ -11,7 +11,7 @@ import org.takes.misc.Opt;
 
 import java.io.IOException;
 
-import static com.esb.foonnel.admin.console.dev.HttpMethod.*;
+import static com.esb.admin.console.dev.HttpMethod.*;
 
 public class ModuleResources implements Fork {
 

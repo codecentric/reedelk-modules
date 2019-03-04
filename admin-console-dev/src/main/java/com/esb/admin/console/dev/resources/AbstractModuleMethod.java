@@ -1,6 +1,6 @@
-package com.esb.foonnel.admin.console.dev.resources;
+package com.esb.admin.console.dev.resources;
 
-import com.esb.foonnel.internal.api.module.v1.ModuleService;
+import com.esb.internal.api.module.v1.ModuleService;
 import org.takes.Request;
 import org.takes.Take;
 import org.takes.rq.RqPrint;

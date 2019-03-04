@@ -1,4 +1,4 @@
-package com.esb.foonnel.admin.console.dev.resources;
+package com.esb.admin.console.dev.resources;
 
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.Fork;

@@ -1,4 +1,4 @@
-package com.esb.foonnel.admin.console.dev;
+package com.esb.admin.console.dev;
 
 
 import com.esb.foonnel.api.exception.FoonnelException;

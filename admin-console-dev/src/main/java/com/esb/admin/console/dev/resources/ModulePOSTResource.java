@@ -1,9 +1,9 @@
-package com.esb.foonnel.admin.console.dev.resources;
+package com.esb.admin.console.dev.resources;
 
-import com.esb.foonnel.internal.api.InternalAPI;
-import com.esb.foonnel.internal.api.module.v1.ModulePOSTReq;
-import com.esb.foonnel.internal.api.module.v1.ModulePOSTRes;
-import com.esb.foonnel.internal.api.module.v1.ModuleService;
+import com.esb.internal.api.InternalAPI;
+import com.esb.internal.api.module.v1.ModulePOSTReq;
+import com.esb.internal.api.module.v1.ModulePOSTRes;
+import com.esb.internal.api.module.v1.ModuleService;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.rs.RsWithBody;

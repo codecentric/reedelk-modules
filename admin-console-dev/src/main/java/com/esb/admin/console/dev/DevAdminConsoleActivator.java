@@ -1,9 +1,9 @@
-package com.esb.foonnel.admin.console.dev;
+package com.esb.admin.console.dev;
 
-import com.esb.foonnel.admin.console.dev.resources.*;
-import com.esb.foonnel.api.service.ConfigurationService;
-import com.esb.foonnel.internal.api.SystemProperty;
-import com.esb.foonnel.internal.api.module.v1.ModuleService;
+import com.esb.admin.console.dev.resources.*;
+import com.esb.api.service.ConfigurationService;
+import com.esb.internal.api.SystemProperty;
+import com.esb.internal.api.module.v1.ModuleService;
 import org.osgi.framework.BundleException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -11,7 +11,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.takes.facets.fork.Fork;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,7 +25,7 @@ public class DevAdminConsoleActivator {
     private static final int DEFAULT_LISTENING_PORT = 9988;
 
     private static final String CONFIG_KEY_LISTENING_PORT = "listening.port";
-    private static final String CONFIG_PID = "com.esb.foonnel.admin.console.dev";
+    private static final String CONFIG_PID = "com.esb.admin.console.dev";
 
     @Reference
     public SystemProperty systemProperty;
