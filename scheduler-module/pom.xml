@@ -25,7 +25,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Foonnel-Module>true</Foonnel-Module>
+                        <ESB-Module>true</ESB-Module>
                     </instructions>
                 </configuration>
             </plugin>

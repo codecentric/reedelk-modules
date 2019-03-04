@@ -14,7 +14,7 @@ public class HostNamePortKeyTest {
     @Test
     public void shouldContainsReturnTrue() {
         // Given
-        String hostname = "www.foonnel.com";
+        String hostname = "www.esb.com";
         int port = 234;
 
         testMap.put(new HostNamePortKey(hostname, port), "value");
@@ -29,7 +29,7 @@ public class HostNamePortKeyTest {
     @Test
     public void shouldContainsReturnFalse() {
         // Given
-        String hostname = "www.foonnel.com";
+        String hostname = "www.esb.com";
         int port = 8091;
 
         testMap.put((new HostNamePortKey(hostname, port)), "aValue");

@@ -11,7 +11,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.esb.foonnel.core</groupId>
+    <groupId>com.esb.core</groupId>
     <artifactId>core-module</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
@@ -23,14 +23,13 @@
     </properties>
 
     <name>core-module</name>
-    <description>Foonnel core components</description>
+    <description>core components</description>
 
     <dependencies>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Foonnel core bundle required plugin -->
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -42,7 +41,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Foonnel-Module>true</Foonnel-Module>
+                        <ESB-Module>true</ESB-Module>
                     </instructions>
                 </configuration>
             </plugin>

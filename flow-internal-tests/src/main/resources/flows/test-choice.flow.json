@@ -2,19 +2,19 @@
   "id": "45a5ce60-5c9d-4075-82a7-d3fa9284f22a",
   "flow": [
     {
-      "implementor.name": "com.esb.foonnel.rest.component.RestListener",
+      "implementor.name": "com.esb.rest.component.RestListener",
       "configRef": "customer-api-connection-config",
       "path": "/choice",
       "method": "POST"
     },
     {
-      "implementor.name": "com.esb.foonnel.component.Choice",
+      "implementor.name": "com.esb.component.Choice",
       "when": [
         {
           "condition": "payload.name == 'Mark'",
           "next": [
             {
-              "implementor.name": "com.esb.foonnel.core.component.SetPayload",
+              "implementor.name": "com.esb.core.component.SetPayload",
               "payload": "{\"result\":\"Choice1\"}"
             }
           ]
@@ -23,7 +23,7 @@
           "condition": "payload.name == 'Lorenz'",
           "next": [
             {
-              "implementor.name": "com.esb.foonnel.core.component.SetPayload",
+              "implementor.name": "com.esb.core.component.SetPayload",
               "payload": "{\"result\":\"Choice2\"}"
             }
           ]
@@ -31,22 +31,22 @@
       ],
       "otherwise": [
         {
-          "implementor.name": "com.esb.foonnel.core.component.SetPayload",
+          "implementor.name": "com.esb.core.component.SetPayload",
           "payload": "{\"result\":\"Otherwise\"}"
         }
       ]
     },
     {
-      "implementor.name": "com.esb.foonnel.rest.component.SetHeader",
+      "implementor.name": "com.esb.rest.component.SetHeader",
       "name": "Content-Type",
       "value": "application/json"
     },
     {
-      "implementor.name": "com.esb.foonnel.rest.component.SetStatus",
+      "implementor.name": "com.esb.rest.component.SetStatus",
       "status": 200
     },
     {
-      "implementor.name": "com.esb.foonnel.logger.component.LogComponent",
+      "implementor.name": "com.esb.logger.component.LogComponent",
       "level": "INFO"
     }
   ]

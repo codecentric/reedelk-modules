@@ -47,8 +47,8 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>
-                            com.esb.foonnel.api.*,
-                            com.esb.foonnel.internal.api.*,
+                            com.esb.api.*,
+                            com.esb.internal.api.*,
                             org.osgi.framework,
                             org.osgi.service.cm,
                             org.slf4j,

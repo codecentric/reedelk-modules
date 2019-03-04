@@ -26,7 +26,6 @@
 
     <build>
         <plugins>
-            <!-- Foonnel core bundle required plugin -->
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -38,7 +37,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Foonnel-Module>true</Foonnel-Module>
+                        <ESB-Module>true</ESB-Module>
                     </instructions>
                 </configuration>
             </plugin>

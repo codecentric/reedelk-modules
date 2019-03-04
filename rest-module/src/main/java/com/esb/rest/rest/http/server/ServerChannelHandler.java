@@ -48,7 +48,7 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
         RouteHandler routeHandler = matchingPath.handler();
 
         try {
-            // Build Foonnel Message according to the method and content type (http strategy)
+            // Build Message according to the method and content type (http strategy)
             MethodStrategy strategy = MethodStrategyBuilder.from(request);
             Message inMessage = strategy.execute(request, matchingPath);
 

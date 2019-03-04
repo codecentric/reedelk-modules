@@ -2,11 +2,11 @@
   "id": "759794c8-d024-458e-b614-196eabccb8da",
   "subflow": [
     {
-      "implementor.name": "com.esb.foonnel.core.component.SetPayload",
+      "implementor.name": "com.esb.core.component.SetPayload",
       "payload": "Subflow Content"
     },
     {
-      "implementor.name": "com.esb.foonnel.logger.component.LogComponent",
+      "implementor.name": "com.esb.logger.component.LogComponent",
       "level": "INFO"
     }
   ]

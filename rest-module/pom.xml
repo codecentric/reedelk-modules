@@ -68,10 +68,10 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Foonnel-Module>true</Foonnel-Module>
+                        <ESB-Module>true</ESB-Module>
                         <Import-Package>
                             sun.misc,
-                            com.esb.foonnel.api.*,
+                            com.esb.api.*,
                             javax.security.cert,
                             org.slf4j;version="[1.7,2)",
                             org.slf4j.helpers;version="[1.7,2)",

@@ -2,25 +2,25 @@
   "id": "415a80b8-c76c-4941-87a8-e5d70eb07252",
   "flow": [
     {
-      "implementor.name": "com.esb.foonnel.scheduler.component.Scheduler",
+      "implementor.name": "com.esb.scheduler.component.Scheduler",
       "delay": 0,
       "period": 2000
     },
     {
-      "implementor.name": "com.esb.foonnel.component.Fork",
+      "implementor.name": "com.esb.component.Fork",
       "threadPoolSize": 3,
       "fork": [
         {
           "next": [
             {
-              "implementor.name": "com.foonnel.tests.flows.CustomWaiter"
+              "implementor.name": "com.tests.flows.CustomWaiter"
             },
             {
-              "implementor.name": "com.esb.foonnel.core.component.SetPayload",
+              "implementor.name": "com.esb.core.component.SetPayload",
               "payload": "Payload3 Content"
             },
             {
-              "implementor.name": "com.esb.foonnel.logger.component.LogComponent",
+              "implementor.name": "com.esb.logger.component.LogComponent",
               "level": "INFO"
             }
           ]
@@ -28,23 +28,23 @@
         {
           "next": [
             {
-              "implementor.name": "com.esb.foonnel.core.component.SetPayload",
+              "implementor.name": "com.esb.core.component.SetPayload",
               "payload": "Payload4 Content"
             },
             {
-              "implementor.name": "com.esb.foonnel.logger.component.LogComponent",
+              "implementor.name": "com.esb.logger.component.LogComponent",
               "level": "DEBUG"
             }
           ]
         }
       ],
       "join": {
-        "implementor.name": "com.esb.foonnel.core.component.JoinPayload",
+        "implementor.name": "com.esb.core.component.JoinPayload",
         "delimeter": " -> "
       }
     },
     {
-      "implementor.name": "com.esb.foonnel.logger.component.LogComponent",
+      "implementor.name": "com.esb.logger.component.LogComponent",
       "level": "DEBUG"
     }
   ]
