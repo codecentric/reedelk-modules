@@ -1,0 +1,26 @@
+package com.esb.rest.server.request.body;
+
+import com.esb.api.message.Part;
+import com.esb.api.message.TypedContent;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BodyStrategyResult<T> {
+
+    private final TypedContent<T> content;
+    private final List<Part> parts = new ArrayList<>();
+
+    public BodyStrategyResult(TypedContent<T> content, List<Part> parts) {
+        this.content = content;
+        this.parts.addAll(parts);
+    }
+
+    public TypedContent<T> getContent() {
+        return content;
+    }
+
+    public List<Part> getParts() {
+        return parts;
+    }
+}
