@@ -10,6 +10,13 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @Component(service = CustomWaiter.class, scope = PROTOTYPE)
 public class CustomWaiter implements Processor {
+
+    private TestEnum test;
+
+    public void setTest(TestEnum test) {
+        this.test = test;
+    }
+
     @Override
     public Message apply(Message message) {
         try {

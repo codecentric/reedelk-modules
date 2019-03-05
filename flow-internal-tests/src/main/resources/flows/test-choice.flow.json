@@ -6,8 +6,12 @@
       "path": "/choice",
       "method": "POST",
       "configuration": {
-        "ref": "customer-api-connection-config"
+        "configRef": "customer-api-connection-config"
       }
+    },
+    {
+      "implementor.name": "com.tests.flows.CustomWaiter",
+      "test": "TEST"
     },
     {
       "implementor.name": "com.esb.component.Choice",
