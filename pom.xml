@@ -29,7 +29,7 @@
     </properties>
 
     <modules>
-        <module>admin-console-dev</module>
+        <module>admin-console-dev-module</module>
         <module>esb-module</module>
         <module>core-module</module>
         <module>rest-module</module>
