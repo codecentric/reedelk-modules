@@ -1,6 +1,7 @@
 package com.esb.rest.component;
 
 import com.esb.api.component.AbstractInbound;
+import com.esb.rest.commons.RestMethod;
 import com.esb.rest.server.Server;
 import com.esb.rest.server.ServerProvider;
 import org.osgi.service.component.annotations.Component;
@@ -20,7 +21,7 @@ public class RestListener extends AbstractInbound {
     private ServerProvider provider;
 
     private String path;
-    private String method;
+    private RestMethod method;
     private RestListenerConfiguration configuration;
 
 
@@ -46,7 +47,7 @@ public class RestListener extends AbstractInbound {
         this.path = path;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(RestMethod method) {
         this.method = method;
     }
 

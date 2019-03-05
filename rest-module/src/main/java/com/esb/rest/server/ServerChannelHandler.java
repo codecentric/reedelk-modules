@@ -1,14 +1,14 @@
 package com.esb.rest.server;
 
 import com.esb.api.message.Message;
-import com.esb.rest.server.route.RouteHandler;
-import com.esb.rest.server.route.Routes;
+import com.esb.rest.commons.RestMethod;
 import com.esb.rest.server.request.method.MethodStrategy;
 import com.esb.rest.server.request.method.MethodStrategyBuilder;
 import com.esb.rest.server.route.Route;
+import com.esb.rest.server.route.RouteHandler;
+import com.esb.rest.server.route.Routes;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +35,10 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
     @Override
     protected FullHttpResponse handle(FullHttpRequest request) {
 
-        HttpMethod method = request.method();
+        RestMethod method = RestMethod.valueOf(request.method().name());
         String uri = request.uri();
 
-        Optional<Route> optionalMatchingPath = routes.findRoute(method.name(), uri);
+        Optional<Route> optionalMatchingPath = routes.findRoute(method, uri);
 
         if (!optionalMatchingPath.isPresent()) {
             return responseMapper.fromStatus(NOT_FOUND);

@@ -1,5 +1,7 @@
 package com.esb.rest.server.route;
 
+import com.esb.rest.commons.RestMethod;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -12,7 +14,7 @@ public class Routes {
         this.routes.add(route);
     }
 
-    public Optional<Route> findRoute(final String method, final String path) {
+    public Optional<Route> findRoute(final RestMethod method, final String path) {
         for (final Route route : routes) {
             if (route.matches(method, path)) {
                 return Optional.of(route);

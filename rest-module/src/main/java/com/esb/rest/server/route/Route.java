@@ -1,5 +1,6 @@
 package com.esb.rest.server.route;
 
+import com.esb.rest.commons.RestMethod;
 import com.esb.rest.commons.UriTemplate;
 
 import java.util.Map;
@@ -10,11 +11,11 @@ import static com.esb.rest.commons.Preconditions.isNotNull;
 public class Route {
 
     private final String path;
-    private final String method;
+    private final RestMethod method;
     private final RouteHandler routeHandler;
     private final UriTemplate uriTemplate;
 
-    public Route(String method, String uriTemplate, RouteHandler routeHandler) {
+    public Route(RestMethod method, String uriTemplate, RouteHandler routeHandler) {
         isNotNull(method, "method");
         isNotNull(uriTemplate, "uriTemplate");
         isNotNull(routeHandler, "routeHandler");
@@ -25,7 +26,7 @@ public class Route {
         this.uriTemplate = new UriTemplate(uriTemplate);
     }
 
-    public String getMethod() {
+    public RestMethod getMethod() {
         return method;
     }
 
@@ -37,7 +38,7 @@ public class Route {
         return routeHandler;
     }
 
-    public boolean matches(String method, String path) {
+    boolean matches(RestMethod method, String path) {
         return this.method.equals(method) && this.uriTemplate.matches(path);
     }
 

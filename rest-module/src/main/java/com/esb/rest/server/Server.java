@@ -1,10 +1,11 @@
 package com.esb.rest.server;
 
 
-import com.esb.rest.server.route.RouteHandler;
-import com.esb.rest.server.route.Routes;
+import com.esb.rest.commons.RestMethod;
 import com.esb.rest.component.RestListenerConfiguration;
 import com.esb.rest.server.route.Route;
+import com.esb.rest.server.route.RouteHandler;
+import com.esb.rest.server.route.Routes;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -79,11 +80,11 @@ public class Server {
         }
     }
 
-    public void addRoute(String method, String path, RouteHandler routeHandler) {
+    public void addRoute(RestMethod method, String path, RouteHandler routeHandler) {
         routes.add(new Route(method, path, routeHandler));
     }
 
-    public void removeRoute(String method, String path) {
+    public void removeRoute(RestMethod method, String path) {
         routes.findRoute(method, path)
                 .ifPresent(routes::remove);
     }
