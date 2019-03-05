@@ -10,10 +10,6 @@
       }
     },
     {
-      "implementor.name": "com.tests.flows.CustomWaiter",
-      "test": "TEST"
-    },
-    {
       "implementor.name": "com.esb.component.Choice",
       "when": [
         {

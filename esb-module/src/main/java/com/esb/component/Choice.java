@@ -14,6 +14,8 @@ import static java.util.Collections.singletonList;
 
 public class Choice implements FlowControlComponent {
 
+    private static final ScriptEngine ENGINE = new JavascriptEngine();
+
     private PathExpressionPair defaultPath;
     private List<PathExpressionPair> pathExpressionPairs = new ArrayList<>();
 
@@ -46,9 +48,8 @@ public class Choice implements FlowControlComponent {
         }
 
         <T> T evaluate(Message message, Class<T> resultClazz) {
-            ScriptEngine engine = new JavascriptEngine();
             try {
-                return engine.evaluate(message, this.expression, resultClazz);
+                return ENGINE.evaluate(message, this.expression, resultClazz);
             } catch (ScriptException e) {
                 throw new ESBException(e);
             }
