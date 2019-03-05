@@ -1,0 +1,211 @@
+package com.esb.lifecycle;
+
+import com.esb.api.exception.ESBException;
+import com.esb.flow.Flow;
+import com.esb.module.Module;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+
+import java.util.Collection;
+
+import static com.esb.module.ModuleState.*;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+class StopModuleAndReleaseReferencesTest {
+
+    private final long moduleId = 33L;
+    private final String testModuleName = "StopTestModule";
+    private final String testVersion = "1.0.0-SNAPSHOT";
+    private final String testLocation = "file://location/test";
+
+    private final Collection<String> unresolvedComponents = asList("com.esb.UnresolvedComponent1", "com.esb.UnresolvedComponent1");
+    private final Collection<String> resolvedComponents = asList("com.esb.ResolvedComponent1", "com.esb.ResolvedComponent2");
+
+    @Mock
+    private Flow flow1;
+    @Mock
+    private Flow flow2;
+    @Mock
+    private Flow flow3;
+    @Mock
+    private Bundle bundle;
+    @Mock
+    private BundleContext context;
+
+    private StopModuleAndReleaseReferences step;
+
+    @BeforeEach
+    void setUp() {
+        step = spy(new StopModuleAndReleaseReferences());
+        doReturn(bundle).when(step).bundle();
+        doReturn(context).when(bundle).getBundleContext();
+    }
+
+    @Test
+    void shouldNotStopModuleWhenStateIsInstalled() {
+        // Given
+        Module inputModule = Module.builder()
+                .moduleId(moduleId)
+                .name(testModuleName)
+                .moduleFilePath(testLocation)
+                .version(testVersion)
+                .build();
+
+        // When
+        Module actualModule = step.run(inputModule);
+
+        // Then
+        assertThat(actualModule.state()).isEqualTo(INSTALLED);
+    }
+
+    @Test
+    void shouldNotStopModuleWhenStateIsUnresolved() {
+        // Given
+        Module inputModule = Module.builder()
+                .moduleId(moduleId)
+                .name(testModuleName)
+                .moduleFilePath(testLocation)
+                .version(testVersion)
+                .build();
+        inputModule.unresolve(unresolvedComponents, resolvedComponents);
+
+        // When
+        Module actualModule = step.run(inputModule);
+
+        // Then
+        assertThat(actualModule.state()).isEqualTo(UNRESOLVED);
+    }
+
+    @Test
+    void shouldNotStopModuleWhenStateIsResolve() {
+        // Given
+        Module inputModule = Module.builder()
+                .moduleId(moduleId)
+                .name(testModuleName)
+                .moduleFilePath(testLocation)
+                .version(testVersion)
+                .build();
+        inputModule.unresolve(unresolvedComponents, resolvedComponents);
+        inputModule.resolve(resolvedComponents);
+
+        // When
+        Module actualModule = step.run(inputModule);
+
+        // Then
+        assertThat(actualModule.state()).isEqualTo(RESOLVED);
+    }
+
+    @Test
+    void shouldNotStopModuleWhenStateIsStopped() {
+        // Given
+        Module inputModule = Module.builder()
+                .moduleId(moduleId)
+                .name(testModuleName)
+                .moduleFilePath(testLocation)
+                .version(testVersion)
+                .build();
+        inputModule.unresolve(unresolvedComponents, resolvedComponents);
+        inputModule.resolve(resolvedComponents);
+        inputModule.stop(asList(flow1, flow2));
+
+        // When
+        Module actualModule = step.run(inputModule);
+
+        // Then
+        assertThat(actualModule.state()).isEqualTo(STOPPED);
+    }
+
+    @Test
+    void shouldStopAllFlowsWhenStateIsStartedAndTransitionToResolved() {
+        // Given
+        Module inputModule = Module.builder()
+                .moduleId(moduleId)
+                .name(testModuleName)
+                .moduleFilePath(testLocation)
+                .version(testVersion)
+                .build();
+        inputModule.unresolve(unresolvedComponents, resolvedComponents);
+        inputModule.resolve(resolvedComponents);
+        inputModule.stop(asList(flow1, flow2));
+        inputModule.start(asList(flow1, flow2));
+
+        // When
+        Module actualModule = step.run(inputModule);
+
+        // Then
+        assertThat(actualModule.state()).isEqualTo(RESOLVED);
+
+        verify(flow1).stopIfStarted();
+        verify(flow2).stopIfStarted();
+        verify(flow1).releaseReferences(bundle);
+        verify(flow2).releaseReferences(bundle);
+
+        verifyNoMoreInteractions(flow1, flow2);
+    }
+
+    @Test
+    void shouldTransitionToErrorStateWhenFlowIsStoppedAndExceptionThrown() {
+        // Given
+        String expectedMessage1 = "Error while stopping flow 2";
+        String expectedMessage2 = "Error while stopping flow 3";
+
+        Module inputModule = Module.builder()
+                .moduleId(moduleId)
+                .name(testModuleName)
+                .moduleFilePath(testLocation)
+                .version(testVersion)
+                .build();
+        inputModule.unresolve(unresolvedComponents, resolvedComponents);
+        inputModule.resolve(resolvedComponents);
+        inputModule.stop(asList(flow1, flow2, flow3));
+        inputModule.start(asList(flow1, flow2, flow3));
+
+        doThrow(new ESBException(expectedMessage1))
+                .when(flow2)
+                .stopIfStarted();
+
+        doThrow(new ESBException(expectedMessage2))
+                .when(flow3)
+                .stopIfStarted();
+
+        // When
+        Module actualModule = step.run(inputModule);
+
+        // Then
+        assertThat(actualModule.state()).isEqualTo(ERROR);
+
+        verify(flow1).stopIfStarted();
+        verify(flow2).stopIfStarted();
+        verify(flow3).stopIfStarted();
+        verify(flow2).getFlowId();
+        verify(flow3).getFlowId();
+
+        verify(flow1).releaseReferences(bundle);
+        verify(flow2).releaseReferences(bundle);
+        verify(flow3).releaseReferences(bundle);
+
+        verifyNoMoreInteractions(flow1, flow2, flow3);
+
+        Collection<Exception> errors = actualModule.errors();
+        assertThat(errors).hasSize(2);
+
+        assertThatExistExceptionWithMessage(errors, expectedMessage1);
+        assertThatExistExceptionWithMessage(errors, expectedMessage2);
+    }
+
+    private void assertThatExistExceptionWithMessage(Collection<Exception> errors, String expectedMessage) {
+        boolean found = errors.stream().anyMatch(e -> expectedMessage.equals(e.getMessage()));
+        assertThat(found).isTrue();
+    }
+}

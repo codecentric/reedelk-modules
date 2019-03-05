@@ -28,7 +28,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>4.1.0</version>
+                <version>${maven.bundle.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -51,6 +51,7 @@
                     <plugin>
                         <artifactId>exec-maven-plugin</artifactId>
                         <groupId>org.codehaus.mojo</groupId>
+                        <version>1.6.0</version>
                         <executions>
                             <execution><!-- Run our version calculation script -->
                                 <id>Upload</id>
@@ -67,7 +68,7 @@
                                         <argument>POST</argument>
                                         <argument>--data</argument>
                                         <argument>
-                                            {"moduleFilePath":"file:${build.directory}/${artifactId}-${version}.jar"}'
+                                            {"moduleFilePath":"file:${project.build.directory}/${project.artifactId}-${project.version}.jar"}'
                                         </argument>
                                         <argument>http://localhost:9988/module</argument>
                                     </arguments>
