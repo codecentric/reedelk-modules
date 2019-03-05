@@ -94,7 +94,7 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <configuration>
                     <tasks>
-                        <copy todir="../../esb/runtime/src/main/resources/systembundles">
+                        <copy todir="../../runtime/src/main/resources/systembundles">
                             <fileset dir="target" includes="*.jar"/>
                         </copy>
                     </tasks>
