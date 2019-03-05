@@ -135,7 +135,7 @@
                                         <argument>POST</argument>
                                         <argument>--data</argument>
                                         <argument>
-                                            {"moduleFilePath":"file:${build.directory}/${artifactId}-${version}.jar"}'
+                                            {"moduleFilePath":"file:${project.build.directory}/${project.artifactId}-${project.version}.jar"}'
                                         </argument>
                                         <argument>http://localhost:9988/module</argument>
                                     </arguments>
