@@ -30,12 +30,12 @@ class HotSwapModuleTest {
     }
 
     @Test
-    void shouldDoSomething(@Mock Bundle bundle) {
+    void shouldCreateModuleWithCorrectParametersAndBundleDeserializer(@Mock Bundle bundle) {
         // Given
         doReturn(bundle).when(step).bundle();
 
         doReturn(342L).when(bundle).getBundleId();
-        doReturn(new Version("1.1.0-SNAPSHOT")).when(bundle).getVersion();
+        doReturn(new Version("1.1.0")).when(bundle).getVersion();
         doReturn("hotswap-bundle").when(bundle).getSymbolicName();
         doReturn("file:/usr/local/desktop/my-hotswap-1.1.0-SNAPSHOT.jar").when(bundle).getLocation();
 
@@ -45,7 +45,7 @@ class HotSwapModuleTest {
         // Then
         assertThat(created.id()).isEqualTo(342L);
         assertThat(created.state()).isEqualTo(INSTALLED);
-        assertThat(created.version()).isEqualTo("1.1.0-SNAPSHOT");
+        assertThat(created.version()).isEqualTo("1.1.0");
         assertThat(created.name()).isEqualTo("hotswap-bundle");
         assertThat(created.moduleFilePath()).isEqualTo("file:/usr/local/desktop/my-hotswap-1.1.0-SNAPSHOT.jar");
 
