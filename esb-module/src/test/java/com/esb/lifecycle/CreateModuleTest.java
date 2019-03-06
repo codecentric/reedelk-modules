@@ -22,6 +22,8 @@ class CreateModuleTest {
 
     private static final Void VOID = null;
 
+    @Mock
+    private Bundle bundle;
     private CreateModule step;
 
     @BeforeEach
@@ -30,7 +32,7 @@ class CreateModuleTest {
     }
 
     @Test
-    void shouldCreateModuleWithCorrectParametersAndBundleDeserializer(@Mock Bundle bundle) {
+    void shouldCreateModuleWithCorrectParametersAndBundleDeserializer() {
         // Given
         doReturn(bundle).when(step).bundle();
 

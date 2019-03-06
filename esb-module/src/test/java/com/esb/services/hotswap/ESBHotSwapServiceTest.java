@@ -15,6 +15,8 @@ import static org.mockito.Mockito.*;
 class ESBHotSwapServiceTest {
 
     @Mock
+    private Bundle bundle;
+    @Mock
     private BundleContext context;
     @Mock
     private HotSwapListener listener;
@@ -27,7 +29,7 @@ class ESBHotSwapServiceTest {
     }
 
     @Test
-    void shouldTestSomething(@Mock Bundle bundle) {
+    void shouldTestSomething() {
         // Given
         String modulePath = "file:/Users/myuser/module/path/test-module-1.0.0.jar";
         String resourcesRootDirectory = "/Users/myuser/module/src/main/resources";

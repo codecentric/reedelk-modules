@@ -13,6 +13,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AddModuleTest {
 
+    @Mock
+    private ModulesManager modulesManager;
+
     private AddModule step;
 
     @BeforeEach
@@ -21,7 +24,7 @@ class AddModuleTest {
     }
 
     @Test
-    void shouldAddModuleToManager(@Mock ModulesManager modulesManager) {
+    void shouldAddModuleToManager() {
         // Given
         doReturn(modulesManager).when(step).modulesManager();
         Module module = mock(Module.class);

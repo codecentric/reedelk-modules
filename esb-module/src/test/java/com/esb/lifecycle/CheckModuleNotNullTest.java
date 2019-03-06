@@ -15,6 +15,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CheckModuleNotNullTest {
 
+    @Mock
+    private Bundle bundle;
     private CheckModuleNotNull step;
 
     @BeforeEach
@@ -23,7 +25,7 @@ class CheckModuleNotNullTest {
     }
 
     @Test
-    void shouldNotThrowExceptionWhenModuleIsNotNull(@Mock Bundle bundle) {
+    void shouldNotThrowExceptionWhenModuleIsNotNull() {
         // Given
         doReturn(bundle).when(step).bundle();
         Module module = mock(Module.class);
@@ -36,7 +38,7 @@ class CheckModuleNotNullTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenModuleIsNull(@Mock Bundle bundle) {
+    void shouldThrowExceptionWhenModuleIsNull() {
         // Given
         doReturn(bundle).when(step).bundle();
         doReturn(23L).when(bundle).getBundleId();

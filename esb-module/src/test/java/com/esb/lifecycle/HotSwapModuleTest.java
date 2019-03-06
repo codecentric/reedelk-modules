@@ -22,6 +22,9 @@ class HotSwapModuleTest {
 
     private static final Void VOID = null;
 
+    @Mock
+    private Bundle bundle;
+
     private HotSwapModule step;
 
     @BeforeEach
@@ -30,7 +33,7 @@ class HotSwapModuleTest {
     }
 
     @Test
-    void shouldCreateModuleWithCorrectParametersAndBundleDeserializer(@Mock Bundle bundle) {
+    void shouldCreateModuleWithCorrectParametersAndBundleDeserializer() {
         // Given
         doReturn(bundle).when(step).bundle();
 
