@@ -143,7 +143,7 @@ public class Module implements State {
                 state.getClass().getSimpleName(), transitionTo.getSimpleName()));
     }
 
-    public DeserializedModule deserialize() throws Exception {
+    public DeserializedModule deserialize() {
         return deserializer.deserialize();
     }
 
