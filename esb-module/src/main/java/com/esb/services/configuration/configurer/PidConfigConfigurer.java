@@ -9,13 +9,14 @@ public class PidConfigConfigurer extends AbstractConfigurer {
 
     @Override
     public boolean apply(ConfigurationAdmin configService, ConfigFile configFile) {
-        if (!(configFile instanceof PropertiesConfigFile)) return false;
-
-        String configPid = getConfigPid(configFile);
-
-        PropertiesConfigFile propertiesConfigFile = (PropertiesConfigFile) configFile;
-        Properties properties = propertiesConfigFile.getContent();
-        return updateConfigurationForPid(configPid, configService, properties);
+        if (configFile instanceof PropertiesConfigFile) {
+            String configPid = getConfigPid(configFile);
+            PropertiesConfigFile propertiesConfigFile = (PropertiesConfigFile) configFile;
+            Properties properties = propertiesConfigFile.getContent();
+            return updateConfigurationForPid(configPid, configService, properties);
+        } else {
+            return false;
+        }
     }
 
     private String getConfigPid(ConfigFile configFile) {

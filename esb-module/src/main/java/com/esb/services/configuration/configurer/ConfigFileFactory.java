@@ -1,6 +1,7 @@
 package com.esb.services.configuration.configurer;
 
 import com.esb.api.exception.ESBException;
+import com.esb.commons.FileExtension;
 import com.esb.commons.FileUtils;
 
 import java.io.File;
@@ -14,8 +15,8 @@ public class ConfigFileFactory {
 
     static {
         Map<String, Class<? extends ConfigFile>> tmp = new HashMap<>();
-        tmp.put("xml", XmlConfigFile.class);
-        tmp.put("properties", PropertiesConfigFile.class);
+        tmp.put(FileExtension.XML.value(), XmlConfigFile.class);
+        tmp.put(FileExtension.PROPERTIES.value(), PropertiesConfigFile.class);
         SUFFIX_TO_CLASS = tmp;
     }
 

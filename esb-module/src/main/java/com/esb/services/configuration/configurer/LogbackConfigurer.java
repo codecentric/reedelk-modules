@@ -13,16 +13,19 @@ public class LogbackConfigurer extends AbstractConfigurer {
 
     @Override
     public boolean apply(ConfigurationAdmin configService, ConfigFile configFile) {
-        if (!matches(configFile, LOGBACK_CONFIG_FILE_NAME)) return false;
+        if (matches(configFile)) {
+            XmlConfigFile logback = (XmlConfigFile) configFile;
+            Properties properties = new Properties();
+            properties.put(LOGBACK_CONFIG_FILE_PROPERTY_NAME, logback.getFilePath());
+            return updateConfigurationForPid(PAX_LOGGING_CONFIG_PID, configService, properties);
+        } else {
+            return false;
+        }
 
-        XmlConfigFile logback = (XmlConfigFile) configFile;
-        Properties properties = new Properties();
-        properties.put(LOGBACK_CONFIG_FILE_PROPERTY_NAME, logback.getFilePath());
-        return updateConfigurationForPid(PAX_LOGGING_CONFIG_PID, configService, properties);
     }
 
-    private boolean matches(ConfigFile configFile, String match) {
-        return match.equalsIgnoreCase(configFile.getFileName());
+    private boolean matches(ConfigFile configFile) {
+        return LOGBACK_CONFIG_FILE_NAME.equalsIgnoreCase(configFile.getFileName());
     }
 
 }
