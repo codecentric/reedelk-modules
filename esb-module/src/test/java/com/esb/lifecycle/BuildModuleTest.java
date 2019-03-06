@@ -15,8 +15,8 @@ import com.esb.module.ModuleDeserializer;
 import com.esb.module.ModulesManager;
 import com.esb.test.utils.AnotherTestComponent;
 import com.esb.test.utils.TestComponent;
-import com.esb.test.utils.TestFlow;
 import com.esb.test.utils.TestInboundComponent;
+import com.esb.test.utils.TestJson;
 import com.google.common.collect.ImmutableList;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -197,7 +197,7 @@ class BuildModuleTest {
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
 
-        JSONObject flowDefinition = parseFlow(TestFlow.WITH_SOME_COMPONENTS);
+        JSONObject flowDefinition = parseFlow(TestJson.FLOW_WITH_COMPONENTS);
         Set<JSONObject> flows = new HashSet<>();
         flows.add(flowDefinition);
 
@@ -255,7 +255,7 @@ class BuildModuleTest {
         // Given
         Module inputModule = newResolvedModule();
 
-        JSONObject flowWithoutId = parseFlow(TestFlow.WITHOUT_ID);
+        JSONObject flowWithoutId = parseFlow(TestJson.FLOW_WITHOUT_ID);
         Set<JSONObject> flows = new HashSet<>();
         flows.add(flowWithoutId);
 
@@ -280,8 +280,8 @@ class BuildModuleTest {
         // Given
         Module inputModule = newResolvedModule();
 
-        JSONObject flowWithoutId = parseFlow(TestFlow.WITHOUT_ID);
-        JSONObject flowWithNotWellFormedChoice = parseFlow(TestFlow.WITH_NOT_WELL_FORMED_CHOICE);
+        JSONObject flowWithoutId = parseFlow(TestJson.FLOW_WITHOUT_ID);
+        JSONObject flowWithNotWellFormedChoice = parseFlow(TestJson.FLOW_WITH_NOT_WELL_FORMED_CHOICE);
         Set<JSONObject> flows = new HashSet<>();
         flows.add(flowWithoutId);
         flows.add(flowWithNotWellFormedChoice);
@@ -312,8 +312,8 @@ class BuildModuleTest {
         // Given
         Module inputModule = newResolvedModule();
 
-        JSONObject flowWithId = parseFlow(TestFlow.WITH_SOME_COMPONENTS);
-        JSONObject flowWithSameId = parseFlow(TestFlow.WITH_SOME_COMPONENTS);
+        JSONObject flowWithId = parseFlow(TestJson.FLOW_WITH_COMPONENTS);
+        JSONObject flowWithSameId = parseFlow(TestJson.FLOW_WITH_COMPONENTS);
         Set<JSONObject> flows = new HashSet<>();
         flows.add(flowWithId);
         flows.add(flowWithSameId);
@@ -395,8 +395,8 @@ class BuildModuleTest {
         return inputModule;
     }
 
-    private JSONObject parseFlow(TestFlow testFlow) {
-        URL url = testFlow.url();
+    private JSONObject parseFlow(TestJson testJson) {
+        URL url = testJson.url();
         String flowAsJson = FileUtils.readFrom(url);
         return JsonParser.from(flowAsJson);
     }

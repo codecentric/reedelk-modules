@@ -6,12 +6,13 @@ import com.esb.component.ComponentRegistry;
 import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
 import com.esb.module.ModuleDeserializer;
-import com.esb.test.utils.TestFlow;
+import com.esb.test.utils.TestJson;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -69,16 +70,75 @@ class ResolveModuleDependenciesTest {
     }
 
     @Test
-    void shouldReturnModuleWithStateUnresolvedWhenNotAllComponentsArePresent() throws Exception {
+    void shouldReturnModuleWithStateUnresolvedWhenNotAllFlowComponentsArePresent() throws Exception {
         // Given
         doReturn(singletonList("com.esb.not.found.Component"))
                 .when(componentRegistry)
                 .unregisteredComponentsOf(anyCollection());
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseFlow(TestFlow.WITH_CHOICE));
+        flows.add(parseJson(TestJson.FLOW_WITH_CHOICE));
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
+        doReturn(deserializedModule).when(deserializer).deserialize();
+
+        // When
+        Module module = step.run(aModule);
+
+        // Then
+        assertThat(module).isNotNull();
+        assertThat(module.state()).isEqualTo(UNRESOLVED);
+    }
+
+    @Test
+    void shouldReturnModuleWithStateUnresolvedWhenNotAllSubFlowComponentsArePresent() {
+        // Given
+        doAnswer(invocation -> {
+            final Collection<String> argument = (Collection<String>) (invocation.getArguments())[0];
+            if (argument.containsAll(asList("com.esb.test.utils.SubFlowComponent", "com.esb.test.utils.AnotherSubFlowComponent"))) {
+                return singletonList("com.esb.test.utils.SubFlowComponent");
+            }
+            return emptyList();
+        }).when(componentRegistry)
+                .unregisteredComponentsOf(ArgumentMatchers.anyCollection());
+
+
+        Set<JSONObject> flows = new HashSet<>();
+        flows.add(parseJson(TestJson.FLOW_WITH_COMPONENTS));
+
+        Set<JSONObject> subFlows = new HashSet<>();
+        subFlows.add(parseJson(TestJson.SUBFLOW_WITH_COMPONENTS));
+
+        DeserializedModule deserializedModule = new DeserializedModule(flows, subFlows, emptySet());
+        doReturn(deserializedModule).when(deserializer).deserialize();
+
+        // When
+        Module module = step.run(aModule);
+
+        // Then
+        assertThat(module).isNotNull();
+        assertThat(module.state()).isEqualTo(UNRESOLVED);
+    }
+
+    @Test
+    void shouldReturnModuleWithStateUnresolvedWhenNotAllConfigComponentsArePresent() {
+        // Given
+        doAnswer(invocation -> {
+            final Collection<String> originalArgument = (Collection<String>) (invocation.getArguments())[0];
+            if (originalArgument.contains("com.esb.test.utils.TestConfiguration")) {
+                return singletonList("com.esb.test.utils.TestConfiguration");
+            }
+            return emptyList();
+        }).when(componentRegistry)
+                .unregisteredComponentsOf(ArgumentMatchers.anyCollection());
+
+        Set<JSONObject> flows = new HashSet<>();
+        flows.add(parseJson(TestJson.FLOW_WITH_COMPONENTS));
+
+        Set<JSONObject> config = new HashSet<>();
+        config.add(parseJson(TestJson.CONFIG));
+
+        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), config);
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
@@ -97,7 +157,7 @@ class ResolveModuleDependenciesTest {
                 .unregisteredComponentsOf(anyCollection());
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseFlow(TestFlow.WITH_CHOICE));
+        flows.add(parseJson(TestJson.FLOW_WITH_CHOICE));
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -131,7 +191,7 @@ class ResolveModuleDependenciesTest {
                 .unregisteredComponentsOf(anyCollection());
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseFlow(TestFlow.WITH_CHOICE));
+        flows.add(parseJson(TestJson.FLOW_WITH_CHOICE));
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -152,8 +212,8 @@ class ResolveModuleDependenciesTest {
                 "com.esb.component.Choice");
     }
 
-    private JSONObject parseFlow(TestFlow testFlow) {
-        URL url = testFlow.url();
+    private JSONObject parseJson(TestJson testJson) {
+        URL url = testJson.url();
         String flowAsJson = FileUtils.readFrom(url);
         return JsonParser.from(flowAsJson);
     }

@@ -2,38 +2,52 @@ package com.esb.test.utils;
 
 import java.net.URL;
 
-public enum TestFlow {
+public enum TestJson {
 
-    WITH_SOME_COMPONENTS {
+    FLOW_WITH_COMPONENTS {
         @Override
         String path() {
             return "/com/esb/lifecycle/flow_with_some_components.json";
         }
     },
 
-    WITH_CHOICE {
+    FLOW_WITH_CHOICE {
         @Override
         String path() {
             return "/com/esb/lifecycle/flow_with_choice.json";
         }
     },
 
-    WITHOUT_ID {
+    FLOW_WITHOUT_ID {
         @Override
         String path() {
             return "/com/esb/lifecycle/flow_without_id.json";
         }
     },
 
-    WITH_NOT_WELL_FORMED_CHOICE {
+    FLOW_WITH_NOT_WELL_FORMED_CHOICE {
         @Override
         String path() {
             return "/com/esb/lifecycle/flow_with_not_well_formed_choice.json";
         }
+    },
+
+    SUBFLOW_WITH_COMPONENTS {
+        @Override
+        String path() {
+            return "/com/esb/lifecycle/subflow_with_some_components.json";
+        }
+    },
+
+    CONFIG {
+        @Override
+        String path() {
+            return "/com/esb/lifecycle/config.json";
+        }
     };
 
     public URL url() {
-        return TestFlow.class.getResource(path());
+        return TestJson.class.getResource(path());
     }
 
     abstract String path();
