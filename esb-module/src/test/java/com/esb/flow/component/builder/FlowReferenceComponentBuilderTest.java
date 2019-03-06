@@ -1,6 +1,6 @@
-package com.esb.flow.builder;
+package com.esb.flow.component.builder;
 
-import com.esb.commons.DeserializedModule;
+import com.esb.module.DeserializedModule;
 import com.esb.commons.Graph;
 import com.esb.component.FlowReference;
 import com.esb.flow.ExecutionNode;

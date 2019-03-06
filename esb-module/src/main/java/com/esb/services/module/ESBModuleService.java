@@ -1,7 +1,7 @@
 package com.esb.services.module;
 
 import com.esb.api.exception.ESBException;
-import com.esb.flow.ModulesManager;
+import com.esb.module.ModulesManager;
 import com.esb.internal.api.module.v1.ModuleGETRes;
 import com.esb.internal.api.module.v1.ModuleService;
 import com.esb.internal.api.module.v1.ModulesGETRes;

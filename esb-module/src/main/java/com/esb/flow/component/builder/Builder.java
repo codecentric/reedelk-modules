@@ -1,4 +1,4 @@
-package com.esb.flow.builder;
+package com.esb.flow.component.builder;
 
 import com.esb.flow.ExecutionNode;
 import org.json.JSONObject;

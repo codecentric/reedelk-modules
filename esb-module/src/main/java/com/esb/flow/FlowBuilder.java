@@ -3,7 +3,7 @@ package com.esb.flow;
 import com.esb.commons.Graph;
 import com.esb.commons.JsonParser;
 import com.esb.component.Stop;
-import com.esb.flow.builder.ExecutionNodeBuilder;
+import com.esb.flow.component.builder.ExecutionNodeBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

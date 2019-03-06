@@ -1,6 +1,6 @@
 package com.esb.lifecycle;
 
-import com.esb.flow.ModulesManager;
+import com.esb.module.ModulesManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 

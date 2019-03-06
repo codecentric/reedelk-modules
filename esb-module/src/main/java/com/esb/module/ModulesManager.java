@@ -1,9 +1,10 @@
-package com.esb.flow;
+package com.esb.module;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Implementor;
 import com.esb.api.exception.ESBException;
 import com.esb.component.ESBComponent;
+import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.module.Module;
 import org.osgi.framework.BundleContext;

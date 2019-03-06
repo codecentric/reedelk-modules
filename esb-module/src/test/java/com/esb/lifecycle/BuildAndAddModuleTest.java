@@ -1,6 +1,6 @@
 package com.esb.lifecycle;
 
-import com.esb.flow.ModulesManager;
+import com.esb.module.ModulesManager;
 import com.esb.module.Module;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

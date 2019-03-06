@@ -1,6 +1,6 @@
 package com.esb.lifecycle;
 
-import com.esb.commons.DeserializedModule;
+import com.esb.module.DeserializedModule;
 import com.esb.commons.JsonParser;
 import com.esb.commons.JsonPropertyValueCollector;
 import com.esb.component.ComponentRegistry;

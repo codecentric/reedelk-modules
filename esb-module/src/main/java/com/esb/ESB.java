@@ -3,7 +3,7 @@ package com.esb;
 import com.esb.api.service.ConfigurationService;
 import com.esb.component.ComponentRegistry;
 import com.esb.component.ESBComponent;
-import com.esb.flow.ModulesManager;
+import com.esb.module.ModulesManager;
 import com.esb.internal.api.SystemProperty;
 import com.esb.internal.api.module.v1.ModuleService;
 import com.esb.lifecycle.*;
