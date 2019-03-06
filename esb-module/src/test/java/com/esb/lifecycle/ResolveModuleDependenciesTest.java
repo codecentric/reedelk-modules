@@ -1,5 +1,7 @@
 package com.esb.lifecycle;
 
+import com.esb.commons.FileUtils;
+import com.esb.commons.JsonParser;
 import com.esb.component.ComponentRegistry;
 import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
@@ -15,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +31,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
+class ResolveModuleDependenciesTest {
 
     @Mock
     private ModuleDeserializer deserializer;
@@ -149,4 +152,9 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
                 "com.esb.component.Choice");
     }
 
+    private JSONObject parseFlow(TestFlow testFlow) {
+        URL url = testFlow.url();
+        String flowAsJson = FileUtils.readFrom(url);
+        return JsonParser.from(flowAsJson);
+    }
 }

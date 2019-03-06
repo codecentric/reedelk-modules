@@ -2,6 +2,8 @@ package com.esb.lifecycle;
 
 import com.esb.api.component.Component;
 import com.esb.api.exception.ESBException;
+import com.esb.commons.FileUtils;
+import com.esb.commons.JsonParser;
 import com.esb.component.Choice;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
@@ -31,6 +33,7 @@ import org.osgi.framework.ServiceObjects;
 import org.osgi.framework.ServiceReference;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,7 +48,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class BuildModuleTest extends AbstractLifecycleTest {
+class BuildModuleTest {
 
     private final long moduleId = 232L;
     private final String testModuleName = "TestModule";
@@ -75,8 +78,8 @@ class BuildModuleTest extends AbstractLifecycleTest {
     @BeforeEach
     void setUp() {
         step = spy(new BuildModule());
-        step.bundle(bundle);
 
+        doReturn(bundle).when(step).bundle();
         doReturn(modulesManager).when(step).modulesManager();
         doReturn(bundleContext).when(bundle).getBundleContext();
         doReturn(bundle).when(bundleContext).getBundle(moduleId);
@@ -390,6 +393,12 @@ class BuildModuleTest extends AbstractLifecycleTest {
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
         return inputModule;
+    }
+
+    private JSONObject parseFlow(TestFlow testFlow) {
+        URL url = testFlow.url();
+        String flowAsJson = FileUtils.readFrom(url);
+        return JsonParser.from(flowAsJson);
     }
 
 }
