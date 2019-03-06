@@ -31,9 +31,9 @@ public class ESB implements EventListener, HotSwapListener {
     private static final Dictionary<String, ?> NO_PROPERTIES = null;
 
     @Reference
-    public SystemProperty systemProperty;
+    private SystemProperty systemProperty;
     @Reference
-    public ConfigurationAdmin configurationAdmin;
+    private ConfigurationAdmin configurationAdmin;
 
     protected BundleContext context;
     protected ModulesManager modulesManager;
@@ -122,14 +122,17 @@ public class ESB implements EventListener, HotSwapListener {
 
     @Override
     public synchronized void hotSwap(long moduleId, String resourcesRootDirectory) {
-        StepRunner.get(context, modulesManager)
-                .next(new StopModuleAndReleaseReferences())
-                .next(new RemoveModule(modulesManager))
-                .next(new BuildHotSwapAndAddModule(modulesManager, resourcesRootDirectory))
-                .next(new ResolveModuleDependencies(componentRegistry))
-                .next(new BuildModule(modulesManager))
-                .next(new StartModule())
-                .execute(moduleId);
+        System.out.println(resourcesRootDirectory);
+        /**
+         StepRunner.get(context, modulesManager)
+         .next(new StopModuleAndReleaseReferences())
+         .next(new RemoveModule(modulesManager))
+         .next(new BuildHotSwapAndAddModule(modulesManager, resourcesRootDirectory))
+         .next(new ResolveModuleDependencies(componentRegistry))
+         .next(new BuildModule(modulesManager))
+         .next(new StartModule())
+         .execute(moduleId);
+         */
     }
 
     private void registerHotSwapService(BundleContext context) {

@@ -34,15 +34,14 @@ public class DevAdminConsoleActivator {
     private static final String CONFIG_KEY_LISTENING_PORT = "listening.port";
     private static final String CONFIG_PID = "com.esb.admin.console.dev";
 
-    // TODO: Check if we can make them private
     @Reference
-    public ModuleService moduleService;
+    private ModuleService moduleService;
     @Reference
-    public SystemProperty systemProperty;
+    private SystemProperty systemProperty;
     @Reference
-    public HotSwapService hotSwapService;
+    private HotSwapService hotSwapService;
     @Reference
-    public ConfigurationService configurationService;
+    private ConfigurationService configurationService;
 
     private DevAdminConsoleService service;
 
