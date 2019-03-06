@@ -1,6 +1,7 @@
 package com.esb.module;
 
 import com.esb.flow.Flow;
+import com.esb.module.state.ModuleState;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 
-import static com.esb.module.ModuleState.*;
+import static com.esb.module.state.ModuleState.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;

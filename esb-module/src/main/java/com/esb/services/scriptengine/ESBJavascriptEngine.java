@@ -1,4 +1,4 @@
-package com.esb.services.javascript;
+package com.esb.services.scriptengine;
 
 import com.esb.api.exception.ESBException;
 import com.esb.api.message.Message;

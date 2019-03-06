@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
-import static com.esb.module.ModuleState.*;
+import static com.esb.module.state.ModuleState.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;

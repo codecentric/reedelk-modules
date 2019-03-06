@@ -1,14 +1,14 @@
 package com.esb.lifecycle;
 
 import com.esb.module.Module;
-import com.esb.module.ModuleState;
+import com.esb.module.state.ModuleState;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
 import static com.esb.commons.Preconditions.checkState;
-import static com.esb.module.ModuleState.*;
+import static com.esb.module.state.ModuleState.*;
 
 public class UpdateUnregisteredComponent extends AbstractStep<Module, Module> {
 

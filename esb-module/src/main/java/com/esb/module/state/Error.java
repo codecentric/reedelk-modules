@@ -1,4 +1,4 @@
-package com.esb.module;
+package com.esb.module.state;
 
 import java.util.ArrayList;
 import java.util.Collection;

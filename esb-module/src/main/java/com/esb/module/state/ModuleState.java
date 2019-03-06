@@ -1,4 +1,4 @@
-package com.esb.module;
+package com.esb.module.state;
 
 public enum ModuleState {
 

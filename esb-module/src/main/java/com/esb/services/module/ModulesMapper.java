@@ -3,13 +3,13 @@ package com.esb.services.module;
 import com.esb.internal.api.Mapper;
 import com.esb.internal.api.module.v1.ModuleGETRes;
 import com.esb.module.Module;
-import com.esb.module.ModuleState;
+import com.esb.module.state.ModuleState;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 
-import static com.esb.module.ModuleState.*;
+import static com.esb.module.state.ModuleState.*;
 import static java.util.stream.Collectors.toList;
 
 public class ModulesMapper implements Mapper<Module, ModuleGETRes> {

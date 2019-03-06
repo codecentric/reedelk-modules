@@ -3,7 +3,7 @@ package com.esb.lifecycle;
 
 import com.esb.flow.Flow;
 import com.esb.module.Module;
-import com.esb.module.ModuleState;
+import com.esb.module.state.ModuleState;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

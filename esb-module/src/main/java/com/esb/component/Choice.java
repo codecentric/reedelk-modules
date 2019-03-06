@@ -3,8 +3,8 @@ package com.esb.component;
 import com.esb.api.exception.ESBException;
 import com.esb.api.message.Message;
 import com.esb.flow.ExecutionNode;
-import com.esb.services.javascript.ESBJavascriptEngine;
-import com.esb.services.javascript.ScriptEngine;
+import com.esb.services.scriptengine.ESBJavascriptEngine;
+import com.esb.services.scriptengine.ScriptEngine;
 
 import javax.script.ScriptException;
 import java.util.ArrayList;

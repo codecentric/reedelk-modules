@@ -1,6 +1,8 @@
 package com.esb.module;
 
 import com.esb.flow.Flow;
+import com.esb.module.state.*;
+import com.esb.module.state.Error;
 
 import java.util.Collection;
 import java.util.HashMap;

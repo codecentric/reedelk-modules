@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static com.esb.module.ModuleState.STARTED;
+import static com.esb.module.state.ModuleState.STARTED;
 import static java.lang.String.format;
 
 public class StopModuleAndReleaseReferences extends AbstractStep<Module, Module> {

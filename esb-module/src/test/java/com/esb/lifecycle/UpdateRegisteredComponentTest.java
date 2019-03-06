@@ -8,8 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.esb.module.ModuleState.RESOLVED;
-import static com.esb.module.ModuleState.UNRESOLVED;
+import static com.esb.module.state.ModuleState.RESOLVED;
+import static com.esb.module.state.ModuleState.UNRESOLVED;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

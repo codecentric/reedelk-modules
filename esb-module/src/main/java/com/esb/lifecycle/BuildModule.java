@@ -7,7 +7,7 @@ import com.esb.commons.JsonParser;
 import com.esb.commons.UniquePropertyValueValidator;
 import com.esb.flow.*;
 import com.esb.module.Module;
-import com.esb.module.ModuleState;
+import com.esb.module.state.ModuleState;
 import org.json.JSONObject;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;

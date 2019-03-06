@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.esb.commons.Preconditions.checkState;
-import static com.esb.module.ModuleState.UNRESOLVED;
+import static com.esb.module.state.ModuleState.UNRESOLVED;
 import static java.lang.String.format;
 
 public class UpdateRegisteredComponent extends AbstractStep<Module, Module> {

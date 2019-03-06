@@ -1,6 +1,7 @@
-package com.esb.module;
+package com.esb.module.state;
 
 import com.esb.flow.Flow;
+import com.esb.module.State;
 
 import java.util.Collection;
 
