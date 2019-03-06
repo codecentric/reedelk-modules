@@ -65,10 +65,11 @@ public class ESB implements EventListener, HotSwapListener {
 
     @Override
     public synchronized void moduleStarted(long moduleId) {
-        StepRunner.get(context)
-                .next(new BuildAndAddModule(modulesManager))
-                .next(new ResolveModuleDependencies(componentRegistry))
-                .next(new BuildModule(modulesManager))
+        StepRunner.get(context, componentRegistry)
+                .next(new CreateModule())
+                .next(new AddModule())
+                .next(new ResolveModuleDependencies())
+                .next(new BuildModule())
                 .next(new StartModule())
                 .execute(moduleId);
     }
@@ -77,7 +78,7 @@ public class ESB implements EventListener, HotSwapListener {
     public synchronized void moduleStopping(long moduleId) {
         StepRunner.get(context, modulesManager)
                 .next(new StopModuleAndReleaseReferences())
-                .next(new RemoveModule(modulesManager))
+                .next(new RemoveModule())
                 .execute(moduleId);
     }
 
@@ -90,7 +91,7 @@ public class ESB implements EventListener, HotSwapListener {
         if (modulesManager.isModuleRegistered(moduleId)) {
             StepRunner.get(context, modulesManager)
                     .next(new StopModuleAndReleaseReferences())
-                    .next(new RemoveModule(modulesManager))
+                    .next(new RemoveModule())
                     .execute(moduleId);
         }
     }
@@ -103,7 +104,7 @@ public class ESB implements EventListener, HotSwapListener {
                 .forEach(unresolvedModule ->
                         StepRunner.get(context, modulesManager)
                                 .next(new UpdateRegisteredComponent(componentName))
-                                .next(new BuildModule(modulesManager))
+                                .next(new BuildModule())
                                 .next(new StartModule())
                                 .execute(unresolvedModule.id()));
     }
@@ -122,17 +123,15 @@ public class ESB implements EventListener, HotSwapListener {
 
     @Override
     public synchronized void hotSwap(long moduleId, String resourcesRootDirectory) {
-        System.out.println(resourcesRootDirectory);
-        /**
-         StepRunner.get(context, modulesManager)
-         .next(new StopModuleAndReleaseReferences())
-         .next(new RemoveModule(modulesManager))
-         .next(new BuildHotSwapAndAddModule(modulesManager, resourcesRootDirectory))
-         .next(new ResolveModuleDependencies(componentRegistry))
-         .next(new BuildModule(modulesManager))
-         .next(new StartModule())
-         .execute(moduleId);
-         */
+        StepRunner.get(context, modulesManager, componentRegistry)
+                .next(new StopModuleAndReleaseReferences())
+                .next(new RemoveModule())
+                .next(new HotSwapModule(resourcesRootDirectory))
+                .next(new AddModule())
+                .next(new ResolveModuleDependencies())
+                .next(new BuildModule())
+                .next(new StartModule())
+                .execute(moduleId);
     }
 
     private void registerHotSwapService(BundleContext context) {

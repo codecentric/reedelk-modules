@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class BuildAndAddModuleTest {
+class CreateModuleTest {
 
     private static final Void VOID = null;
 
@@ -23,11 +23,11 @@ class BuildAndAddModuleTest {
     @Mock
     private ModulesManager modulesManager;
 
-    private BuildAndAddModule step;
+    private CreateModule step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new BuildAndAddModule(modulesManager));
+        step = spy(new CreateModule(modulesManager));
         doReturn(bundle).when(step).bundle();
     }
 

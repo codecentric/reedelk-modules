@@ -2,7 +2,6 @@ package com.esb.lifecycle;
 
 import com.esb.commons.JsonParser;
 import com.esb.commons.JsonPropertyValueCollector;
-import com.esb.component.ComponentRegistry;
 import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
 
@@ -10,12 +9,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
-
-    private final ComponentRegistry componentRegistry;
-
-    public ResolveModuleDependencies(ComponentRegistry componentRegistry) {
-        this.componentRegistry = componentRegistry;
-    }
 
     @Override
     public Module run(Module module) {
@@ -33,7 +26,7 @@ public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
         }
 
         Collection<String> resolvedComponents = collectFlowAndSubFlowImplementorsValues(deserializedModule);
-        Collection<String> unresolvedComponents = componentRegistry.unregisteredComponentsOf(resolvedComponents);
+        Collection<String> unresolvedComponents = componentRegistry().unregisteredComponentsOf(resolvedComponents);
 
         // We remove the unresolved components from the set of resolved ones.
         // Resolved must not contain unresolved components.

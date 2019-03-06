@@ -28,12 +28,6 @@ public class BuildModule extends AbstractStep<Module, Module> {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildModule.class);
 
-    private final ModulesManager modulesManager;
-
-    public BuildModule(ModulesManager modulesManager) {
-        this.modulesManager = modulesManager;
-    }
-
     @Override
     public Module run(Module module) {
 
@@ -94,6 +88,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
 
         String flowId = JsonParser.Flow.id(flowDefinition);
 
+        ModulesManager modulesManager = modulesManager();
         FlowBuilderContext context = new FlowBuilderContext(bundle, modulesManager, deserializedModule);
         FlowBuilder flowBuilder = new FlowBuilder(context);
         try {
