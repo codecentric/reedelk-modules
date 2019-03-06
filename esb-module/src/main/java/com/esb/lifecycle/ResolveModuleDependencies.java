@@ -25,7 +25,7 @@ public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
             return module;
         }
 
-        Collection<String> resolvedComponents = collectFlowAndSubFlowImplementorsValues(deserializedModule);
+        Collection<String> resolvedComponents = collectImplementorDependencies(deserializedModule);
         Collection<String> unresolvedComponents = componentRegistry().unregisteredComponentsOf(resolvedComponents);
 
         // We remove the unresolved components from the set of resolved ones.
@@ -42,7 +42,7 @@ public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
     }
 
 
-    private Collection<String> collectFlowAndSubFlowImplementorsValues(DeserializedModule deserializedModule) {
+    private Collection<String> collectImplementorDependencies(DeserializedModule deserializedModule) {
         JsonPropertyValueCollector collector = new JsonPropertyValueCollector(JsonParser.Implementor.name());
         Collection<String> flowImplementorNames = collector.collect(deserializedModule.getFlows());
         Collection<String> subFlowImplementorNames = collector.collect(deserializedModule.getSubflows());
