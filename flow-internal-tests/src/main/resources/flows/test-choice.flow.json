@@ -13,7 +13,7 @@
       "implementor.name": "com.esb.component.Choice",
       "when": [
         {
-          "condition": "payload.name == 'Yeppa'",
+          "condition": "payload.name == 'Super'",
           "next": [
             {
               "implementor.name": "com.esb.core.component.SetPayload",
