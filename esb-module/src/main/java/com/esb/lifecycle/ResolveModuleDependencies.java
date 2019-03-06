@@ -44,12 +44,14 @@ public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
 
     private Collection<String> collectFlowAndSubFlowImplementorsValues(DeserializedModule deserializedModule) {
         JsonPropertyValueCollector collector = new JsonPropertyValueCollector(JsonParser.Implementor.name());
-        Collection<String> flowComponentNames = collector.collect(deserializedModule.getFlows());
-        Collection<String> subFlowComponentNames = collector.collect(deserializedModule.getSubflows());
-        Collection<String> allComponentsUsedByModule = new HashSet<>();
+        Collection<String> flowImplementorNames = collector.collect(deserializedModule.getFlows());
+        Collection<String> subFlowImplementorNames = collector.collect(deserializedModule.getSubflows());
+        Collection<String> configImplementorNames = collector.collect(deserializedModule.getConfigurations());
 
-        allComponentsUsedByModule.addAll(flowComponentNames);
-        allComponentsUsedByModule.addAll(subFlowComponentNames);
+        Collection<String> allComponentsUsedByModule = new HashSet<>();
+        allComponentsUsedByModule.addAll(flowImplementorNames);
+        allComponentsUsedByModule.addAll(subFlowImplementorNames);
+        allComponentsUsedByModule.addAll(configImplementorNames);
         return allComponentsUsedByModule;
     }
 

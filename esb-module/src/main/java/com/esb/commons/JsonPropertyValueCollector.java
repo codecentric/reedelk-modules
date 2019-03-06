@@ -20,11 +20,11 @@ public class JsonPropertyValueCollector {
         this.propertySearchFor = propertyName;
     }
 
-    public Collection<String> collect(Set<JSONObject> root) {
+    public Collection<String> collect(Collection<JSONObject> root) {
         return collectComponentNames(root);
     }
 
-    private Collection<String> collectComponentNames(Set<JSONObject> jsonStructure) {
+    private Collection<String> collectComponentNames(Collection<JSONObject> jsonStructure) {
         Set<String> componentNames = new HashSet<>();
         for (JSONObject jsonObject : jsonStructure) {
             componentNames.addAll(collectComponentNames(jsonObject));
