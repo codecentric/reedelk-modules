@@ -5,10 +5,10 @@ import com.esb.module.ModuleDeserializer;
 
 public class FileSystemDeserializer implements ModuleDeserializer {
 
-    private final String rootPath;
+    private final String resourcesRootDirectory;
 
-    public FileSystemDeserializer(String rootPath) {
-        this.rootPath = rootPath;
+    public FileSystemDeserializer(String resourcesRootDirectory) {
+        this.resourcesRootDirectory = resourcesRootDirectory;
     }
 
     @Override

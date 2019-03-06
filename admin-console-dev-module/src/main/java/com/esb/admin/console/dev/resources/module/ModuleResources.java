@@ -1,6 +1,6 @@
-package com.esb.admin.console.dev.resources;
+package com.esb.admin.console.dev.resources.module;
 
-import com.esb.internal.api.module.v1.ModuleService;
+import com.esb.internal.api.ModuleService;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.facets.fork.FkMethods;
@@ -21,10 +21,10 @@ public class ModuleResources implements Fork {
 
     public ModuleResources(ModuleService service) {
         fkRegex = new FkRegex(BASE_PATH, new TkFork(
+                new FkMethods(GET.name(), new ModuleGETResource(service)),
                 new FkMethods(PUT.name(), new ModulePUTResource(service)),
                 new FkMethods(POST.name(), new ModulePOSTResource(service)),
-                new FkMethods(DELETE.name(), new ModuleDELETEResource(service)),
-                new FkMethods(GET.name(), new ModuleGETResource(service))));
+                new FkMethods(DELETE.name(), new ModuleDELETEResource(service))));
     }
 
     @Override

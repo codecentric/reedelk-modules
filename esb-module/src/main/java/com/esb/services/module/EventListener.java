@@ -1,4 +1,4 @@
-package com.esb.services.event;
+package com.esb.services.module;
 
 public interface EventListener {
 
@@ -11,4 +11,5 @@ public interface EventListener {
     void componentRegistered(String componentName);
 
     void componentUnregistering(String componentName);
+
 }

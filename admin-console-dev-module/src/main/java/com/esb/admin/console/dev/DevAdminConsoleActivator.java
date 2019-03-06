@@ -1,9 +1,16 @@
 package com.esb.admin.console.dev;
 
-import com.esb.admin.console.dev.resources.*;
+import com.esb.admin.console.dev.resources.console.ConsoleCSSResource;
+import com.esb.admin.console.dev.resources.console.ConsoleHTMLResource;
+import com.esb.admin.console.dev.resources.console.ConsoleIndexResource;
+import com.esb.admin.console.dev.resources.console.ConsoleJavascriptResource;
+import com.esb.admin.console.dev.resources.health.HealthResources;
+import com.esb.admin.console.dev.resources.hotswap.HotSwapResources;
+import com.esb.admin.console.dev.resources.module.ModuleResources;
 import com.esb.api.service.ConfigurationService;
+import com.esb.internal.api.HotSwapService;
+import com.esb.internal.api.ModuleService;
 import com.esb.internal.api.SystemProperty;
-import com.esb.internal.api.module.v1.ModuleService;
 import org.osgi.framework.BundleException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -27,10 +34,13 @@ public class DevAdminConsoleActivator {
     private static final String CONFIG_KEY_LISTENING_PORT = "listening.port";
     private static final String CONFIG_PID = "com.esb.admin.console.dev";
 
+    // TODO: Check if we can make them private
+    @Reference
+    public ModuleService moduleService;
     @Reference
     public SystemProperty systemProperty;
     @Reference
-    public ModuleService moduleService;
+    public HotSwapService hotSwapService;
     @Reference
     public ConfigurationService configurationService;
 
@@ -44,6 +54,7 @@ public class DevAdminConsoleActivator {
         service = new DevAdminConsoleService(listeningPort,
                 new HealthResources(systemProperty),
                 new ModuleResources(moduleService),
+                new HotSwapResources(hotSwapService),
                 new ConsoleCSSResource(),
                 new ConsoleHTMLResource(),
                 new ConsoleJavascriptResource(),

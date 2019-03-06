@@ -87,7 +87,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
         Graph flowGraph = Graph.build();
 
         // TODO: THis should be part of the validation process of the flow with JSON schema.
-        if (doesNotHaveValidFlowId(flowDefinition)) {
+        if (invalidFlowId(flowDefinition)) {
             return new ErrorStateFlow(flowGraph,
                     new ESBException("\"id\" property must be defined in the flow definition"));
         }
@@ -96,7 +96,6 @@ public class BuildModule extends AbstractStep<Module, Module> {
 
         FlowBuilderContext context = new FlowBuilderContext(bundle, modulesManager, deserializedModule);
         FlowBuilder flowBuilder = new FlowBuilder(context);
-
         try {
             flowBuilder.build(flowGraph, flowDefinition);
             return new Flow(flowId, flowGraph);
@@ -110,7 +109,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
         moduleFlows.forEach(flow -> flow.releaseReferences(bundle));
     }
 
-    private boolean doesNotHaveValidFlowId(JSONObject flowDefinition) {
+    private boolean invalidFlowId(JSONObject flowDefinition) {
         return !JsonParser.Flow.hasId(flowDefinition) || isBlank(JsonParser.Flow.id(flowDefinition));
     }
 

@@ -1,4 +1,4 @@
-package com.esb.admin.console.dev.resources;
+package com.esb.admin.console.dev.resources.console;
 
 import org.takes.Request;
 import org.takes.Response;

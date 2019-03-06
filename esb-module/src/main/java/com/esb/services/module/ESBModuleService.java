@@ -1,11 +1,10 @@
 package com.esb.services.module;
 
 import com.esb.api.exception.ESBException;
-import com.esb.module.ModulesManager;
+import com.esb.internal.api.ModuleService;
 import com.esb.internal.api.module.v1.ModuleGETRes;
-import com.esb.internal.api.module.v1.ModuleService;
 import com.esb.internal.api.module.v1.ModulesGETRes;
-import com.esb.services.event.EventListener;
+import com.esb.module.ModulesManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -28,22 +27,22 @@ public class ESBModuleService implements ModuleService {
 
     private final ModulesMapper mapper = new ModulesMapper();
 
-    private final BundleContext bundleContext;
-    private final EventListener eventListener;
+    private final EventListener listener;
+    private final BundleContext context;
     private final ModulesManager modulesManager;
 
-    public ESBModuleService(BundleContext bundleContext, ModulesManager modulesManager, EventListener eventListener) {
-        this.eventListener = eventListener;
-        this.bundleContext = bundleContext;
+    public ESBModuleService(BundleContext context, ModulesManager modulesManager, EventListener listener) {
         this.modulesManager = modulesManager;
+        this.listener = listener;
+        this.context = context;
     }
 
     @Override
     public long update(String modulePath) {
-        Optional<Bundle> optionalBundleAtPath = getModuleAtPath(modulePath);
-        Bundle bundleAtPath = checkIsPresentAndGetOrThrow(optionalBundleAtPath, "Update failed: could not find registered bundle in target file path=%s", modulePath);
+        Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
+        Bundle bundleAtPath = checkIsPresentAndGetOrThrow(optionalBundle, "Update failed: could not find registered bundle in target file path=%s", modulePath);
 
-        eventListener.moduleStopping(bundleAtPath.getBundleId());
+        listener.moduleStopping(bundleAtPath.getBundleId());
         executeOperation(bundleAtPath, Bundle::stop, Bundle::update, Bundle::start);
 
         logger.debug("Module [{}] updated", bundleAtPath.getSymbolicName());
@@ -53,10 +52,10 @@ public class ESBModuleService implements ModuleService {
 
     @Override
     public long uninstall(String modulePath) {
-        Optional<Bundle> optionalBundleAtPath = getModuleAtPath(modulePath);
-        Bundle bundleAtPath = checkIsPresentAndGetOrThrow(optionalBundleAtPath, "Uninstall failed: could not find registered bundle in target file path=%s", modulePath);
+        Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
+        Bundle bundleAtPath = checkIsPresentAndGetOrThrow(optionalBundle, "Uninstall failed: could not find registered bundle in target file path=%s", modulePath);
 
-        eventListener.moduleStopping(bundleAtPath.getBundleId());
+        listener.moduleStopping(bundleAtPath.getBundleId());
         executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall);
 
         logger.debug("Module [{}] uninstalled", bundleAtPath.getSymbolicName());
@@ -66,11 +65,11 @@ public class ESBModuleService implements ModuleService {
 
     @Override
     public long install(String modulePath) {
-        Optional<Bundle> optionalBundleAtPath = getModuleAtPath(modulePath);
-        checkState(!optionalBundleAtPath.isPresent(), format("Install failed: the bundle in target file path=%s is already installed. Did you mean update?", modulePath));
+        Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
+        checkState(!optionalBundle.isPresent(), format("Install failed: the bundle in target file path=%s is already installed. Did you mean update?", modulePath));
         try {
 
-            Bundle installedBundle = bundleContext.installBundle(modulePath);
+            Bundle installedBundle = context.installBundle(modulePath);
             installedBundle.start();
 
             logger.debug("Module [{}] installed", installedBundle.getSymbolicName());
@@ -83,8 +82,8 @@ public class ESBModuleService implements ModuleService {
 
     @Override
     public long installOrUpdate(String modulePath) {
-        Optional<Bundle> optionalBundleAtPath = getModuleAtPath(modulePath);
-        if (optionalBundleAtPath.isPresent()) {
+        Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
+        if (optionalBundle.isPresent()) {
             return update(modulePath);
         } else {
             return install(modulePath);
@@ -105,7 +104,7 @@ public class ESBModuleService implements ModuleService {
     }
 
     private Optional<Bundle> getModuleAtPath(String bundlePath) {
-        return Optional.ofNullable(bundleContext.getBundle(bundlePath));
+        return Optional.ofNullable(context.getBundle(bundlePath));
     }
 
     private interface Operation {

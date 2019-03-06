@@ -1,4 +1,4 @@
-package com.esb.services.event;
+package com.esb.services.module;
 
 import com.esb.module.ModuleProperties;
 import org.osgi.framework.*;

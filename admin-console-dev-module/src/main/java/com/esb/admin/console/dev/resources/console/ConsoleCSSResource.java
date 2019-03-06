@@ -1,16 +1,18 @@
-package com.esb.admin.console.dev.resources;
+package com.esb.admin.console.dev.resources.console;
 
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.Fork;
 import org.takes.tk.TkClasspath;
 import org.takes.tk.TkWithType;
 
+import static com.esb.api.message.MimeType.CSS;
+
 public class ConsoleCSSResource extends AbstractConsoleResource {
 
     private final FkRegex fkRegex;
 
     public ConsoleCSSResource() {
-        this.fkRegex = new FkRegex(BASE_PATH + "/css/.+", new TkWithType(new TkClasspath(), "text/css"));
+        this.fkRegex = new FkRegex(BASE_PATH + "/css/.+", new TkWithType(new TkClasspath(), CSS.toString()));
     }
 
     @Override

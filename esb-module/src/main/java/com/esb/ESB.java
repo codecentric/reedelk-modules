@@ -3,14 +3,17 @@ package com.esb;
 import com.esb.api.service.ConfigurationService;
 import com.esb.component.ComponentRegistry;
 import com.esb.component.ESBComponent;
-import com.esb.module.ModulesManager;
+import com.esb.internal.api.HotSwapService;
+import com.esb.internal.api.ModuleService;
 import com.esb.internal.api.SystemProperty;
-import com.esb.internal.api.module.v1.ModuleService;
 import com.esb.lifecycle.*;
+import com.esb.module.ModulesManager;
 import com.esb.services.configuration.ESBConfigurationService;
-import com.esb.services.event.ESBEventService;
-import com.esb.services.event.EventListener;
+import com.esb.services.hotswap.ESBHotSwapService;
+import com.esb.services.hotswap.HotSwapListener;
+import com.esb.services.module.ESBEventService;
 import com.esb.services.module.ESBModuleService;
+import com.esb.services.module.EventListener;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
@@ -23,7 +26,7 @@ import java.util.Dictionary;
 import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
 
 @Component(service = ESB.class, scope = SINGLETON, immediate = true)
-public class ESB implements EventListener {
+public class ESB implements EventListener, HotSwapListener {
 
     private static final Dictionary<String, ?> NO_PROPERTIES = null;
 
@@ -34,9 +37,9 @@ public class ESB implements EventListener {
 
     protected BundleContext context;
     protected ModulesManager modulesManager;
-    protected ComponentRegistry componentRegistry;
 
     private ESBEventService eventDispatcher;
+    private ComponentRegistry componentRegistry;
 
     @Activate
     public void start(BundleContext context) {
@@ -50,6 +53,7 @@ public class ESB implements EventListener {
         context.addServiceListener(eventDispatcher);
 
         registerModuleService(context);
+        registerHotSwapService(context);
         registerConfigurationService(context);
     }
 
@@ -62,7 +66,6 @@ public class ESB implements EventListener {
     @Override
     public synchronized void moduleStarted(long moduleId) {
         StepRunner.get(context)
-                // Add Module step
                 .next(new BuildAndAddModule(modulesManager))
                 .next(new ResolveModuleDependencies(componentRegistry))
                 .next(new BuildModule(modulesManager))
@@ -117,14 +120,31 @@ public class ESB implements EventListener {
                                 .execute(moduleUsingComponent.id()));
     }
 
+    @Override
+    public synchronized void hotSwap(long moduleId, String resourcesRootDirectory) {
+        StepRunner.get(context, modulesManager)
+                .next(new StopModuleAndReleaseReferences())
+                .next(new RemoveModule(modulesManager))
+                .next(new BuildHotSwapAndAddModule(modulesManager, resourcesRootDirectory))
+                .next(new ResolveModuleDependencies(componentRegistry))
+                .next(new BuildModule(modulesManager))
+                .next(new StartModule())
+                .execute(moduleId);
+    }
+
+    private void registerHotSwapService(BundleContext context) {
+        ESBHotSwapService service = new ESBHotSwapService(context, this);
+        context.registerService(HotSwapService.class, service, NO_PROPERTIES);
+    }
+
     private void registerModuleService(BundleContext context) {
-        ESBModuleService ESBModuleService = new ESBModuleService(context, modulesManager, this);
-        context.registerService(ModuleService.class, ESBModuleService, NO_PROPERTIES);
+        ESBModuleService service = new ESBModuleService(context, modulesManager, this);
+        context.registerService(ModuleService.class, service, NO_PROPERTIES);
     }
 
     private void registerConfigurationService(BundleContext context) {
-        ESBConfigurationService configurationService = new ESBConfigurationService(configurationAdmin, systemProperty);
-        configurationService.initialize();
-        context.registerService(ConfigurationService.class, configurationService, NO_PROPERTIES);
+        ESBConfigurationService service = new ESBConfigurationService(configurationAdmin, systemProperty);
+        service.initialize();
+        context.registerService(ConfigurationService.class, service, NO_PROPERTIES);
     }
 }

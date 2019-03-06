@@ -1,4 +1,4 @@
-package com.esb.admin.console.dev.resources;
+package com.esb.admin.console.dev.resources.health;
 
 import com.esb.internal.api.InternalAPI;
 import com.esb.internal.api.SystemProperty;
@@ -16,6 +16,8 @@ import org.takes.rs.RsWithHeader;
 import java.io.IOException;
 
 import static com.esb.admin.console.dev.HttpMethod.GET;
+import static com.esb.admin.console.dev.commons.HttpHeader.CONTENT_TYPE;
+import static com.esb.api.message.MimeType.APPLICATION_JSON;
 
 public class HealthResources implements Fork {
 
@@ -28,7 +30,7 @@ public class HealthResources implements Fork {
         fkRegex = new FkRegex(BASE_PATH, new TkFork(
                 new FkMethods(GET.name(),
                         new RsWithBody(
-                                new RsWithHeader("Content-Type: application/json"), responseJson.getBytes()))));
+                                new RsWithHeader(CONTENT_TYPE, APPLICATION_JSON.toString()), responseJson.getBytes()))));
     }
 
     @Override
