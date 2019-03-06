@@ -62,7 +62,9 @@ public class ESB implements EventListener {
     @Override
     public synchronized void moduleStarted(long moduleId) {
         StepRunner.get(context)
-                .next(new ResolveModuleDependencies(componentRegistry, modulesManager))
+                // Add Module step
+                .next(new BuildAndAddModule(modulesManager))
+                .next(new ResolveModuleDependencies(componentRegistry))
                 .next(new BuildModule(modulesManager))
                 .next(new StartModule())
                 .execute(moduleId);

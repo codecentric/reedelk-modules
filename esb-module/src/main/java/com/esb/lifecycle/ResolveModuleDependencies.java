@@ -4,7 +4,6 @@ import com.esb.commons.DeserializedModule;
 import com.esb.commons.JsonParser;
 import com.esb.commons.JsonPropertyValueCollector;
 import com.esb.component.ComponentRegistry;
-import com.esb.flow.ModulesManager;
 import com.esb.module.Module;
 import org.json.JSONException;
 import org.osgi.framework.Bundle;
@@ -12,43 +11,32 @@ import org.osgi.framework.Bundle;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class ResolveModuleDependencies extends AbstractStep<Void, Module> {
+public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
 
     private final ComponentRegistry componentRegistry;
-    private final ModulesManager modulesManager;
 
-    public ResolveModuleDependencies(ComponentRegistry componentRegistry, ModulesManager modulesManager) {
+    public ResolveModuleDependencies(ComponentRegistry componentRegistry) {
         this.componentRegistry = componentRegistry;
-        this.modulesManager = modulesManager;
     }
 
     @Override
-    public Module run(Void nothing) {
+    public Module run(Module module) {
         final Bundle bundle = bundle();
-
-        Module module = Module.builder()
-                .moduleId(bundle.getBundleId())
-                .name(bundle.getSymbolicName())
-                .moduleFilePath(bundle.getLocation())
-                .version(bundle.getVersion().toString())
-                .build();
 
         DeserializedModule deserializedModule;
         try {
             deserializedModule = deserializedModule(bundle);
         } catch (JSONException error) {
             module.error(error);
-            modulesManager.add(module);
             return module;
         }
 
+        // This is a module with only components and there are no Flows.
         if (deserializedModule.getFlows().isEmpty()) {
-            // This is a module with only components (no flows). The state is Installed.
-            modulesManager.add(module);
             return module;
         }
 
-        Collection<String> resolvedComponents = collectFlowAndSubFlowComponentsUsedByModule(deserializedModule);
+        Collection<String> resolvedComponents = collectFlowAndSubFlowImplementorsValues(deserializedModule);
         Collection<String> unresolvedComponents = componentRegistry.unregisteredComponentsOf(resolvedComponents);
 
         // We remove the unresolved components from the set of resolved ones.
@@ -61,12 +49,11 @@ public class ResolveModuleDependencies extends AbstractStep<Void, Module> {
             module.resolve(resolvedComponents);
         }
 
-        modulesManager.add(module);
         return module;
     }
 
 
-    private Collection<String> collectFlowAndSubFlowComponentsUsedByModule(DeserializedModule deserializedModule) {
+    private Collection<String> collectFlowAndSubFlowImplementorsValues(DeserializedModule deserializedModule) {
         JsonPropertyValueCollector collector = new JsonPropertyValueCollector(JsonParser.Implementor.name());
         Collection<String> flowComponentNames = collector.collect(deserializedModule.getFlows());
         Collection<String> subFlowComponentNames = collector.collect(deserializedModule.getSubflows());

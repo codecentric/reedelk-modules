@@ -2,7 +2,6 @@ package com.esb.lifecycle;
 
 import com.esb.commons.DeserializedModule;
 import com.esb.component.ComponentRegistry;
-import com.esb.flow.ModulesManager;
 import com.esb.module.Module;
 import com.esb.test.utils.TestFlow;
 import org.json.JSONException;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.Version;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,17 +30,15 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
     @Mock
     private Bundle bundle;
     @Mock
-    private ModulesManager modulesManager;
-    @Mock
     private ComponentRegistry componentRegistry;
 
     private ResolveModuleDependencies step;
+    private Module aModule = Module.builder().build();
 
     @BeforeEach
     void setUp() {
-        step = spy(new ResolveModuleDependencies(componentRegistry, modulesManager));
+        step = spy(new ResolveModuleDependencies(componentRegistry));
         doReturn(bundle).when(step).bundle();
-        doReturn(new Version("1.0.0")).when(bundle).getVersion();
     }
 
     @Test
@@ -53,14 +49,11 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
                 .getEntryPaths(anyString());
 
         // When
-        Module module = step.run(null);
+        Module module = step.run(aModule);
 
         // Then
         assertThat(module).isNotNull();
         assertThat(module.state()).isEqualTo(INSTALLED);
-
-        verify(modulesManager).add(module);
-        verifyNoMoreInteractions(modulesManager);
     }
 
     @Test
@@ -79,14 +72,11 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
                 .deserializedModule(bundle);
 
         // When
-        Module module = step.run(null);
+        Module module = step.run(aModule);
 
         // Then
         assertThat(module).isNotNull();
         assertThat(module.state()).isEqualTo(UNRESOLVED);
-
-        verify(modulesManager).add(module);
-        verifyNoMoreInteractions(modulesManager);
     }
 
     @Test
@@ -105,14 +95,11 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
                 .deserializedModule(bundle);
 
         // When
-        Module module = step.run(null);
+        Module module = step.run(aModule);
 
         // Then
         assertThat(module).isNotNull();
         assertThat(module.state()).isEqualTo(RESOLVED);
-
-        verify(modulesManager).add(module);
-        verifyNoMoreInteractions(modulesManager);
     }
 
     @Test
@@ -123,14 +110,11 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
                 .deserializedModule(bundle);
 
         // When
-        Module module = step.run(null);
+        Module module = step.run(aModule);
 
         // Then
         assertThat(module).isNotNull();
         assertThat(module.state()).isEqualTo(ERROR);
-
-        verify(modulesManager).add(module);
-        verifyNoMoreInteractions(modulesManager);
     }
 
     @Test
@@ -149,7 +133,7 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
                 .deserializedModule(bundle);
 
         // When
-        Module module = step.run(null);
+        Module module = step.run(aModule);
 
         // Then
         assertThat(module.state()).isEqualTo(UNRESOLVED);
