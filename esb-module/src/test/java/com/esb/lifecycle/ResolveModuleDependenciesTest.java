@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
 
     @Mock
@@ -37,7 +40,8 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
 
     @BeforeEach
     void setUp() {
-        step = spy(new ResolveModuleDependencies(componentRegistry));
+        step = spy(new ResolveModuleDependencies());
+        doReturn(componentRegistry).when(step).componentRegistry();
         aModule = Module.builder()
                 .name("test")
                 .moduleId(23L)

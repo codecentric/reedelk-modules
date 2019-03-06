@@ -74,8 +74,10 @@ class BuildModuleTest extends AbstractLifecycleTest {
 
     @BeforeEach
     void setUp() {
-        step = spy(new BuildModule(modulesManager));
+        step = spy(new BuildModule());
         step.bundle(bundle);
+
+        doReturn(modulesManager).when(step).modulesManager();
         doReturn(bundleContext).when(bundle).getBundleContext();
         doReturn(bundle).when(bundleContext).getBundle(moduleId);
     }

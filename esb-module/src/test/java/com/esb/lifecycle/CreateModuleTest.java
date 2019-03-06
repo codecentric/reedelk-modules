@@ -1,7 +1,7 @@
 package com.esb.lifecycle;
 
 import com.esb.module.Module;
-import com.esb.module.ModulesManager;
+import com.esb.module.state.ModuleState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +11,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 class CreateModuleTest {
@@ -20,14 +21,12 @@ class CreateModuleTest {
 
     @Mock
     private Bundle bundle;
-    @Mock
-    private ModulesManager modulesManager;
 
     private CreateModule step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new CreateModule(modulesManager));
+        step = spy(new CreateModule());
         doReturn(bundle).when(step).bundle();
     }
 
@@ -44,7 +43,9 @@ class CreateModuleTest {
 
         // Then
         assertThat(created).isNotNull();
-        verify(modulesManager).add(created);
-        verifyNoMoreInteractions(modulesManager);
+        assertThat(created.state()).isEqualTo(ModuleState.INSTALLED);
+        assertThat(created.version()).isEqualTo("1.0.0");
+        assertThat(created.name()).isEqualTo("test-bundle");
+        assertThat(created.moduleFilePath()).isEqualTo("file:/usr/local/desktop/my-bundle-1.0.0.jar");
     }
 }
