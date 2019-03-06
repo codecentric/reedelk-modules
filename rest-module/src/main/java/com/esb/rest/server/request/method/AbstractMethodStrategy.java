@@ -1,9 +1,9 @@
 package com.esb.rest.server.request.method;
 
 import com.esb.api.message.Message;
-import com.esb.rest.server.route.Route;
 import com.esb.rest.commons.HeadersUtils;
 import com.esb.rest.commons.InboundProperty;
+import com.esb.rest.server.route.Route;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
 

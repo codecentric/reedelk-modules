@@ -1,7 +1,7 @@
 package com.esb.lifecycle;
 
-import com.esb.module.ModulesManager;
 import com.esb.module.Module;
+import com.esb.module.ModulesManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

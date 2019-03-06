@@ -1,9 +1,9 @@
 package com.esb.module.deserializer;
 
-import com.esb.module.DeserializedModule;
-import com.esb.module.ModuleDeserializer;
+import java.net.URL;
+import java.util.List;
 
-public class FileSystemDeserializer implements ModuleDeserializer {
+public class FileSystemDeserializer extends AbstractDeserializer {
 
     private final String resourcesRootDirectory;
 
@@ -12,7 +12,8 @@ public class FileSystemDeserializer implements ModuleDeserializer {
     }
 
     @Override
-    public DeserializedModule deserialize() {
+    protected List<URL> getResources(String directory) {
+
         return null;
     }
 }

@@ -6,7 +6,6 @@ import com.esb.api.exception.ESBException;
 import com.esb.component.ESBComponent;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
-import com.esb.module.Module;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceObjects;
 import org.osgi.framework.ServiceReference;

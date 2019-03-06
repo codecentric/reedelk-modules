@@ -1,10 +1,10 @@
 package com.esb.flow.component.builder;
 
-import com.esb.module.DeserializedModule;
 import com.esb.commons.Graph;
 import com.esb.component.FlowReference;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
+import com.esb.module.DeserializedModule;
 import com.esb.test.utils.ComponentsBuilder;
 import com.esb.test.utils.TestComponent;
 import org.json.JSONObject;

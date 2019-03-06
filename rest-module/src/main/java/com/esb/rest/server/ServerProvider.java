@@ -1,7 +1,7 @@
 package com.esb.rest.server;
 
-import com.esb.rest.component.RestListenerConfiguration;
 import com.esb.rest.commons.HostNamePortKey;
+import com.esb.rest.component.RestListenerConfiguration;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;

@@ -1,7 +1,7 @@
 package com.esb.lifecycle;
 
-import com.esb.module.ModulesManager;
 import com.esb.module.Module;
+import com.esb.module.ModulesManager;
 
 public class RemoveModule extends AbstractStep<Module, Void> {
 
