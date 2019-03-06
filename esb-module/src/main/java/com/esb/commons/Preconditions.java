@@ -26,7 +26,7 @@ public class Preconditions {
         }
     }
 
-    public static void checkState(boolean expression, String errorMessage, String... args) {
+    public static void checkState(boolean expression, String errorMessage, Object... args) {
         if (!expression) {
             throw new IllegalStateException(String.format(errorMessage, args));
         }

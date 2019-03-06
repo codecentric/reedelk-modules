@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.esb.commons.Preconditions.checkArgument;
-import static com.esb.commons.Preconditions.checkState;
-import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 
 public class StepRunner {
@@ -29,10 +27,6 @@ public class StepRunner {
 
     public static StepRunner get(BundleContext context, ModulesManager modulesManager, ComponentRegistry componentRegistry) {
         return new StepRunner(context, modulesManager, componentRegistry);
-    }
-
-    public static StepRunner get(BundleContext context, ComponentRegistry componentRegistry) {
-        return new StepRunner(context, null, componentRegistry);
     }
 
     public static StepRunner get(BundleContext context, ModulesManager modulesManager) {
@@ -56,20 +50,14 @@ public class StepRunner {
         // manager is not needed (e.g ResolveModuleDependencies).
         // In all the other cases, by default, the first step must
         // accept in input the module to be processed.
-        Object output = null;
-        if (modulesManager != null) {
-            output = modulesManager.getModuleById(moduleId);
-            checkState(output != null,
-                    "Modules Manager was expected to contain module with id=[%s]",
-                    valueOf(moduleId));
-        }
-
+        Object output = modulesManager.getModuleById(moduleId);
         Bundle bundle = context.getBundle(moduleId);
+
         for (Step step : steps) {
-            ofNullable(modulesManager).ifPresent(step::modulesManager);
+            step.bundle(bundle);
+            step.modulesManager(modulesManager);
             ofNullable(componentRegistry).ifPresent(step::componentRegistry);
 
-            step.bundle(bundle);
             output = step.run(output);
         }
     }

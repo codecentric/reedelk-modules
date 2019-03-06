@@ -65,7 +65,7 @@ public class ESB implements EventListener, HotSwapListener {
 
     @Override
     public synchronized void moduleStarted(long moduleId) {
-        StepRunner.get(context, componentRegistry)
+        StepRunner.get(context, modulesManager, componentRegistry)
                 .next(new CreateModule())
                 .next(new AddModule())
                 .next(new ResolveModuleDependencies())
@@ -77,17 +77,20 @@ public class ESB implements EventListener, HotSwapListener {
     @Override
     public synchronized void moduleStopping(long moduleId) {
         StepRunner.get(context, modulesManager)
+                .next(new CheckModuleNotNull())
                 .next(new StopModuleAndReleaseReferences())
                 .next(new RemoveModule())
                 .execute(moduleId);
     }
 
+    /**
+     * When the OSGi container process is stopped, 'moduleStopping' is not called therefore the module is
+     * still registered in the ModuleManager. 'moduleStopped' is called when the OSGi container shuts down
+     * (skipping the call to moduleStopping). Note that when a module is stopped there is no more context
+     * (Bundle Context) associated with it.
+     */
     @Override
     public synchronized void moduleStopped(long moduleId) {
-        // When the OSGi container process is stopped, 'moduleStopping' is not
-        // called therefore the module is still registered in the ModuleManager.
-        // 'moduleStopped' is called when the OSGi container shuts down (skipping the call to moduleStopping).
-        // NOTE: when a module is stopped there is no more context (Bundle Context) associated with it.
         if (modulesManager.isModuleRegistered(moduleId)) {
             StepRunner.get(context, modulesManager)
                     .next(new StopModuleAndReleaseReferences())
@@ -103,6 +106,7 @@ public class ESB implements EventListener, HotSwapListener {
         modulesManager.findUnresolvedModules()
                 .forEach(unresolvedModule ->
                         StepRunner.get(context, modulesManager)
+                                .next(new CheckModuleNotNull())
                                 .next(new UpdateRegisteredComponent(componentName))
                                 .next(new BuildModule())
                                 .next(new StartModule())
@@ -116,6 +120,7 @@ public class ESB implements EventListener, HotSwapListener {
         modulesManager.findModulesUsingComponent(componentName)
                 .forEach(moduleUsingComponent ->
                         StepRunner.get(context, modulesManager)
+                                .next(new CheckModuleNotNull())
                                 .next(new StopModuleAndReleaseReferences())
                                 .next(new UpdateUnregisteredComponent(componentName))
                                 .execute(moduleUsingComponent.id()));
@@ -124,6 +129,7 @@ public class ESB implements EventListener, HotSwapListener {
     @Override
     public synchronized void hotSwap(long moduleId, String resourcesRootDirectory) {
         StepRunner.get(context, modulesManager, componentRegistry)
+                .next(new CheckModuleNotNull())
                 .next(new StopModuleAndReleaseReferences())
                 .next(new RemoveModule())
                 .next(new HotSwapModule(resourcesRootDirectory))
@@ -133,6 +139,7 @@ public class ESB implements EventListener, HotSwapListener {
                 .next(new StartModule())
                 .execute(moduleId);
     }
+
 
     private void registerHotSwapService(BundleContext context) {
         ESBHotSwapService service = new ESBHotSwapService(context, this);
@@ -149,4 +156,5 @@ public class ESB implements EventListener, HotSwapListener {
         service.initialize();
         context.registerService(ConfigurationService.class, service, NO_PROPERTIES);
     }
+
 }
