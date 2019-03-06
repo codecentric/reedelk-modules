@@ -7,7 +7,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
-public class JavascriptEngine implements ScriptEngine {
+public class ESBJavascriptEngine implements ScriptEngine {
 
     private static final String ENGINE_NAME = "nashorn";
 
@@ -15,7 +15,7 @@ public class JavascriptEngine implements ScriptEngine {
 
     private final javax.script.ScriptEngine engine;
 
-    public JavascriptEngine() {
+    public ESBJavascriptEngine() {
         engine = new ScriptEngineManager().getEngineByName(ENGINE_NAME);
     }
 

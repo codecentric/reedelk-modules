@@ -3,7 +3,7 @@ package com.esb.component;
 import com.esb.api.exception.ESBException;
 import com.esb.api.message.Message;
 import com.esb.flow.ExecutionNode;
-import com.esb.services.javascript.JavascriptEngine;
+import com.esb.services.javascript.ESBJavascriptEngine;
 import com.esb.services.javascript.ScriptEngine;
 
 import javax.script.ScriptException;
@@ -14,7 +14,7 @@ import static java.util.Collections.singletonList;
 
 public class Choice implements FlowControlComponent {
 
-    private static final ScriptEngine ENGINE = new JavascriptEngine();
+    private static final ScriptEngine ENGINE = new ESBJavascriptEngine();
 
     private PathExpressionPair defaultPath;
     private List<PathExpressionPair> pathExpressionPairs = new ArrayList<>();
