@@ -2,7 +2,7 @@ package com.esb.lifecycle;
 
 import com.esb.module.Module;
 import com.esb.module.ModuleDeserializer;
-import com.esb.module.deserializer.BundleDeserializer;
+import com.esb.module.deserializer.FileSystemDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,38 +18,39 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
-class CreateModuleTest {
+class HotSwapModuleTest {
 
     private static final Void VOID = null;
 
-    private CreateModule step;
+    private HotSwapModule step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new CreateModule());
+        step = spy(new HotSwapModule("/Users/test/dir"));
     }
 
     @Test
-    void shouldCreateModuleWithCorrectParametersAndBundleDeserializer(@Mock Bundle bundle) {
+    void shouldDoSomething(@Mock Bundle bundle) {
         // Given
         doReturn(bundle).when(step).bundle();
 
-        doReturn(123L).when(bundle).getBundleId();
-        doReturn(new Version("1.0.0")).when(bundle).getVersion();
-        doReturn("test-bundle").when(bundle).getSymbolicName();
-        doReturn("file:/usr/local/desktop/my-bundle-1.0.0.jar").when(bundle).getLocation();
+        doReturn(342L).when(bundle).getBundleId();
+        doReturn(new Version("1.1.0-SNAPSHOT")).when(bundle).getVersion();
+        doReturn("hotswap-bundle").when(bundle).getSymbolicName();
+        doReturn("file:/usr/local/desktop/my-hotswap-1.1.0-SNAPSHOT.jar").when(bundle).getLocation();
 
         // When
         Module created = step.run(VOID);
 
         // Then
-        assertThat(created.id()).isEqualTo(123L);
+        assertThat(created.id()).isEqualTo(342L);
         assertThat(created.state()).isEqualTo(INSTALLED);
-        assertThat(created.version()).isEqualTo("1.0.0");
-        assertThat(created.name()).isEqualTo("test-bundle");
-        assertThat(created.moduleFilePath()).isEqualTo("file:/usr/local/desktop/my-bundle-1.0.0.jar");
+        assertThat(created.version()).isEqualTo("1.1.0-SNAPSHOT");
+        assertThat(created.name()).isEqualTo("hotswap-bundle");
+        assertThat(created.moduleFilePath()).isEqualTo("file:/usr/local/desktop/my-hotswap-1.1.0-SNAPSHOT.jar");
 
         ModuleDeserializer deserializer = EXTRACTION.fieldValue("deserializer", ModuleDeserializer.class, created);
-        assertThat(deserializer).isInstanceOf(BundleDeserializer.class);
+        assertThat(deserializer).isInstanceOf(FileSystemDeserializer.class);
     }
+
 }
