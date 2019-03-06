@@ -1,5 +1,6 @@
 package com.esb.commons;
 
+import com.esb.api.exception.ESBException;
 import com.esb.converter.CollectionFactory;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.slf4j.Logger;
@@ -11,6 +12,8 @@ import java.lang.reflect.Type;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.lang.String.format;
 
 public class ReflectionUtils {
 
@@ -33,16 +36,15 @@ public class ReflectionUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static Optional<SetterArgument> argumentOf(Object source, String propertyName) {
+    public static SetterArgument argumentOf(Object source, String propertyName) {
         Optional<Method> optionalMethod = getSetter(source, setterName(propertyName));
         if (!optionalMethod.isPresent()) {
-            logger.warn("Could not find setter for property with name {}", propertyName);
-            return Optional.empty();
+            throw new ESBException(format("Could not find setter for property [%s]", propertyName));
         }
 
         Method method = optionalMethod.get();
         if (method.getParameterTypes().length != 1) {
-            throw new IllegalStateException("Setter for property must have one argument!");
+            throw new IllegalStateException(format("Setter for property [%s] must have one argument", propertyName));
         }
 
         Class<?> parameterType = method.getParameterTypes()[0];
@@ -50,13 +52,13 @@ public class ReflectionUtils {
         Optional<String> optionalGenericType = getGenericType(method);
         if (optionalGenericType.isPresent()) {
             try {
-                return Optional.of(new SetterArgument(parameterType, Class.forName(optionalGenericType.get())));
+                return new SetterArgument(parameterType, Class.forName(optionalGenericType.get()));
             } catch (ClassNotFoundException e) {
                 logger.warn("Could not find class for generic type {}", optionalGenericType.get());
             }
         }
 
-        return Optional.of(new SetterArgument(parameterType));
+        return new SetterArgument(parameterType);
     }
 
     private static Optional<Method> getSetter(Object object, String methodName) {
@@ -107,7 +109,7 @@ public class ReflectionUtils {
         }
 
         public boolean isSupportedCollection() {
-            return CollectionFactory.SUPPORTED_COLLECTIONS.contains(this.clazz);
+            return CollectionFactory.isSupported(this.clazz);
         }
 
         public Class<G> getGenericType() {

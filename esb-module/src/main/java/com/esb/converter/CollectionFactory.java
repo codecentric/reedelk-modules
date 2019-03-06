@@ -8,7 +8,10 @@ import static java.util.Arrays.asList;
 
 public class CollectionFactory {
 
-    public static final Collection<Class> SUPPORTED_COLLECTIONS = asList(Set.class, List.class, Collection.class);
+    private static final Collection<Class> SUPPORTED_COLLECTIONS = asList(Set.class, List.class, Collection.class);
+
+    private CollectionFactory() {
+    }
 
     public static Collection from(Class collectionClass) {
         checkArgument(SUPPORTED_COLLECTIONS.contains(collectionClass), format("Collection class %s not supported", collectionClass.getName()));
@@ -19,5 +22,9 @@ public class CollectionFactory {
 
         // Should never get to this point (unless SUPPORTED_COLLECTION does not reflect this method implementation)
         throw new IllegalArgumentException(format("Collection class %s not supported", collectionClass.getName()));
+    }
+
+    public static <C> boolean isSupported(Class<C> clazz) {
+        return SUPPORTED_COLLECTIONS.contains(clazz);
     }
 }

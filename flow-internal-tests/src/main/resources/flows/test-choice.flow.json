@@ -22,7 +22,7 @@
           ]
         },
         {
-          "condition": "payload.name == 'Lorenz'",
+          "condition": "payload.name == 'Mark'",
           "next": [
             {
               "implementor.name": "com.esb.core.component.SetPayload",

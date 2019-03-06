@@ -53,17 +53,13 @@ public class JSONDeserializer {
 
             // Collection
         } else if (propertyValue instanceof JSONArray) {
-            Optional<SetterArgument> optionalSetterArg = argumentOf(bean, propertyName);
-            checkArgument(optionalSetterArg.isPresent(), format("Could not find setter for property %s", propertyName));
-            checkArgument(optionalSetterArg.get().isSupportedCollection(), format("Could not map property %s. Not a supported collection", propertyName));
-            SetterArgument setterArgument = optionalSetterArg.get();
+            SetterArgument setterArgument = argumentOf(bean, propertyName);
+            checkArgument(setterArgument.isSupportedCollection(), format("Could not map property %s. Not a supported collection", propertyName));
             return deserialize((JSONArray) propertyValue, setterArgument);
 
             // Primitive
         } else {
-            Optional<SetterArgument> optionalSetterArg = argumentOf(bean, propertyName);
-            checkArgument(optionalSetterArg.isPresent(), format("Could not find setter for property %s", propertyName));
-            SetterArgument setterArgument = optionalSetterArg.get();
+            SetterArgument setterArgument = argumentOf(bean, propertyName);
             return deserialize(componentDefinition, propertyName, setterArgument);
         }
     }
