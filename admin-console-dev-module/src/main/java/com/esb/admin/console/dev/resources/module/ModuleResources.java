@@ -32,5 +32,4 @@ public class ModuleResources implements Fork {
         return fkRegex.route(request);
     }
 
-
 }

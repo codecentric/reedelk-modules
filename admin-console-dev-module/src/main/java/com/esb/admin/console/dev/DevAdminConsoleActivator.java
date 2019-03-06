@@ -50,7 +50,6 @@ public class DevAdminConsoleActivator {
     public void activate() throws BundleException {
         int listeningPort = configurationService.getIntConfigProperty(CONFIG_PID, CONFIG_KEY_LISTENING_PORT, DEFAULT_LISTENING_PORT);
 
-
         service = new DevAdminConsoleService(listeningPort,
                 new HealthResources(systemProperty),
                 new ModuleResources(moduleService),
@@ -60,19 +59,23 @@ public class DevAdminConsoleActivator {
                 new ConsoleJavascriptResource(),
                 new ConsoleIndexResource());
         service.start();
+        waitAndLogStarted(listeningPort);
 
-        // TODO: Fix this logger. Configuration should wait until completed.
+    }
+
+    @Deactivate
+    public void deactivate() {
+        service.stop();
+    }
+
+    // TODO: Fix this logger. Configuration should wait until completed.
+    private void waitAndLogStarted(int listeningPort) {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 logger.info(String.format("Dev Admin Console listening on port %d", listeningPort));
             }
         }, 500);
-    }
-
-    @Deactivate
-    public void deactivate() {
-        service.stop();
     }
 
 }
