@@ -3,6 +3,7 @@ package com.esb.lifecycle;
 import com.esb.api.exception.ESBException;
 import com.esb.flow.Flow;
 import com.esb.module.Module;
+import com.esb.module.ModuleDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +43,8 @@ class StopModuleAndReleaseReferencesTest {
     private Bundle bundle;
     @Mock
     private BundleContext context;
+    @Mock
+    private ModuleDeserializer deserializer;
 
     private StopModuleAndReleaseReferences step;
 
@@ -58,8 +61,9 @@ class StopModuleAndReleaseReferencesTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
 
         // When
@@ -75,8 +79,9 @@ class StopModuleAndReleaseReferencesTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
 
@@ -93,8 +98,9 @@ class StopModuleAndReleaseReferencesTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
@@ -112,8 +118,9 @@ class StopModuleAndReleaseReferencesTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
@@ -132,8 +139,9 @@ class StopModuleAndReleaseReferencesTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
@@ -163,8 +171,9 @@ class StopModuleAndReleaseReferencesTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);

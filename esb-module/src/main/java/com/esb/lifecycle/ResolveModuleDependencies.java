@@ -1,12 +1,10 @@
 package com.esb.lifecycle;
 
-import com.esb.module.DeserializedModule;
 import com.esb.commons.JsonParser;
 import com.esb.commons.JsonPropertyValueCollector;
 import com.esb.component.ComponentRegistry;
+import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
-import org.json.JSONException;
-import org.osgi.framework.Bundle;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,12 +19,10 @@ public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
 
     @Override
     public Module run(Module module) {
-        final Bundle bundle = bundle();
-
         DeserializedModule deserializedModule;
         try {
-            deserializedModule = deserializedModule(bundle);
-        } catch (JSONException error) {
+            deserializedModule = module.deserialize();
+        } catch (Exception error) {
             module.error(error);
             return module;
         }

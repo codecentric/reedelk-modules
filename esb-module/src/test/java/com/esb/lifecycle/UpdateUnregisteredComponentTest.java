@@ -1,7 +1,11 @@
 package com.esb.lifecycle;
 
 import com.esb.module.Module;
+import com.esb.module.ModuleDeserializer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 
@@ -13,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-
+@ExtendWith(MockitoExtension.class)
 class UpdateUnregisteredComponentTest {
 
     private final long moduleId = 232L;
@@ -26,6 +30,9 @@ class UpdateUnregisteredComponentTest {
     private final String component3 = "com.esb.foonel.testing.AwesomeComponent3";
     private final String component4 = "com.esb.foonel.testing.AwesomeComponent4";
 
+    @Mock
+    private ModuleDeserializer deserializer;
+
     @Test
     void shouldRemoveComponentFromResolvedModule() {
         // Given
@@ -35,8 +42,9 @@ class UpdateUnregisteredComponentTest {
         Module module = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
 
         module.unresolve(unresolvedComponents, resolvedComponents);
@@ -61,8 +69,9 @@ class UpdateUnregisteredComponentTest {
         Module module = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         module.unresolve(unresolvedComponents, resolvedComponents);
 
@@ -82,8 +91,9 @@ class UpdateUnregisteredComponentTest {
         Module module = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
 
         Collection<String> unresolvedComponents = emptyList();

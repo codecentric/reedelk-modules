@@ -2,6 +2,7 @@ package com.esb.module;
 
 import com.esb.flow.Flow;
 import com.esb.module.state.ModuleState;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,22 +24,27 @@ class ModuleTest {
 
     @Mock
     private Flow flow;
+    private final Collection<String> unresolvedComponents = asList("com.esb.Unresolved1", "com.esb.Unresolved2");
 
     private static final long TEST_MODULE_ID = 12;
     private static final String TEST_MODULE_NAME = "ModuleNameTest";
     private static final String TEST_VERSION = "1.0.0-SNAPSHOT";
     private static final String TEST_LOCATION = "file://location/test";
-
-    private Module module = Module.builder()
-            .version(TEST_VERSION)
-            .name(TEST_MODULE_NAME)
-            .moduleId(TEST_MODULE_ID)
-            .moduleFilePath(TEST_LOCATION)
-            .build();
-
-    private final Collection<String> unresolvedComponents = asList("com.esb.Unresolved1", "com.esb.Unresolved2");
     private final Collection<String> resolvedComponents = asList("com.esb.Resolved1", "com.esb.Resolved2");
+    @Mock
+    private ModuleDeserializer deserializer;
+    private Module module;
 
+    @BeforeEach
+    void setUp() {
+        module = Module.builder()
+                .version(TEST_VERSION)
+                .name(TEST_MODULE_NAME)
+                .moduleId(TEST_MODULE_ID)
+                .deserializer(deserializer)
+                .moduleFilePath(TEST_LOCATION)
+                .build();
+    }
 
     @Test
     void shouldCorrectlyReturnModuleId() {

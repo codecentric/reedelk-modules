@@ -1,9 +1,13 @@
 package com.esb.flow;
 
 import com.esb.module.Module;
+import com.esb.module.ModuleDeserializer;
 import com.esb.module.ModulesManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -11,6 +15,7 @@ import java.util.Collections;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(MockitoExtension.class)
 class ModulesManagerTest {
 
     private final String component1 = "com.esb.foonel.testing.AwesomeComponent1";
@@ -22,6 +27,9 @@ class ModulesManagerTest {
     private final String testModuleName = "TestModule";
     private final String testVersion = "1.0.0-SNAPSHOT";
     private final String testLocation = "file://location/test";
+
+    @Mock
+    private ModuleDeserializer deserializer;
 
     private ModulesManager manager;
 
@@ -36,8 +44,9 @@ class ModulesManagerTest {
         Module module = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
 
         // When
@@ -55,8 +64,9 @@ class ModulesManagerTest {
         Module module = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         manager.add(module);
 
@@ -70,9 +80,9 @@ class ModulesManagerTest {
     @Test
     void shouldAllModulesReturnAllRegisteredModules() {
         // Given
-        Module module1 = Module.builder().moduleId(1L).name("TestModule1").moduleFilePath(testLocation).version(testVersion).build();
-        Module module2 = Module.builder().moduleId(2L).name("TestModule2").moduleFilePath(testLocation).version(testVersion).build();
-        Module module3 = Module.builder().moduleId(3L).name("TestModule3").moduleFilePath(testLocation).version(testVersion).build();
+        Module module1 = Module.builder().moduleId(1L).name("TestModule1").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
+        Module module2 = Module.builder().moduleId(2L).name("TestModule2").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
+        Module module3 = Module.builder().moduleId(3L).name("TestModule3").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
 
         manager.add(module1);
         manager.add(module2);
@@ -92,12 +102,12 @@ class ModulesManagerTest {
         Collection<String> unresolvedComponents = asList(component1, component3);
         Collection<String> resolvedComponents = asList(component2, component4);
 
-        Module module1 = Module.builder().moduleId(1L).name("TestModule1").moduleFilePath(testLocation).version(testVersion).build();
+        Module module1 = Module.builder().moduleId(1L).name("TestModule1").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
         module1.unresolve(unresolvedComponents, resolvedComponents);
 
-        Module module2 = Module.builder().moduleId(2L).name("TestModule2").moduleFilePath(testLocation).version(testVersion).build();
+        Module module2 = Module.builder().moduleId(2L).name("TestModule2").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
 
-        Module module3 = Module.builder().moduleId(3L).name("TestModule3").moduleFilePath(testLocation).version(testVersion).build();
+        Module module3 = Module.builder().moduleId(3L).name("TestModule3").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
         module3.unresolve(unresolvedComponents, resolvedComponents);
 
         manager.add(module1);
@@ -118,13 +128,13 @@ class ModulesManagerTest {
         Collection<String> unresolvedComponents = asList(component1, component3);
         Collection<String> resolvedComponents = asList(component2, component4);
 
-        Module module1 = Module.builder().moduleId(1L).name("TestModule1").moduleFilePath(testLocation).version(testVersion).build();
+        Module module1 = Module.builder().moduleId(1L).name("TestModule1").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
         module1.unresolve(unresolvedComponents, resolvedComponents);
 
-        Module module2 = Module.builder().moduleId(2L).name("TestModule2").moduleFilePath(testLocation).version(testVersion).build();
+        Module module2 = Module.builder().moduleId(2L).name("TestModule2").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
         module2.error(Collections.emptyList());
 
-        Module module3 = Module.builder().moduleId(3L).name("TestModule3").moduleFilePath(testLocation).version(testVersion).build();
+        Module module3 = Module.builder().moduleId(3L).name("TestModule3").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
         module3.unresolve(unresolvedComponents, resolvedComponents);
 
 

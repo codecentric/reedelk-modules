@@ -1,8 +1,9 @@
 package com.esb.lifecycle;
 
-import com.esb.module.DeserializedModule;
 import com.esb.component.ComponentRegistry;
+import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
+import com.esb.module.ModuleDeserializer;
 import com.esb.test.utils.TestFlow;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.osgi.framework.Bundle;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,25 +28,30 @@ import static org.mockito.Mockito.*;
 class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
 
     @Mock
-    private Bundle bundle;
+    private ModuleDeserializer deserializer;
     @Mock
     private ComponentRegistry componentRegistry;
 
     private ResolveModuleDependencies step;
-    private Module aModule = Module.builder().build();
+    private Module aModule;
 
     @BeforeEach
     void setUp() {
         step = spy(new ResolveModuleDependencies(componentRegistry));
-        doReturn(bundle).when(step).bundle();
+        aModule = Module.builder()
+                .name("test")
+                .moduleId(23L)
+                .version("1.0.0-SNAPSHOT")
+                .moduleFilePath("file:/module/path")
+                .deserializer(deserializer)
+                .build();
     }
 
     @Test
-    void shouldReturnModuleWithStateInstalledWhenNoFlowsArePresent() {
+    void shouldReturnModuleWithStateInstalledWhenNoFlowsArePresent() throws Exception {
         // Given
-        doReturn(enumeration(emptyList()))
-                .when(bundle)
-                .getEntryPaths(anyString());
+        DeserializedModule deserializedModule = new DeserializedModule(emptySet(), emptySet(), emptySet());
+        doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);
@@ -57,7 +62,7 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
     }
 
     @Test
-    void shouldReturnModuleWithStateUnresolvedWhenNotAllComponentsArePresent() {
+    void shouldReturnModuleWithStateUnresolvedWhenNotAllComponentsArePresent() throws Exception {
         // Given
         doReturn(singletonList("com.esb.not.found.Component"))
                 .when(componentRegistry)
@@ -67,9 +72,7 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
         flows.add(parseFlow(TestFlow.WITH_CHOICE));
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
-        doReturn(deserializedModule)
-                .when(step)
-                .deserializedModule(bundle);
+        doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);
@@ -80,7 +83,7 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
     }
 
     @Test
-    void shouldReturnModuleWithStateResolvedWhenAllComponentsArePresent() {
+    void shouldReturnModuleWithStateResolvedWhenAllComponentsArePresent() throws Exception {
         // Given
         doReturn(emptyList())
                 .when(componentRegistry)
@@ -90,9 +93,7 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
         flows.add(parseFlow(TestFlow.WITH_CHOICE));
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
-        doReturn(deserializedModule)
-                .when(step)
-                .deserializedModule(bundle);
+        doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);
@@ -103,11 +104,9 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
     }
 
     @Test
-    void shouldReturnModuleWithStateErrorWhenDeserializationThrowsException() {
+    void shouldReturnModuleWithStateErrorWhenDeserializationThrowsException() throws Exception {
         // Given
-        doThrow(new JSONException("Could not deserialize module"))
-                .when(step)
-                .deserializedModule(bundle);
+        doThrow(new JSONException("Could not deserialize module")).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);
@@ -118,7 +117,7 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
     }
 
     @Test
-    void shouldReturnModuleWithStateUnresolvedWithCorrectResolvedAndUnresolvedSets() {
+    void shouldReturnModuleWithStateUnresolvedWithCorrectResolvedAndUnresolvedSets() throws Exception {
         // Given
         doReturn(asList("com.esb.test.utils.AnotherTestComponent", "com.esb.test.utils.TestInboundComponent"))
                 .when(componentRegistry)
@@ -128,9 +127,7 @@ class ResolveModuleDependenciesTest extends AbstractLifecycleTest {
         flows.add(parseFlow(TestFlow.WITH_CHOICE));
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
-        doReturn(deserializedModule)
-                .when(step)
-                .deserializedModule(bundle);
+        doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);

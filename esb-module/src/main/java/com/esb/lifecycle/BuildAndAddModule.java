@@ -1,7 +1,8 @@
 package com.esb.lifecycle;
 
-import com.esb.module.ModulesManager;
 import com.esb.module.Module;
+import com.esb.module.ModulesManager;
+import com.esb.module.deserializer.BundleDeserializer;
 import org.osgi.framework.Bundle;
 
 public class BuildAndAddModule extends AbstractStep<Void, Module> {
@@ -21,6 +22,7 @@ public class BuildAndAddModule extends AbstractStep<Void, Module> {
                 .name(bundle.getSymbolicName())
                 .moduleFilePath(bundle.getLocation())
                 .version(bundle.getVersion().toString())
+                .deserializer(new BundleDeserializer(bundle))
                 .build();
 
         // The state of the Module just created is INSTALLED.

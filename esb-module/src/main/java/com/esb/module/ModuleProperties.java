@@ -1,4 +1,4 @@
-package com.esb.commons;
+package com.esb.module;
 
 public class ModuleProperties {
 

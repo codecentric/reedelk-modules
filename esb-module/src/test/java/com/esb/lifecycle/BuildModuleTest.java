@@ -2,14 +2,15 @@ package com.esb.lifecycle;
 
 import com.esb.api.component.Component;
 import com.esb.api.exception.ESBException;
-import com.esb.module.DeserializedModule;
 import com.esb.component.Choice;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.flow.Flow;
-import com.esb.module.ModulesManager;
+import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
+import com.esb.module.ModuleDeserializer;
+import com.esb.module.ModulesManager;
 import com.esb.test.utils.AnotherTestComponent;
 import com.esb.test.utils.TestComponent;
 import com.esb.test.utils.TestFlow;
@@ -66,6 +67,8 @@ class BuildModuleTest extends AbstractLifecycleTest {
     private ModulesManager modulesManager;
     @Mock
     private ServiceReference<Component> serviceReference;
+    @Mock
+    private ModuleDeserializer deserializer;
 
     private BuildModule step;
 
@@ -83,8 +86,9 @@ class BuildModuleTest extends AbstractLifecycleTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
 
         // When
@@ -100,8 +104,9 @@ class BuildModuleTest extends AbstractLifecycleTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.error(new ESBException("Module in error state!"));
 
@@ -118,8 +123,9 @@ class BuildModuleTest extends AbstractLifecycleTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
 
@@ -136,8 +142,9 @@ class BuildModuleTest extends AbstractLifecycleTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
@@ -156,8 +163,9 @@ class BuildModuleTest extends AbstractLifecycleTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
@@ -172,13 +180,14 @@ class BuildModuleTest extends AbstractLifecycleTest {
     }
 
     @Test
-    void shouldBuildModuleWhenStateIsResolvedAndTransitionToStopped() {
+    void shouldBuildModuleWhenStateIsResolvedAndTransitionToStopped() throws Exception {
         // Given
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
@@ -188,9 +197,7 @@ class BuildModuleTest extends AbstractLifecycleTest {
         flows.add(flowDefinition);
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
-        doReturn(deserializedModule)
-                .when(step)
-                .deserializedModule(bundle);
+        doReturn(deserializedModule).when(deserializer).deserialize();
 
         mockComponentWithServiceReference(TestInboundComponent.class);
         mockComponentWithServiceReference(TestComponent.class);
@@ -211,20 +218,19 @@ class BuildModuleTest extends AbstractLifecycleTest {
     }
 
     @Test
-    void shouldTransitionToErrorStateWhenJsonIsNotDeserializable() {
+    void shouldTransitionToErrorStateWhenJsonIsNotDeserializable() throws Exception {
         // Given
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
 
-        doThrow(new JSONException("JSON could not be parsed"))
-                .when(step)
-                .deserializedModule(bundle);
+        doThrow(new JSONException("JSON could not be parsed")).when(deserializer).deserialize();
 
         // When
         Module module = step.run(inputModule);
@@ -240,7 +246,7 @@ class BuildModuleTest extends AbstractLifecycleTest {
     }
 
     @Test
-    void shouldTransitionToErrorStateWhenFlowDoesNotContainAnId() {
+    void shouldTransitionToErrorStateWhenFlowDoesNotContainAnId() throws Exception {
         // Given
         Module inputModule = newResolvedModule();
 
@@ -249,9 +255,7 @@ class BuildModuleTest extends AbstractLifecycleTest {
         flows.add(flowWithoutId);
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
-        doReturn(deserializedModule)
-                .when(step)
-                .deserializedModule(bundle);
+        doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(inputModule);
@@ -267,7 +271,7 @@ class BuildModuleTest extends AbstractLifecycleTest {
     }
 
     @Test
-    void shouldTransitionToErrorStateAndListAllExceptionFromFlowConstruction() {
+    void shouldTransitionToErrorStateAndListAllExceptionFromFlowConstruction() throws Exception {
         // Given
         Module inputModule = newResolvedModule();
 
@@ -278,9 +282,7 @@ class BuildModuleTest extends AbstractLifecycleTest {
         flows.add(flowWithNotWellFormedChoice);
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
-        doReturn(deserializedModule)
-                .when(step)
-                .deserializedModule(bundle);
+        doReturn(deserializedModule).when(deserializer).deserialize();
 
         mockComponentWithServiceReference(TestInboundComponent.class);
         mockComponentWithServiceReference(AnotherTestComponent.class);
@@ -301,7 +303,7 @@ class BuildModuleTest extends AbstractLifecycleTest {
     }
 
     @Test
-    void shouldTransitionToErrorStateWhenThereAreTwoFlowsWithSameId() {
+    void shouldTransitionToErrorStateWhenThereAreTwoFlowsWithSameId() throws Exception {
         // Given
         Module inputModule = newResolvedModule();
 
@@ -316,9 +318,7 @@ class BuildModuleTest extends AbstractLifecycleTest {
         mockComponent(Stop.class);
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
-        doReturn(deserializedModule)
-                .when(step)
-                .deserializedModule(bundle);
+        doReturn(deserializedModule).when(deserializer).deserialize();
 
 
         // When
@@ -381,8 +381,9 @@ class BuildModuleTest extends AbstractLifecycleTest {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);

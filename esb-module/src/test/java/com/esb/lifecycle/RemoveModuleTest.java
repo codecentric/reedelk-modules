@@ -1,7 +1,8 @@
 package com.esb.lifecycle;
 
-import com.esb.module.ModulesManager;
 import com.esb.module.Module;
+import com.esb.module.ModuleDeserializer;
+import com.esb.module.ModulesManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,8 @@ class RemoveModuleTest {
 
     @Mock
     private ModulesManager modulesManager;
+    @Mock
+    private ModuleDeserializer deserializer;
 
     private RemoveModule step;
 
@@ -32,8 +35,9 @@ class RemoveModuleTest {
         Module module = Module.builder()
                 .moduleId(14L)
                 .name("TestModule")
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
 
         // When

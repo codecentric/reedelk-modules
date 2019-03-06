@@ -1,13 +1,14 @@
 package com.esb.module;
 
 import com.esb.flow.Flow;
-import com.esb.module.state.*;
 import com.esb.module.state.Error;
+import com.esb.module.state.*;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.esb.commons.Preconditions.checkArgument;
 import static com.esb.commons.Preconditions.checkState;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -29,6 +30,7 @@ public class Module implements State {
         ALLOWED_TRANSITIONS = tmp;
     }
 
+    private ModuleDeserializer deserializer;
     private State state;
 
     private final long moduleId;
@@ -36,10 +38,11 @@ public class Module implements State {
     private final String version;
     private final String moduleFilePath;
 
-    private Module(final long moduleId, final String name, final String version, final String moduleFilePath) {
+    private Module(final long moduleId, final String name, final String version, final String moduleFilePath, final ModuleDeserializer deserializer) {
         this.name = name;
         this.version = version;
         this.moduleId = moduleId;
+        this.deserializer = deserializer;
         this.moduleFilePath = moduleFilePath;
         this.state = new Installed();
     }
@@ -140,6 +143,10 @@ public class Module implements State {
                 state.getClass().getSimpleName(), transitionTo.getSimpleName()));
     }
 
+    public DeserializedModule deserialize() throws Exception {
+        return deserializer.deserialize();
+    }
+
     public static class Builder {
 
         private long moduleId;
@@ -147,6 +154,7 @@ public class Module implements State {
         private String name;
         private String version;
         private String moduleFilePath;
+        private ModuleDeserializer deserializer;
 
         public Builder name(String name) {
             this.name = name;
@@ -168,8 +176,17 @@ public class Module implements State {
             return this;
         }
 
+        public Builder deserializer(ModuleDeserializer deserializer) {
+            this.deserializer = deserializer;
+            return this;
+        }
+
         public Module build() {
-            return new Module(moduleId, name, version, moduleFilePath);
+            checkArgument(name != null, "name");
+            checkArgument(version != null, "version");
+            checkArgument(moduleFilePath != null, "module file path");
+            checkArgument(deserializer != null, "module deserializer");
+            return new Module(moduleId, name, version, moduleFilePath, deserializer);
         }
     }
 }

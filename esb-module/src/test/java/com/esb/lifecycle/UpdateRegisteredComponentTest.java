@@ -1,8 +1,10 @@
 package com.esb.lifecycle;
 
 import com.esb.module.Module;
+import com.esb.module.ModuleDeserializer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
@@ -27,6 +29,9 @@ class UpdateRegisteredComponentTest {
     private final String component3 = "com.esb.foonel.testing.AwesomeComponent3";
     private final String component4 = "com.esb.foonel.testing.AwesomeComponent4";
 
+    @Mock
+    private ModuleDeserializer deserializer;
+
     @Test
     void shouldRemoveComponentFromUnresolvedAndAddItToResolvedAndKeepStateToUnresolved() {
         // Given
@@ -36,8 +41,9 @@ class UpdateRegisteredComponentTest {
         Module module = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         module.unresolve(unresolvedComponents, resolvedComponents);
 
@@ -60,8 +66,9 @@ class UpdateRegisteredComponentTest {
         Module module = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         module.unresolve(unresolvedComponents, resolvedComponents);
 
@@ -80,8 +87,9 @@ class UpdateRegisteredComponentTest {
         Module module = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
-                .moduleFilePath(testLocation)
                 .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
                 .build();
         UpdateRegisteredComponent step = new UpdateRegisteredComponent(component3);
 

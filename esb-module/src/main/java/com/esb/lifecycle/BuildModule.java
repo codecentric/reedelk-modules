@@ -1,11 +1,14 @@
 package com.esb.lifecycle;
 
 import com.esb.api.exception.ESBException;
-import com.esb.module.DeserializedModule;
 import com.esb.commons.Graph;
 import com.esb.commons.JsonParser;
 import com.esb.commons.UniquePropertyValueValidator;
-import com.esb.flow.*;
+import com.esb.flow.ErrorStateFlow;
+import com.esb.flow.Flow;
+import com.esb.flow.FlowBuilder;
+import com.esb.flow.FlowBuilderContext;
+import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
 import com.esb.module.ModulesManager;
 import com.esb.module.state.ModuleState;
@@ -40,7 +43,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
 
         DeserializedModule deserializedModule;
         try {
-            deserializedModule = deserializedModule(bundle);
+            deserializedModule = module.deserialize();
         } catch (Exception exception) {
             logger.error("Module deserialization", exception);
 
@@ -52,8 +55,9 @@ public class BuildModule extends AbstractStep<Module, Module> {
                 .map(flowDefinition -> buildFlow(bundle, flowDefinition, deserializedModule))
                 .collect(toSet());
 
-        // If exists at least one flow in error state, then we release component references
-        // for each flow built belonging to this Module.
+        // If exists at least one flow in error state,
+        // then we release component references for each flow built
+        // belonging to this Module.
         Set<ErrorStateFlow> flowsWithErrors = flows.stream()
                 .filter(flow -> flow instanceof ErrorStateFlow)
                 .map(flow -> (ErrorStateFlow) flow)
