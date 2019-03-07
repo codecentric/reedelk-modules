@@ -1,7 +1,7 @@
 package com.esb.lifecycle;
 
 import com.esb.api.exception.ESBException;
-import com.esb.commons.Graph;
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.commons.JsonParser;
 import com.esb.commons.UniquePropertyValueValidator;
 import com.esb.flow.ErrorStateFlow;
@@ -79,7 +79,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
 
 
     private Flow buildFlow(Bundle bundle, JSONObject flowDefinition, DeserializedModule deserializedModule) {
-        Graph flowGraph = Graph.build();
+        ESBExecutionGraph flowGraph = ESBExecutionGraph.build();
 
         // TODO: This should be part of the validation process of the flow with JSON schema.
         if (invalidFlowId(flowDefinition)) {

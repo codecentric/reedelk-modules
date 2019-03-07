@@ -2,7 +2,7 @@ package com.esb.executor;
 
 import com.esb.api.component.Component;
 import com.esb.api.message.Message;
-import com.esb.commons.Graph;
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.component.Choice;
 import com.esb.component.Fork;
 import com.esb.component.Stop;
@@ -29,7 +29,7 @@ public class Executors {
     private Executors() {
     }
 
-    public static ExecutionResult execute(ExecutionNode next, Message message, Graph graph) {
+    public static ExecutionResult execute(ExecutionNode next, Message message, ESBExecutionGraph graph) {
         Component component = next.getComponent();
         Executor executor = COMPONENT_EXECUTOR.getOrDefault(component.getClass(), DEFAULT_EXECUTOR);
         return executor.execute(next, message, graph);

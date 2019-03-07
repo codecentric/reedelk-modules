@@ -2,14 +2,14 @@ package com.esb.executor;
 
 import com.esb.api.component.Join;
 import com.esb.api.message.Message;
-import com.esb.commons.Graph;
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.component.Fork;
 import com.esb.flow.ExecutionNode;
 import com.esb.internal.commons.SerializationUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
@@ -18,7 +18,7 @@ import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 public class ForkExecutor implements Executor {
 
     @Override
-    public ExecutionResult execute(ExecutionNode executionNode, final Message message, Graph graph) {
+    public ExecutionResult execute(ExecutionNode executionNode, final Message message, ESBExecutionGraph graph) {
 
         Fork fork = (Fork) executionNode.getComponent();
         List<ExecutionNode> nextExecutionNodes = fork.apply(message);
@@ -39,7 +39,7 @@ public class ForkExecutor implements Executor {
         Join join = (Join) joinComponentExecutionNode.getComponent();
         Message joinedMessage = join.apply(results);
 
-        Set<ExecutionNode> followingExecutionNodes = graph.successors(joinComponentExecutionNode);
+        Collection<ExecutionNode> followingExecutionNodes = graph.successors(joinComponentExecutionNode);
 
         ExecutionNode next = checkAtLeastOneAndGetOrThrow(
                 followingExecutionNodes.stream(),

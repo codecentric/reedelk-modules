@@ -1,7 +1,7 @@
 package com.esb.flow.component.builder;
 
 import com.esb.api.exception.ESBException;
-import com.esb.commons.Graph;
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.commons.JsonParser;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
@@ -14,10 +14,10 @@ import static com.esb.commons.Preconditions.checkState;
 
 class FlowReferenceComponentBuilder implements Builder {
 
-    private final Graph graph;
+    private final ESBExecutionGraph graph;
     private final FlowBuilderContext context;
 
-    FlowReferenceComponentBuilder(Graph graph, FlowBuilderContext context) {
+    FlowReferenceComponentBuilder(ESBExecutionGraph graph, FlowBuilderContext context) {
         this.graph = graph;
         this.context = context;
     }

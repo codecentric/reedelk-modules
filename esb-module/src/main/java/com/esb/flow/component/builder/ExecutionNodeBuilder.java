@@ -1,7 +1,7 @@
 package com.esb.flow.component.builder;
 
 import com.esb.api.exception.ESBException;
-import com.esb.commons.Graph;
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.commons.JsonParser;
 import com.esb.component.Choice;
 import com.esb.component.FlowReference;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class ExecutionNodeBuilder {
 
-    private Graph graph;
+    private ESBExecutionGraph graph;
     private ExecutionNode parent;
     private FlowBuilderContext context;
     private JSONObject componentDefinition;
@@ -41,9 +41,14 @@ public class ExecutionNodeBuilder {
         return this;
     }
 
-    public ExecutionNodeBuilder graph(Graph graph) {
-        this.graph = graph;
-        return this;
+    private static Builder instantiateBuilder(ESBExecutionGraph graph, FlowBuilderContext context, Class<? extends Builder> builderClazz) {
+        try {
+            return builderClazz
+                    .getDeclaredConstructor(ESBExecutionGraph.class, FlowBuilderContext.class)
+                    .newInstance(graph, context);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new ESBException(e);
+        }
     }
 
     public ExecutionNodeBuilder parent(ExecutionNode parent) {
@@ -68,14 +73,9 @@ public class ExecutionNodeBuilder {
                 .build(parent, componentDefinition);
     }
 
-    private static Builder instantiateBuilder(Graph graph, FlowBuilderContext context, Class<? extends Builder> builderClazz) {
-        try {
-            return builderClazz
-                    .getDeclaredConstructor(Graph.class, FlowBuilderContext.class)
-                    .newInstance(graph, context);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new ESBException(e);
-        }
+    public ExecutionNodeBuilder graph(ESBExecutionGraph graph) {
+        this.graph = graph;
+        return this;
     }
 
 }

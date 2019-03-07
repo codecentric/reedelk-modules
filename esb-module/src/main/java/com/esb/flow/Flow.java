@@ -3,12 +3,13 @@ package com.esb.flow;
 import com.esb.api.component.Inbound;
 import com.esb.api.component.InboundEventListener;
 import com.esb.api.message.Message;
-import com.esb.commons.Graph;
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.executor.FlowExecutor;
-import com.google.common.base.Optional;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 import static com.esb.commons.Preconditions.checkArgument;
 import static com.esb.commons.Preconditions.checkState;
@@ -20,11 +21,11 @@ public class Flow implements InboundEventListener {
 
     private final String flowId;
     private final FlowExecutor flowExecutor;
-    private final Graph executionGraph;
+    private final ESBExecutionGraph executionGraph;
 
     private boolean started = false;
 
-    public Flow(final String flowId, final Graph executionGraph) {
+    public Flow(final String flowId, final ESBExecutionGraph executionGraph) {
         this.flowId = flowId;
         this.executionGraph = executionGraph;
         this.flowExecutor = new FlowExecutor(executionGraph);

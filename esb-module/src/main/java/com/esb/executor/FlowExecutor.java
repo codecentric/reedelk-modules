@@ -1,25 +1,25 @@
 package com.esb.executor;
 
 import com.esb.api.message.Message;
-import com.esb.commons.Graph;
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.flow.ExecutionNode;
 
-import java.util.Set;
+import java.util.Collection;
 
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
 public class FlowExecutor {
 
-    private final Graph graph;
+    private final ESBExecutionGraph graph;
 
-    public FlowExecutor(Graph graph) {
+    public FlowExecutor(ESBExecutionGraph graph) {
         this.graph = graph;
     }
 
     public Message execute(Message message) {
         ExecutionNode root = graph.getRoot();
 
-        Set<ExecutionNode> nextExecutorNodes = graph.successors(root);
+        Collection<ExecutionNode> nextExecutorNodes = graph.successors(root);
 
         ExecutionNode nodeAfterRoot = checkAtLeastOneAndGetOrThrow(
                 nextExecutorNodes.stream(),

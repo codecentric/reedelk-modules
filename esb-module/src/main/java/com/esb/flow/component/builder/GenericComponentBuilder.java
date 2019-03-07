@@ -1,7 +1,7 @@
 package com.esb.flow.component.builder;
 
 import com.esb.api.component.Component;
-import com.esb.commons.Graph;
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.commons.JsonParser;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
@@ -9,10 +9,10 @@ import org.json.JSONObject;
 
 public class GenericComponentBuilder implements Builder {
 
-    private final Graph graph;
+    private final ESBExecutionGraph graph;
     private final FlowBuilderContext context;
 
-    GenericComponentBuilder(Graph graph, FlowBuilderContext context) {
+    GenericComponentBuilder(ESBExecutionGraph graph, FlowBuilderContext context) {
         this.graph = graph;
         this.context = context;
     }

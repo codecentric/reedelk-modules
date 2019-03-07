@@ -1,6 +1,7 @@
 package com.esb.flow;
 
-import com.esb.commons.Graph;
+
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.commons.JsonParser;
 import com.esb.component.Stop;
 import com.esb.flow.component.builder.ExecutionNodeBuilder;
@@ -17,7 +18,7 @@ public class FlowBuilder {
         this.context = context;
     }
 
-    public void build(Graph flowGraph, JSONObject flowStructure) {
+    public void build(ESBExecutionGraph flowGraph, JSONObject flowStructure) {
         JSONArray flowComponents = JsonParser.Flow.getFlow(flowStructure);
 
         ExecutionNode current = null;

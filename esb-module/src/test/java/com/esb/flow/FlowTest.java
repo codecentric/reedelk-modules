@@ -3,10 +3,9 @@ package com.esb.flow;
 import com.esb.api.component.Component;
 import com.esb.api.component.Inbound;
 import com.esb.api.message.Message;
-import com.esb.commons.Graph;
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.component.Stop;
 import com.esb.test.utils.TestComponent;
-import com.google.common.base.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +20,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -43,7 +43,7 @@ class FlowTest {
     @Mock
     private ExecutionNode mockExecutionNode;
     @Mock
-    private Graph mockExecutionGraph;
+    private ESBExecutionGraph mockExecutionGraph;
 
     @BeforeEach
     void setUp() {
@@ -81,7 +81,7 @@ class FlowTest {
     void shouldIsUsingComponentReturnFalse() {
         // Given
         Flow flow = new Flow(flowId, mockExecutionGraph);
-        doReturn(Optional.absent()).when(mockExecutionGraph).findOne(ArgumentMatchers.any());
+        doReturn(Optional.empty()).when(mockExecutionGraph).findOne(ArgumentMatchers.any());
 
         // When
         boolean actualIsUsingComponent = flow.isUsingComponent("com.esb.my.target.Component");

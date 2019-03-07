@@ -2,21 +2,21 @@ package com.esb.executor;
 
 import com.esb.api.component.Processor;
 import com.esb.api.message.Message;
-import com.esb.commons.Graph;
+import com.esb.commons.ESBExecutionGraph;
 import com.esb.flow.ExecutionNode;
 
-import java.util.Set;
+import java.util.Collection;
 
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
 public class ProcessorExecutor implements Executor {
 
     @Override
-    public ExecutionResult execute(ExecutionNode executionNode, Message message, Graph graph) {
+    public ExecutionResult execute(ExecutionNode executionNode, Message message, ESBExecutionGraph graph) {
         Processor processor = (Processor) executionNode.getComponent();
         Message transformedMessage = processor.apply(message);
 
-        Set<ExecutionNode> followingExecutionNodes = graph.successors(executionNode);
+        Collection<ExecutionNode> followingExecutionNodes = graph.successors(executionNode);
 
         ExecutionNode next = checkAtLeastOneAndGetOrThrow(
                 followingExecutionNodes.stream(),
