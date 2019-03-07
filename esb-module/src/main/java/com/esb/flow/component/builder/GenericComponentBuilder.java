@@ -3,7 +3,6 @@ package com.esb.flow.component.builder;
 import com.esb.api.component.Component;
 import com.esb.commons.Graph;
 import com.esb.commons.JsonParser;
-import com.esb.converter.JSONDeserializer;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import org.json.JSONObject;
@@ -25,7 +24,7 @@ public class GenericComponentBuilder implements Builder {
         ExecutionNode executionNode = context.instantiateComponent(componentName);
         Component component = executionNode.getComponent();
 
-        JSONDeserializer deserializer = new JSONDeserializer(executionNode, context);
+        GenericComponentDeserializer deserializer = new GenericComponentDeserializer(executionNode, context);
         deserializer.deserialize(componentDefinition, component);
 
         graph.putEdge(parent, executionNode);

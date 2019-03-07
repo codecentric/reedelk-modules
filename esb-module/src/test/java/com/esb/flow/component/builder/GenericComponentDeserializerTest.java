@@ -1,4 +1,4 @@
-package com.esb.converter;
+package com.esb.flow.component.builder;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Implementor;
@@ -31,18 +31,18 @@ import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class JSONDeserializerTest {
+class GenericComponentDeserializerTest {
 
     @Mock
     private ExecutionNode mockExecutionNode;
     @Mock
     private FlowBuilderContext context;
 
-    private JSONDeserializer deserializer;
+    private GenericComponentDeserializer deserializer;
 
     @BeforeEach
     public void setUp() {
-        deserializer = new JSONDeserializer(mockExecutionNode, context);
+        deserializer = new GenericComponentDeserializer(mockExecutionNode, context);
     }
 
     @Nested

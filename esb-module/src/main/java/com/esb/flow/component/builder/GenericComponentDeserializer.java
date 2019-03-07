@@ -1,10 +1,12 @@
-package com.esb.converter;
+package com.esb.flow.component.builder;
 
 import com.esb.api.component.Implementor;
 import com.esb.api.exception.ESBException;
 import com.esb.commons.JsonParser;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
+import com.esb.internal.api.commons.CollectionFactory;
+import com.esb.internal.api.commons.PrimitiveTypeConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -21,15 +23,15 @@ import static com.esb.internal.api.commons.ReflectionUtils.*;
 import static java.lang.String.format;
 
 @SuppressWarnings("unchecked")
-public class JSONDeserializer {
+public class GenericComponentDeserializer {
 
-    private static final Logger logger = LoggerFactory.getLogger(JSONDeserializer.class);
+    private static final Logger logger = LoggerFactory.getLogger(GenericComponentDeserializer.class);
     private static final Collection<String> EXCLUDED_PROPERTIES = Collections.singletonList(JsonParser.Implementor.name());
 
     private final ExecutionNode executionNode;
     private final FlowBuilderContext context;
 
-    public JSONDeserializer(final ExecutionNode executionNode, final FlowBuilderContext context) {
+    public GenericComponentDeserializer(final ExecutionNode executionNode, final FlowBuilderContext context) {
         this.executionNode = executionNode;
         this.context = context;
     }
