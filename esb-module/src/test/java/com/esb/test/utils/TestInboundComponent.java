@@ -33,7 +33,11 @@ public class TestInboundComponent implements Inbound {
         throw new UnsupportedOperationException("Test Only Inbound");
     }
 
-    void setMessage(String message) {
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
         this.message = message;
     }
 }
