@@ -17,8 +17,7 @@ public class ExecutionGraphDirected {
     }
 
     public void putEdge(ExecutionNode n1, ExecutionNode n2) {
-        checkState(adjacentNodes.containsKey(n1),
-                "n1 must be already in graph in order to add an edge");
+        checkState(adjacentNodes.containsKey(n1), "n1 must be already in graph in order to add an edge");
         if (!adjacentNodes.containsKey(n2)) {
             adjacentNodes.put(n2, new ArrayList<>());
         }
