@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static com.esb.commons.Preconditions.checkArgument;
 import static com.esb.commons.Preconditions.checkState;
 
 public class ExecutionGraph {
@@ -24,6 +25,8 @@ public class ExecutionGraph {
     }
 
     public void putEdge(ExecutionNode n1, ExecutionNode n2) {
+        checkArgument(n2 != null, "n2 must not be null");
+
         // If the parent is null, then the current execution node is the FIRST node of the graph
         if (n1 == null) {
             checkState(root == null, "Root must be null for first component");
@@ -40,16 +43,19 @@ public class ExecutionGraph {
     }
 
     public Collection<ExecutionNode> successors(ExecutionNode executionNode) {
+        checkArgument(executionNode != null, "executionNode");
         return executionGraph.successors(executionNode);
     }
 
-    public void applyOnNodes(Consumer<ExecutionNode> function) {
+    public void applyOnNodes(Consumer<ExecutionNode> consumer) {
+        checkArgument(consumer != null, "consumer");
         if (hasRoot()) {
-            executionGraph.breadthFirstTraversal(root, function);
+            executionGraph.breadthFirstTraversal(root, consumer);
         }
     }
 
     public Optional<ExecutionNode> findOne(Predicate<ExecutionNode> predicate) {
+        checkArgument(predicate != null, "predicate");
         return executionGraph.findOne(predicate);
     }
 
