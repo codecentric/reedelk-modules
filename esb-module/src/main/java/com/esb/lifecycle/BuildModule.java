@@ -8,6 +8,7 @@ import com.esb.flow.ErrorStateFlow;
 import com.esb.flow.Flow;
 import com.esb.flow.FlowBuilder;
 import com.esb.flow.FlowBuilderContext;
+import com.esb.internal.api.commons.StringUtils;
 import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
 import com.esb.module.ModulesManager;
@@ -22,7 +23,6 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class BuildModule extends AbstractStep<Module, Module> {
 
@@ -105,7 +105,8 @@ public class BuildModule extends AbstractStep<Module, Module> {
     }
 
     private boolean invalidFlowId(JSONObject flowDefinition) {
-        return !JsonParser.Flow.hasId(flowDefinition) || isBlank(JsonParser.Flow.id(flowDefinition));
+        return !JsonParser.Flow.hasId(flowDefinition) ||
+                StringUtils.isBlank(JsonParser.Flow.id(flowDefinition));
     }
 
 }

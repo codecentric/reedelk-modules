@@ -17,7 +17,6 @@
     <properties>
         <json.version>20180813</json.version>
         <guava.version>27.0.1-jre</guava.version>
-        <commons.lang.version>3.8.1</commons.lang.version>
     </properties>
 
     <dependencies>
@@ -32,11 +31,6 @@
             <artifactId>json</artifactId>
             <version>${json.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons.lang.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

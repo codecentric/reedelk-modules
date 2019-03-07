@@ -3,7 +3,6 @@ package com.esb.converter;
 import com.esb.api.component.Implementor;
 import com.esb.api.exception.ESBException;
 import com.esb.commons.JsonParser;
-import com.esb.commons.ReflectionUtils;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import org.json.JSONArray;
@@ -14,8 +13,7 @@ import java.util.Iterator;
 import java.util.Optional;
 
 import static com.esb.commons.Preconditions.checkArgument;
-import static com.esb.commons.ReflectionUtils.SetterArgument;
-import static com.esb.commons.ReflectionUtils.argumentOf;
+import static com.esb.internal.api.commons.ReflectionUtils.*;
 import static java.lang.String.format;
 
 @SuppressWarnings("unchecked")
@@ -40,7 +38,7 @@ public class JSONDeserializer {
             Object deserialized = optionalReference.isPresent() ?
                     deserialize(optionalReference.get()) :
                     deserialize(componentDefinition, implementor, propertyName);
-            ReflectionUtils.setPropertyIfExists(implementor, propertyName, deserialized);
+            setPropertyIfExists(implementor, propertyName, deserialized);
         }
     }
 
@@ -54,7 +52,7 @@ public class JSONDeserializer {
             // Collection
         } else if (propertyValue instanceof JSONArray) {
             SetterArgument setterArgument = argumentOf(bean, propertyName);
-            checkArgument(setterArgument.isSupportedCollection(), format("Could not map property %s. Not a supported collection", propertyName));
+            checkArgument(CollectionFactory.isSupported(setterArgument.getClazz()), format("Could not map property %s: not a supported collection type", propertyName));
             return deserialize((JSONArray) propertyValue, setterArgument);
 
             // Primitive
