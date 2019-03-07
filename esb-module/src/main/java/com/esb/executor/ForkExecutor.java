@@ -2,9 +2,9 @@ package com.esb.executor;
 
 import com.esb.api.component.Join;
 import com.esb.api.message.Message;
-import com.esb.commons.ExecutionGraph;
 import com.esb.component.Fork;
 import com.esb.flow.ExecutionNode;
+import com.esb.graph.ExecutionGraph;
 import com.esb.internal.commons.SerializationUtils;
 
 import java.util.ArrayList;

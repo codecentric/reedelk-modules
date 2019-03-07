@@ -1,9 +1,9 @@
 package com.esb.executor;
 
 import com.esb.api.message.Message;
-import com.esb.commons.ExecutionGraph;
 import com.esb.component.Choice;
 import com.esb.flow.ExecutionNode;
+import com.esb.graph.ExecutionGraph;
 
 import java.util.Collection;
 import java.util.List;

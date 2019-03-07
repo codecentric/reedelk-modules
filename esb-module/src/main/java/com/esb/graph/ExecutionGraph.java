@@ -1,4 +1,4 @@
-package com.esb.commons;
+package com.esb.graph;
 
 import com.esb.api.component.Inbound;
 import com.esb.flow.ExecutionNode;

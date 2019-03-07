@@ -2,11 +2,11 @@ package com.esb.executor;
 
 import com.esb.api.component.Component;
 import com.esb.api.message.Message;
-import com.esb.commons.ExecutionGraph;
 import com.esb.component.Choice;
 import com.esb.component.Fork;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
+import com.esb.graph.ExecutionGraph;
 
 import java.util.Collections;
 import java.util.HashMap;

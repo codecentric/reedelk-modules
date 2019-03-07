@@ -1,6 +1,6 @@
 package com.esb.flow;
 
-import com.esb.commons.ExecutionGraph;
+import com.esb.graph.ExecutionGraph;
 
 public class ErrorStateFlow extends Flow {
 
