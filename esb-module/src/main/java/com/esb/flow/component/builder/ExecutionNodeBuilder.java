@@ -8,10 +8,11 @@ import com.esb.component.FlowReference;
 import com.esb.component.Fork;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
-import com.google.common.collect.ImmutableMap;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ExecutionNodeBuilder {
@@ -23,11 +24,15 @@ public class ExecutionNodeBuilder {
 
     private static final Class<? extends Builder> GENERIC_HANDLER = GenericComponentBuilder.class;
 
-    private static final Map<String, Class<? extends Builder>> COMPONENT_NAME_HANDLER = ImmutableMap.of(
-            Fork.class.getName(), ForkJoinComponentBuilder.class,
-            Choice.class.getName(), ChoiceComponentBuilder.class,
-            FlowReference.class.getName(), FlowReferenceComponentBuilder.class);
+    private static final Map<String, Class<? extends Builder>> COMPONENT_NAME_HANDLER;
 
+    static {
+        Map<String, Class<? extends Builder>> tmp = new HashMap<>();
+        tmp.put(Fork.class.getName(), ForkJoinComponentBuilder.class);
+        tmp.put(Choice.class.getName(), ChoiceComponentBuilder.class);
+        tmp.put(FlowReference.class.getName(), FlowReferenceComponentBuilder.class);
+        COMPONENT_NAME_HANDLER = Collections.unmodifiableMap(tmp);
+    }
 
     private ExecutionNodeBuilder() {
     }
