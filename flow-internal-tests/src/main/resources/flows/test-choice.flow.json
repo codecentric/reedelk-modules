@@ -5,6 +5,7 @@
       "implementor.name": "com.esb.rest.component.RestListener",
       "path": "/choice",
       "method": "POST",
+      "unexistent": "propertyvauleu",
       "configuration": {
         "configRef": "customer-api-connection-config"
       }

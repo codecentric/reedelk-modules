@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Set;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -80,7 +81,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
     private Flow buildFlow(Bundle bundle, JSONObject flowDefinition, DeserializedModule deserializedModule) {
         Graph flowGraph = Graph.build();
 
-        // TODO: THis should be part of the validation process of the flow with JSON schema.
+        // TODO: This should be part of the validation process of the flow with JSON schema.
         if (invalidFlowId(flowDefinition)) {
             return new ErrorStateFlow(flowGraph,
                     new ESBException("\"id\" property must be defined in the flow definition"));
@@ -95,7 +96,8 @@ public class BuildModule extends AbstractStep<Module, Module> {
             flowBuilder.build(flowGraph, flowDefinition);
             return new Flow(flowId, flowGraph);
         } catch (Exception exception) {
-            logger.error("BuildFlow", exception);
+            String message = format("Error building flow with id [%s]", flowId);
+            logger.error(message, exception);
             return new ErrorStateFlow(flowId, flowGraph, exception);
         }
     }

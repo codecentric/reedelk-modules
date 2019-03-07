@@ -7,8 +7,12 @@ import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -18,6 +22,9 @@ import static java.lang.String.format;
 
 @SuppressWarnings("unchecked")
 public class JSONDeserializer {
+
+    private static final Logger logger = LoggerFactory.getLogger(JSONDeserializer.class);
+    private static final Collection<String> EXCLUDED_PROPERTIES = Collections.singletonList(JsonParser.Implementor.name());
 
     private final ExecutionNode executionNode;
     private final FlowBuilderContext context;
@@ -31,14 +38,24 @@ public class JSONDeserializer {
         Iterator<String> iterator = componentDefinition.keys();
 
         while (iterator.hasNext()) {
-            String propertyName = iterator.next();
-            if (JsonParser.Implementor.name().equals(propertyName)) continue;
 
-            Optional<String> optionalReference = isReference(componentDefinition, propertyName);
-            Object deserialized = optionalReference.isPresent() ?
-                    deserialize(optionalReference.get()) :
-                    deserialize(componentDefinition, implementor, propertyName);
-            setPropertyIfExists(implementor, propertyName, deserialized);
+            String propertyName = iterator.next();
+
+            if (EXCLUDED_PROPERTIES.contains(propertyName)) continue;
+
+            Optional<Method> maybeSetter = getSetter(implementor, propertyName);
+            if (maybeSetter.isPresent()) {
+                Optional<String> maybeReference = isReference(componentDefinition, propertyName);
+                Object deserializedObject = maybeReference.isPresent() ?
+                        deserialize(maybeReference.get()) :
+                        deserialize(componentDefinition, implementor, propertyName);
+                Method setter = maybeSetter.get();
+                setProperty(implementor, setter, deserializedObject);
+
+            } else {
+                logger.warn("Could not find setter on implementor [{}] for property name [{}]. The property will be skipped",
+                        implementor.getClass().getName(), propertyName);
+            }
         }
     }
 
@@ -147,7 +164,6 @@ public class JSONDeserializer {
                 .stream()
                 .filter(referenceJsonObject -> reference.equals(JsonParser.Config.id(referenceJsonObject)))
                 .findFirst()
-                .orElseThrow(() ->
-                        new ESBException("Could not find configuration with id=[" + reference + "]"));
+                .orElseThrow(() -> new ESBException("Could not find configuration with id=[" + reference + "]"));
     }
 }
