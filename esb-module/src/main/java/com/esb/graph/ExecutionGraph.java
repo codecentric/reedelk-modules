@@ -13,11 +13,11 @@ import static com.esb.commons.Preconditions.checkState;
 
 public class ExecutionGraph {
 
-    private ExecutionGraphDirected executionGraph;
+    private ExecutionGraphDirected graph;
     private ExecutionNode root;
 
     private ExecutionGraph() {
-        executionGraph = new ExecutionGraphDirected();
+        graph = new ExecutionGraphDirected();
     }
 
     public static ExecutionGraph build() {
@@ -32,9 +32,9 @@ public class ExecutionGraph {
             checkState(root == null, "Root must be null for first component");
             checkState(n2.getComponent() instanceof Inbound, "First component must be Inbound");
             root = n2;
-            executionGraph.addNode(n2);
+            graph.addNode(n2);
         } else {
-            executionGraph.putEdge(n1, n2);
+            graph.putEdge(n1, n2);
         }
     }
 
@@ -44,19 +44,19 @@ public class ExecutionGraph {
 
     public Collection<ExecutionNode> successors(ExecutionNode executionNode) {
         checkArgument(executionNode != null, "executionNode");
-        return executionGraph.successors(executionNode);
+        return graph.successors(executionNode);
     }
 
     public void applyOnNodes(Consumer<ExecutionNode> consumer) {
         checkArgument(consumer != null, "consumer");
         if (hasRoot()) {
-            executionGraph.breadthFirstTraversal(root, consumer);
+            graph.breadthFirstTraversal(root, consumer);
         }
     }
 
     public Optional<ExecutionNode> findOne(Predicate<ExecutionNode> predicate) {
         checkArgument(predicate != null, "predicate");
-        return executionGraph.findOne(predicate);
+        return graph.findOne(predicate);
     }
 
     private boolean hasRoot() {
