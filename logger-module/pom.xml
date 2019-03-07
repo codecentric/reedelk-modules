@@ -28,11 +28,6 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <ESB-Module>true</ESB-Module>
-                        <Import-Package>
-                            com.esb.api.*,
-                            org.osgi.framework,
-                            org.slf4j
-                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
