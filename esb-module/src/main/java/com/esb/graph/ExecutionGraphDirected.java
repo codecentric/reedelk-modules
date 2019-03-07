@@ -8,15 +8,15 @@ import java.util.function.Predicate;
 
 import static com.esb.commons.Preconditions.checkState;
 
-public class ExecutionGraphDirected {
+class ExecutionGraphDirected {
 
     private Map<ExecutionNode, List<ExecutionNode>> adjacentNodes = new HashMap<>();
 
-    public void addNode(ExecutionNode n2) {
+    void addNode(ExecutionNode n2) {
         adjacentNodes.putIfAbsent(n2, new ArrayList<>());
     }
 
-    public void putEdge(ExecutionNode n1, ExecutionNode n2) {
+    void putEdge(ExecutionNode n1, ExecutionNode n2) {
         checkState(adjacentNodes.containsKey(n1), "n1 must be already in graph in order to add an edge");
         if (!adjacentNodes.containsKey(n2)) {
             adjacentNodes.put(n2, new ArrayList<>());
@@ -24,11 +24,7 @@ public class ExecutionGraphDirected {
         adjacentNodes.get(n1).add(n2);
     }
 
-    public Collection<ExecutionNode> successors(ExecutionNode executionNode) {
-        return adjacentNodes.get(executionNode);
-    }
-
-    public void breadthFirstTraversal(ExecutionNode root, Consumer<ExecutionNode> visitor) {
+    void breadthFirstTraversal(ExecutionNode root, Consumer<ExecutionNode> visitor) {
         Set<ExecutionNode> visited = new LinkedHashSet<>();
         Queue<ExecutionNode> queue = new LinkedList<>();
         queue.add(root);
@@ -45,7 +41,11 @@ public class ExecutionGraphDirected {
         }
     }
 
-    public Optional<ExecutionNode> findOne(Predicate<ExecutionNode> predicate) {
+    Collection<ExecutionNode> successors(ExecutionNode executionNode) {
+        return adjacentNodes.get(executionNode);
+    }
+
+    Optional<ExecutionNode> findOne(Predicate<ExecutionNode> predicate) {
         return adjacentNodes.keySet()
                 .stream()
                 .filter(predicate)
