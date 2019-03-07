@@ -5,7 +5,7 @@ import com.esb.api.message.Message;
 import com.esb.commons.Graph;
 import com.esb.component.Fork;
 import com.esb.flow.ExecutionNode;
-import com.esb.internal.api.commons.SerializationUtils;
+import com.esb.internal.commons.SerializationUtils;
 
 import java.util.ArrayList;
 import java.util.List;

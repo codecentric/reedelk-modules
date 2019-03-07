@@ -8,7 +8,7 @@ import com.esb.flow.ErrorStateFlow;
 import com.esb.flow.Flow;
 import com.esb.flow.FlowBuilder;
 import com.esb.flow.FlowBuilderContext;
-import com.esb.internal.api.commons.StringUtils;
+import com.esb.internal.commons.StringUtils;
 import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
 import com.esb.module.ModulesManager;

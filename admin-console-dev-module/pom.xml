@@ -15,7 +15,7 @@
     <artifactId>admin-console-dev-module</artifactId>
 
     <properties>
-        <json.version>20180813</json.version>
+        <takes.version>1.13</takes.version>
         <jackson.version>2.9.7</jackson.version>
         <netty.version>5.0.0.Alpha2</netty.version>
         <internal.rest.api.version>1.0.0-SNAPSHOT</internal.rest.api.version>
@@ -34,10 +34,17 @@
             <version>${internal.system.api.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- internal-rest-api depends on org.json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${json.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.takes</groupId>
             <artifactId>takes</artifactId>
-            <version>1.13</version>
+            <version>${takes.version}</version>
         </dependency>
     </dependencies>
 
@@ -56,10 +63,10 @@
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>
                             com.esb.api.*,
-                            com.esb.internal.api.*,
                             com.esb.system.api.*,
                             org.osgi.framework,
                             org.osgi.service.cm,
+                            org.json,
                             org.slf4j,
                             org.slf4j.spi
                         </Import-Package>

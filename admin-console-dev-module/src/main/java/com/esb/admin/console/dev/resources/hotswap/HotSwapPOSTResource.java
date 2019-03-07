@@ -1,9 +1,9 @@
 package com.esb.admin.console.dev.resources.hotswap;
 
 import com.esb.admin.console.dev.commons.RequestBody;
-import com.esb.internal.api.InternalAPI;
-import com.esb.internal.api.hotswap.v1.HotSwapPOSTReq;
-import com.esb.internal.api.hotswap.v1.HotSwapPOSTRes;
+import com.esb.internal.rest.api.InternalAPI;
+import com.esb.internal.rest.api.hotswap.v1.HotSwapPOSTReq;
+import com.esb.internal.rest.api.hotswap.v1.HotSwapPOSTRes;
 import com.esb.system.api.HotSwapService;
 import org.takes.Request;
 import org.takes.Response;

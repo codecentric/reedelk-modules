@@ -1,9 +1,9 @@
 package com.esb.admin.console.dev.resources.module;
 
 import com.esb.admin.console.dev.commons.RequestBody;
-import com.esb.internal.api.InternalAPI;
-import com.esb.internal.api.module.v1.ModulePOSTReq;
-import com.esb.internal.api.module.v1.ModulePOSTRes;
+import com.esb.internal.rest.api.InternalAPI;
+import com.esb.internal.rest.api.module.v1.ModulePOSTReq;
+import com.esb.internal.rest.api.module.v1.ModulePOSTRes;
 import com.esb.system.api.ModuleService;
 import org.takes.Request;
 import org.takes.Response;

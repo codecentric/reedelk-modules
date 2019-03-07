@@ -5,8 +5,8 @@ import com.esb.api.exception.ESBException;
 import com.esb.commons.JsonParser;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
-import com.esb.internal.api.commons.CollectionFactory;
-import com.esb.internal.api.commons.PrimitiveTypeConverter;
+import com.esb.internal.commons.CollectionFactory;
+import com.esb.internal.commons.PrimitiveTypeConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.Optional;
 
 import static com.esb.commons.Preconditions.checkArgument;
-import static com.esb.internal.api.commons.ReflectionUtils.*;
+import static com.esb.internal.commons.ReflectionUtils.*;
 import static java.lang.String.format;
 
 @SuppressWarnings("unchecked")

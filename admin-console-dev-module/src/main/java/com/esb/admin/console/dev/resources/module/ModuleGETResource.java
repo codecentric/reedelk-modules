@@ -1,8 +1,8 @@
 package com.esb.admin.console.dev.resources.module;
 
-import com.esb.internal.api.InternalAPI;
-import com.esb.internal.api.module.v1.ModuleGETRes;
-import com.esb.internal.api.module.v1.ModulesGETRes;
+import com.esb.internal.rest.api.InternalAPI;
+import com.esb.internal.rest.api.module.v1.ModuleGETRes;
+import com.esb.internal.rest.api.module.v1.ModulesGETRes;
 import com.esb.system.api.ModuleService;
 import com.esb.system.api.Modules;
 import org.takes.Request;
