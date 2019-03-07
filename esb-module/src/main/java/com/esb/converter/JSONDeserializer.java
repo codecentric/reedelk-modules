@@ -38,9 +38,7 @@ public class JSONDeserializer {
         Iterator<String> iterator = componentDefinition.keys();
 
         while (iterator.hasNext()) {
-
             String propertyName = iterator.next();
-
             if (EXCLUDED_PROPERTIES.contains(propertyName)) continue;
 
             Optional<Method> maybeSetter = getSetter(implementor, propertyName);
@@ -49,6 +47,7 @@ public class JSONDeserializer {
                 Object deserializedObject = maybeReference.isPresent() ?
                         deserialize(maybeReference.get()) :
                         deserialize(componentDefinition, implementor, propertyName);
+
                 Method setter = maybeSetter.get();
                 setProperty(implementor, setter, deserializedObject);
 
