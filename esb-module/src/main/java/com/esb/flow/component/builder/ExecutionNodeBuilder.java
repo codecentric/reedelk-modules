@@ -25,7 +25,6 @@ public class ExecutionNodeBuilder {
     private static final Class<? extends Builder> GENERIC_HANDLER = GenericComponentBuilder.class;
 
     private static final Map<String, Class<? extends Builder>> COMPONENT_NAME_HANDLER;
-
     static {
         Map<String, Class<? extends Builder>> tmp = new HashMap<>();
         tmp.put(Fork.class.getName(), ForkJoinComponentBuilder.class);
@@ -64,7 +63,9 @@ public class ExecutionNodeBuilder {
     public ExecutionNode build() {
         String componentName = JsonParser.Implementor.name(componentDefinition);
         Class<? extends Builder> builderClazz = COMPONENT_NAME_HANDLER.getOrDefault(componentName, GENERIC_HANDLER);
-        return instantiateBuilder(graph, context, builderClazz).build(parent, componentDefinition);
+
+        return instantiateBuilder(graph, context, builderClazz)
+                .build(parent, componentDefinition);
     }
 
     private static Builder instantiateBuilder(Graph graph, FlowBuilderContext context, Class<? extends Builder> builderClazz) {
