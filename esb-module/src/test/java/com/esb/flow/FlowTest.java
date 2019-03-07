@@ -7,7 +7,6 @@ import com.esb.commons.Graph;
 import com.esb.component.Stop;
 import com.esb.test.utils.TestComponent;
 import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +20,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -233,7 +234,9 @@ class FlowTest {
         ExecutionNode stopEN = mock(ExecutionNode.class);
         doReturn(new Stop()).when(stopEN).getComponent();
 
-        doReturn(Sets.newHashSet(stopEN)).when(mockExecutionGraph).successors(mockExecutionNode);
+        Set<ExecutionNode> executionNodes = new HashSet<>();
+        executionNodes.add(stopEN);
+        doReturn(executionNodes).when(mockExecutionGraph).successors(mockExecutionNode);
         Message inMessage = new Message();
 
 

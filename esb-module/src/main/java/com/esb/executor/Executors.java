@@ -7,18 +7,24 @@ import com.esb.component.Choice;
 import com.esb.component.Fork;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
-import com.google.common.collect.ImmutableMap;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Executors {
 
     private static final ProcessorExecutor DEFAULT_EXECUTOR = new ProcessorExecutor();
 
-    private static final Map<Class, Executor> COMPONENT_EXECUTOR = ImmutableMap.of(
-            Stop.class, new StopExecutor(),
-            Fork.class, new ForkExecutor(),
-            Choice.class, new ChoiceExecutor());
+    private static final Map<Class, Executor> COMPONENT_EXECUTOR;
+
+    static {
+        Map<Class, Executor> tmp = new HashMap<>();
+        tmp.put(Stop.class, new StopExecutor());
+        tmp.put(Fork.class, new ForkExecutor());
+        tmp.put(Choice.class, new ChoiceExecutor());
+        COMPONENT_EXECUTOR = Collections.unmodifiableMap(tmp);
+    }
 
     private Executors() {
     }
@@ -26,7 +32,6 @@ public class Executors {
     public static ExecutionResult execute(ExecutionNode next, Message message, Graph graph) {
         Component component = next.getComponent();
         Executor executor = COMPONENT_EXECUTOR.getOrDefault(component.getClass(), DEFAULT_EXECUTOR);
-
         return executor.execute(next, message, graph);
     }
 
