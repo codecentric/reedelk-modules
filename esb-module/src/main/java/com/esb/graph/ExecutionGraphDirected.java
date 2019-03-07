@@ -41,8 +41,8 @@ public class ExecutionGraphDirected {
                     visited.add(en);
                     queue.add(en);
                 }
-                visitor.accept(en);
             }
+            visitor.accept(executionNode);
         }
     }
 
