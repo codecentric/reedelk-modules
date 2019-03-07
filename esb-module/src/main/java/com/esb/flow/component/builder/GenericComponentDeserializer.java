@@ -108,6 +108,7 @@ public class GenericComponentDeserializer {
      */
     // TODO: What if the generic type is defined in the bundle? (Trello #12)
     // TODO: What if the generic type is an enum? (Trello #12)
+    // TODO: Use method argument.isGenericTypePrimitive! (probably should add isGenericTypeEnum as well!)
     private Collection deserialize(JSONArray array, SetterArgument argument) {
         Class<Collection> clazz = (Class<Collection>) argument.getClazz();
         Collection collection = CollectionFactory.from(clazz);

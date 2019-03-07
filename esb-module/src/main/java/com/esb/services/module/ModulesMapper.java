@@ -32,7 +32,7 @@ public class ModulesMapper implements Mapper<Module, ModuleGETRes> {
             moduleDto.setResolvedComponents(module.resolvedComponents());
         }
         if (ERROR == state) {
-            moduleDto.setExceptions(serializeExceptions(module.errors()));
+            moduleDto.setErrors(serializeExceptions(module.errors()));
         }
         return moduleDto;
     }
