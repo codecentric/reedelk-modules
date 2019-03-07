@@ -15,7 +15,6 @@
     <artifactId>esb-module</artifactId>
 
     <properties>
-        <guava.version>27.0.1-jre</guava.version>
         <internal.commons.version>1.0.0-SNAPSHOT</internal.commons.version>
         <internal.system.api.version>1.0.0-SNAPSHOT</internal.system.api.version>
     </properties>
