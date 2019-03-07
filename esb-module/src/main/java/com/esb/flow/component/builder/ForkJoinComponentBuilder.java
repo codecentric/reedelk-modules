@@ -1,6 +1,6 @@
 package com.esb.flow.component.builder;
 
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.commons.JsonParser;
 import com.esb.component.Fork;
 import com.esb.component.Stop;
@@ -11,10 +11,10 @@ import org.json.JSONObject;
 
 class ForkJoinComponentBuilder implements Builder {
 
-    private final ESBExecutionGraph graph;
+    private final ExecutionGraph graph;
     private final FlowBuilderContext context;
 
-    ForkJoinComponentBuilder(ESBExecutionGraph graph, FlowBuilderContext context) {
+    ForkJoinComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
         this.graph = graph;
         this.context = context;
     }

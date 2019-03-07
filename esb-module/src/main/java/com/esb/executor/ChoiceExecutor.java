@@ -1,7 +1,7 @@
 package com.esb.executor;
 
 import com.esb.api.message.Message;
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.component.Choice;
 import com.esb.flow.ExecutionNode;
 
@@ -15,7 +15,7 @@ import static com.esb.commons.Preconditions.checkState;
 public class ChoiceExecutor implements Executor {
 
     @Override
-    public ExecutionResult execute(ExecutionNode executionNode, Message message, ESBExecutionGraph graph) {
+    public ExecutionResult execute(ExecutionNode executionNode, Message message, ExecutionGraph graph) {
         Choice choice = (Choice) executionNode.getComponent();
 
         List<ExecutionNode> nextExecutionNodes = choice.apply(message);

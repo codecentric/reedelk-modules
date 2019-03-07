@@ -1,6 +1,6 @@
 package com.esb.flow.component.builder;
 
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.component.Choice;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
@@ -30,7 +30,7 @@ class ChoiceComponentBuilderTest {
     private static final String COMPONENT_6_NAME = TestComponent.class.getName() + "6";
 
     @Mock
-    private ESBExecutionGraph graph;
+    private ExecutionGraph graph;
     @Mock
     private FlowBuilderContext context;
     @Mock

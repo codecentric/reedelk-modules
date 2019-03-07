@@ -3,7 +3,7 @@ package com.esb.flow;
 import com.esb.api.component.Component;
 import com.esb.api.component.Inbound;
 import com.esb.api.message.Message;
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.component.Stop;
 import com.esb.test.utils.TestComponent;
 import org.junit.jupiter.api.Assertions;
@@ -43,7 +43,7 @@ class FlowTest {
     @Mock
     private ExecutionNode mockExecutionNode;
     @Mock
-    private ESBExecutionGraph mockExecutionGraph;
+    private ExecutionGraph mockExecutionGraph;
 
     @BeforeEach
     void setUp() {

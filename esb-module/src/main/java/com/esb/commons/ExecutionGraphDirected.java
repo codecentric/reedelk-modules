@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 
 import static com.esb.commons.Preconditions.checkState;
 
-public class ESBDirectedGraph {
+public class ExecutionGraphDirected {
 
     private Map<ExecutionNode, List<ExecutionNode>> adjacentNodes = new HashMap<>();
 

@@ -1,7 +1,7 @@
 package com.esb.flow.component.builder;
 
 
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.commons.JsonParser;
 import com.esb.component.Choice;
 import com.esb.component.Stop;
@@ -12,10 +12,10 @@ import org.json.JSONObject;
 
 class ChoiceComponentBuilder implements Builder {
 
-    private final ESBExecutionGraph graph;
+    private final ExecutionGraph graph;
     private final FlowBuilderContext context;
 
-    ChoiceComponentBuilder(ESBExecutionGraph graph, FlowBuilderContext context) {
+    ChoiceComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
         this.graph = graph;
         this.context = context;
     }

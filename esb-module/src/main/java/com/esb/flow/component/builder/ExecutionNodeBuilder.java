@@ -1,7 +1,7 @@
 package com.esb.flow.component.builder;
 
 import com.esb.api.exception.ESBException;
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.commons.JsonParser;
 import com.esb.component.Choice;
 import com.esb.component.FlowReference;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class ExecutionNodeBuilder {
 
-    private ESBExecutionGraph graph;
+    private ExecutionGraph graph;
     private ExecutionNode parent;
     private FlowBuilderContext context;
     private JSONObject componentDefinition;
@@ -41,10 +41,10 @@ public class ExecutionNodeBuilder {
         return this;
     }
 
-    private static Builder instantiateBuilder(ESBExecutionGraph graph, FlowBuilderContext context, Class<? extends Builder> builderClazz) {
+    private static Builder instantiateBuilder(ExecutionGraph graph, FlowBuilderContext context, Class<? extends Builder> builderClazz) {
         try {
             return builderClazz
-                    .getDeclaredConstructor(ESBExecutionGraph.class, FlowBuilderContext.class)
+                    .getDeclaredConstructor(ExecutionGraph.class, FlowBuilderContext.class)
                     .newInstance(graph, context);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new ESBException(e);
@@ -73,7 +73,7 @@ public class ExecutionNodeBuilder {
                 .build(parent, componentDefinition);
     }
 
-    public ExecutionNodeBuilder graph(ESBExecutionGraph graph) {
+    public ExecutionNodeBuilder graph(ExecutionGraph graph) {
         this.graph = graph;
         return this;
     }

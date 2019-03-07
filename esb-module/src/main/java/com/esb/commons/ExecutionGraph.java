@@ -10,17 +10,17 @@ import java.util.function.Predicate;
 
 import static com.esb.commons.Preconditions.checkState;
 
-public class ESBExecutionGraph {
+public class ExecutionGraph {
 
-    private ESBDirectedGraph executionGraph;
+    private ExecutionGraphDirected executionGraph;
     private ExecutionNode root;
 
-    private ESBExecutionGraph() {
-        executionGraph = new ESBDirectedGraph();
+    private ExecutionGraph() {
+        executionGraph = new ExecutionGraphDirected();
     }
 
-    public static ESBExecutionGraph build() {
-        return new ESBExecutionGraph();
+    public static ExecutionGraph build() {
+        return new ExecutionGraph();
     }
 
     public void putEdge(ExecutionNode n1, ExecutionNode n2) {

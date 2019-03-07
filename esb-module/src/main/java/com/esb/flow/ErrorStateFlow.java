@@ -1,17 +1,17 @@
 package com.esb.flow;
 
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 
 public class ErrorStateFlow extends Flow {
 
     private final Exception exception;
 
-    public ErrorStateFlow(String flowId, ESBExecutionGraph executionGraph, Exception exception) {
+    public ErrorStateFlow(String flowId, ExecutionGraph executionGraph, Exception exception) {
         super(flowId, executionGraph);
         this.exception = exception;
     }
 
-    public ErrorStateFlow(ESBExecutionGraph executionGraph, Exception exception) {
+    public ErrorStateFlow(ExecutionGraph executionGraph, Exception exception) {
         super(null, executionGraph);
         this.exception = exception;
     }

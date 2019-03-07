@@ -1,6 +1,6 @@
 package com.esb.flow.component.builder;
 
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.flow.FlowBuilderContext;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class GenericComponentBuilderTest {
 
     @Mock
-    private ESBExecutionGraph graph;
+    private ExecutionGraph graph;
     @Mock
     private ExecutionNode parent;
     @Mock

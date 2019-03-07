@@ -2,7 +2,7 @@ package com.esb.executor;
 
 import com.esb.api.component.Join;
 import com.esb.api.message.Message;
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.component.Fork;
 import com.esb.flow.ExecutionNode;
 import com.esb.internal.commons.SerializationUtils;
@@ -18,7 +18,7 @@ import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 public class ForkExecutor implements Executor {
 
     @Override
-    public ExecutionResult execute(ExecutionNode executionNode, final Message message, ESBExecutionGraph graph) {
+    public ExecutionResult execute(ExecutionNode executionNode, final Message message, ExecutionGraph graph) {
 
         Fork fork = (Fork) executionNode.getComponent();
         List<ExecutionNode> nextExecutionNodes = fork.apply(message);

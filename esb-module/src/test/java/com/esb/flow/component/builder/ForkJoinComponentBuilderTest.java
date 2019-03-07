@@ -1,6 +1,6 @@
 package com.esb.flow.component.builder;
 
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.component.Fork;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
@@ -30,7 +30,7 @@ class ForkJoinComponentBuilderTest {
     private static final Class JOIN_COMPONENT_NAME = TestJoinComponent.class;
 
     @Mock
-    private ESBExecutionGraph graph;
+    private ExecutionGraph graph;
     @Mock
     private FlowBuilderContext context;
     @Mock

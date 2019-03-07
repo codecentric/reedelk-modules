@@ -1,7 +1,7 @@
 package com.esb.executor;
 
 import com.esb.api.message.Message;
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.flow.ExecutionNode;
 
 import java.util.Collection;
@@ -10,9 +10,9 @@ import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
 public class FlowExecutor {
 
-    private final ESBExecutionGraph graph;
+    private final ExecutionGraph graph;
 
-    public FlowExecutor(ESBExecutionGraph graph) {
+    public FlowExecutor(ExecutionGraph graph) {
         this.graph = graph;
     }
 

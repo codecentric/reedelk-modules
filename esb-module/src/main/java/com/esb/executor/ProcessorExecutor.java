@@ -2,7 +2,7 @@ package com.esb.executor;
 
 import com.esb.api.component.Processor;
 import com.esb.api.message.Message;
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.flow.ExecutionNode;
 
 import java.util.Collection;
@@ -12,7 +12,7 @@ import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 public class ProcessorExecutor implements Executor {
 
     @Override
-    public ExecutionResult execute(ExecutionNode executionNode, Message message, ESBExecutionGraph graph) {
+    public ExecutionResult execute(ExecutionNode executionNode, Message message, ExecutionGraph graph) {
         Processor processor = (Processor) executionNode.getComponent();
         Message transformedMessage = processor.apply(message);
 

@@ -1,6 +1,6 @@
 package com.esb.flow.component.builder;
 
-import com.esb.commons.ESBExecutionGraph;
+import com.esb.commons.ExecutionGraph;
 import com.esb.component.FlowReference;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
@@ -29,7 +29,7 @@ class FlowReferenceComponentBuilderTest {
     private static final String COMPONENT_3_NAME = TestComponent.class.getName() + "3";
 
     @Mock
-    private ESBExecutionGraph graph;
+    private ExecutionGraph graph;
     @Mock
     private FlowBuilderContext context;
     @Mock
