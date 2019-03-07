@@ -1,9 +1,9 @@
 package com.esb.services.configuration;
 
-import com.esb.internal.api.SystemProperty;
 import com.esb.services.configuration.configurer.ConfigFile;
 import com.esb.services.configuration.configurer.PropertiesConfigFile;
 import com.esb.services.configuration.configurer.XmlConfigFile;
+import com.esb.system.api.SystemProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

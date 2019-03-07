@@ -18,14 +18,20 @@
         <json.version>20180813</json.version>
         <jackson.version>2.9.7</jackson.version>
         <netty.version>5.0.0.Alpha2</netty.version>
-        <internal.api.version>1.0.0-SNAPSHOT</internal.api.version>
+        <internal.rest.api.version>1.0.0-SNAPSHOT</internal.rest.api.version>
+        <internal.system.api.version>1.0.0-SNAPSHOT</internal.system.api.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.esb</groupId>
-            <artifactId>internal-api</artifactId>
-            <version>${internal.api.version}</version>
+            <artifactId>internal-rest-api</artifactId>
+            <version>${internal.rest.api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.esb</groupId>
+            <artifactId>internal-system-api</artifactId>
+            <version>${internal.system.api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -51,6 +57,7 @@
                         <Import-Package>
                             com.esb.api.*,
                             com.esb.internal.api.*,
+                            com.esb.system.api.*,
                             org.osgi.framework,
                             org.osgi.service.cm,
                             org.slf4j,

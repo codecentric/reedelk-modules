@@ -1,6 +1,6 @@
 package com.esb.admin.console.dev.resources.module;
 
-import com.esb.internal.api.ModuleService;
+import com.esb.system.api.ModuleService;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.facets.fork.FkMethods;

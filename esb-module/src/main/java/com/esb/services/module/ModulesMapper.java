@@ -1,7 +1,5 @@
 package com.esb.services.module;
 
-import com.esb.internal.api.Mapper;
-import com.esb.internal.api.module.v1.ModuleGETRes;
 import com.esb.module.Module;
 import com.esb.module.state.ModuleState;
 
@@ -12,12 +10,11 @@ import java.util.Collection;
 import static com.esb.module.state.ModuleState.*;
 import static java.util.stream.Collectors.toList;
 
-public class ModulesMapper implements Mapper<Module, ModuleGETRes> {
+public class ModulesMapper {
 
-    @Override
-    public ModuleGETRes map(Module module) {
+    public com.esb.system.api.Module map(Module module) {
         ModuleState state = module.state();
-        ModuleGETRes moduleDto = new ModuleGETRes();
+        com.esb.system.api.Module moduleDto = new com.esb.system.api.Module();
         moduleDto.setState(state.name());
         moduleDto.setName(module.name());
         moduleDto.setModuleId(module.id());

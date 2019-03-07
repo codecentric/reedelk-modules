@@ -1,8 +1,8 @@
 package com.esb.admin.console.dev.resources.health;
 
 import com.esb.internal.api.InternalAPI;
-import com.esb.internal.api.SystemProperty;
 import com.esb.internal.api.health.v1.HealthGETRes;
+import com.esb.system.api.SystemProperty;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.facets.fork.FkMethods;

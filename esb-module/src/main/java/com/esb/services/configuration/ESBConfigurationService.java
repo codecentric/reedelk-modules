@@ -1,8 +1,8 @@
 package com.esb.services.configuration;
 
 import com.esb.api.service.ConfigurationService;
-import com.esb.internal.api.SystemProperty;
 import com.esb.services.configuration.configurer.*;
+import com.esb.system.api.SystemProperty;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;

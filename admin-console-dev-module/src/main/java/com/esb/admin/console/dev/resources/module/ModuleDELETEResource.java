@@ -2,9 +2,9 @@ package com.esb.admin.console.dev.resources.module;
 
 import com.esb.admin.console.dev.commons.RequestBody;
 import com.esb.internal.api.InternalAPI;
-import com.esb.internal.api.ModuleService;
 import com.esb.internal.api.module.v1.ModuleDELETEReq;
 import com.esb.internal.api.module.v1.ModuleDELETERes;
+import com.esb.system.api.ModuleService;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;

@@ -1,6 +1,6 @@
 package com.esb.services.hotswap;
 
-import com.esb.internal.api.HotSwapService;
+import com.esb.system.api.HotSwapService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;

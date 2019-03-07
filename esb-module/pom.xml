@@ -17,14 +17,20 @@
     <properties>
         <json.version>20180813</json.version>
         <guava.version>27.0.1-jre</guava.version>
-        <internal.api.version>1.0.0-SNAPSHOT</internal.api.version>
+        <internal.rest.api.version>1.0.0-SNAPSHOT</internal.rest.api.version>
+        <internal.system.api.version>1.0.0-SNAPSHOT</internal.system.api.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.esb</groupId>
-            <artifactId>internal-api</artifactId>
-            <version>${internal.api.version}</version>
+            <artifactId>internal-rest-api</artifactId>
+            <version>${internal.rest.api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.esb</groupId>
+            <artifactId>internal-system-api</artifactId>
+            <version>${internal.system.api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

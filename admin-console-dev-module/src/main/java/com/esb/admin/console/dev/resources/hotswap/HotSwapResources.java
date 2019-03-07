@@ -1,6 +1,6 @@
 package com.esb.admin.console.dev.resources.hotswap;
 
-import com.esb.internal.api.HotSwapService;
+import com.esb.system.api.HotSwapService;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.facets.fork.FkMethods;

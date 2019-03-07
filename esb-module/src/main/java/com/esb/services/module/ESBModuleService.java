@@ -1,10 +1,10 @@
 package com.esb.services.module;
 
 import com.esb.api.exception.ESBException;
-import com.esb.internal.api.ModuleService;
-import com.esb.internal.api.module.v1.ModuleGETRes;
-import com.esb.internal.api.module.v1.ModulesGETRes;
 import com.esb.module.ModulesManager;
+import com.esb.system.api.Module;
+import com.esb.system.api.ModuleService;
+import com.esb.system.api.Modules;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -90,15 +90,13 @@ public class ESBModuleService implements ModuleService {
         }
     }
 
-    // TODO: ModulesGETRes should be a DTO to be used only in the REST.
     @Override
-    public ModulesGETRes modules() {
-        Set<ModuleGETRes> mappedModules = modulesManager.allModules()
+    public Modules modules() {
+        Set<Module> mappedModules = modulesManager.allModules()
                 .stream()
                 .map(mapper::map)
                 .collect(toSet());
-
-        ModulesGETRes modules = new ModulesGETRes();
+        Modules modules = new Modules();
         modules.setModules(mappedModules);
         return modules;
     }
