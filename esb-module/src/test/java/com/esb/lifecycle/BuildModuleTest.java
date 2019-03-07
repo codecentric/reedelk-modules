@@ -17,7 +17,6 @@ import com.esb.test.utils.AnotherTestComponent;
 import com.esb.test.utils.TestComponent;
 import com.esb.test.utils.TestInboundComponent;
 import com.esb.test.utils.TestJson;
-import com.google.common.collect.ImmutableList;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +40,7 @@ import java.util.Set;
 
 import static com.esb.module.state.ModuleState.*;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptySet;
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.*;
@@ -153,7 +152,7 @@ class BuildModuleTest {
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
-        inputModule.stop(ImmutableList.of(flow));
+        inputModule.stop(unmodifiableList(singletonList(flow)));
 
         // When
         Module module = step.run(inputModule);
@@ -174,8 +173,8 @@ class BuildModuleTest {
                 .build();
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
-        inputModule.stop(ImmutableList.of(flow));
-        inputModule.start(ImmutableList.of(flow));
+        inputModule.stop(unmodifiableList(singletonList(flow)));
+        inputModule.start(unmodifiableList(singletonList(flow)));
 
         // When
         Module module = step.run(inputModule);
