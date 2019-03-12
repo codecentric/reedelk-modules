@@ -17,7 +17,7 @@
             },
             {
               "implementor.name": "com.esb.core.component.SetPayload",
-              "payload": "Payload3 Content"
+              "payload": "Payload3 CHANGED"
             },
             {
               "implementor.name": "com.esb.logger.component.LogComponent",

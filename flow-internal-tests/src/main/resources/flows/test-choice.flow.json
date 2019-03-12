@@ -5,7 +5,6 @@
       "implementor.name": "com.esb.rest.component.RestListener",
       "path": "/choice",
       "method": "POST",
-      "unexistent": "propertyvauleu",
       "configuration": {
         "configRef": "customer-api-connection-config"
       }
@@ -14,11 +13,11 @@
       "implementor.name": "com.esb.component.Choice",
       "when": [
         {
-          "condition": "payload.name == 'Super'",
+          "condition": "payload.name == 35",
           "next": [
             {
               "implementor.name": "com.esb.core.component.SetPayload",
-              "payload": "{\"result\":\"Choice1\"}"
+              "payload": "{\"result\":\"Payload contains 35\"}"
             }
           ]
         },

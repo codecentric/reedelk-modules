@@ -12,7 +12,7 @@
     },
     {
       "implementor.name": "com.esb.core.component.SetPayload",
-      "payload": "Main flow continuation"
+      "payload": "Main Flow Processor"
     },
     {
       "implementor.name": "com.esb.logger.component.LogComponent",

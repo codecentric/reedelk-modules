@@ -3,7 +3,7 @@
   "subflow": [
     {
       "implementor.name": "com.esb.core.component.SetPayload",
-      "payload": "Subflow Content"
+      "payload": "Subflow Processor"
     },
     {
       "implementor.name": "com.esb.logger.component.LogComponent",

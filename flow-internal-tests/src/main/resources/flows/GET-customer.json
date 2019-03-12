@@ -20,7 +20,7 @@
     },
     {
       "implementor.name": "com.esb.core.component.SetPayload",
-      "payload": "{ \"name\": \"Mark\", \"surname\": \"Franz\"}"
+      "payload": "{ \"name\": \"Claudio\", \"surname\": \"Mark\"}"
     },
     {
       "implementor.name": "com.esb.logger.component.LogComponent",
