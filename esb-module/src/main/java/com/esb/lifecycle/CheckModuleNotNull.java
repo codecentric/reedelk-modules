@@ -12,7 +12,7 @@ public class CheckModuleNotNull extends AbstractStep<Module, Module> {
         Bundle bundle = bundle();
         long moduleId = bundle.getBundleId();
         checkState(module != null,
-                "Module with id=[%d] was found in Module Manager", moduleId);
+                "Module with id=[%d] was not found in Module Manager", moduleId);
         return module;
     }
 }
