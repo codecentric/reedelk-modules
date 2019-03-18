@@ -21,13 +21,11 @@ import static com.esb.api.message.MimeType.APPLICATION_JSON;
 
 public class HealthResources implements Fork {
 
-    private static final String BASE_PATH = "/health";
-
     private final FkRegex fkRegex;
 
-    public HealthResources(SystemProperty systemProperty) {
+    public HealthResources(SystemProperty systemProperty, String path) {
         String responseJson = buildResponse(systemProperty);
-        fkRegex = new FkRegex(BASE_PATH, new TkFork(
+        fkRegex = new FkRegex(path, new TkFork(
                 new FkMethods(GET.name(),
                         new RsWithBody(
                                 new RsWithHeader(CONTENT_TYPE, APPLICATION_JSON.toString()), responseJson.getBytes()))));

@@ -15,12 +15,10 @@ import static com.esb.admin.console.dev.HttpMethod.*;
 
 public class ModuleResources implements Fork {
 
-    private static final String BASE_PATH = "/module";
-
     private final FkRegex fkRegex;
 
-    public ModuleResources(ModuleService service) {
-        fkRegex = new FkRegex(BASE_PATH, new TkFork(
+    public ModuleResources(ModuleService service, String path) {
+        fkRegex = new FkRegex(path, new TkFork(
                 new FkMethods(GET.name(), new ModuleGETResource(service)),
                 new FkMethods(PUT.name(), new ModulePUTResource(service)),
                 new FkMethods(POST.name(), new ModulePOSTResource(service)),

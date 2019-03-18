@@ -53,9 +53,9 @@ public class DevAdminConsoleActivator {
         String bindAddress = configurationService.getStringConfigProperty(CONFIG_PID, CONFIG_KEY_LISTENING_ADDRESS, DEFAULT_BIND_ADDRESS);
 
         service = new DevAdminConsoleService(bindAddress, listeningPort,
-                new HealthResources(systemProperty),
-                new ModuleResources(moduleService),
-                new HotSwapResources(hotSwapService),
+                new HealthResources(systemProperty, "/api/health"),
+                new ModuleResources(moduleService, "/api/module"),
+                new HotSwapResources(hotSwapService, "/api/hotswap"),
                 new ConsoleCSSResource(),
                 new ConsoleHTMLResource(),
                 new ConsoleJavascriptResource(),

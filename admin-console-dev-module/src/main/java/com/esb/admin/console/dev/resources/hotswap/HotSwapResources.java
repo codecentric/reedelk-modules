@@ -19,8 +19,8 @@ public class HotSwapResources implements Fork {
 
     private final FkRegex fkRegex;
 
-    public HotSwapResources(HotSwapService service) {
-        fkRegex = new FkRegex(BASE_PATH, new TkFork(
+    public HotSwapResources(HotSwapService service, String path) {
+        fkRegex = new FkRegex(path, new TkFork(
                 new FkMethods(POST.name(), new HotSwapPOSTResource(service))));
     }
 
