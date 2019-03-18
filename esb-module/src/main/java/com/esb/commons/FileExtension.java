@@ -5,6 +5,7 @@ public enum FileExtension {
     XML("xml"),
     JSON("json"),
     FLOW("flow"),
+    FLOW_CONFIG("flow.config"),
     PROPERTIES("properties");
 
     private final String value;

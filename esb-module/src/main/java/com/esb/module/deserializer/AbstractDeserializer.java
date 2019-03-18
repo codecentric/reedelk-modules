@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.esb.commons.FileExtension.FLOW;
+import static com.esb.commons.FileExtension.FLOW_CONFIG;
 import static com.esb.module.ModuleProperties.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -21,8 +22,15 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
 
     @Override
     public DeserializedModule deserialize() {
-        Set<JSONObject> flows = objectsWithRoot(filteredResources(Flow.RESOURCE_DIRECTORY), Flow.ROOT_PROPERTY);
-        Set<JSONObject> subflows = objectsWithRoot(filteredResources(Subflow.RESOURCE_DIRECTORY), Subflow.ROOT_PROPERTY);
+
+        Set<JSONObject> flows = objectsWithRoot(
+                filteredResources(Flow.RESOURCE_DIRECTORY, FLOW.value()),
+                Flow.ROOT_PROPERTY);
+
+        Set<JSONObject> subflows = objectsWithRoot(
+                filteredResources(Subflow.RESOURCE_DIRECTORY, FLOW.value()),
+                Subflow.ROOT_PROPERTY);
+
         Collection<JSONObject> configurations = getConfigurations();
 
         return new DeserializedModule(flows, subflows, configurations);
@@ -30,10 +38,10 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
 
     protected abstract List<URL> getResources(String directory);
 
-    private List<URL> filteredResources(String directory) {
+    private List<URL> filteredResources(String directory, String suffix) {
         return getResources(directory)
                 .stream()
-                .filter(url -> url.getFile().endsWith(FLOW.value()))
+                .filter(url -> url.getFile().endsWith(suffix))
                 .collect(Collectors.toList());
     }
 
@@ -46,11 +54,15 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
     }
 
     private Collection<JSONObject> getConfigurations() {
-        Iterator<JSONObject> it = objectsWithRoot(getResources(Config.RESOURCE_DIRECTORY), Config.ROOT_PROPERTY).iterator();
+        Iterator<JSONObject> it = objectsWithRoot(
+                filteredResources(Config.RESOURCE_DIRECTORY, FLOW_CONFIG.value()),
+                Config.ROOT_PROPERTY)
+                .iterator();
+
         if (!it.hasNext()) {
             return Collections.emptyList();
         } else {
-            JSONArray configs = it.next().getJSONArray("configs");
+            JSONArray configs = it.next().getJSONArray(Config.ROOT_PROPERTY);
             return StreamSupport
                     .stream(configs.spliterator(), false)
                     .map(o -> (JSONObject) o)
