@@ -32,8 +32,8 @@ public class DevAdminConsoleActivator {
     private static final int DEFAULT_LISTENING_PORT = 9988;
     private static final String DEFAULT_BIND_ADDRESS = "localhost";
 
-    private static final String CONFIG_KEY_LISTENING_PORT = "listening.port";
-    private static final String CONFIG_KEY_LISTENING_ADDRESS = "listening.bind.address";
+    private static final String CONFIG_KEY_LISTENING_PORT = "admin.console.bind.port";
+    private static final String CONFIG_KEY_LISTENING_ADDRESS = "admin.console.bind.address";
     private static final String CONFIG_PID = "com.esb.admin.console.dev";
 
     @Reference
