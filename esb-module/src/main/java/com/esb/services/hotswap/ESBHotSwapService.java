@@ -1,5 +1,6 @@
 package com.esb.services.hotswap;
 
+import com.esb.system.api.BundleNotFoundException;
 import com.esb.system.api.HotSwapService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -8,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-import static com.esb.commons.Preconditions.checkIsPresentAndGetOrThrow;
+import static java.lang.String.format;
 
 public class ESBHotSwapService implements HotSwapService {
 
@@ -23,9 +24,11 @@ public class ESBHotSwapService implements HotSwapService {
     }
 
     @Override
-    public long hotSwap(String modulePath, String resourcesRootDirectory) {
+    public long hotSwap(String modulePath, String resourcesRootDirectory) throws BundleNotFoundException {
         Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
-        Bundle bundleAtPath = checkIsPresentAndGetOrThrow(optionalBundle, "Hot Swap failed: could not find registered bundle in target file path=%s", modulePath);
+        Bundle bundleAtPath = optionalBundle
+                .orElseThrow(() ->
+                        new BundleNotFoundException(format("Hot Swap failed: could not find registered bundle in target file path=%s", modulePath)));
 
         listener.hotSwap(bundleAtPath.getBundleId(), resourcesRootDirectory);
 

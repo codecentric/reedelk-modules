@@ -4,6 +4,7 @@ import com.esb.admin.console.dev.commons.RequestBody;
 import com.esb.internal.rest.api.InternalAPI;
 import com.esb.internal.rest.api.hotswap.v1.HotSwapPOSTReq;
 import com.esb.internal.rest.api.hotswap.v1.HotSwapPOSTRes;
+import com.esb.system.api.BundleNotFoundException;
 import com.esb.system.api.HotSwapService;
 import org.takes.Request;
 import org.takes.Response;
@@ -16,6 +17,7 @@ import java.io.IOException;
 
 import static com.esb.admin.console.dev.commons.HttpHeader.CONTENT_TYPE;
 import static com.esb.api.message.MimeType.APPLICATION_JSON;
+import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 public class HotSwapPOSTResource implements Take {
@@ -31,15 +33,20 @@ public class HotSwapPOSTResource implements Take {
         String json = RequestBody.from(request);
         HotSwapPOSTReq hotSwapReq = InternalAPI.HotSwap.V1.POST.Req.deserialize(json);
 
-        long moduleId = service.hotSwap(hotSwapReq.getModuleFilePath(), hotSwapReq.getResourcesRootDirectory());
+        try {
+            long moduleId = service.hotSwap(hotSwapReq.getModuleFilePath(), hotSwapReq.getResourcesRootDirectory());
 
-        HotSwapPOSTRes dto = new HotSwapPOSTRes();
-        dto.setModuleId(moduleId);
+            HotSwapPOSTRes dto = new HotSwapPOSTRes();
+            dto.setModuleId(moduleId);
 
-        return new RsWithBody(
-                new RsWithStatus(
-                        new RsWithHeader(CONTENT_TYPE, APPLICATION_JSON.toString()), HTTP_OK),
-                InternalAPI.HotSwap.V1.POST.Res.serialize(dto));
+            return new RsWithBody(
+                    new RsWithStatus(
+                            new RsWithHeader(CONTENT_TYPE, APPLICATION_JSON.toString()), HTTP_OK),
+                    InternalAPI.HotSwap.V1.POST.Res.serialize(dto));
+
+        } catch (BundleNotFoundException e) {
+            return new RsWithStatus(HTTP_NOT_FOUND);
+        }
 
     }
 }

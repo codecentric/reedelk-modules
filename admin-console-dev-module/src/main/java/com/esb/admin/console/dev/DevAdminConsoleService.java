@@ -4,10 +4,11 @@ package com.esb.admin.console.dev;
 import com.esb.api.exception.ESBException;
 import org.takes.facets.fork.Fork;
 import org.takes.facets.fork.TkFork;
-import org.takes.http.Exit;
-import org.takes.http.FtBasic;
+import org.takes.http.*;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -19,17 +20,19 @@ class DevAdminConsoleService {
     private final Fork[] forks;
 
     private int port;
+    private String bindAddress;
     private FtBasic server;
     private ExitStrategy exit = new ExitStrategy();
 
-    DevAdminConsoleService(int port, Fork... forks) {
+    DevAdminConsoleService(String bindAddress, int port, Fork... forks) {
         this.port = port;
         this.forks = forks;
+        this.bindAddress = bindAddress;
     }
 
     void start() {
         TkFork tkFork = new TkFork(forks);
-        executor.submit(new StartServer(exit, tkFork, port));
+        executor.submit(new StartServer(exit, tkFork, bindAddress, port));
     }
 
     void stop() {
@@ -47,20 +50,28 @@ class DevAdminConsoleService {
 
     class StartServer implements Runnable {
 
-        private final Exit exit;
         private final int port;
+        private final String bindAddress;
+
+        private final Exit exit;
         private final TkFork routes;
 
-        StartServer(Exit exit, TkFork routes, int port) {
+        StartServer(Exit exit, TkFork routes, String bindAddress, int port) {
             this.exit = exit;
             this.port = port;
             this.routes = routes;
+            this.bindAddress = bindAddress;
         }
 
         @Override
         public void run() {
             try {
-                server = new FtBasic(routes, port);
+                InetSocketAddress socketAddress = new InetSocketAddress(bindAddress, port);
+                ServerSocket serverSocket = new ServerSocket();
+                serverSocket.bind(socketAddress);
+
+                Back bkSafe = new BkSafe(new BkBasic(routes));
+                server = new FtBasic(bkSafe, serverSocket);
                 server.start(exit);
             } catch (IOException e) {
                 throw new ESBException(e);

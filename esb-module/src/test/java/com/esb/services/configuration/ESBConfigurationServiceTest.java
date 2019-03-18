@@ -82,12 +82,30 @@ class ESBConfigurationServiceTest {
     }
 
     @Test
-    void shouldReturnDefaultStringConfigProperty() throws IOException {
+    void shouldReturnDefaultStringConfigPropertyWhenDictionaryIsNull() throws IOException {
         // Given
         doReturn(null)
                 .when(service)
                 .getStringSystemProperty(TEST_CONFIG_KEY);
         mockConfigurationWithProperties(TEST_CONFIG_PID, null);
+
+        // When
+        String actualConfigProperty = service.getStringConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, "MyDefaultValue");
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo("MyDefaultValue");
+    }
+
+    @Test
+    void shouldReturnDefaultStringConfigPropertyWhenDictionaryDoesNotContainKey() throws IOException {
+        // Given
+        Dictionary<String, Object> dictionaryNotContainingTargetKey = new Hashtable<>();
+        dictionaryNotContainingTargetKey.put("anotherKey", "aString");
+
+        doReturn(null)
+                .when(service)
+                .getStringSystemProperty(TEST_CONFIG_KEY);
+        mockConfigurationWithProperties(TEST_CONFIG_PID, dictionaryNotContainingTargetKey);
 
         // When
         String actualConfigProperty = service.getStringConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, "MyDefaultValue");

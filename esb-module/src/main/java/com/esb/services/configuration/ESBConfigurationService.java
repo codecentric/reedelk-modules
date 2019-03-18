@@ -14,6 +14,8 @@ import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.list;
 import static java.util.stream.Collectors.toList;
 
 public class ESBConfigurationService implements ConfigurationService {
@@ -75,7 +77,7 @@ public class ESBConfigurationService implements ConfigurationService {
     Collection<ConfigFile> listConfigFilesFromConfigDirectory() {
         File configDirectory = new File(systemProperty.configDirectory());
         File[] files = configDirectory.listFiles(File::isFile);
-        if (files == null) return Collections.emptyList();
+        if (files == null) return emptyList();
         return stream(files)
                 .map(ConfigFileFactory::get)
                 .filter(Objects::nonNull)
@@ -104,7 +106,9 @@ public class ESBConfigurationService implements ConfigurationService {
     }
 
     private <T> T getPropertyOrDefault(Dictionary<String, Object> dictionary, String configKey, T defaultValue, DataMapper<T> mapper) {
-        boolean isKeyPresent = Collections.list(dictionary.keys()).stream().findAny().isPresent();
+        boolean isKeyPresent = list(dictionary.keys())
+                .stream()
+                .anyMatch(configKey::equals);
         if (isKeyPresent) {
             return mapper.map(dictionary.get(configKey));
         } else {

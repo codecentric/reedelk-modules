@@ -1,5 +1,6 @@
 package com.esb.services.hotswap;
 
+import com.esb.system.api.BundleNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +30,7 @@ class ESBHotSwapServiceTest {
     }
 
     @Test
-    void shouldTestSomething() {
+    void shouldTestSomething() throws BundleNotFoundException {
         // Given
         String modulePath = "file:/Users/myuser/module/path/test-module-1.0.0.jar";
         String resourcesRootDirectory = "/Users/myuser/module/src/main/resources";

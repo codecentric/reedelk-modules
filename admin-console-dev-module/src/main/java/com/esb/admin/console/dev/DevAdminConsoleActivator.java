@@ -30,8 +30,10 @@ public class DevAdminConsoleActivator {
     private static final Logger logger = LoggerFactory.getLogger(DevAdminConsoleActivator.class);
 
     private static final int DEFAULT_LISTENING_PORT = 9988;
+    private static final String DEFAULT_BIND_ADDRESS = "localhost";
 
     private static final String CONFIG_KEY_LISTENING_PORT = "listening.port";
+    private static final String CONFIG_KEY_LISTENING_ADDRESS = "listening.bind.address";
     private static final String CONFIG_PID = "com.esb.admin.console.dev";
 
     @Reference
@@ -48,8 +50,9 @@ public class DevAdminConsoleActivator {
     @Activate
     public void activate() throws BundleException {
         int listeningPort = configurationService.getIntConfigProperty(CONFIG_PID, CONFIG_KEY_LISTENING_PORT, DEFAULT_LISTENING_PORT);
+        String bindAddress = configurationService.getStringConfigProperty(CONFIG_PID, CONFIG_KEY_LISTENING_ADDRESS, DEFAULT_BIND_ADDRESS);
 
-        service = new DevAdminConsoleService(listeningPort,
+        service = new DevAdminConsoleService(bindAddress, listeningPort,
                 new HealthResources(systemProperty),
                 new ModuleResources(moduleService),
                 new HotSwapResources(hotSwapService),
@@ -58,8 +61,8 @@ public class DevAdminConsoleActivator {
                 new ConsoleJavascriptResource(),
                 new ConsoleIndexResource());
         service.start();
-        waitAndLogStarted(listeningPort);
 
+        waitAndLogStarted(bindAddress, listeningPort);
     }
 
     @Deactivate
@@ -67,12 +70,11 @@ public class DevAdminConsoleActivator {
         service.stop();
     }
 
-    // TODO: Fix this logger. Configuration should wait until completed.
-    private void waitAndLogStarted(int listeningPort) {
+    private void waitAndLogStarted(String bindAddress, int listeningPort) {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                logger.info(String.format("Dev Admin Console listening on port %d", listeningPort));
+                logger.info(String.format("Dev Admin Console listening on http://%s:%d/console", bindAddress, listeningPort));
             }
         }, 500);
     }
