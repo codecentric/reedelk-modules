@@ -32,14 +32,19 @@ class FileSystemDeserializerTest {
     }
 
     @Test
-    void shouldDoSomething() throws IOException {
+    void shouldRecursivelyReturnAllFiles() throws IOException {
         // Given
         Path somethingDir = Paths.get(tmpDir, "something");
         somethingDir.toFile().mkdirs();
 
-        String flow1 = createFile(somethingDir.toString(), "flow1.json");
-        String flow2 = createFile(somethingDir.toString(), "flow2.json");
-        String flow3 = createFile(somethingDir.toString(), "flow3.json");
+        Path nestedDirectory = Paths.get(somethingDir.toString(), "nested");
+        nestedDirectory.toFile().mkdirs();
+
+        String flow1 = createFile(somethingDir.toString(), "flow1.flow");
+        String flow2 = createFile(somethingDir.toString(), "flow2.flow");
+        String flow3 = createFile(somethingDir.toString(), "flow3.txt");
+        String flow4 = createFile(somethingDir.toString(), "flow3.json");
+        String flow5 = createFile(nestedDirectory.toString(), "flow3.json");
 
 
         FileSystemDeserializer deserializer = new FileSystemDeserializer(tmpDir);
@@ -51,6 +56,8 @@ class FileSystemDeserializerTest {
         assertFound(folderResources, flow1);
         assertFound(folderResources, flow2);
         assertFound(folderResources, flow3);
+        assertFound(folderResources, flow4);
+        assertFound(folderResources, flow5);
     }
 
     private void assertFound(Collection<URL> folderResources, String resourcePath) {

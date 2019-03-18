@@ -11,10 +11,17 @@ public class ModuleProperties {
 
     public static class Flow {
         public static final String RESOURCE_DIRECTORY = "/flows";
+        public static final String ROOT_PROPERTY = "flow";
+    }
+
+    public static class Subflow {
+        public static final String RESOURCE_DIRECTORY = "/flows";
+        public static final String ROOT_PROPERTY = "subflow";
     }
 
     public static class Config {
         public static final String RESOURCE_DIRECTORY = "/configs";
+        public static final String ROOT_PROPERTY = "configs";
     }
 
 }

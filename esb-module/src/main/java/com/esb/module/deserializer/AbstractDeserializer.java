@@ -9,28 +9,33 @@ import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.esb.module.ModuleProperties.Config;
-import static com.esb.module.ModuleProperties.Flow;
+import static com.esb.commons.FileExtension.FLOW;
+import static com.esb.module.ModuleProperties.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 abstract class AbstractDeserializer implements ModuleDeserializer {
 
-    private static final String FLOW_ROOT_PROPERTY = "flow";
-    private static final String SUBFLOW_ROOT_PROPERTY = "subflow";
-
     @Override
     public DeserializedModule deserialize() {
-        Set<JSONObject> flows = objectsWithRoot(getResources(Flow.RESOURCE_DIRECTORY), FLOW_ROOT_PROPERTY);
-        Set<JSONObject> subflows = objectsWithRoot(getResources(Flow.RESOURCE_DIRECTORY), SUBFLOW_ROOT_PROPERTY);
+        Set<JSONObject> flows = objectsWithRoot(filteredResources(Flow.RESOURCE_DIRECTORY), Flow.ROOT_PROPERTY);
+        Set<JSONObject> subflows = objectsWithRoot(filteredResources(Subflow.RESOURCE_DIRECTORY), Subflow.ROOT_PROPERTY);
         Collection<JSONObject> configurations = getConfigurations();
 
         return new DeserializedModule(flows, subflows, configurations);
     }
 
     protected abstract List<URL> getResources(String directory);
+
+    private List<URL> filteredResources(String directory) {
+        return getResources(directory)
+                .stream()
+                .filter(url -> url.getFile().endsWith(FLOW.value()))
+                .collect(Collectors.toList());
+    }
 
     private Set<JSONObject> objectsWithRoot(List<URL> resourcesURL, String rootPropertyName) {
         return resourcesURL.stream()
@@ -41,7 +46,7 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
     }
 
     private Collection<JSONObject> getConfigurations() {
-        Iterator<JSONObject> it = objectsWithRoot(getResources(Config.RESOURCE_DIRECTORY), "configs").iterator();
+        Iterator<JSONObject> it = objectsWithRoot(getResources(Config.RESOURCE_DIRECTORY), Config.ROOT_PROPERTY).iterator();
         if (!it.hasNext()) {
             return Collections.emptyList();
         } else {

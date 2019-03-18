@@ -4,6 +4,7 @@ public enum FileExtension {
 
     XML("xml"),
     JSON("json"),
+    FLOW("flow"),
     PROPERTIES("properties");
 
     private final String value;
