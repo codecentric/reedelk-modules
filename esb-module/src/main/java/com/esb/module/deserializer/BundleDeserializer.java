@@ -19,7 +19,7 @@ public class BundleDeserializer extends AbstractDeserializer {
 
     @Override
     protected List<URL> getResources(String directory, String suffix) {
-        Enumeration<URL> entryPaths = bundle.findEntries(directory, suffix, RECURSIVE);
+        Enumeration<URL> entryPaths = bundle.findEntries(directory, "*." + suffix, RECURSIVE);
         return entryPaths == null ?
                 Collections.emptyList() :
                 Collections.list(entryPaths);
