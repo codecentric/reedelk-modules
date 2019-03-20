@@ -4,6 +4,7 @@ import com.esb.api.exception.ESBException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Scanner;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -20,6 +21,12 @@ public class FileUtils {
         } catch (IOException e) {
             throw new ESBException("String from URI could not be read.", e);
         }
+    }
+
+    public static boolean hasExtension(Path path, String suffix) {
+        String fileName = path.getFileName().toString();
+        String extension = getExtension(fileName);
+        return suffix.equals(extension);
     }
 
     public static String getExtension(String filename) {

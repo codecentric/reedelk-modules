@@ -9,7 +9,6 @@ import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.esb.commons.FileExtension.FLOW;
@@ -24,11 +23,11 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
     public DeserializedModule deserialize() {
 
         Set<JSONObject> flows = objectsWithRoot(
-                filteredResources(Flow.RESOURCE_DIRECTORY, FLOW.value()),
+                getResources(Flow.RESOURCE_DIRECTORY, FLOW.value()),
                 Flow.ROOT_PROPERTY);
 
         Set<JSONObject> subflows = objectsWithRoot(
-                filteredResources(Subflow.RESOURCE_DIRECTORY, FLOW.value()),
+                getResources(Subflow.RESOURCE_DIRECTORY, FLOW.value()),
                 Subflow.ROOT_PROPERTY);
 
         Collection<JSONObject> configurations = getConfigurations();
@@ -36,14 +35,8 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
         return new DeserializedModule(flows, subflows, configurations);
     }
 
-    protected abstract List<URL> getResources(String directory);
+    protected abstract List<URL> getResources(String directory, String suffix);
 
-    private List<URL> filteredResources(String directory, String suffix) {
-        return getResources(directory)
-                .stream()
-                .filter(url -> url.getFile().endsWith(suffix))
-                .collect(Collectors.toList());
-    }
 
     private Set<JSONObject> objectsWithRoot(List<URL> resourcesURL, String rootPropertyName) {
         return resourcesURL.stream()
@@ -55,7 +48,7 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
 
     private Collection<JSONObject> getConfigurations() {
         Iterator<JSONObject> it = objectsWithRoot(
-                filteredResources(Config.RESOURCE_DIRECTORY, FLOW_CONFIG.value()),
+                getResources(Config.RESOURCE_DIRECTORY, FLOW_CONFIG.value()),
                 Config.ROOT_PROPERTY)
                 .iterator();
 

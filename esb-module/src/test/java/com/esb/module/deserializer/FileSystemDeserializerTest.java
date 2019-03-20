@@ -43,21 +43,21 @@ class FileSystemDeserializerTest {
         String flow1 = createFile(somethingDir.toString(), "flow1.flow");
         String flow2 = createFile(somethingDir.toString(), "flow2.flow");
         String flow3 = createFile(somethingDir.toString(), "flow3.txt");
-        String flow4 = createFile(somethingDir.toString(), "flow3.json");
-        String flow5 = createFile(nestedDirectory.toString(), "flow3.json");
+        String flow4 = createFile(somethingDir.toString(), "flow4.flow");
+        String flow5 = createFile(nestedDirectory.toString(), "flow5.json");
 
 
         FileSystemDeserializer deserializer = new FileSystemDeserializer(tmpDir);
 
         // When
-        List<URL> folderResources = deserializer.getResources("/something");
+        List<URL> folderResources = deserializer.getResources("/something", "flow");
 
         // Then
         assertFound(folderResources, flow1);
         assertFound(folderResources, flow2);
-        assertFound(folderResources, flow3);
         assertFound(folderResources, flow4);
-        assertFound(folderResources, flow5);
+
+        assertThat(folderResources).hasSize(3);
     }
 
     private void assertFound(Collection<URL> folderResources, String resourcePath) {

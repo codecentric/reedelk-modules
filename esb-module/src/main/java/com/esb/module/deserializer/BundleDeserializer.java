@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 public class BundleDeserializer extends AbstractDeserializer {
+
+    private static final boolean RECURSIVE = true;
 
     private final Bundle bundle;
 
@@ -18,14 +18,11 @@ public class BundleDeserializer extends AbstractDeserializer {
     }
 
     @Override
-    protected List<URL> getResources(String directory) {
-        Enumeration<String> entryPaths = bundle.getEntryPaths(directory);
-        if (entryPaths == null) return Collections.emptyList();
-        return Collections
-                .list(entryPaths)
-                .stream()
-                .map(bundle::getResource)
-                .collect(toList());
+    protected List<URL> getResources(String directory, String suffix) {
+        Enumeration<URL> entryPaths = bundle.findEntries(directory, suffix, RECURSIVE);
+        return entryPaths == null ?
+                Collections.emptyList() :
+                Collections.list(entryPaths);
     }
 
 }
