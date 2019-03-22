@@ -68,6 +68,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
             return module;
         }
 
+        // TODO: Validate somewhere else, like below, validation step or something.
         if (!UniquePropertyValueValidator.validate(flows, Flow::getFlowId)) {
             module.error(new ESBException("There are at least two flows with the same id. Flows Ids must be unique."));
             return module;
