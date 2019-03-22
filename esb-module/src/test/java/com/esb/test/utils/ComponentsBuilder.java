@@ -1,6 +1,6 @@
 package com.esb.test.utils;
 
-import com.esb.commons.JsonParser;
+import com.esb.internal.commons.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

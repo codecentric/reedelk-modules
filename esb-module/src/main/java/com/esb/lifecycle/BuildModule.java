@@ -1,13 +1,13 @@
 package com.esb.lifecycle;
 
 import com.esb.api.exception.ESBException;
-import com.esb.commons.JsonParser;
 import com.esb.commons.UniquePropertyValueValidator;
 import com.esb.flow.ErrorStateFlow;
 import com.esb.flow.Flow;
 import com.esb.flow.FlowBuilder;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
+import com.esb.internal.commons.JsonParser;
 import com.esb.internal.commons.StringUtils;
 import com.esb.module.DeserializedModule;
 import com.esb.module.Module;

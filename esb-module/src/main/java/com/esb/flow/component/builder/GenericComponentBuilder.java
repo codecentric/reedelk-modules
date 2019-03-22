@@ -1,10 +1,10 @@
 package com.esb.flow.component.builder;
 
 import com.esb.api.component.Component;
-import com.esb.commons.JsonParser;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
+import com.esb.internal.commons.JsonParser;
 import org.json.JSONObject;
 
 public class GenericComponentBuilder implements Builder {

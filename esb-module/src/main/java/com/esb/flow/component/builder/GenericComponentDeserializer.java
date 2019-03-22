@@ -2,10 +2,10 @@ package com.esb.flow.component.builder;
 
 import com.esb.api.component.Implementor;
 import com.esb.api.exception.ESBException;
-import com.esb.commons.JsonParser;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.internal.commons.CollectionFactory;
+import com.esb.internal.commons.JsonParser;
 import com.esb.internal.commons.PrimitiveTypeConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
