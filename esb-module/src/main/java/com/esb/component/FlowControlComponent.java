@@ -10,7 +10,7 @@ public interface FlowControlComponent extends Component {
 
     /**
      * The method apply for a FlowControlComponent component
-     * returns the name of the children nodes to execute after this call.
+     * returns the child nodes to be executed after this call.
      */
     List<ExecutionNode> apply(Message input);
 
