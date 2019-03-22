@@ -2,7 +2,7 @@ package com.esb.services.configuration.configurer;
 
 import com.esb.api.exception.ESBException;
 import com.esb.commons.FileExtension;
-import com.esb.commons.FileUtils;
+import com.esb.internal.commons.FileUtils;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

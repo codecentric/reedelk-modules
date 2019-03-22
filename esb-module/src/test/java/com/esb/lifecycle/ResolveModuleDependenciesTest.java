@@ -1,7 +1,7 @@
 package com.esb.lifecycle;
 
-import com.esb.commons.FileUtils;
 import com.esb.component.ComponentRegistry;
+import com.esb.internal.commons.FileUtils;
 import com.esb.internal.commons.JsonParser;
 import com.esb.module.DeserializedModule;
 import com.esb.module.Module;

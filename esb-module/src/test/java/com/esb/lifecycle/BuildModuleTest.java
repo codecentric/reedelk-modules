@@ -2,12 +2,12 @@ package com.esb.lifecycle;
 
 import com.esb.api.component.Component;
 import com.esb.api.exception.ESBException;
-import com.esb.commons.FileUtils;
 import com.esb.component.Choice;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.flow.Flow;
+import com.esb.internal.commons.FileUtils;
 import com.esb.internal.commons.JsonParser;
 import com.esb.module.DeserializedModule;
 import com.esb.module.Module;

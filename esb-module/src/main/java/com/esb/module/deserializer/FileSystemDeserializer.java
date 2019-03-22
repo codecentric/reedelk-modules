@@ -1,7 +1,7 @@
 package com.esb.module.deserializer;
 
 import com.esb.api.exception.ESBException;
-import com.esb.commons.FileUtils;
+import com.esb.internal.commons.FileUtils;
 
 import java.io.IOException;
 import java.net.URL;

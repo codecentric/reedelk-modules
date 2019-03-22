@@ -1,6 +1,6 @@
 package com.esb.services.configuration.configurer;
 
-import com.esb.commons.FileUtils;
+import com.esb.internal.commons.FileUtils;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.Properties;

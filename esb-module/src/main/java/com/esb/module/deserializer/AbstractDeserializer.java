@@ -1,6 +1,6 @@
 package com.esb.module.deserializer;
 
-import com.esb.commons.FileUtils;
+import com.esb.internal.commons.FileUtils;
 import com.esb.internal.commons.JsonParser;
 import com.esb.module.DeserializedModule;
 import com.esb.module.ModuleDeserializer;
