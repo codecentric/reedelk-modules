@@ -36,13 +36,13 @@ class ForkJoinComponentBuilder implements Builder {
         JSONArray fork = JsonParser.ForkJoin.getFork(componentDefinition);
         for (int i = 0; i < fork.length(); i++) {
 
-            JSONObject component = fork.getJSONObject(i);
-            JSONArray next = JsonParser.ForkJoin.getNext(component);
+            JSONObject nextObject = fork.getJSONObject(i);
+            JSONArray nextComponents = JsonParser.ForkJoin.getNext(nextObject);
 
             ExecutionNode currentNode = forkExecutionNode;
-            for (int j = 0; j < next.length(); j++) {
+            for (int j = 0; j < nextComponents.length(); j++) {
 
-                JSONObject currentComponentDefinition = next.getJSONObject(j);
+                JSONObject currentComponentDefinition = nextComponents.getJSONObject(j);
                 ExecutionNode lastNode = ExecutionNodeBuilder.get()
                         .componentDefinition(currentComponentDefinition)
                         .parent(currentNode)
@@ -50,7 +50,7 @@ class ForkJoinComponentBuilder implements Builder {
                         .graph(graph)
                         .build();
 
-                // The first component of A GIVEN fork path,
+                // The first nextObject of A GIVEN fork path,
                 // must be added as a fork execution node.
                 if (j == 0) forkComponent.addForkNode(lastNode);
 
