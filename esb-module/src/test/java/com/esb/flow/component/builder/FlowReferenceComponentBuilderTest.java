@@ -24,9 +24,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class FlowReferenceComponentBuilderTest {
 
-    private static final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
-    private static final String COMPONENT_2_NAME = TestComponent.class.getName() + "2";
-    private static final String COMPONENT_3_NAME = TestComponent.class.getName() + "3";
+    private final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
+    private final String COMPONENT_2_NAME = TestComponent.class.getName() + "2";
+    private final String COMPONENT_3_NAME = TestComponent.class.getName() + "3";
 
     @Mock
     private ExecutionGraph graph;

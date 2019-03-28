@@ -26,10 +26,10 @@ class ModuleTest {
     private Flow flow;
     private final Collection<String> unresolvedComponents = asList("com.esb.Unresolved1", "com.esb.Unresolved2");
 
-    private static final long TEST_MODULE_ID = 12;
-    private static final String TEST_MODULE_NAME = "ModuleNameTest";
-    private static final String TEST_VERSION = "1.0.0-SNAPSHOT";
-    private static final String TEST_LOCATION = "file://location/test";
+    private final long TEST_MODULE_ID = 12;
+    private final String TEST_MODULE_NAME = "ModuleNameTest";
+    private final String TEST_VERSION = "1.0.0-SNAPSHOT";
+    private final String TEST_LOCATION = "file://location/test";
     private final Collection<String> resolvedComponents = asList("com.esb.Resolved1", "com.esb.Resolved2");
     @Mock
     private ModuleDeserializer deserializer;

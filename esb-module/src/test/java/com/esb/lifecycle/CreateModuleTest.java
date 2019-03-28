@@ -20,7 +20,7 @@ import static org.mockito.Mockito.spy;
 @ExtendWith(MockitoExtension.class)
 class CreateModuleTest {
 
-    private static final Void VOID = null;
+    private final Void VOID = null;
 
     @Mock
     private Bundle bundle;

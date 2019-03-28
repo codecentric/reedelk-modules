@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class ComponentRegistryTest {
 
-    private static final String PREDEFINED_1 = "com.esb.predefined.component1";
-    private static final String PREDEFINED_2 = "com.esb.predefined.component2";
-    private static final String PREDEFINED_3 = "com.esb.predefined.component3";
+    private final String PREDEFINED_1 = "com.esb.predefined.component1";
+    private final String PREDEFINED_2 = "com.esb.predefined.component2";
+    private final String PREDEFINED_3 = "com.esb.predefined.component3";
 
     @Test
     void shouldRegistryRegisterPredefinedComponentsCorrectly() {

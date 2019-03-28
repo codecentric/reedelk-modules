@@ -23,11 +23,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ForkJoinComponentBuilderTest {
 
-    private static final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
-    private static final String COMPONENT_4_NAME = TestComponent.class.getName() + "4";
-    private static final String COMPONENT_5_NAME = TestComponent.class.getName() + "5";
-    private static final String COMPONENT_6_NAME = TestComponent.class.getName() + "6";
-    private static final Class JOIN_COMPONENT_NAME = TestJoinComponent.class;
+    private final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
+    private final String COMPONENT_4_NAME = TestComponent.class.getName() + "4";
+    private final String COMPONENT_5_NAME = TestComponent.class.getName() + "5";
+    private final String COMPONENT_6_NAME = TestComponent.class.getName() + "6";
+    private final Class JOIN_COMPONENT_NAME = TestJoinComponent.class;
 
     @Mock
     private ExecutionGraph graph;

@@ -27,8 +27,8 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ESBConfigurationServiceTest {
 
-    private static final String TEST_CONFIG_PID = "my.test.config.pid";
-    private static final String TEST_CONFIG_KEY = "name.endpoint";
+    private final String TEST_CONFIG_PID = "my.test.config.pid";
+    private final String TEST_CONFIG_KEY = "name.endpoint";
 
     @Mock
     private SystemProperty systemProperty;

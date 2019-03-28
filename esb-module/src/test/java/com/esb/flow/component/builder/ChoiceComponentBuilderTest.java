@@ -22,12 +22,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ChoiceComponentBuilderTest {
 
-    private static final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
-    private static final String COMPONENT_2_NAME = TestComponent.class.getName() + "2";
-    private static final String COMPONENT_3_NAME = TestComponent.class.getName() + "3";
-    private static final String COMPONENT_4_NAME = TestComponent.class.getName() + "4";
-    private static final String COMPONENT_5_NAME = TestComponent.class.getName() + "5";
-    private static final String COMPONENT_6_NAME = TestComponent.class.getName() + "6";
+    private final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
+    private final String COMPONENT_2_NAME = TestComponent.class.getName() + "2";
+    private final String COMPONENT_3_NAME = TestComponent.class.getName() + "3";
+    private final String COMPONENT_4_NAME = TestComponent.class.getName() + "4";
+    private final String COMPONENT_5_NAME = TestComponent.class.getName() + "5";
+    private final String COMPONENT_6_NAME = TestComponent.class.getName() + "6";
 
     @Mock
     private ExecutionGraph graph;
