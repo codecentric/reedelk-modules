@@ -1,6 +1,6 @@
 package com.esb.flow.component.builder;
 
-import com.esb.component.Fork;
+import com.esb.component.ForkWrapper;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
@@ -26,7 +26,7 @@ class ForkJoinComponentBuilder implements Builder {
         ExecutionNode stopComponent = context.instantiateComponent(Stop.class);
         ExecutionNode forkExecutionNode = context.instantiateComponent(componentName);
 
-        Fork forkComponent = (Fork) forkExecutionNode.getComponent();
+        ForkWrapper forkComponent = (ForkWrapper) forkExecutionNode.getComponent();
 
         int threadPoolSize = JsonParser.ForkJoin.getThreadPoolSize(componentDefinition);
         forkComponent.setThreadPoolSize(threadPoolSize);

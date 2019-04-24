@@ -1,7 +1,7 @@
 package com.esb.flow.component.builder;
 
 
-import com.esb.component.Choice;
+import com.esb.component.ChoiceWrapper;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
@@ -26,6 +26,7 @@ class ChoiceComponentBuilder implements Builder {
 
         ExecutionNode stopComponent = context.instantiateComponent(Stop.class);
         ExecutionNode choiceExecutionNode = context.instantiateComponent(componentName);
+        ChoiceWrapper choiceWrapper = (ChoiceWrapper) choiceExecutionNode.getComponent();
 
         graph.putEdge(parent, choiceExecutionNode);
 
@@ -50,8 +51,7 @@ class ChoiceComponentBuilder implements Builder {
                 // The first component of A GIVEN choice path,
                 // must be added as a choice expression pair.
                 if (j == 0) {
-                    Choice choiceComponent = (Choice) choiceExecutionNode.getComponent();
-                    choiceComponent.addPathExpressionPair(condition, lastNode);
+                    choiceWrapper.addPathExpressionPair(condition, lastNode);
                 }
 
                 currentNode = lastNode;
@@ -77,8 +77,7 @@ class ChoiceComponentBuilder implements Builder {
             // The first component of A GIVEN choice otherwise path,
             // must be added as default path.
             if (j == 0) {
-                Choice choiceComponent = (Choice) choiceExecutionNode.getComponent();
-                choiceComponent.addDefaultPath(lastNode);
+                choiceWrapper.addDefaultPath(lastNode);
             }
 
             currentNode = lastNode;

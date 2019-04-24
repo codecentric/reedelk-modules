@@ -69,8 +69,7 @@ public class ExecutionNodeBuilder {
         String componentName = JsonParser.Implementor.name(componentDefinition);
         Class<? extends Builder> builderClazz = COMPONENT_NAME_HANDLER.getOrDefault(componentName, GENERIC_HANDLER);
 
-        return instantiateBuilder(graph, context, builderClazz)
-                .build(parent, componentDefinition);
+        return instantiateBuilder(graph, context, builderClazz).build(parent, componentDefinition);
     }
 
     public ExecutionNodeBuilder graph(ExecutionGraph graph) {

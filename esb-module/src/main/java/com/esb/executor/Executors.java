@@ -2,8 +2,8 @@ package com.esb.executor;
 
 import com.esb.api.component.Component;
 import com.esb.api.message.Message;
-import com.esb.component.Choice;
-import com.esb.component.Fork;
+import com.esb.component.ChoiceWrapper;
+import com.esb.component.ForkWrapper;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.graph.ExecutionGraph;
@@ -21,8 +21,8 @@ public class Executors {
     static {
         Map<Class, Executor> tmp = new HashMap<>();
         tmp.put(Stop.class, new StopExecutor());
-        tmp.put(Fork.class, new ForkExecutor());
-        tmp.put(Choice.class, new ChoiceExecutor());
+        tmp.put(ForkWrapper.class, new ForkExecutor());
+        tmp.put(ChoiceWrapper.class, new ChoiceExecutor());
         COMPONENT_EXECUTOR = Collections.unmodifiableMap(tmp);
     }
 

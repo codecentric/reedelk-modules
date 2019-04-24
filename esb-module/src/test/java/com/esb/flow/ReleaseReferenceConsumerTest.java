@@ -2,8 +2,8 @@ package com.esb.flow;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Implementor;
-import com.esb.component.Choice;
-import com.esb.component.Fork;
+import com.esb.component.ChoiceWrapper;
+import com.esb.component.ForkWrapper;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.test.utils.TestComponent;
@@ -58,7 +58,7 @@ class ReleaseReferenceConsumerTest {
     @Test
     void shouldNotReleaseAnyReferenceAndClearReferencesWhenComponentIsFork() {
         // Given
-        Component fork = new Fork();
+        Component fork = new ForkWrapper();
         ExecutionNode executionNode = mockExecutionNodeWithComponent(fork);
 
         // When
@@ -72,7 +72,7 @@ class ReleaseReferenceConsumerTest {
     @Test
     void shouldNotReleaseAnyReferenceAndClearReferencesWhenComponentIsChoice() {
         // Given
-        Component choice = new Choice();
+        Component choice = new ChoiceWrapper();
         ExecutionNode executionNode = mockExecutionNodeWithComponent(choice);
 
         // When

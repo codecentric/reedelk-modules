@@ -1,6 +1,6 @@
 package com.esb.flow.component.builder;
 
-import com.esb.component.Fork;
+import com.esb.component.ForkWrapper;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
@@ -48,7 +48,7 @@ class ForkJoinComponentBuilderTest {
 
 
     private ExecutionNode stopExecutionNode = new ExecutionNode(new ReferencePair<>(new Stop()));
-    private ExecutionNode forkJoinExecutionNode = new ExecutionNode(new ReferencePair<>(new Fork()));
+    private ExecutionNode forkJoinExecutionNode = new ExecutionNode(new ReferencePair<>(new ForkWrapper()));
 
     @BeforeEach
     void setUp() {
@@ -59,7 +59,7 @@ class ForkJoinComponentBuilderTest {
         doReturn(new TestJoinComponent()).when(joinComponentExecutionNode).getComponent();
 
         doReturn(stopExecutionNode).when(context).instantiateComponent(Stop.class);
-        doReturn(forkJoinExecutionNode).when(context).instantiateComponent(Fork.class.getName());
+        doReturn(forkJoinExecutionNode).when(context).instantiateComponent(ForkWrapper.class.getName());
         doReturn(testComponent1ExecutionNode).when(context).instantiateComponent(COMPONENT_1_NAME);
         doReturn(testComponent4ExecutionNode).when(context).instantiateComponent(COMPONENT_4_NAME);
         doReturn(testComponent5ExecutionNode).when(context).instantiateComponent(COMPONENT_5_NAME);
@@ -74,7 +74,7 @@ class ForkJoinComponentBuilderTest {
         forkArray.put(createNextObject(COMPONENT_6_NAME, COMPONENT_5_NAME));
         forkArray.put(createNextObject(COMPONENT_1_NAME, COMPONENT_4_NAME));
 
-        JSONObject componentDefinition = ComponentsBuilder.forComponent(Fork.class)
+        JSONObject componentDefinition = ComponentsBuilder.forComponent(ForkWrapper.class)
                 .with("threadPoolSize", 3)
                 .with("fork", forkArray)
                 .with("join", ComponentsBuilder.forComponent(JOIN_COMPONENT_NAME)

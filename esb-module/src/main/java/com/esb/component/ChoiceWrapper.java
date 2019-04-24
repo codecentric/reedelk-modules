@@ -12,7 +12,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 
-public class Choice implements FlowControlComponent {
+public class ChoiceWrapper extends Choice implements FlowControlComponent {
 
     private static final ScriptEngine ENGINE = new ESBJavascriptEngine();
 

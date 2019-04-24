@@ -17,6 +17,7 @@
     <properties>
         <internal.commons.version>1.0.0-SNAPSHOT</internal.commons.version>
         <internal.system.api.version>1.0.0-SNAPSHOT</internal.system.api.version>
+        <internal.system.components.version>1.0.0-SNAPSHOT</internal.system.components.version>
     </properties>
 
     <dependencies>
@@ -29,6 +30,12 @@
             <groupId>com.esb</groupId>
             <artifactId>internal-system-api</artifactId>
             <version>${internal.system.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.esb</groupId>
+            <artifactId>internal-system-components</artifactId>
+            <version>${internal.system.components.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

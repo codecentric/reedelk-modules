@@ -1,6 +1,6 @@
 package com.esb.flow.component.builder;
 
-import com.esb.component.Choice;
+import com.esb.component.ChoiceWrapper;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
@@ -49,7 +49,7 @@ class ChoiceComponentBuilderTest {
     private ExecutionNode testComponent6ExecutionNode;
 
     private ExecutionNode stopExecutionNode = new ExecutionNode(new ReferencePair<>(new Stop()));
-    private ExecutionNode choiceExecutionNode = new ExecutionNode(new ReferencePair<>(new Choice()));
+    private ExecutionNode choiceExecutionNode = new ExecutionNode(new ReferencePair<>(new ChoiceWrapper()));
 
     @BeforeEach
     void setUp() {
@@ -61,7 +61,7 @@ class ChoiceComponentBuilderTest {
         doReturn(new TestComponent()).when(testComponent6ExecutionNode).getComponent();
 
         doReturn(stopExecutionNode).when(context).instantiateComponent(Stop.class);
-        doReturn(choiceExecutionNode).when(context).instantiateComponent(Choice.class.getName());
+        doReturn(choiceExecutionNode).when(context).instantiateComponent(ChoiceWrapper.class.getName());
         doReturn(testComponent1ExecutionNode).when(context).instantiateComponent(COMPONENT_1_NAME);
         doReturn(testComponent2ExecutionNode).when(context).instantiateComponent(COMPONENT_2_NAME);
         doReturn(testComponent3ExecutionNode).when(context).instantiateComponent(COMPONENT_3_NAME);
@@ -77,7 +77,7 @@ class ChoiceComponentBuilderTest {
         whenArray.put(conditionalBranch("1 == 1", COMPONENT_3_NAME, COMPONENT_1_NAME));
         whenArray.put(conditionalBranch("'hello' == 'hello1'", COMPONENT_2_NAME, COMPONENT_4_NAME));
 
-        JSONObject componentDefinition = ComponentsBuilder.forComponent(Choice.class)
+        JSONObject componentDefinition = ComponentsBuilder.forComponent(ChoiceWrapper.class)
                 .with("when", whenArray)
                 .with("otherwise", ComponentsBuilder.createNextComponentsArray(COMPONENT_6_NAME, COMPONENT_5_NAME))
                 .build();

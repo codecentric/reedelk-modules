@@ -2,7 +2,7 @@ package com.esb.executor;
 
 import com.esb.api.component.Join;
 import com.esb.api.message.Message;
-import com.esb.component.Fork;
+import com.esb.component.ForkWrapper;
 import com.esb.flow.ExecutionNode;
 import com.esb.graph.ExecutionGraph;
 import com.esb.internal.commons.SerializationUtils;
@@ -20,7 +20,7 @@ public class ForkExecutor implements Executor {
     @Override
     public ExecutionResult execute(ExecutionNode executionNode, final Message message, ExecutionGraph graph) {
 
-        Fork fork = (Fork) executionNode.getComponent();
+        ForkWrapper fork = (ForkWrapper) executionNode.getComponent();
         List<ExecutionNode> nextExecutionNodes = fork.apply(message);
 
 

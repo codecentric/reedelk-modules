@@ -10,7 +10,7 @@ import java.util.concurrent.*;
 
 import static com.esb.commons.Preconditions.checkState;
 
-public class Fork implements FlowControlComponent {
+public class ForkWrapper extends Fork implements FlowControlComponent {
 
     private List<ExecutionNode> forkNodes = new ArrayList<>();
     private ExecutionNode join;

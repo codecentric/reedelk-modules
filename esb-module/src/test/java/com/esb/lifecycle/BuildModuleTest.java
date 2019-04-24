@@ -3,6 +3,7 @@ package com.esb.lifecycle;
 import com.esb.api.component.Component;
 import com.esb.api.exception.ESBException;
 import com.esb.component.Choice;
+import com.esb.component.ChoiceWrapper;
 import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
@@ -290,7 +291,7 @@ class BuildModuleTest {
 
         mockComponentWithServiceReference(TestInboundComponent.class);
         mockComponentWithServiceReference(AnotherTestComponent.class);
-        mockComponent(Choice.class);
+        mockComponent(Choice.class, ChoiceWrapper.class);
         mockComponent(Stop.class);
 
         // When
@@ -344,6 +345,16 @@ class BuildModuleTest {
             mockInstantiateComponent(componentExecutionNode, clazz);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             fail("mockComponentWithServiceReference", e);
+        }
+    }
+
+    private <T extends Component> void mockComponent(Class<T> clazz, Class<? extends T> realInstance) {
+        try {
+            T component = realInstance.getConstructor().newInstance();
+            ExecutionNode componentExecutionNode = new ExecutionNode(new ReferencePair<>(component));
+            mockInstantiateComponent(componentExecutionNode, clazz);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            fail("mockComponent", e);
         }
     }
 

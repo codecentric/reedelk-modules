@@ -13,9 +13,9 @@ public class ESBComponent {
 
     static {
         Map<String, Class<? extends Component>> tmp = new HashMap<>();
-        tmp.put(Fork.class.getName(), Fork.class);
         tmp.put(Stop.class.getName(), Stop.class);
-        tmp.put(Choice.class.getName(), Choice.class);
+        tmp.put(Choice.class.getName(), ChoiceWrapper.class);
+        tmp.put(Fork.class.getName(), ForkWrapper.class);
         tmp.put(FlowReference.class.getName(), FlowReference.class);
         COMPONENTS = Collections.unmodifiableMap(tmp);
     }
@@ -28,7 +28,15 @@ public class ESBComponent {
     }
 
     public static boolean is(Component componentObject) {
-        return COMPONENTS.containsKey(componentObject.getClass().getName());
+        // TODO: Fix this
+        return COMPONENTS.keySet().stream().anyMatch(componentClassName -> {
+            try {
+                Class<?> aClass = Class.forName(componentClassName);
+                return aClass.isAssignableFrom(componentObject.getClass());
+            } catch (ClassNotFoundException e) {
+                return false;
+            }
+        });
     }
 
     public static Class<? extends Component> getDefiningClass(String componentName) {
