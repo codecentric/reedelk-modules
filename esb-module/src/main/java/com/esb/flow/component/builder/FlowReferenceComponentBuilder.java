@@ -12,14 +12,10 @@ import java.util.Set;
 
 import static com.esb.commons.Preconditions.checkState;
 
-class FlowReferenceComponentBuilder implements Builder {
-
-    private final ExecutionGraph graph;
-    private final FlowBuilderContext context;
+class FlowReferenceComponentBuilder extends AbstractBuilder {
 
     FlowReferenceComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
-        this.graph = graph;
-        this.context = context;
+        super(graph, context);
     }
 
     @Override

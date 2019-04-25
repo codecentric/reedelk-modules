@@ -7,14 +7,10 @@ import com.esb.graph.ExecutionGraph;
 import com.esb.internal.commons.JsonParser;
 import org.json.JSONObject;
 
-public class GenericComponentBuilder implements Builder {
-
-    private final ExecutionGraph graph;
-    private final FlowBuilderContext context;
+public class GenericComponentBuilder extends AbstractBuilder {
 
     GenericComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
-        this.graph = graph;
-        this.context = context;
+        super(graph, context);
     }
 
     @Override

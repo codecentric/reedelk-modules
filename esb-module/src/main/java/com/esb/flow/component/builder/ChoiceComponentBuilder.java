@@ -10,14 +10,10 @@ import com.esb.internal.commons.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-class ChoiceComponentBuilder implements Builder {
-
-    private final ExecutionGraph graph;
-    private final FlowBuilderContext context;
+class ChoiceComponentBuilder extends AbstractBuilder {
 
     ChoiceComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
-        this.graph = graph;
-        this.context = context;
+        super(graph, context);
     }
 
     @Override
