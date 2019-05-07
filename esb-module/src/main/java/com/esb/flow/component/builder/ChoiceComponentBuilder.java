@@ -6,9 +6,11 @@ import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
-import com.esb.internal.commons.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import static com.esb.internal.commons.JsonParser.Choice;
+import static com.esb.internal.commons.JsonParser.Implementor;
 
 class ChoiceComponentBuilder extends AbstractBuilder {
 
@@ -18,7 +20,7 @@ class ChoiceComponentBuilder extends AbstractBuilder {
 
     @Override
     public ExecutionNode build(ExecutionNode parent, JSONObject componentDefinition) {
-        String componentName = JsonParser.Implementor.name(componentDefinition);
+        String componentName = Implementor.name(componentDefinition);
 
         ExecutionNode stopComponent = context.instantiateComponent(Stop.class);
         ExecutionNode choiceExecutionNode = context.instantiateComponent(componentName);
@@ -26,14 +28,14 @@ class ChoiceComponentBuilder extends AbstractBuilder {
 
         graph.putEdge(parent, choiceExecutionNode);
 
-        JSONArray when = JsonParser.Choice.getWhen(componentDefinition);
+        JSONArray when = Choice.when(componentDefinition);
 
         for (int i = 0; i < when.length(); i++) {
             ExecutionNode currentNode = choiceExecutionNode;
 
             JSONObject component = when.getJSONObject(i);
-            String condition = JsonParser.Choice.getCondition(component);
-            JSONArray next = JsonParser.Choice.getNext(component);
+            String condition = Choice.condition(component);
+            JSONArray next = Choice.next(component);
 
             for (int j = 0; j < next.length(); j++) {
                 JSONObject currentComponentDef = next.getJSONObject(j);
@@ -58,7 +60,7 @@ class ChoiceComponentBuilder extends AbstractBuilder {
 
         ExecutionNode currentNode = choiceExecutionNode;
 
-        JSONArray otherwise = JsonParser.Choice.getOtherwise(componentDefinition);
+        JSONArray otherwise = Choice.otherwise(componentDefinition);
 
         for (int j = 0; j < otherwise.length(); j++) {
             JSONObject currentComponentDef = otherwise.getJSONObject(j);

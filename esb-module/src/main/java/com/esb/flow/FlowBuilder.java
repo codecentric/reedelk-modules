@@ -19,7 +19,7 @@ public class FlowBuilder {
     }
 
     public void build(ExecutionGraph flowGraph, JSONObject flowStructure) {
-        JSONArray flowComponents = JsonParser.Flow.getFlow(flowStructure);
+        JSONArray flowComponents = JsonParser.Flow.flow(flowStructure);
 
         ExecutionNode current = null;
         for (Object componentDefinitionObject : flowComponents) {

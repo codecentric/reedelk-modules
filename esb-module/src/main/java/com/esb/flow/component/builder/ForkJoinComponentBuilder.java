@@ -5,9 +5,11 @@ import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
-import com.esb.internal.commons.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import static com.esb.internal.commons.JsonParser.ForkJoin;
+import static com.esb.internal.commons.JsonParser.Implementor;
 
 class ForkJoinComponentBuilder extends AbstractBuilder {
 
@@ -17,23 +19,23 @@ class ForkJoinComponentBuilder extends AbstractBuilder {
 
     @Override
     public ExecutionNode build(ExecutionNode parent, JSONObject componentDefinition) {
-        String componentName = JsonParser.Implementor.name(componentDefinition);
+        String componentName = Implementor.name(componentDefinition);
 
         ExecutionNode stopComponent = context.instantiateComponent(Stop.class);
         ExecutionNode forkExecutionNode = context.instantiateComponent(componentName);
 
         ForkWrapper forkComponent = (ForkWrapper) forkExecutionNode.getComponent();
 
-        int threadPoolSize = JsonParser.ForkJoin.getThreadPoolSize(componentDefinition);
+        int threadPoolSize = ForkJoin.threadPoolSize(componentDefinition);
         forkComponent.setThreadPoolSize(threadPoolSize);
 
         graph.putEdge(parent, forkExecutionNode);
 
-        JSONArray fork = JsonParser.ForkJoin.getFork(componentDefinition);
+        JSONArray fork = ForkJoin.fork(componentDefinition);
         for (int i = 0; i < fork.length(); i++) {
 
             JSONObject nextObject = fork.getJSONObject(i);
-            JSONArray nextComponents = JsonParser.ForkJoin.getNext(nextObject);
+            JSONArray nextComponents = ForkJoin.next(nextObject);
 
             ExecutionNode currentNode = forkExecutionNode;
             for (int j = 0; j < nextComponents.length(); j++) {
@@ -56,7 +58,7 @@ class ForkJoinComponentBuilder extends AbstractBuilder {
             graph.putEdge(currentNode, stopComponent);
         }
 
-        JSONObject joinComponent = JsonParser.ForkJoin.getJoin(componentDefinition);
+        JSONObject joinComponent = ForkJoin.join(componentDefinition);
         ExecutionNode joinExecutionNode = ExecutionNodeBuilder.get()
                 .componentDefinition(joinComponent)
                 .parent(stopComponent)
