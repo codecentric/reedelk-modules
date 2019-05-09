@@ -58,16 +58,7 @@ class ForkComponentBuilder extends AbstractBuilder {
             graph.putEdge(currentNode, stopComponent);
         }
 
-        JSONObject joinComponent = Fork.join(componentDefinition);
-        ExecutionNode joinExecutionNode = ExecutionNodeBuilder.get()
-                .componentDefinition(joinComponent)
-                .parent(stopComponent)
-                .context(context)
-                .graph(graph)
-                .build();
-
-        forkComponent.addJoin(joinExecutionNode);
-        return joinExecutionNode;
+        return stopComponent;
     }
 
 }

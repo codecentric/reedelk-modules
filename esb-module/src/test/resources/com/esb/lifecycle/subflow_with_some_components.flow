@@ -2,11 +2,11 @@
   "id": "759794c8-d024-458e-b614-196eabccb8da",
   "subflow": [
     {
-      "implementor.name": "com.esb.test.utils.SubFlowComponent",
+      "implementor": "com.esb.test.utils.SubFlowComponent",
       "message": "Test inbound message"
     },
     {
-      "implementor.name": "com.esb.test.utils.AnotherSubFlowComponent",
+      "implementor": "com.esb.test.utils.AnotherSubFlowComponent",
       "stringProperty": "A string property description",
       "longProperty": 99871
     }

@@ -16,7 +16,6 @@ public class ChoiceWrapper extends Choice implements FlowControlComponent {
 
     private static final ScriptEngine ENGINE = new ESBJavascriptEngine();
 
-    private PathExpressionPair defaultPath;
     private List<PathExpressionPair> pathExpressionPairs = new ArrayList<>();
 
     @Override
@@ -26,15 +25,18 @@ public class ChoiceWrapper extends Choice implements FlowControlComponent {
                 return singletonList(pathExpressionPair.pathReference);
             }
         }
-        return singletonList(defaultPath.pathReference);
+        return singletonList(getDefaultPathOrThrow().pathReference);
     }
 
     public void addPathExpressionPair(String expression, ExecutionNode pathExecutionNode) {
         pathExpressionPairs.add(new PathExpressionPair(expression, pathExecutionNode));
     }
 
-    public void addDefaultPath(ExecutionNode pathExecutionNode) {
-        defaultPath = new PathExpressionPair(Boolean.TRUE.toString(), pathExecutionNode);
+    private PathExpressionPair getDefaultPathOrThrow() {
+        return pathExpressionPairs.stream()
+                .filter(pathExpressionPair -> pathExpressionPair.expression.equals(DEFAULT_CONDITION))
+                .findFirst()
+                .orElseThrow(() -> new ESBException("Default choice condition could not be found"));
     }
 
     // The engine should be part of the context.

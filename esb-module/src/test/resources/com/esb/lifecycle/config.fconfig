@@ -1,6 +1,6 @@
 {
   "id": "customer-api-connection-config",
-  "implementor.name": "com.esb.test.utils.TestConfiguration",
+  "implementor": "com.esb.test.utils.TestConfiguration",
   "port": 8822,
   "hostname": "localhost"
 }

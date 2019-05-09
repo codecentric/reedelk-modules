@@ -1,7 +1,7 @@
 {
   "flow": [
     {
-      "implementor.name": "com.esb.test.utils.TestInboundComponent",
+      "implementor": "com.esb.test.utils.TestInboundComponent",
       "message": "Test inbound message"
     }
   ]

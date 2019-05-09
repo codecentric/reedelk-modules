@@ -18,7 +18,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ForkComponentBuilderTest {
@@ -43,12 +44,9 @@ class ForkComponentBuilderTest {
     private ExecutionNode testComponent5ExecutionNode;
     @Mock
     private ExecutionNode testComponent6ExecutionNode;
-    @Mock
-    private ExecutionNode joinComponentExecutionNode;
-
 
     private ExecutionNode stopExecutionNode = new ExecutionNode(new ReferencePair<>(new Stop()));
-    private ExecutionNode forkJoinExecutionNode = new ExecutionNode(new ReferencePair<>(new ForkWrapper()));
+    private ExecutionNode forkExecutionNode = new ExecutionNode(new ReferencePair<>(new ForkWrapper()));
 
     @BeforeEach
     void setUp() {
@@ -56,15 +54,13 @@ class ForkComponentBuilderTest {
         doReturn(new TestComponent()).when(testComponent4ExecutionNode).getComponent();
         doReturn(new TestComponent()).when(testComponent5ExecutionNode).getComponent();
         doReturn(new TestComponent()).when(testComponent6ExecutionNode).getComponent();
-        doReturn(new TestJoinComponent()).when(joinComponentExecutionNode).getComponent();
 
         doReturn(stopExecutionNode).when(context).instantiateComponent(Stop.class);
-        doReturn(forkJoinExecutionNode).when(context).instantiateComponent(ForkWrapper.class.getName());
+        doReturn(forkExecutionNode).when(context).instantiateComponent(ForkWrapper.class.getName());
         doReturn(testComponent1ExecutionNode).when(context).instantiateComponent(COMPONENT_1_NAME);
         doReturn(testComponent4ExecutionNode).when(context).instantiateComponent(COMPONENT_4_NAME);
         doReturn(testComponent5ExecutionNode).when(context).instantiateComponent(COMPONENT_5_NAME);
         doReturn(testComponent6ExecutionNode).when(context).instantiateComponent(COMPONENT_6_NAME);
-        doReturn(joinComponentExecutionNode).when(context).instantiateComponent(JOIN_COMPONENT_NAME.getName());
     }
 
     @Test
@@ -89,24 +85,19 @@ class ForkComponentBuilderTest {
         ExecutionNode lastNode = builder.build(parentExecutionNode, componentDefinition);
 
         // Then
-        assertThat(lastNode).isEqualTo(joinComponentExecutionNode);
+        assertThat(lastNode).isEqualTo(stopExecutionNode);
 
-        verify(graph).putEdge(parentExecutionNode, forkJoinExecutionNode);
+        verify(graph).putEdge(parentExecutionNode, forkExecutionNode);
 
         // First Fork
-        verify(graph).putEdge(forkJoinExecutionNode, testComponent6ExecutionNode);
+        verify(graph).putEdge(forkExecutionNode, testComponent6ExecutionNode);
         verify(graph).putEdge(testComponent6ExecutionNode, testComponent5ExecutionNode);
         verify(graph).putEdge(testComponent5ExecutionNode, stopExecutionNode);
 
         // Second Fork
-        verify(graph).putEdge(forkJoinExecutionNode, testComponent1ExecutionNode);
+        verify(graph).putEdge(forkExecutionNode, testComponent1ExecutionNode);
         verify(graph).putEdge(testComponent1ExecutionNode, testComponent4ExecutionNode);
         verify(graph).putEdge(testComponent4ExecutionNode, stopExecutionNode);
-
-        // Join
-        verify(graph).putEdge(stopExecutionNode, joinComponentExecutionNode);
-        verify(graph, never()).putEdge(parentExecutionNode, joinComponentExecutionNode);
-
     }
 
     private JSONObject createNextObject(String... componentNames) {

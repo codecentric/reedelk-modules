@@ -58,31 +58,6 @@ class ChoiceComponentBuilder extends AbstractBuilder {
             graph.putEdge(currentNode, stopComponent);
         }
 
-        ExecutionNode currentNode = choiceExecutionNode;
-
-        JSONArray otherwise = Choice.otherwise(componentDefinition);
-
-        for (int j = 0; j < otherwise.length(); j++) {
-            JSONObject currentComponentDef = otherwise.getJSONObject(j);
-
-            ExecutionNode lastNode = ExecutionNodeBuilder.get()
-                    .componentDefinition(currentComponentDef)
-                    .parent(currentNode)
-                    .context(context)
-                    .graph(graph)
-                    .build();
-
-            // The first component of A GIVEN choice otherwise path,
-            // must be added as default path.
-            if (j == 0) {
-                choiceWrapper.addDefaultPath(lastNode);
-            }
-
-            currentNode = lastNode;
-
-        }
-
-        graph.putEdge(currentNode, stopComponent);
         return stopComponent;
     }
 
