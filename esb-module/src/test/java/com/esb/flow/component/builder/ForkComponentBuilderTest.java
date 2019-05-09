@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ForkJoinComponentBuilderTest {
+class ForkComponentBuilderTest {
 
     private final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
     private final String COMPONENT_4_NAME = TestComponent.class.getName() + "4";
@@ -83,7 +83,7 @@ class ForkJoinComponentBuilderTest {
                         .build())
                 .build();
 
-        ForkJoinComponentBuilder builder = new ForkJoinComponentBuilder(graph, context);
+        ForkComponentBuilder builder = new ForkComponentBuilder(graph, context);
 
         // When
         ExecutionNode lastNode = builder.build(parentExecutionNode, componentDefinition);

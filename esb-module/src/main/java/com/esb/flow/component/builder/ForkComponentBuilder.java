@@ -8,12 +8,12 @@ import com.esb.graph.ExecutionGraph;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import static com.esb.internal.commons.JsonParser.ForkJoin;
+import static com.esb.internal.commons.JsonParser.Fork;
 import static com.esb.internal.commons.JsonParser.Implementor;
 
-class ForkJoinComponentBuilder extends AbstractBuilder {
+class ForkComponentBuilder extends AbstractBuilder {
 
-    ForkJoinComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
+    ForkComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
         super(graph, context);
     }
 
@@ -26,16 +26,16 @@ class ForkJoinComponentBuilder extends AbstractBuilder {
 
         ForkWrapper forkComponent = (ForkWrapper) forkExecutionNode.getComponent();
 
-        int threadPoolSize = ForkJoin.threadPoolSize(componentDefinition);
+        int threadPoolSize = Fork.threadPoolSize(componentDefinition);
         forkComponent.setThreadPoolSize(threadPoolSize);
 
         graph.putEdge(parent, forkExecutionNode);
 
-        JSONArray fork = ForkJoin.fork(componentDefinition);
+        JSONArray fork = Fork.fork(componentDefinition);
         for (int i = 0; i < fork.length(); i++) {
 
             JSONObject nextObject = fork.getJSONObject(i);
-            JSONArray nextComponents = ForkJoin.next(nextObject);
+            JSONArray nextComponents = Fork.next(nextObject);
 
             ExecutionNode currentNode = forkExecutionNode;
             for (int j = 0; j < nextComponents.length(); j++) {
@@ -58,7 +58,7 @@ class ForkJoinComponentBuilder extends AbstractBuilder {
             graph.putEdge(currentNode, stopComponent);
         }
 
-        JSONObject joinComponent = ForkJoin.join(componentDefinition);
+        JSONObject joinComponent = Fork.join(componentDefinition);
         ExecutionNode joinExecutionNode = ExecutionNodeBuilder.get()
                 .componentDefinition(joinComponent)
                 .parent(stopComponent)

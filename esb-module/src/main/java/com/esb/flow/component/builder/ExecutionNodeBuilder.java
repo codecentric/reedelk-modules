@@ -27,7 +27,7 @@ public class ExecutionNodeBuilder {
     private static final Map<String, Class<? extends Builder>> COMPONENT_NAME_HANDLER;
     static {
         Map<String, Class<? extends Builder>> tmp = new HashMap<>();
-        tmp.put(Fork.class.getName(), ForkJoinComponentBuilder.class);
+        tmp.put(Fork.class.getName(), ForkComponentBuilder.class);
         tmp.put(Choice.class.getName(), ChoiceComponentBuilder.class);
         tmp.put(FlowReference.class.getName(), FlowReferenceComponentBuilder.class);
         COMPONENT_NAME_HANDLER = Collections.unmodifiableMap(tmp);
