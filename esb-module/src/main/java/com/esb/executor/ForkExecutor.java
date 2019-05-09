@@ -19,11 +19,6 @@ import static com.esb.commons.Preconditions.checkState;
 
 public class ForkExecutor implements Executor {
 
-    private static ExecutionNode getNextNodeOrThrow(ExecutionGraph graph, ExecutionNode node, String message) {
-        Collection<ExecutionNode> successors = graph.successors(node);
-        return checkAtLeastOneAndGetOrThrow(successors.stream(), message);
-    }
-
     @Override
     public ExecutionResult execute(final ExecutionNode executionNode, final Message message, final ExecutionGraph graph) {
 
@@ -67,6 +62,11 @@ public class ForkExecutor implements Executor {
                     "Join must be followed by one node");
             return Executors.execute(nextOfJoin, joinedMessage, graph);
         }
+    }
+
+    private static ExecutionNode getNextNodeOrThrow(ExecutionGraph graph, ExecutionNode node, String message) {
+        Collection<ExecutionNode> successors = graph.successors(node);
+        return checkAtLeastOneAndGetOrThrow(successors.stream(), message);
     }
 
 
