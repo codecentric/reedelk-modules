@@ -1,5 +1,6 @@
 package com.esb.executor;
 
+import com.esb.api.component.Component;
 import com.esb.api.component.Join;
 import com.esb.api.message.Message;
 import com.esb.component.ForkWrapper;
@@ -14,6 +15,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Function;
 
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
+import static com.esb.commons.Preconditions.checkState;
 
 public class ForkExecutor implements Executor {
 
@@ -21,12 +23,14 @@ public class ForkExecutor implements Executor {
     public ExecutionResult execute(ExecutionNode executionNode, final Message message, ExecutionGraph graph) {
 
         ForkWrapper fork = (ForkWrapper) executionNode.getComponent();
+
         List<ExecutionNode> nextExecutionNodes = fork.apply(message);
 
-
         List<Callable<Message>> allTasks = new ArrayList<>();
-        Function<ExecutionNode, Callable<Message>> mapper = en ->
-                Executors.execute(en, SerializationUtils.clone(message), graph)::getMessage;
+
+        Function<ExecutionNode, Callable<Message>> mapper = currentExecutionNode ->
+                Executors.execute(currentExecutionNode,
+                        SerializationUtils.clone(message), graph)::getMessage;
 
         for (ExecutionNode nextExecutionNode : nextExecutionNodes) {
             Callable<Message> messageCallable = mapper.apply(nextExecutionNode);
@@ -35,17 +39,28 @@ public class ForkExecutor implements Executor {
 
         List<Message> results = fork.invokeAllAndWait(allTasks);
 
-        ExecutionNode joinComponentExecutionNode = fork.getJoin();
-        Join join = (Join) joinComponentExecutionNode.getComponent();
+        ExecutionNode stopNode = fork.getStopNode();
+
+        Collection<ExecutionNode> followingNodes = graph.successors(stopNode);
+
+        ExecutionNode joinExecutionNode = checkAtLeastOneAndGetOrThrow(
+                followingNodes.stream(),
+                "Stop node from fork must be followed by one node");
+
+        Component component = joinExecutionNode.getComponent();
+        checkState(component instanceof Join, "Fork must be followed by Join component");
+
+        Join join = (Join) component;
         Message joinedMessage = join.apply(results);
 
-        Collection<ExecutionNode> followingExecutionNodes = graph.successors(joinComponentExecutionNode);
+        Collection<ExecutionNode> followingExecutionNodes = graph.successors(joinExecutionNode);
 
-        ExecutionNode next = checkAtLeastOneAndGetOrThrow(
+        ExecutionNode nextOfJoin = checkAtLeastOneAndGetOrThrow(
                 followingExecutionNodes.stream(),
-                "Join must be followed by exactly one node");
+                "Join must be followed by one node");
 
-        return Executors.execute(next, joinedMessage, graph);
+
+        return Executors.execute(nextOfJoin, joinedMessage, graph);
     }
 
 }

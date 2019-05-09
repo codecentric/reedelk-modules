@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.esb.component.Choice.DEFAULT_CONDITION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -34,40 +35,40 @@ class ChoiceComponentBuilderTest {
     @Mock
     private FlowBuilderContext context;
     @Mock
-    private ExecutionNode parentExecutionNode;
+    private ExecutionNode parentEn;
     @Mock
-    private ExecutionNode testComponent1ExecutionNode;
+    private ExecutionNode component1En;
     @Mock
-    private ExecutionNode testComponent2ExecutionNode;
+    private ExecutionNode component2En;
     @Mock
-    private ExecutionNode testComponent3ExecutionNode;
+    private ExecutionNode component3En;
     @Mock
-    private ExecutionNode testComponent4ExecutionNode;
+    private ExecutionNode component4En;
     @Mock
-    private ExecutionNode testComponent5ExecutionNode;
+    private ExecutionNode component5En;
     @Mock
-    private ExecutionNode testComponent6ExecutionNode;
+    private ExecutionNode component6En;
 
-    private ExecutionNode stopExecutionNode = new ExecutionNode(new ReferencePair<>(new Stop()));
-    private ExecutionNode choiceExecutionNode = new ExecutionNode(new ReferencePair<>(new ChoiceWrapper()));
+    private ExecutionNode stopEn = new ExecutionNode(new ReferencePair<>(new Stop()));
+    private ExecutionNode choiceEn = new ExecutionNode(new ReferencePair<>(new ChoiceWrapper()));
 
     @BeforeEach
     void setUp() {
-        doReturn(new TestComponent()).when(testComponent1ExecutionNode).getComponent();
-        doReturn(new TestComponent()).when(testComponent2ExecutionNode).getComponent();
-        doReturn(new TestComponent()).when(testComponent3ExecutionNode).getComponent();
-        doReturn(new TestComponent()).when(testComponent4ExecutionNode).getComponent();
-        doReturn(new TestComponent()).when(testComponent5ExecutionNode).getComponent();
-        doReturn(new TestComponent()).when(testComponent6ExecutionNode).getComponent();
+        doReturn(new TestComponent()).when(component1En).getComponent();
+        doReturn(new TestComponent()).when(component2En).getComponent();
+        doReturn(new TestComponent()).when(component3En).getComponent();
+        doReturn(new TestComponent()).when(component4En).getComponent();
+        doReturn(new TestComponent()).when(component5En).getComponent();
+        doReturn(new TestComponent()).when(component6En).getComponent();
 
-        doReturn(stopExecutionNode).when(context).instantiateComponent(Stop.class);
-        doReturn(choiceExecutionNode).when(context).instantiateComponent(ChoiceWrapper.class.getName());
-        doReturn(testComponent1ExecutionNode).when(context).instantiateComponent(COMPONENT_1_NAME);
-        doReturn(testComponent2ExecutionNode).when(context).instantiateComponent(COMPONENT_2_NAME);
-        doReturn(testComponent3ExecutionNode).when(context).instantiateComponent(COMPONENT_3_NAME);
-        doReturn(testComponent4ExecutionNode).when(context).instantiateComponent(COMPONENT_4_NAME);
-        doReturn(testComponent5ExecutionNode).when(context).instantiateComponent(COMPONENT_5_NAME);
-        doReturn(testComponent6ExecutionNode).when(context).instantiateComponent(COMPONENT_6_NAME);
+        doReturn(stopEn).when(context).instantiateComponent(Stop.class);
+        doReturn(choiceEn).when(context).instantiateComponent(ChoiceWrapper.class.getName());
+        doReturn(component1En).when(context).instantiateComponent(COMPONENT_1_NAME);
+        doReturn(component2En).when(context).instantiateComponent(COMPONENT_2_NAME);
+        doReturn(component3En).when(context).instantiateComponent(COMPONENT_3_NAME);
+        doReturn(component4En).when(context).instantiateComponent(COMPONENT_4_NAME);
+        doReturn(component5En).when(context).instantiateComponent(COMPONENT_5_NAME);
+        doReturn(component6En).when(context).instantiateComponent(COMPONENT_6_NAME);
     }
 
     @Test
@@ -76,38 +77,38 @@ class ChoiceComponentBuilderTest {
         JSONArray whenArray = new JSONArray();
         whenArray.put(conditionalBranch("1 == 1", COMPONENT_3_NAME, COMPONENT_1_NAME));
         whenArray.put(conditionalBranch("'hello' == 'hello1'", COMPONENT_2_NAME, COMPONENT_4_NAME));
+        whenArray.put(conditionalBranch(DEFAULT_CONDITION, COMPONENT_6_NAME, COMPONENT_5_NAME));
 
         JSONObject componentDefinition = ComponentsBuilder.forComponent(ChoiceWrapper.class)
                 .with("when", whenArray)
-                .with("otherwise", ComponentsBuilder.createNextComponentsArray(COMPONENT_6_NAME, COMPONENT_5_NAME))
                 .build();
 
         ChoiceComponentBuilder builder = new ChoiceComponentBuilder(graph, context);
 
         // When
-        ExecutionNode lastNode = builder.build(parentExecutionNode, componentDefinition);
+        ExecutionNode lastNode = builder.build(parentEn, componentDefinition);
 
         // Then
-        assertThat(lastNode).isEqualTo(stopExecutionNode);
+        assertThat(lastNode).isEqualTo(stopEn);
 
-        verify(graph).putEdge(parentExecutionNode, choiceExecutionNode);
+        verify(graph).putEdge(parentEn, choiceEn);
 
         // First condition
-        verify(graph).putEdge(choiceExecutionNode, testComponent3ExecutionNode);
-        verify(graph).putEdge(testComponent3ExecutionNode, testComponent1ExecutionNode);
-        verify(graph).putEdge(testComponent1ExecutionNode, stopExecutionNode);
+        verify(graph).putEdge(choiceEn, component3En);
+        verify(graph).putEdge(component3En, component1En);
+        verify(graph).putEdge(component1En, stopEn);
 
         // Second condition
-        verify(graph).putEdge(choiceExecutionNode, testComponent2ExecutionNode);
-        verify(graph).putEdge(testComponent2ExecutionNode, testComponent4ExecutionNode);
-        verify(graph).putEdge(testComponent4ExecutionNode, stopExecutionNode);
+        verify(graph).putEdge(choiceEn, component2En);
+        verify(graph).putEdge(component2En, component4En);
+        verify(graph).putEdge(component4En, stopEn);
 
         // Otherwise
-        verify(graph).putEdge(choiceExecutionNode, testComponent6ExecutionNode);
-        verify(graph).putEdge(testComponent6ExecutionNode, testComponent5ExecutionNode);
-        verify(graph).putEdge(testComponent5ExecutionNode, stopExecutionNode);
+        verify(graph).putEdge(choiceEn, component6En);
+        verify(graph).putEdge(component6En, component5En);
+        verify(graph).putEdge(component5En, stopEn);
 
-        verifyNoMoreInteractions(parentExecutionNode);
+        verifyNoMoreInteractions(parentEn);
     }
 
     private JSONObject conditionalBranch(String condition, String... componentsNames) {

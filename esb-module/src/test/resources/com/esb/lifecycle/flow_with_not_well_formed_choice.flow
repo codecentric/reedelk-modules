@@ -7,7 +7,7 @@
     },
     {
       "implementor": "com.esb.component.Choice",
-      "when": [
+      "unknownWhen": [
         {
           "condition": "false",
           "next": [

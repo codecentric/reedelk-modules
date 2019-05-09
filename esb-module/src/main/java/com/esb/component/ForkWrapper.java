@@ -1,6 +1,5 @@
 package com.esb.component;
 
-import com.esb.api.component.Join;
 import com.esb.api.message.Message;
 import com.esb.flow.ExecutionNode;
 
@@ -8,33 +7,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static com.esb.commons.Preconditions.checkState;
-
 public class ForkWrapper extends Fork implements FlowControlComponent {
 
     private List<ExecutionNode> forkNodes = new ArrayList<>();
-    private ExecutionNode join;
 
     private CompletionService<Message> completionService;
+
+    private ExecutionNode stopNode;
 
     @Override
     public List<ExecutionNode> apply(Message input) {
         return forkNodes;
     }
 
-    public void addJoin(ExecutionNode joinComponent) {
-        checkState(joinComponent.getComponent() instanceof Join, "Join Component must implement interface 'Join'");
-        this.join = joinComponent;
-    }
-
     public void addForkNode(ExecutionNode executionNode) {
         this.forkNodes.add(executionNode);
     }
 
-    public ExecutionNode getJoin() {
-        return join;
+    public ExecutionNode getStopNode() {
+        return this.stopNode;
     }
 
+    public void setStopNode(ExecutionNode stopNode) {
+        this.stopNode = stopNode;
+    }
 
     public void setThreadPoolSize(int threadPoolSize) {
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);

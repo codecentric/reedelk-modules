@@ -304,7 +304,7 @@ class BuildModuleTest {
         assertThat(errors).hasSize(2);
 
         assertThatExistsExceptionWithMessage(errors, "\"id\" property must be defined in the flow definition");
-        assertThatExistsExceptionWithMessage(errors, "JSONObject[\"otherwise\"] not found.");
+        assertThatExistsExceptionWithMessage(errors, "JSONObject[\"when\"] not found.");
     }
 
     @Test
