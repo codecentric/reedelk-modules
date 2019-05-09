@@ -19,8 +19,13 @@ import static com.esb.commons.Preconditions.checkState;
 
 public class ForkExecutor implements Executor {
 
+    private static ExecutionNode getNextNodeOrThrow(ExecutionGraph graph, ExecutionNode node, String message) {
+        Collection<ExecutionNode> successors = graph.successors(node);
+        return checkAtLeastOneAndGetOrThrow(successors.stream(), message);
+    }
+
     @Override
-    public ExecutionResult execute(ExecutionNode executionNode, final Message message, ExecutionGraph graph) {
+    public ExecutionResult execute(final ExecutionNode executionNode, final Message message, final ExecutionGraph graph) {
 
         ForkWrapper fork = (ForkWrapper) executionNode.getComponent();
 
@@ -41,26 +46,28 @@ public class ForkExecutor implements Executor {
 
         ExecutionNode stopNode = fork.getStopNode();
 
-        Collection<ExecutionNode> followingNodes = graph.successors(stopNode);
+        ExecutionNode joinExecutionNode = getNextNodeOrThrow(graph, stopNode,
+                "Fork stop node must be followed by one node");
 
-        ExecutionNode joinExecutionNode = checkAtLeastOneAndGetOrThrow(
-                followingNodes.stream(),
-                "Stop node from fork must be followed by one node");
+        Component joinComponent = joinExecutionNode.getComponent();
+        checkState(joinComponent instanceof Join,
+                String.format("Fork must be followed by a component implementing %s interface", Join.class.getName()));
 
-        Component component = joinExecutionNode.getComponent();
-        checkState(component instanceof Join, "Fork must be followed by Join component");
-
-        Join join = (Join) component;
+        Join join = (Join) joinComponent;
         Message joinedMessage = join.apply(results);
 
-        Collection<ExecutionNode> followingExecutionNodes = graph.successors(joinExecutionNode);
 
-        ExecutionNode nextOfJoin = checkAtLeastOneAndGetOrThrow(
-                followingExecutionNodes.stream(),
-                "Join must be followed by one node");
+        Collection<ExecutionNode> successors = graph.successors(joinExecutionNode);
+        if (successors.isEmpty()) {
+            // The join was the last node of the graph.
+            return new ExecutionResult(joinedMessage, joinExecutionNode);
 
-
-        return Executors.execute(nextOfJoin, joinedMessage, graph);
+        } else {
+            ExecutionNode nextOfJoin = getNextNodeOrThrow(graph, joinExecutionNode,
+                    "Join must be followed by one node");
+            return Executors.execute(nextOfJoin, joinedMessage, graph);
+        }
     }
+
 
 }

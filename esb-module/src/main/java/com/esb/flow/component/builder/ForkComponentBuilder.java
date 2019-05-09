@@ -24,10 +24,10 @@ class ForkComponentBuilder extends AbstractBuilder {
         ExecutionNode stopComponent = context.instantiateComponent(Stop.class);
         ExecutionNode forkExecutionNode = context.instantiateComponent(componentName);
 
-        ForkWrapper forkComponent = (ForkWrapper) forkExecutionNode.getComponent();
+        ForkWrapper forkWrapper = (ForkWrapper) forkExecutionNode.getComponent();
 
         int threadPoolSize = Fork.threadPoolSize(componentDefinition);
-        forkComponent.setThreadPoolSize(threadPoolSize);
+        forkWrapper.setThreadPoolSize(threadPoolSize);
 
         graph.putEdge(parent, forkExecutionNode);
 
@@ -50,13 +50,15 @@ class ForkComponentBuilder extends AbstractBuilder {
 
                 // The first nextObject of A GIVEN fork path,
                 // must be added as a fork execution node.
-                if (j == 0) forkComponent.addForkNode(lastNode);
+                if (j == 0) forkWrapper.addForkNode(lastNode);
 
                 currentNode = lastNode;
             }
 
             graph.putEdge(currentNode, stopComponent);
         }
+
+        forkWrapper.setStopNode(stopComponent);
 
         return stopComponent;
     }
