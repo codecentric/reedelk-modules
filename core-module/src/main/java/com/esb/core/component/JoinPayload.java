@@ -1,5 +1,9 @@
 package com.esb.core.component;
 
+import com.esb.api.annotation.DefaultValue;
+import com.esb.api.annotation.DisplayName;
+import com.esb.api.annotation.EsbComponent;
+import com.esb.api.annotation.Required;
 import com.esb.api.component.Join;
 import com.esb.api.message.MemoryTypedContent;
 import com.esb.api.message.Message;
@@ -12,9 +16,13 @@ import java.util.stream.Collectors;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
+@EsbComponent
 @Component(service = JoinPayload.class, scope = PROTOTYPE)
 public class JoinPayload implements Join {
 
+    @Required
+    @DisplayName("Delimeter")
+    @DefaultValue(stringValue = ",")
     private String delimeter;
 
     @Override

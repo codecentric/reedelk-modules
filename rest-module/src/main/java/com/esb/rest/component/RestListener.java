@@ -1,5 +1,8 @@
 package com.esb.rest.component;
 
+import com.esb.api.annotation.DisplayName;
+import com.esb.api.annotation.EsbComponent;
+import com.esb.api.annotation.Required;
 import com.esb.api.component.AbstractInbound;
 import com.esb.rest.commons.RestMethod;
 import com.esb.rest.server.Server;
@@ -12,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import static com.esb.rest.commons.Preconditions.isNotNull;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
+@EsbComponent
 @Component(service = RestListener.class, scope = PROTOTYPE)
 public class RestListener extends AbstractInbound {
 
@@ -20,8 +24,13 @@ public class RestListener extends AbstractInbound {
     @Reference
     private ServerProvider provider;
 
+    @Required
+    @DisplayName("REST Path")
     private String path;
+    @Required
+    @DisplayName("REST Method")
     private RestMethod method;
+
     private RestListenerConfiguration configuration;
 
 
@@ -29,7 +38,7 @@ public class RestListener extends AbstractInbound {
     public void onStart() {
         isNotNull(configuration, "Configuration was null");
         Server server = provider.get(configuration);
-        server.addRoute(method, path, request -> onEvent(request));
+        server.addRoute(method, path, this::onEvent);
     }
 
     @Override
