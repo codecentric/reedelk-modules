@@ -1,9 +1,9 @@
 package com.esb.scheduler.component;
 
 
-import com.esb.api.annotation.DefaultValue;
-import com.esb.api.annotation.DisplayName;
-import com.esb.api.annotation.EsbComponent;
+import com.esb.api.annotation.Default;
+import com.esb.api.annotation.ESBComponent;
+import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
 import com.esb.api.component.AbstractInbound;
 import com.esb.api.message.Message;
@@ -19,7 +19,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@EsbComponent
+@ESBComponent("Scheduler")
 @Component(service = Scheduler.class, scope = PROTOTYPE)
 public class Scheduler extends AbstractInbound {
 
@@ -27,14 +27,14 @@ public class Scheduler extends AbstractInbound {
 
     private ScheduledExecutorService scheduledService = Executors.newScheduledThreadPool(1);
 
+    @Property("Delay")
+    @Default("0")
     @Required
-    @DisplayName("Delay")
-    @DefaultValue(longValue = 0)
     private long delay;
 
+    @Property("Period")
+    @Default("1000")
     @Required
-    @DisplayName("Period")
-    @DefaultValue(longValue = 1000)
     private long period;
 
     private ScheduledFuture<?> scheduledFuture;
@@ -63,16 +63,8 @@ public class Scheduler extends AbstractInbound {
         }
     }
 
-    public long getDelay() {
-        return delay;
-    }
-
     public void setDelay(long delay) {
         this.delay = delay;
-    }
-
-    public long getPeriod() {
-        return period;
     }
 
     public void setPeriod(long period) {

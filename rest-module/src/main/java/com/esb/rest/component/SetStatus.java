@@ -1,8 +1,8 @@
 package com.esb.rest.component;
 
-import com.esb.api.annotation.DefaultValue;
-import com.esb.api.annotation.DisplayName;
-import com.esb.api.annotation.EsbComponent;
+import com.esb.api.annotation.Default;
+import com.esb.api.annotation.ESBComponent;
+import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
 import com.esb.api.component.Processor;
 import com.esb.api.message.Message;
@@ -11,13 +11,13 @@ import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@EsbComponent
+@ESBComponent("Set Response Status")
 @Component(service = SetStatus.class, scope = PROTOTYPE)
 public class SetStatus implements Processor {
 
+    @Property("Response Status")
+    @Default("200")
     @Required
-    @DefaultValue(intValue = 200)
-    @DisplayName("Response Status")
     private int status;
 
     @Override

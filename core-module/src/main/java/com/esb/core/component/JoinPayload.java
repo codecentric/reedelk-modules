@@ -1,8 +1,8 @@
 package com.esb.core.component;
 
-import com.esb.api.annotation.DefaultValue;
-import com.esb.api.annotation.DisplayName;
-import com.esb.api.annotation.EsbComponent;
+import com.esb.api.annotation.Default;
+import com.esb.api.annotation.ESBComponent;
+import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
 import com.esb.api.component.Join;
 import com.esb.api.message.MemoryTypedContent;
@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@EsbComponent
+@ESBComponent("Join String Payload")
 @Component(service = JoinPayload.class, scope = PROTOTYPE)
 public class JoinPayload implements Join {
 
+    @Property("Delimiter")
+    @Default(",")
     @Required
-    @DisplayName("Delimeter")
-    @DefaultValue(stringValue = ",")
-    private String delimeter;
+    private String delimiter;
 
     @Override
     public Message apply(List<Message> messagesToJoin) {
@@ -36,7 +36,7 @@ public class JoinPayload implements Join {
                         return null;
                     }
                 })
-                .collect(Collectors.joining(delimeter));
+                .collect(Collectors.joining(delimiter));
 
         Message message = new Message();
         Type type = new Type(MimeType.TEXT, String.class);
@@ -45,8 +45,8 @@ public class JoinPayload implements Join {
         return message;
     }
 
-    public void setDelimeter(String delimeter) {
-        this.delimeter = delimeter;
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 
 }

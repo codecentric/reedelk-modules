@@ -1,7 +1,8 @@
 package com.esb.rest.component;
 
-import com.esb.api.annotation.DisplayName;
-import com.esb.api.annotation.EsbComponent;
+import com.esb.api.annotation.Default;
+import com.esb.api.annotation.ESBComponent;
+import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
 import com.esb.api.component.AbstractInbound;
 import com.esb.rest.commons.RestMethod;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import static com.esb.rest.commons.Preconditions.isNotNull;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@EsbComponent
+@ESBComponent
 @Component(service = RestListener.class, scope = PROTOTYPE)
 public class RestListener extends AbstractInbound {
 
@@ -24,15 +25,17 @@ public class RestListener extends AbstractInbound {
     @Reference
     private ServerProvider provider;
 
+    @Property("Path")
+    @Default("/")
     @Required
-    @DisplayName("REST Path")
     private String path;
+
+    @Property("Method")
+    @Default("GET")
     @Required
-    @DisplayName("REST Method")
     private RestMethod method;
 
     private RestListenerConfiguration configuration;
-
 
     @Override
     public void onStart() {
