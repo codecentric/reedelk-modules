@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Log")
-@Component(service = LogComponent.class, scope = PROTOTYPE)
-public class LogComponent implements Processor {
+@ESBComponent("Logger")
+@Component(service = LoggerComponent.class, scope = PROTOTYPE)
+public class LoggerComponent implements Processor {
 
-    private static final Logger logger = LoggerFactory.getLogger(LogComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoggerComponent.class);
 
-    @Property("Log Level")
+    @Property("Logger Level")
     @Default("INFO")
     @Required
     private String level;
