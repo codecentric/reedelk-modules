@@ -11,7 +11,7 @@ import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Set Response Status")
+@ESBComponent("Set Status")
 @Component(service = SetStatus.class, scope = PROTOTYPE)
 public class SetStatus implements Processor {
 
@@ -24,10 +24,6 @@ public class SetStatus implements Processor {
     public Message apply(Message message) {
         OutboundProperty.STATUS.set(message, status);
         return message;
-    }
-
-    public int getStatus() {
-        return status;
     }
 
     public void setStatus(int status) {

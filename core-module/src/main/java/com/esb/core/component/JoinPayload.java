@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Join String Payload")
+@ESBComponent("Join Payload")
 @Component(service = JoinPayload.class, scope = PROTOTYPE)
 public class JoinPayload implements Join {
 

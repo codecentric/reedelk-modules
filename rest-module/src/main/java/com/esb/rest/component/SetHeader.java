@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Set Response Header")
+@ESBComponent("Set Header")
 @Component(service = SetHeader.class, scope = PROTOTYPE)
 public class SetHeader implements Processor {
 

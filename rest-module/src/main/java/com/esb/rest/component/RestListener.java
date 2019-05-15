@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import static com.esb.rest.commons.Preconditions.isNotNull;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent
+@ESBComponent("REST Listener")
 @Component(service = RestListener.class, scope = PROTOTYPE)
 public class RestListener extends AbstractInbound {
 
@@ -30,7 +30,7 @@ public class RestListener extends AbstractInbound {
     @Required
     private String path;
 
-    @Property("Method")
+    //@Property("Method")
     @Default("GET")
     @Required
     private RestMethod method;
