@@ -33,7 +33,7 @@ public class Scheduler extends AbstractInbound {
     private long delay;
 
     @Property("Period")
-    @Default("1000")
+    @Default("5000")
     @Required
     private long period;
 
