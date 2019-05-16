@@ -30,7 +30,7 @@ public class RestListener extends AbstractInbound {
     @Required
     private String path;
 
-    //@Property("Method")
+    @Property("Method")
     @Default("GET")
     @Required
     private RestMethod method;
