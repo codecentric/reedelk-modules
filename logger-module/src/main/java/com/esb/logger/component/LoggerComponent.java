@@ -22,6 +22,7 @@ public class LoggerComponent implements Processor {
     @Property("Logger Level")
     @Default("INFO")
     @Required
+    // TODO: This should be an enum
     private String level;
 
     @Override
