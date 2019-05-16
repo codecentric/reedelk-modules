@@ -17,87 +17,27 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = LoggerComponent.class, scope = PROTOTYPE)
 public class LoggerComponent implements Processor {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggerComponent.class);
+    static final Logger logger = LoggerFactory.getLogger(LoggerComponent.class);
 
     @Property("Logger Level")
     @Default("INFO")
     @Required
-    // TODO: This should be an enum
-    private String level;
+    private LoggerLevel level;
 
     @Override
     public Message apply(Message input) {
         TypedContent content = input.getTypedContent();
         if (content != null) {
-            LogLevel.from(level).log(content.getContent());
+            level.log(content.getContent());
+
         } else {
-            LogLevel.from(level).log(null);
+            level.log(null);
         }
         return input;
     }
 
-    public void setLevel(String level) {
+    public void setLevel(LoggerLevel level) {
         this.level = level;
     }
-
-
-    enum LogLevel implements MessageLogger {
-
-        INFO("INFO") {
-            @Override
-            public void log(Object message) {
-                logger.info(asLoggableString(message));
-            }
-        },
-        DEBUG("DEBUG") {
-            @Override
-            public void log(Object message) {
-                logger.debug(asLoggableString(message));
-            }
-        },
-        WARN("WARN") {
-            @Override
-            public void log(Object message) {
-                logger.warn(asLoggableString(message));
-            }
-        },
-        ERROR("ERROR") {
-            @Override
-            public void log(Object message) {
-                logger.error(asLoggableString(message));
-            }
-        },
-        TRACE("TRACE") {
-            @Override
-            public void log(Object message) {
-                logger.trace(asLoggableString(message));
-            }
-        };
-
-        private String levelName;
-
-
-        LogLevel(String levelName) {
-            this.levelName = levelName;
-        }
-
-        static LogLevel from(String stringValue) {
-            for (LogLevel level : values()) {
-                if (level.levelName.equalsIgnoreCase(stringValue)) {
-                    return level;
-                }
-            }
-            return INFO;
-        }
-
-        private static String asLoggableString(Object message) {
-            return message == null ? null : message.toString();
-        }
-    }
-
-    interface MessageLogger {
-        void log(Object message);
-    }
-
 
 }
