@@ -13,7 +13,7 @@ import java.util.stream.StreamSupport;
 
 import static com.esb.commons.FileExtension.FLOW;
 import static com.esb.commons.FileExtension.FLOW_CONFIG;
-import static com.esb.module.ModuleProperties.*;
+import static com.esb.internal.commons.ModuleProperties.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 

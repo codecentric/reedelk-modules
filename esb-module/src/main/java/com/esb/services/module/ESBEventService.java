@@ -1,6 +1,6 @@
 package com.esb.services.module;
 
-import com.esb.module.ModuleProperties;
+import com.esb.internal.commons.ModuleProperties;
 import org.osgi.framework.*;
 
 import java.util.Dictionary;
