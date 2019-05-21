@@ -33,9 +33,8 @@
         <module>admin-console-dev-module</module>
         <module>esb-module</module>
         <module>rest-module</module>
-        <module>logger-module</module>
+        <module>core-module</module>
         <module>scheduler-module</module>
-        <module>flow-internal-tests</module>
     </modules>
 
     <dependencyManagement>

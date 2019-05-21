@@ -104,41 +104,6 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>deploy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <executions>
-                            <execution><!-- Run our version calculation script -->
-                                <id>Upload</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>curl</executable>
-                                    <arguments>
-                                        <argument>-H</argument>
-                                        <argument>'Content-Type: application/json'</argument>
-                                        <argument>--request</argument>
-                                        <argument>POST</argument>
-                                        <argument>--data</argument>
-                                        <argument>
-                                            {"moduleFilePath":"file:${project.build.directory}/${project.artifactId}-${project.version}.jar"}'
-                                        </argument>
-                                        <argument>http://localhost:9988/module</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
 
