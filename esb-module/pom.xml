@@ -30,7 +30,6 @@
             <groupId>com.esb</groupId>
             <artifactId>internal-system-components</artifactId>
             <version>${internal.system.components.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.esb</groupId>
