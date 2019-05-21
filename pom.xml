@@ -32,7 +32,6 @@
     <modules>
         <module>admin-console-dev-module</module>
         <module>esb-module</module>
-        <module>core-module</module>
         <module>rest-module</module>
         <module>logger-module</module>
         <module>scheduler-module</module>
