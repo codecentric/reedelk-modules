@@ -1,4 +1,4 @@
-package com.esb.logger.component;
+package com.esb.component.logger;
 
 public interface MessageLogger {
 
