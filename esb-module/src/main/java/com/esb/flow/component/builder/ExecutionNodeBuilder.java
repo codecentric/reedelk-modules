@@ -1,13 +1,13 @@
 package com.esb.flow.component.builder;
 
 import com.esb.api.exception.ESBException;
-import com.esb.component.Choice;
-import com.esb.component.FlowReference;
-import com.esb.component.Fork;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
 import com.esb.internal.commons.JsonParser;
+import com.esb.system.component.Choice;
+import com.esb.system.component.FlowReference;
+import com.esb.system.component.Fork;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;

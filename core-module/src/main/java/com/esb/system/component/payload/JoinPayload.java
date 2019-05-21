@@ -1,4 +1,4 @@
-package com.esb.component.payload;
+package com.esb.system.component.payload;
 
 import com.esb.api.annotation.Default;
 import com.esb.api.annotation.ESBComponent;

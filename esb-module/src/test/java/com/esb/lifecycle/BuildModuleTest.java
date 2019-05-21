@@ -2,9 +2,7 @@ package com.esb.lifecycle;
 
 import com.esb.api.component.Component;
 import com.esb.api.exception.ESBException;
-import com.esb.component.Choice;
 import com.esb.component.ChoiceWrapper;
-import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.flow.Flow;
@@ -14,6 +12,8 @@ import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
 import com.esb.module.ModuleDeserializer;
 import com.esb.module.ModulesManager;
+import com.esb.system.component.Choice;
+import com.esb.system.component.Stop;
 import com.esb.test.utils.AnotherTestComponent;
 import com.esb.test.utils.TestComponent;
 import com.esb.test.utils.TestInboundComponent;

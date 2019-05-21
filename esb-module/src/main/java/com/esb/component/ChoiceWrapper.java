@@ -5,6 +5,7 @@ import com.esb.api.message.Message;
 import com.esb.flow.ExecutionNode;
 import com.esb.services.scriptengine.ESBJavascriptEngine;
 import com.esb.services.scriptengine.ScriptEngine;
+import com.esb.system.component.Choice;
 
 import javax.script.ScriptException;
 import java.util.ArrayList;

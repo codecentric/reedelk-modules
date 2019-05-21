@@ -1,10 +1,10 @@
 package com.esb.flow.component.builder;
 
 import com.esb.component.ForkWrapper;
-import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
+import com.esb.system.component.Stop;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

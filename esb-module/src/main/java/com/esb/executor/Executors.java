@@ -4,9 +4,9 @@ import com.esb.api.component.Component;
 import com.esb.api.message.Message;
 import com.esb.component.ChoiceWrapper;
 import com.esb.component.ForkWrapper;
-import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.graph.ExecutionGraph;
+import com.esb.system.component.Stop;
 
 import java.util.Collections;
 import java.util.HashMap;

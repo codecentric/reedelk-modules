@@ -1,11 +1,11 @@
 package com.esb.flow.component.builder;
 
 import com.esb.component.ChoiceWrapper;
-import com.esb.component.Stop;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
+import com.esb.system.component.Stop;
 import com.esb.test.utils.ComponentsBuilder;
 import com.esb.test.utils.TestComponent;
 import org.json.JSONArray;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.esb.component.Choice.DEFAULT_CONDITION;
+import static com.esb.system.component.Choice.DEFAULT_CONDITION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

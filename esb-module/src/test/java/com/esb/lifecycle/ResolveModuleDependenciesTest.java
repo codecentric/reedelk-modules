@@ -209,7 +209,7 @@ class ResolveModuleDependenciesTest {
                 "com.esb.test.utils.TestInboundComponent");
 
         assertThat(resolvedComponents).containsExactlyInAnyOrder(
-                "com.esb.component.Choice");
+                "com.esb.system.component.Choice");
     }
 
     private JSONObject parseJson(TestJson testJson) {

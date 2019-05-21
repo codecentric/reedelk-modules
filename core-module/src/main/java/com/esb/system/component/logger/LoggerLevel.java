@@ -1,4 +1,4 @@
-package com.esb.component.logger;
+package com.esb.system.component.logger;
 
 public enum LoggerLevel implements MessageLogger {
 

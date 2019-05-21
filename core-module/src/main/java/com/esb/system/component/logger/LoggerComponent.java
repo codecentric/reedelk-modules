@@ -1,4 +1,4 @@
-package com.esb.component.logger;
+package com.esb.system.component.logger;
 
 import com.esb.api.annotation.Default;
 import com.esb.api.annotation.ESBComponent;

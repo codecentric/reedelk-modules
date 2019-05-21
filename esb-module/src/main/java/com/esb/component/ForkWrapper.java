@@ -2,6 +2,7 @@ package com.esb.component;
 
 import com.esb.api.message.Message;
 import com.esb.flow.ExecutionNode;
+import com.esb.system.component.Fork;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,10 @@
 package com.esb.component;
 
 import com.esb.api.component.Component;
+import com.esb.system.component.Choice;
+import com.esb.system.component.FlowReference;
+import com.esb.system.component.Fork;
+import com.esb.system.component.Stop;
 
 import java.util.Collection;
 import java.util.Collections;
