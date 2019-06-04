@@ -13,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Optional;
+import java.util.*;
 
 import static com.esb.commons.Preconditions.checkArgument;
 import static com.esb.internal.commons.ReflectionUtils.*;
@@ -24,6 +21,9 @@ import static java.lang.String.format;
 
 @SuppressWarnings("unchecked")
 public class GenericComponentDeserializer {
+
+    private static final List<String> EXCLUDED_PROPERTIES_FROM_WARNINGS =
+            Collections.singletonList(JsonParser.Implementor.description());
 
     private static final Logger logger = LoggerFactory.getLogger(GenericComponentDeserializer.class);
     private static final Collection<String> EXCLUDED_PROPERTIES = Collections.singletonList(JsonParser.Implementor.name());
@@ -54,8 +54,10 @@ public class GenericComponentDeserializer {
                 setProperty(implementor, setter, deserializedObject);
 
             } else {
-                logger.warn("Could not find setter on implementor [{}] for property name [{}]. The property will be skipped",
-                        implementor.getClass().getName(), propertyName);
+                if (!EXCLUDED_PROPERTIES_FROM_WARNINGS.contains(propertyName)) {
+                    logger.warn("Could not find setter on implementor [{}] for property name [{}]. The property will be skipped",
+                            implementor.getClass().getName(), propertyName);
+                }
             }
         }
     }

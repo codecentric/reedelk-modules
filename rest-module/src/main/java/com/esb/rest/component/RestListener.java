@@ -24,27 +24,30 @@ public class RestListener extends AbstractInbound {
     @Reference
     private ServerProvider provider;
 
-    @Property("Path")
-    @Default("/")
-    @Required
-    private String path;
-
-    @Property("Method")
-    @Default("GET")
-    @Required
-    private RestMethod method;
-
-    @Property("Hostname")
-    @Default("localhost")
-    @Required
-    private String hostname;
 
     @Property("Port")
     @Default("8080")
     @Required
     private int port;
 
+    @Property("Path")
+    @Default("/")
+    @Required
+    private String path;
+
+    @Property("Hostname")
+    @Default("localhost")
+    @Required
+    private String hostname;
+
+    @Property("Method")
+    @Default("GET")
+    @Required
+    private RestMethod method;
+
+
     private RestListenerConfiguration configuration = new RestListenerConfiguration();
+
 
     @Override
     public void onStart() {
@@ -66,6 +69,10 @@ public class RestListener extends AbstractInbound {
         }
     }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public void setPath(String path) {
         this.path = path;
     }
@@ -78,7 +85,4 @@ public class RestListener extends AbstractInbound {
         this.hostname = hostname;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
 }
