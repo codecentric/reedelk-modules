@@ -26,22 +26,30 @@ public class Default implements BodyStrategy {
             buf.getBytes(buf.readerIndex(), bytes);
         }
 
-        String contentType = request.headers().get(HttpHeaderNames.CONTENT_TYPE);
+        MimeType payloadMimeType = getContentMimeTypeOrDefault(request, MimeType.TEXT);
 
-        MimeType payloadMimeType = MimeType.parse(contentType);
-        if (payloadMimeType.equals(MimeType.APPLICATION_JSON)) {
+        if (payloadMimeType.equals(MimeType.APPLICATION_JSON) ||
+                payloadMimeType.equals(MimeType.TEXT)) {
+
             // Payload is string
             Type type = new Type(payloadMimeType, String.class);
             // The charset should be fixed.
             MemoryTypedContent<String> memoryTypedContent = new MemoryTypedContent<>(new String(bytes, StandardCharsets.UTF_8), type);
             return new BodyStrategyResult<>(memoryTypedContent, Collections.emptyList());
 
-
         } else {
             Type type = new Type(payloadMimeType, byte[].class);
             MemoryTypedContent<byte[]> memoryTypedContent = new MemoryTypedContent<>(bytes, type);
             return new BodyStrategyResult<>(memoryTypedContent, Collections.emptyList());
         }
+    }
+
+    private MimeType getContentMimeTypeOrDefault(FullHttpRequest request, MimeType defaultMimeType) {
+        if (request.headers().contains(HttpHeaderNames.CONTENT_TYPE)) {
+            String contentType = request.headers().get(HttpHeaderNames.CONTENT_TYPE);
+            return MimeType.parse(contentType);
+        }
+        return defaultMimeType;
     }
 
 }

@@ -44,7 +44,11 @@ public class BodyStrategyBuilder {
     }
 
     private static MimeType getMimeType(HttpRequest request) {
-        return MimeType.parse(request.headers().get(HttpHeaderNames.CONTENT_TYPE));
+        if (request.headers().contains(HttpHeaderNames.CONTENT_TYPE)) {
+            return MimeType.parse(request.headers().get(HttpHeaderNames.CONTENT_TYPE));
+        } else {
+            return MimeType.TEXT;
+        }
     }
 
 

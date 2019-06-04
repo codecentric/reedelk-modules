@@ -13,7 +13,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.esb.rest.commons.Preconditions.isNotNull;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("REST Listener")
@@ -35,11 +34,23 @@ public class RestListener extends AbstractInbound {
     @Required
     private RestMethod method;
 
-    private RestListenerConfiguration configuration;
+    @Property("Hostname")
+    @Default("localhost")
+    @Required
+    private String hostname;
+
+    @Property("Port")
+    @Default("8080")
+    @Required
+    private int port;
+
+    private RestListenerConfiguration configuration = new RestListenerConfiguration();
 
     @Override
     public void onStart() {
-        isNotNull(configuration, "Configuration was null");
+        configuration.setPort(port);
+        configuration.setHostname(hostname);
+
         Server server = provider.get(configuration);
         server.addRoute(method, path, this::onEvent);
     }
@@ -63,7 +74,11 @@ public class RestListener extends AbstractInbound {
         this.method = method;
     }
 
-    public void setConfiguration(RestListenerConfiguration configuration) {
-        this.configuration = configuration;
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }
