@@ -33,7 +33,7 @@ public class ChoiceExecutor implements Executor {
         Optional<ExecutionNode> moreNodeAfterStop = nextNode.stream().findFirst();
 
         return moreNodeAfterStop.isPresent() ?
-                Executors.execute(moreNodeAfterStop.get(), message, graph) :
+                Executors.execute(moreNodeAfterStop.get(), execute.getMessage(), graph) :
                 execute;
     }
 

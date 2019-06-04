@@ -22,6 +22,8 @@ public class ChoiceWrapper extends Choice implements FlowControlComponent {
     @Override
     public List<ExecutionNode> apply(Message input) {
         for (PathExpressionPair pathExpressionPair : pathExpressionPairs) {
+            if (pathExpressionPair.expression.equals(Choice.DEFAULT_CONDITION)) continue;
+
             if (pathExpressionPair.evaluate(input, Boolean.class)) {
                 return singletonList(pathExpressionPair.pathReference);
             }
