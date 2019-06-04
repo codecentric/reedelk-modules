@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Cursor as JSON")
+@ESBComponent("Results to JSON")
 @Component(service = ResultSetToJsonComponent.class, scope = PROTOTYPE)
 public class ResultSetToJsonComponent implements Processor {
 
