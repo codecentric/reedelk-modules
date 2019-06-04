@@ -8,7 +8,6 @@ import com.esb.api.component.Processor;
 import com.esb.api.message.*;
 import com.esb.rest.client.Client;
 import com.esb.rest.commons.RestMethod;
-import com.squareup.okhttp.OkHttpClient;
 import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -30,7 +29,6 @@ public class RestCall implements Processor {
     @Override
     public Message apply(Message input) {
         Client client;
-        OkHttpClient okHttpClient = new OkHttpClient();
         try {
             client = new Client(requestUrl, method);
         } catch (Exception e) {
