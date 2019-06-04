@@ -34,6 +34,7 @@
         <module>esb-module</module>
         <module>rest-module</module>
         <module>core-module</module>
+        <module>mysql-module</module>
         <module>scheduler-module</module>
     </modules>
 
