@@ -11,8 +11,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-import static com.esb.commons.FileExtension.FLOW;
-import static com.esb.commons.FileExtension.FLOW_CONFIG;
+import static com.esb.commons.FileExtension.*;
 import static com.esb.internal.commons.ModuleProperties.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -27,7 +26,7 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
                 Flow.ROOT_PROPERTY);
 
         Set<JSONObject> subflows = objectsWithRoot(
-                getResources(Subflow.RESOURCE_DIRECTORY, FLOW.value()),
+                getResources(Subflow.RESOURCE_DIRECTORY, SUBFLOW.value()),
                 Subflow.ROOT_PROPERTY);
 
         Collection<JSONObject> configurations = getConfigurations();
@@ -62,5 +61,4 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
                     .collect(toList());
         }
     }
-
 }
