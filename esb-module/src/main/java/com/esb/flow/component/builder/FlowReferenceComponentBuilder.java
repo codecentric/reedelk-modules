@@ -51,6 +51,6 @@ class FlowReferenceComponentBuilder extends AbstractBuilder {
         return subflows.stream()
                 .filter(subflow -> Subflow.id(subflow).equals(referenceName))
                 .findFirst()
-                .orElseThrow(() -> new ESBException("Could not find Subflow with referenceId=" + referenceName));
+                .orElseThrow(() -> new ESBException("Could not find Subflow with referenceId='" + referenceName + "'"));
     }
 }
