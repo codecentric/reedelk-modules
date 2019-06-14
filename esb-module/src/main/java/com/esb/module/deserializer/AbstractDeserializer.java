@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-import static com.esb.commons.FileExtension.*;
+import static com.esb.internal.commons.FileExtension.*;
 import static com.esb.internal.commons.ModuleProperties.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
