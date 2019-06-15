@@ -1,7 +1,7 @@
 package com.esb.flow.component.builder;
 
 
-import com.esb.component.ChoiceWrapper;
+import com.esb.component.RouterWrapper;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
@@ -9,12 +9,12 @@ import com.esb.system.component.Stop;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import static com.esb.internal.commons.JsonParser.Choice;
 import static com.esb.internal.commons.JsonParser.Implementor;
+import static com.esb.internal.commons.JsonParser.Router;
 
-class ChoiceComponentBuilder extends AbstractBuilder {
+class RouterComponentBuilder extends AbstractBuilder {
 
-    ChoiceComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
+    RouterComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
         super(graph, context);
     }
 
@@ -23,19 +23,19 @@ class ChoiceComponentBuilder extends AbstractBuilder {
         String componentName = Implementor.name(componentDefinition);
 
         ExecutionNode stopComponent = context.instantiateComponent(Stop.class);
-        ExecutionNode choiceExecutionNode = context.instantiateComponent(componentName);
-        ChoiceWrapper choiceWrapper = (ChoiceWrapper) choiceExecutionNode.getComponent();
+        ExecutionNode routerExecutionNode = context.instantiateComponent(componentName);
+        RouterWrapper routerWrapper = (RouterWrapper) routerExecutionNode.getComponent();
 
-        graph.putEdge(parent, choiceExecutionNode);
+        graph.putEdge(parent, routerExecutionNode);
 
-        JSONArray when = Choice.when(componentDefinition);
+        JSONArray when = Router.when(componentDefinition);
 
         for (int i = 0; i < when.length(); i++) {
-            ExecutionNode currentNode = choiceExecutionNode;
+            ExecutionNode currentNode = routerExecutionNode;
 
             JSONObject component = when.getJSONObject(i);
-            String condition = Choice.condition(component);
-            JSONArray next = Choice.next(component);
+            String condition = Router.condition(component);
+            JSONArray next = Router.next(component);
 
             for (int j = 0; j < next.length(); j++) {
                 JSONObject currentComponentDef = next.getJSONObject(j);
@@ -46,10 +46,10 @@ class ChoiceComponentBuilder extends AbstractBuilder {
                         .graph(graph)
                         .build();
 
-                // The first component of A GIVEN choice path,
-                // must be added as a choice expression pair.
+                // The first component of A GIVEN router path,
+                // must be added as a router expression pair.
                 if (j == 0) {
-                    choiceWrapper.addPathExpressionPair(condition, lastNode);
+                    routerWrapper.addPathExpressionPair(condition, lastNode);
                 }
 
                 currentNode = lastNode;

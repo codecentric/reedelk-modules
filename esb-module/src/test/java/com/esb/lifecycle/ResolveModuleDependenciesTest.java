@@ -77,7 +77,7 @@ class ResolveModuleDependenciesTest {
                 .unregisteredComponentsOf(anyCollection());
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseJson(TestJson.FLOW_WITH_CHOICE));
+        flows.add(parseJson(TestJson.FLOW_WITH_ROUTER));
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -157,7 +157,7 @@ class ResolveModuleDependenciesTest {
                 .unregisteredComponentsOf(anyCollection());
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseJson(TestJson.FLOW_WITH_CHOICE));
+        flows.add(parseJson(TestJson.FLOW_WITH_ROUTER));
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -191,7 +191,7 @@ class ResolveModuleDependenciesTest {
                 .unregisteredComponentsOf(anyCollection());
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseJson(TestJson.FLOW_WITH_CHOICE));
+        flows.add(parseJson(TestJson.FLOW_WITH_ROUTER));
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -209,7 +209,7 @@ class ResolveModuleDependenciesTest {
                 "com.esb.test.utils.TestInboundComponent");
 
         assertThat(resolvedComponents).containsExactlyInAnyOrder(
-                "com.esb.system.component.Choice");
+                "com.esb.system.component.Router");
     }
 
     private JSONObject parseJson(TestJson testJson) {

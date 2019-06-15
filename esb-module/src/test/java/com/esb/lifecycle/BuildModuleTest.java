@@ -2,7 +2,7 @@ package com.esb.lifecycle;
 
 import com.esb.api.component.Component;
 import com.esb.api.exception.ESBException;
-import com.esb.component.ChoiceWrapper;
+import com.esb.component.RouterWrapper;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.flow.Flow;
@@ -12,7 +12,7 @@ import com.esb.module.DeserializedModule;
 import com.esb.module.Module;
 import com.esb.module.ModuleDeserializer;
 import com.esb.module.ModulesManager;
-import com.esb.system.component.Choice;
+import com.esb.system.component.Router;
 import com.esb.system.component.Stop;
 import com.esb.test.utils.AnotherTestComponent;
 import com.esb.test.utils.TestComponent;
@@ -281,17 +281,17 @@ class BuildModuleTest {
         Module inputModule = newResolvedModule();
 
         JSONObject flowWithoutId = parseFlow(TestJson.FLOW_WITHOUT_ID);
-        JSONObject flowWithNotWellFormedChoice = parseFlow(TestJson.FLOW_WITH_NOT_WELL_FORMED_CHOICE);
+        JSONObject flowWithNotWellFormedRouter = parseFlow(TestJson.FLOW_WITH_NOT_WELL_FORMED_ROUTER);
         Set<JSONObject> flows = new HashSet<>();
         flows.add(flowWithoutId);
-        flows.add(flowWithNotWellFormedChoice);
+        flows.add(flowWithNotWellFormedRouter);
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         mockComponentWithServiceReference(TestInboundComponent.class);
         mockComponentWithServiceReference(AnotherTestComponent.class);
-        mockComponent(Choice.class, ChoiceWrapper.class);
+        mockComponent(Router.class, RouterWrapper.class);
         mockComponent(Stop.class);
 
         // When

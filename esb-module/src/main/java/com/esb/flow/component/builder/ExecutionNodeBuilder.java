@@ -5,9 +5,9 @@ import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
 import com.esb.internal.commons.JsonParser;
-import com.esb.system.component.Choice;
 import com.esb.system.component.FlowReference;
 import com.esb.system.component.Fork;
+import com.esb.system.component.Router;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +28,7 @@ public class ExecutionNodeBuilder {
     static {
         Map<String, Class<? extends Builder>> tmp = new HashMap<>();
         tmp.put(Fork.class.getName(), ForkComponentBuilder.class);
-        tmp.put(Choice.class.getName(), ChoiceComponentBuilder.class);
+        tmp.put(Router.class.getName(), RouterComponentBuilder.class);
         tmp.put(FlowReference.class.getName(), FlowReferenceComponentBuilder.class);
         COMPONENT_NAME_HANDLER = Collections.unmodifiableMap(tmp);
     }

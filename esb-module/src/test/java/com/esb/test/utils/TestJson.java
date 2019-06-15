@@ -11,10 +11,10 @@ public enum TestJson {
         }
     },
 
-    FLOW_WITH_CHOICE {
+    FLOW_WITH_ROUTER {
         @Override
         String path() {
-            return "/com/esb/lifecycle/flow_with_choice.flow";
+            return "/com/esb/lifecycle/flow_with_router.flow";
         }
     },
 
@@ -25,10 +25,10 @@ public enum TestJson {
         }
     },
 
-    FLOW_WITH_NOT_WELL_FORMED_CHOICE {
+    FLOW_WITH_NOT_WELL_FORMED_ROUTER {
         @Override
         String path() {
-            return "/com/esb/lifecycle/flow_with_not_well_formed_choice.flow";
+            return "/com/esb/lifecycle/flow_with_not_well_formed_router.flow";
         }
     },
 

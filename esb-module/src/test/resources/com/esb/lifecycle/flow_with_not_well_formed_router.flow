@@ -6,7 +6,7 @@
       "message": "Test inbound message"
     },
     {
-      "implementor": "com.esb.system.component.Choice",
+      "implementor": "com.esb.system.component.Router",
       "unknownWhen": [
         {
           "condition": "false",

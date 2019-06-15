@@ -1,9 +1,9 @@
 package com.esb.component;
 
 import com.esb.api.component.Component;
-import com.esb.system.component.Choice;
 import com.esb.system.component.FlowReference;
 import com.esb.system.component.Fork;
+import com.esb.system.component.Router;
 import com.esb.system.component.Stop;
 
 import java.util.Collection;
@@ -18,7 +18,7 @@ public class ESBComponent {
     static {
         Map<String, Class<? extends Component>> tmp = new HashMap<>();
         tmp.put(Stop.class.getName(), Stop.class);
-        tmp.put(Choice.class.getName(), ChoiceWrapper.class);
+        tmp.put(Router.class.getName(), RouterWrapper.class);
         tmp.put(Fork.class.getName(), ForkWrapper.class);
         tmp.put(FlowReference.class.getName(), FlowReference.class);
         COMPONENTS = Collections.unmodifiableMap(tmp);

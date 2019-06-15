@@ -5,7 +5,7 @@ import com.esb.api.message.Message;
 import com.esb.flow.ExecutionNode;
 import com.esb.services.scriptengine.ESBJavascriptEngine;
 import com.esb.services.scriptengine.ScriptEngine;
-import com.esb.system.component.Choice;
+import com.esb.system.component.Router;
 
 import javax.script.ScriptException;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 
-public class ChoiceWrapper extends Choice implements FlowControlComponent {
+public class RouterWrapper extends Router implements FlowControlComponent {
 
     private static final ScriptEngine ENGINE = new ESBJavascriptEngine();
 
@@ -22,7 +22,7 @@ public class ChoiceWrapper extends Choice implements FlowControlComponent {
     @Override
     public List<ExecutionNode> apply(Message input) {
         for (PathExpressionPair pathExpressionPair : pathExpressionPairs) {
-            if (pathExpressionPair.expression.equals(Choice.DEFAULT_CONDITION)) continue;
+            if (pathExpressionPair.expression.equals(Router.DEFAULT_CONDITION)) continue;
 
             if (pathExpressionPair.evaluate(input, Boolean.class)) {
                 return singletonList(pathExpressionPair.pathReference);
@@ -39,7 +39,7 @@ public class ChoiceWrapper extends Choice implements FlowControlComponent {
         return pathExpressionPairs.stream()
                 .filter(pathExpressionPair -> pathExpressionPair.expression.equals(DEFAULT_CONDITION))
                 .findFirst()
-                .orElseThrow(() -> new ESBException("Default choice condition could not be found"));
+                .orElseThrow(() -> new ESBException("Default router condition could not be found"));
     }
 
     // The engine should be part of the context.

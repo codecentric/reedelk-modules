@@ -1,6 +1,6 @@
 package com.esb.flow.component.builder;
 
-import com.esb.component.ChoiceWrapper;
+import com.esb.component.RouterWrapper;
 import com.esb.flow.ExecutionNode;
 import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.flow.FlowBuilderContext;
@@ -16,12 +16,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.esb.system.component.Choice.DEFAULT_CONDITION;
+import static com.esb.system.component.Router.DEFAULT_CONDITION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ChoiceComponentBuilderTest {
+class RouterComponentBuilderTest {
 
     private final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
     private final String COMPONENT_2_NAME = TestComponent.class.getName() + "2";
@@ -50,7 +50,7 @@ class ChoiceComponentBuilderTest {
     private ExecutionNode component6En;
 
     private ExecutionNode stopEn = new ExecutionNode(new ReferencePair<>(new Stop()));
-    private ExecutionNode choiceEn = new ExecutionNode(new ReferencePair<>(new ChoiceWrapper()));
+    private ExecutionNode routerEn = new ExecutionNode(new ReferencePair<>(new RouterWrapper()));
 
     @BeforeEach
     void setUp() {
@@ -62,7 +62,7 @@ class ChoiceComponentBuilderTest {
         doReturn(new TestComponent()).when(component6En).getComponent();
 
         doReturn(stopEn).when(context).instantiateComponent(Stop.class);
-        doReturn(choiceEn).when(context).instantiateComponent(ChoiceWrapper.class.getName());
+        doReturn(routerEn).when(context).instantiateComponent(RouterWrapper.class.getName());
         doReturn(component1En).when(context).instantiateComponent(COMPONENT_1_NAME);
         doReturn(component2En).when(context).instantiateComponent(COMPONENT_2_NAME);
         doReturn(component3En).when(context).instantiateComponent(COMPONENT_3_NAME);
@@ -72,18 +72,18 @@ class ChoiceComponentBuilderTest {
     }
 
     @Test
-    void shouldCorrectlyHandleChoiceComponent() {
+    void shouldCorrectlyHandleRouterComponent() {
         // Given
         JSONArray whenArray = new JSONArray();
         whenArray.put(conditionalBranch("1 == 1", COMPONENT_3_NAME, COMPONENT_1_NAME));
         whenArray.put(conditionalBranch("'hello' == 'hello1'", COMPONENT_2_NAME, COMPONENT_4_NAME));
         whenArray.put(conditionalBranch(DEFAULT_CONDITION, COMPONENT_6_NAME, COMPONENT_5_NAME));
 
-        JSONObject componentDefinition = ComponentsBuilder.forComponent(ChoiceWrapper.class)
+        JSONObject componentDefinition = ComponentsBuilder.forComponent(RouterWrapper.class)
                 .with("when", whenArray)
                 .build();
 
-        ChoiceComponentBuilder builder = new ChoiceComponentBuilder(graph, context);
+        RouterComponentBuilder builder = new RouterComponentBuilder(graph, context);
 
         // When
         ExecutionNode lastNode = builder.build(parentEn, componentDefinition);
@@ -91,20 +91,20 @@ class ChoiceComponentBuilderTest {
         // Then
         assertThat(lastNode).isEqualTo(stopEn);
 
-        verify(graph).putEdge(parentEn, choiceEn);
+        verify(graph).putEdge(parentEn, routerEn);
 
         // First condition
-        verify(graph).putEdge(choiceEn, component3En);
+        verify(graph).putEdge(routerEn, component3En);
         verify(graph).putEdge(component3En, component1En);
         verify(graph).putEdge(component1En, stopEn);
 
         // Second condition
-        verify(graph).putEdge(choiceEn, component2En);
+        verify(graph).putEdge(routerEn, component2En);
         verify(graph).putEdge(component2En, component4En);
         verify(graph).putEdge(component4En, stopEn);
 
         // Otherwise
-        verify(graph).putEdge(choiceEn, component6En);
+        verify(graph).putEdge(routerEn, component6En);
         verify(graph).putEdge(component6En, component5En);
         verify(graph).putEdge(component5En, stopEn);
 

@@ -2,8 +2,8 @@ package com.esb.executor;
 
 import com.esb.api.component.Component;
 import com.esb.api.message.Message;
-import com.esb.component.ChoiceWrapper;
 import com.esb.component.ForkWrapper;
+import com.esb.component.RouterWrapper;
 import com.esb.flow.ExecutionNode;
 import com.esb.graph.ExecutionGraph;
 import com.esb.system.component.Stop;
@@ -22,7 +22,7 @@ public class Executors {
         Map<Class, Executor> tmp = new HashMap<>();
         tmp.put(Stop.class, new StopExecutor());
         tmp.put(ForkWrapper.class, new ForkExecutor());
-        tmp.put(ChoiceWrapper.class, new ChoiceExecutor());
+        tmp.put(RouterWrapper.class, new RouterExecutor());
         COMPONENT_EXECUTOR = Collections.unmodifiableMap(tmp);
     }
 

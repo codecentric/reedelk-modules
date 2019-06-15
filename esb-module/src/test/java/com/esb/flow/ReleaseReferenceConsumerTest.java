@@ -2,8 +2,8 @@ package com.esb.flow;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Implementor;
-import com.esb.component.ChoiceWrapper;
 import com.esb.component.ForkWrapper;
+import com.esb.component.RouterWrapper;
 import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.system.component.Stop;
 import com.esb.test.utils.TestComponent;
@@ -70,10 +70,10 @@ class ReleaseReferenceConsumerTest {
     }
 
     @Test
-    void shouldNotReleaseAnyReferenceAndClearReferencesWhenComponentIsChoice() {
+    void shouldNotReleaseAnyReferenceAndClearReferencesWhenComponentIsRouter() {
         // Given
-        Component choice = new ChoiceWrapper();
-        ExecutionNode executionNode = mockExecutionNodeWithComponent(choice);
+        Component router = new RouterWrapper();
+        ExecutionNode executionNode = mockExecutionNodeWithComponent(router);
 
         // When
         ReleaseReferenceConsumer.get(bundle).accept(executionNode);
