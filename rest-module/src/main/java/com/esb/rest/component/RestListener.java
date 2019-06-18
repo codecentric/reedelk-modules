@@ -1,9 +1,6 @@
 package com.esb.rest.component;
 
-import com.esb.api.annotation.Default;
-import com.esb.api.annotation.ESBComponent;
-import com.esb.api.annotation.Property;
-import com.esb.api.annotation.Required;
+import com.esb.api.annotation.*;
 import com.esb.api.component.AbstractInbound;
 import com.esb.rest.commons.RestMethod;
 import com.esb.rest.server.Server;
@@ -13,6 +10,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.esb.rest.commons.Preconditions.isNotNull;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("REST Listener")
@@ -24,36 +22,25 @@ public class RestListener extends AbstractInbound {
     @Reference
     private ServerProvider provider;
 
-
-    @Property("Port")
-    @Default("8080")
-    @Required
-    private int port;
-
     @Property("Path")
     @Default("/")
     @Required
     private String path;
-
-    @Property("Hostname")
-    @Default("localhost")
-    @Required
-    private String hostname;
 
     @Property("Method")
     @Default("GET")
     @Required
     private RestMethod method;
 
-
-    private RestListenerConfiguration configuration = new RestListenerConfiguration();
+    @Shareable
+    @Required
+    @Property("Listener Configuration")
+    private RestListenerConfiguration configuration;
 
 
     @Override
     public void onStart() {
-        configuration.setPort(port);
-        configuration.setHostname(hostname);
-
+        isNotNull(configuration, "Configuration was null");
         Server server = provider.get(configuration);
         server.addRoute(method, path, this::onEvent);
     }
@@ -69,10 +56,6 @@ public class RestListener extends AbstractInbound {
         }
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
     public void setPath(String path) {
         this.path = path;
     }
@@ -81,8 +64,7 @@ public class RestListener extends AbstractInbound {
         this.method = method;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public void setConfiguration(RestListenerConfiguration configuration) {
+        this.configuration = configuration;
     }
-
 }
