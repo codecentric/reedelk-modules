@@ -2,12 +2,14 @@ package com.esb.rest.component;
 
 import com.esb.api.annotation.Default;
 import com.esb.api.annotation.Property;
+import com.esb.api.annotation.Shareable;
 import com.esb.api.component.Implementor;
 import com.esb.rest.commons.HttpProtocol;
 import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
+@Shareable
 @Component(service = RestListenerConfiguration.class, scope = PROTOTYPE)
 public class RestListenerConfiguration implements Implementor {
 

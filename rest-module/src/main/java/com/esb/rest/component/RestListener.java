@@ -1,6 +1,9 @@
 package com.esb.rest.component;
 
-import com.esb.api.annotation.*;
+import com.esb.api.annotation.Default;
+import com.esb.api.annotation.ESBComponent;
+import com.esb.api.annotation.Property;
+import com.esb.api.annotation.Required;
 import com.esb.api.component.AbstractInbound;
 import com.esb.rest.commons.RestMethod;
 import com.esb.rest.server.Server;
@@ -32,7 +35,6 @@ public class RestListener extends AbstractInbound {
     @Required
     private RestMethod method;
 
-    @Shareable
     @Required
     @Property("Listener Configuration")
     private RestListenerConfiguration configuration;
