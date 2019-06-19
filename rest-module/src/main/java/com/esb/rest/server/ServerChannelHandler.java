@@ -1,6 +1,7 @@
 package com.esb.rest.server;
 
 import com.esb.api.message.Message;
+import com.esb.rest.commons.HttpProtocol;
 import com.esb.rest.commons.RestMethod;
 import com.esb.rest.server.request.method.MethodStrategy;
 import com.esb.rest.server.request.method.MethodStrategyBuilder;
@@ -26,9 +27,9 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
     private final HttpVersion httpVersion;
     private final HttpResponseMapper responseMapper;
 
-    public ServerChannelHandler(String protocol, Routes routes) {
+    public ServerChannelHandler(HttpProtocol protocol, Routes routes) {
         this.routes = routes;
-        this.httpVersion = HttpVersion.valueOf(protocol);
+        this.httpVersion = HttpVersion.valueOf(protocol.get());
         this.responseMapper = new HttpResponseMapper(httpVersion);
     }
 

@@ -9,6 +9,7 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
+import static com.esb.rest.commons.Default.*;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
@@ -26,19 +27,24 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
         final ChannelPipeline p = ch.pipeline();
 
         p.addLast("readTimeoutHandler", new ReadTimeoutHandler(
-                configuration.getReadTimeoutMillis(), MILLISECONDS));
+                getValueOrDefault(configuration.getReadTimeoutMillis(), DEFAULT_READ_TIMEOUT_MILLISECONDS),
+                MILLISECONDS));
 
         p.addLast("decoder", new HttpRequestDecoder(
-                configuration.getMaxInitialLineLength(),
-                configuration.getMaxLengthOfAllHeaders(),
-                configuration.getMaxChunkSize(),
-                configuration.getValidateHeaders()));
+                getValueOrDefault(configuration.getMaxInitialLineLength(), DEFAULT_MAX_INITIAL_LINE_LENGTH),
+                getValueOrDefault(configuration.getMaxLengthOfAllHeaders(), DEFAULT_MAX_LENGTH_OF_ALL_HEADERS),
+                getValueOrDefault(configuration.getMaxChunkSize(), DEFAULT_MAX_CHUNK_SIZE),
+                getValueOrDefault(configuration.getValidateHeaders(), DEFAULT_VALIDATE_HEADERS)));
 
         p.addLast("encoder", new HttpResponseEncoder());
 
         p.addLast("aggregator", new HttpObjectAggregator(
-                configuration.getMaxContentSize()));
+                getValueOrDefault(configuration.getMaxContentSize(), DEFAULT_MAX_CONTENT_SIZE)));
 
         p.addLast(serverHandler);
+    }
+
+    private <T> T getValueOrDefault(T original, T defaultValue) {
+        return original == null ? defaultValue : original;
     }
 }

@@ -108,9 +108,6 @@ public class GenericComponentDeserializer {
      * @param argument the bean setter argument
      * @return a deserialized Java collection (Collection,List,Set) representing the JSON array
      */
-    // TODO: What if the generic type is defined in the bundle? (Trello #12)
-    // TODO: What if the generic type is an enum? (Trello #12)
-    // TODO: Use method argument.isGenericTypePrimitive! (probably should add isGenericTypeEnum as well!)
     private Collection deserialize(JSONArray array, SetterArgument argument) {
         Class<Collection> clazz = (Class<Collection>) argument.getClazz();
         Collection collection = CollectionFactory.from(clazz);
@@ -129,7 +126,7 @@ public class GenericComponentDeserializer {
      * @param componentDefinition the JSON object holding the primitive type
      * @param propertyName        the name of the JSON object's property for which we want the primitive type deserialized
      * @param setterArgument      the bean setter argument
-     * @return a deserialized primitive type or an enum if the setter argument resolves to an enum type
+     * @return a de-serialized primitive type or an enum if the setter argument resolves to an enum type
      */
     private <E extends Enum<E>> Object deserialize(JSONObject componentDefinition, String propertyName, SetterArgument setterArgument) {
         if (setterArgument.isEnum()) {
