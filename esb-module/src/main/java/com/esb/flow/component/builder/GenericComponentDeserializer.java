@@ -16,14 +16,19 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import static com.esb.commons.Preconditions.checkArgument;
+import static com.esb.internal.commons.JsonParser.Component;
+import static com.esb.internal.commons.JsonParser.Config;
 import static com.esb.internal.commons.ReflectionUtils.*;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 
 @SuppressWarnings("unchecked")
 public class GenericComponentDeserializer {
 
     private static final List<String> EXCLUDED_PROPERTIES_FROM_WARNINGS =
-            Collections.singletonList(JsonParser.Implementor.description());
+            asList(JsonParser.Implementor.description(),
+                    Config.id(),
+                    Config.title());
 
     private static final Logger logger = LoggerFactory.getLogger(GenericComponentDeserializer.class);
     private static final Collection<String> EXCLUDED_PROPERTIES = Collections.singletonList(JsonParser.Implementor.name());
@@ -149,8 +154,8 @@ public class GenericComponentDeserializer {
         Object propertyValue = componentDefinition.get(propertyName);
         if (propertyValue instanceof JSONObject) {
             JSONObject possibleConfigRef = (JSONObject) propertyValue;
-            if (possibleConfigRef.has(JsonParser.Component.configRef())) {
-                return Optional.ofNullable(JsonParser.Component.configRef(possibleConfigRef));
+            if (possibleConfigRef.has(Component.configRef())) {
+                return Optional.ofNullable(Component.configRef(possibleConfigRef));
             }
         }
         return Optional.empty();
@@ -165,7 +170,7 @@ public class GenericComponentDeserializer {
         return context.getDeserializedModule()
                 .getConfigurations()
                 .stream()
-                .filter(referenceJsonObject -> reference.equals(JsonParser.Config.id(referenceJsonObject)))
+                .filter(referenceJsonObject -> reference.equals(Config.id(referenceJsonObject)))
                 .findFirst()
                 .orElseThrow(() -> new ESBException("Could not find configuration with id=[" + reference + "]"));
     }
