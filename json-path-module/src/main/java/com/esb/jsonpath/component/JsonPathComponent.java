@@ -15,7 +15,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = JsonPathComponent.class, scope = PROTOTYPE)
 public class JsonPathComponent implements Processor {
 
-    @Property("Expression")
+    @Property("JsonPath Expression")
     private String jsonPathExpression;
 
     private JsonPath compiledExpression;
