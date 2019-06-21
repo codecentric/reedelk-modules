@@ -36,6 +36,7 @@
         <module>core-module</module>
         <module>mysql-module</module>
         <module>scheduler-module</module>
+        <module>json-path-module</module>
     </modules>
 
     <dependencyManagement>
