@@ -9,29 +9,20 @@ import com.esb.internal.commons.JsonParser;
 import com.esb.internal.commons.PrimitiveTypeConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Optional;
 
 import static com.esb.commons.Preconditions.checkArgument;
 import static com.esb.internal.commons.JsonParser.Component;
 import static com.esb.internal.commons.JsonParser.Config;
 import static com.esb.internal.commons.ReflectionUtils.*;
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 
 @SuppressWarnings("unchecked")
 public class GenericComponentDeserializer {
-
-    private static final List<String> EXCLUDED_PROPERTIES_FROM_WARNINGS =
-            asList(JsonParser.Implementor.description(),
-                    Config.id(),
-                    Config.title());
-
-    private static final Logger logger = LoggerFactory.getLogger(GenericComponentDeserializer.class);
-    private static final Collection<String> EXCLUDED_PROPERTIES = Collections.singletonList(JsonParser.Implementor.name());
 
     private final ExecutionNode executionNode;
     private final FlowBuilderContext context;
@@ -46,8 +37,6 @@ public class GenericComponentDeserializer {
 
         while (iterator.hasNext()) {
             String propertyName = iterator.next();
-            if (EXCLUDED_PROPERTIES.contains(propertyName)) continue;
-
             Optional<Method> maybeSetter = getSetter(implementor, propertyName);
             if (maybeSetter.isPresent()) {
                 Optional<String> maybeReference = isReference(componentDefinition, propertyName);
@@ -57,12 +46,6 @@ public class GenericComponentDeserializer {
 
                 Method setter = maybeSetter.get();
                 setProperty(implementor, setter, deserializedObject);
-
-            } else {
-                if (!EXCLUDED_PROPERTIES_FROM_WARNINGS.contains(propertyName)) {
-                    logger.warn("Could not find setter on implementor [{}] for property name [{}]. The property will be skipped",
-                            implementor.getClass().getName(), propertyName);
-                }
             }
         }
     }
