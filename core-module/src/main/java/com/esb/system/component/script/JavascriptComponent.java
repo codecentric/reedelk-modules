@@ -3,6 +3,7 @@ package com.esb.system.component.script;
 import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.component.Processor;
+import com.esb.api.exception.ESBException;
 import com.esb.api.message.*;
 import com.esb.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
@@ -17,7 +18,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class JavascriptComponent implements Processor {
 
     @Reference
-    private ScriptEngineService scriptEngineService;
+    private ScriptEngineService service;
 
     @Property("Script")
     private String script;
@@ -25,12 +26,12 @@ public class JavascriptComponent implements Processor {
     @Override
     public Message apply(Message input) {
         try {
-            Object result = scriptEngineService.evaluate(input, script, String.class);
-            TypedContent<Object> content = new MemoryTypedContent<>(result, new Type(MimeType.TEXT, Object.class));
+            Object result = service.evaluate(input, script);
+            TypedContent<Object> content = new MemoryTypedContent<>(result, new Type(MimeType.ANY, Object.class));
             input.setTypedContent(content);
             return input;
         } catch (ScriptException e) {
-            return input;
+            throw new ESBException(e);
         }
     }
 

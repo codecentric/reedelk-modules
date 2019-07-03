@@ -24,7 +24,7 @@ public class RouterWrapper extends Router implements FlowControlComponent {
         for (PathExpressionPair pathExpressionPair : pathExpressionPairs) {
             if (pathExpressionPair.expression.equals(Router.DEFAULT_CONDITION)) continue;
 
-            if (pathExpressionPair.evaluate(input, Boolean.class)) {
+            if (pathExpressionPair.evaluate(input)) {
                 return singletonList(pathExpressionPair.pathReference);
             }
         }
@@ -52,9 +52,9 @@ public class RouterWrapper extends Router implements FlowControlComponent {
             this.pathReference = pathReference;
         }
 
-        <T> T evaluate(Message message, Class<T> resultClazz) {
+        boolean evaluate(Message message) {
             try {
-                return ENGINE.evaluate(message, this.expression, resultClazz);
+                return ENGINE.evaluate(message, this.expression, boolean.class);
             } catch (ScriptException e) {
                 throw new ESBException(e);
             }

@@ -26,11 +26,11 @@ class HttpResponseMapper {
     FullHttpResponse map(Message message) {
 
         byte[] bytes = new byte[0];
-        if (message.getTypedContent().getType().getTypeClass().isAssignableFrom(byte[].class)) {
-            bytes = (byte[]) message.getTypedContent().getContent();
-        }
-        if (message.getTypedContent().getType().getTypeClass().isAssignableFrom(String.class)) {
-            bytes = ((String) message.getTypedContent().getContent()).getBytes();
+        Object content = message.getTypedContent().getContent();
+        if (content instanceof String) {
+            bytes = ((String) content).getBytes();
+        } else if (content != null) {
+            bytes = content.toString().getBytes();
         }
 
         ByteBuf entity = Unpooled.wrappedBuffer(bytes);
