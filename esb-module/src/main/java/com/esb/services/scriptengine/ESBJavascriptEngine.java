@@ -1,21 +1,24 @@
 package com.esb.services.scriptengine;
 
-import com.esb.api.exception.ESBException;
 import com.esb.api.message.Message;
+import com.esb.api.service.ScriptEngineService;
 
+import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
-public class ESBJavascriptEngine implements ScriptEngine {
+public enum ESBJavascriptEngine implements ScriptEngineService {
+
+    INSTANCE;
 
     private static final String ENGINE_NAME = "nashorn";
 
     private static final String JSON_TYPE_PAYLOAD = "var payload = JSON.parse(message.typedContent.content);\n";
 
-    private final javax.script.ScriptEngine engine;
+    private final ScriptEngine engine;
 
-    public ESBJavascriptEngine() {
+    ESBJavascriptEngine() {
         engine = new ScriptEngineManager().getEngineByName(ENGINE_NAME);
     }
 
@@ -31,7 +34,9 @@ public class ESBJavascriptEngine implements ScriptEngine {
         if (result instanceof Boolean && returnType == Boolean.class) return result;
         if (result instanceof String && returnType == Boolean.class) {
             return Boolean.parseBoolean((String) result);
+        } else {
+            return result;
         }
-        throw new ESBException("Could not convert");
+        //throw new ESBException("Could not convert");
     }
 }

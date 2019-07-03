@@ -1,18 +1,13 @@
 package com.esb;
 
-import com.esb.api.service.ConfigurationService;
 import com.esb.component.ComponentRegistry;
 import com.esb.component.ESBComponent;
 import com.esb.lifecycle.*;
 import com.esb.module.ModulesManager;
-import com.esb.services.configuration.ESBConfigurationService;
-import com.esb.services.hotswap.ESBHotSwapService;
+import com.esb.services.ESBServicesManager;
 import com.esb.services.hotswap.HotSwapListener;
 import com.esb.services.module.ESBEventService;
-import com.esb.services.module.ESBModuleService;
 import com.esb.services.module.EventListener;
-import com.esb.system.api.HotSwapService;
-import com.esb.system.api.ModuleService;
 import com.esb.system.api.SystemProperty;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -21,14 +16,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.Dictionary;
-
 import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
 
 @Component(service = ESB.class, scope = SINGLETON, immediate = true)
 public class ESB implements EventListener, HotSwapListener {
-
-    private static final Dictionary<String, ?> NO_PROPERTIES = null;
 
     @Reference
     private SystemProperty systemProperty;
@@ -39,6 +30,7 @@ public class ESB implements EventListener, HotSwapListener {
     protected ModulesManager modulesManager;
 
     private ESBEventService eventDispatcher;
+    private ESBServicesManager servicesManager;
     private ComponentRegistry componentRegistry;
 
     @Activate
@@ -52,15 +44,20 @@ public class ESB implements EventListener, HotSwapListener {
         context.addBundleListener(eventDispatcher);
         context.addServiceListener(eventDispatcher);
 
-        registerModuleService(context);
-        registerHotSwapService(context);
-        registerConfigurationService(context);
+        servicesManager = new ESBServicesManager(
+                ESB.this,
+                ESB.this,
+                modulesManager,
+                systemProperty,
+                configurationAdmin);
+        servicesManager.registerServices(context);
     }
 
     @Deactivate
     public void stop(BundleContext context) {
         context.removeBundleListener(eventDispatcher);
         context.removeServiceListener(eventDispatcher);
+        servicesManager.unregisterServices();
     }
 
     @Override
@@ -139,22 +136,4 @@ public class ESB implements EventListener, HotSwapListener {
                 .next(new StartModule())
                 .execute(moduleId);
     }
-
-
-    private void registerHotSwapService(BundleContext context) {
-        ESBHotSwapService service = new ESBHotSwapService(context, this);
-        context.registerService(HotSwapService.class, service, NO_PROPERTIES);
-    }
-
-    private void registerModuleService(BundleContext context) {
-        ESBModuleService service = new ESBModuleService(context, modulesManager, this);
-        context.registerService(ModuleService.class, service, NO_PROPERTIES);
-    }
-
-    private void registerConfigurationService(BundleContext context) {
-        ESBConfigurationService service = new ESBConfigurationService(configurationAdmin, systemProperty);
-        service.initialize();
-        context.registerService(ConfigurationService.class, service, NO_PROPERTIES);
-    }
-
 }

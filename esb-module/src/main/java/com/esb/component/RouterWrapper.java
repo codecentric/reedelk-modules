@@ -2,9 +2,9 @@ package com.esb.component;
 
 import com.esb.api.exception.ESBException;
 import com.esb.api.message.Message;
+import com.esb.api.service.ScriptEngineService;
 import com.esb.flow.ExecutionNode;
 import com.esb.services.scriptengine.ESBJavascriptEngine;
-import com.esb.services.scriptengine.ScriptEngine;
 import com.esb.system.component.Router;
 
 import javax.script.ScriptException;
@@ -15,7 +15,7 @@ import static java.util.Collections.singletonList;
 
 public class RouterWrapper extends Router implements FlowControlComponent {
 
-    private static final ScriptEngine ENGINE = new ESBJavascriptEngine();
+    private static final ScriptEngineService ENGINE = ESBJavascriptEngine.INSTANCE;
 
     private List<PathExpressionPair> pathExpressionPairs = new ArrayList<>();
 
@@ -60,5 +60,4 @@ public class RouterWrapper extends Router implements FlowControlComponent {
             }
         }
     }
-
 }
