@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.esb.commons.FunctionWrapper.unchecked;
 import static java.lang.String.format;
@@ -25,8 +26,8 @@ public class FileSystemDeserializer extends AbstractDeserializer {
     @Override
     protected List<URL> getResources(String directory, String suffix) {
         Path targetPath = Paths.get(resourcesRootDirectory, directory);
-        try {
-            return Files.walk(targetPath)
+        try (Stream<Path> walk = Files.walk(targetPath)) {
+            return walk
                     .filter(Files::isRegularFile)
                     .filter(path -> FileUtils.hasExtension(path, suffix))
                     .map(unchecked(path -> path.toFile().toURI().toURL()))
@@ -35,5 +36,4 @@ public class FileSystemDeserializer extends AbstractDeserializer {
             throw new ESBException(format("Error reading files from resource folder [%s]", targetPath), e);
         }
     }
-
 }
