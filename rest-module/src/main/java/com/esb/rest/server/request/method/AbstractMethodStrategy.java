@@ -21,7 +21,7 @@ abstract class AbstractMethodStrategy implements MethodStrategy {
         InboundProperty.HEADERS.set(inMessage, HeadersUtils.toMap(request.headers()));
 
         // Path Params
-        Map<String, String> pathParams = matchingRoute.bindPathParams(request.uri());
+        Map<String, String> pathParams = matchingRoute.bindPathParams(request);
         InboundProperty.PATH_PARAMS.set(inMessage, pathParams);
 
         // Query Params

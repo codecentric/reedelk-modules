@@ -60,8 +60,8 @@ public class Route {
                 this.uriTemplate.matches(path);
     }
 
-    public Map<String,String> bindPathParams(String requestUri) {
-        return this.uriTemplate.bind(requestUri);
+    public Map<String, String> bindPathParams(HttpRequest request) {
+        return this.uriTemplate.bind(request.uri());
     }
 
     public Map<String, List<String>> queryParameters(HttpRequest request) {

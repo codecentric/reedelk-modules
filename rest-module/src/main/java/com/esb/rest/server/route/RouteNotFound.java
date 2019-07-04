@@ -3,6 +3,7 @@ package com.esb.rest.server.route;
 import com.esb.api.message.*;
 import com.esb.rest.commons.InboundProperty;
 import com.esb.rest.commons.OutboundProperty;
+import io.netty.handler.codec.http.HttpRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class RouteNotFound extends Route implements RouteHandler {
     }
 
     @Override
-    public Map<String, String> bindPathParams(String requestUri) {
+    public Map<String, String> bindPathParams(HttpRequest request) {
         return new HashMap<>();
     }
 }
