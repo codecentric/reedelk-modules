@@ -13,6 +13,8 @@ import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 
 public class RouteNotFound extends Route {
 
+    private static final String NOT_FOUND_MESSAGE = "Not Found: for request '%s %s'";
+
     public RouteNotFound() {
         super(new EmptyUriTemplate(), new RouteNotFoundHandler());
     }
@@ -20,15 +22,23 @@ public class RouteNotFound extends Route {
     static class RouteNotFoundHandler implements RouteHandler {
         @Override
         public Message handle(Message request) throws Exception {
+
+            Message response = new Message();
+
+            // The payload is a message containing the Method and Path
+            // not found on this server.
             String path = InboundProperty.PATH.getString(request);
             String method = InboundProperty.METHOD.getString(request);
-            OutboundProperty.STATUS.set(request, NOT_FOUND.code());
-            Type contentType = new Type(MimeType.TEXT, String.class);
+            String message = String.format(NOT_FOUND_MESSAGE, method, path);
 
-            String message = "Not Found: for request '" + method + " " + path + "'";
+            Type contentType = new Type(MimeType.TEXT, String.class);
             TypedContent<String> content = new MemoryTypedContent<>(message, contentType);
-            request.setTypedContent(content);
-            return request;
+            response.setTypedContent(content);
+
+            // Set the response status to 404.
+            OutboundProperty.STATUS.set(response, NOT_FOUND.code());
+
+            return response;
         }
     }
 
