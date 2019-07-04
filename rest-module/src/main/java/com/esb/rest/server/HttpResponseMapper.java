@@ -27,6 +27,8 @@ public class HttpResponseMapper {
     // TODO: This method is crap.
     FullHttpResponse map(Message message) {
 
+        // Need to convert
+
         byte[] bytes = new byte[0];
         Object content = message.getTypedContent().getContent();
         if (content instanceof String) {

@@ -51,6 +51,8 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
 
             logger.error("REST Listener", exception);
 
+            // TODO: I think that the exception should be encapsulated in the response.
+
             return responseMapper.fromStatus(INTERNAL_SERVER_ERROR);
         }
     }
