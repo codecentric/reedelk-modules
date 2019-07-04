@@ -23,13 +23,10 @@ public class Route {
         this.uriTemplate = new UriTemplate(uriTemplate);
     }
 
-    protected Route(UriTemplate uriTemplate, RouteHandler routeHandler) {
-        isNotNull(uriTemplate, "uriTemplate");
-        isNotNull(routeHandler, "routeHandler");
-
+    protected Route() {
         this.method = null;
-        this.uriTemplate = uriTemplate;
-        this.routeHandler = routeHandler;
+        this.uriTemplate = null;
+        this.routeHandler = null;
     }
 
     public RestMethod getMethod() {
@@ -48,5 +45,4 @@ public class Route {
     public Map<String,String> bindPathParams(String requestUri) {
         return this.uriTemplate.bind(requestUri);
     }
-
 }
