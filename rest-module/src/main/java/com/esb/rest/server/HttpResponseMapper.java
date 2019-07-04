@@ -24,6 +24,7 @@ public class HttpResponseMapper {
         this.httpVersion = httpVersion;
     }
 
+    // TODO: This method is crap.
     FullHttpResponse map(Message message) {
 
         byte[] bytes = new byte[0];

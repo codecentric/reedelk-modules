@@ -93,6 +93,21 @@ class RouteMatcherTest {
         assertThat(matched).isEqualTo(routeToMatch);
     }
 
+    @ParameterizedTest(name = "Should match root path for {0}")
+    @EnumSource(RestMethod.class)
+    void shouldMatchRootPath(RestMethod method) {
+        // Given
+        Route routeToMatch = new Route(method, "/", mockHandler);
+        RouteMatcher matcher = createMatcher(routeToMatch);
+        HttpRequest request = createRequest(method, "/");
+
+        // When
+        Route matched = matcher.match(request);
+
+        // Then
+        assertThat(matched).isEqualTo(routeToMatch);
+    }
+
     private HttpRequest createRequest(RestMethod method, String uri) {
         return new DefaultHttpRequest(HTTP_1_1, HttpMethod.valueOf(method.name()), uri);
     }
