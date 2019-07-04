@@ -7,12 +7,12 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HostMethodContentTypeKeyTest {
+class HostMethodContentTypeKeyTest {
 
     private Map<HttpMethodContentTypeKey, String> testMap = new HashMap<>();
 
     @Test
-    public void shouldContainsReturnTrue() {
+    void shouldContainsReturnTrue() {
         // Given
         String method = "GET";
         String contentType = "application/json";
@@ -27,7 +27,7 @@ public class HostMethodContentTypeKeyTest {
     }
 
     @Test
-    public void shouldContainsReturnFalse() {
+    void shouldContainsReturnFalse() {
         // Given
         String method = "GET";
         String contentType = "application/json";

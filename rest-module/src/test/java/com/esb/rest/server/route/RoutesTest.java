@@ -12,7 +12,7 @@ import java.util.Arrays;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RouteMatcherTest {
+class RoutesTest {
 
     private RouteHandler mockHandler = request -> request;
 
@@ -23,11 +23,11 @@ class RouteMatcherTest {
     void shouldMatchSimplePathWith(RestMethod method) {
         // Given
         Route routeToMatch = new Route(method, "/test", mockHandler);
-        RouteMatcher matcher = createMatcher(routeToMatch);
+        Routes routes = createRoutes(routeToMatch);
         HttpRequest request = createRequest(method, "/test");
 
         // When
-        Route matched = matcher.match(request);
+        Route matched = routes.findRouteOrDefault(request);
 
         // Then
         assertThat(matched).isEqualTo(routeToMatch);
@@ -38,11 +38,11 @@ class RouteMatcherTest {
     void shouldReturnDefaultRouteWhenNotMatchForSimplePath(RestMethod method) {
         // Given
         Route routeToMatch = new Route(method, "/test", mockHandler);
-        RouteMatcher matcher = createMatcher(routeToMatch);
+        Routes routes = createRoutes(routeToMatch);
         HttpRequest request = createRequest(method, "/unknown");
 
         // When
-        Route matched = matcher.match(request);
+        Route matched = routes.findRouteOrDefault(request);
 
         // Then
         assertThat(matched).isEqualTo(defaultRoute);
@@ -53,11 +53,11 @@ class RouteMatcherTest {
     void shouldMatchSimplePathWhenQueryParametersArePresent(RestMethod method) {
         // Given
         Route routeToMatch = new Route(method, "/test", mockHandler);
-        RouteMatcher matcher = createMatcher(routeToMatch);
+        Routes routes = createRoutes(routeToMatch);
         HttpRequest request = createRequest(method, "/test?param1=value1&param2=value2");
 
         // When
-        Route matched = matcher.match(request);
+        Route matched = routes.findRouteOrDefault(request);
 
         // Then
         assertThat(matched).isEqualTo(routeToMatch);
@@ -68,11 +68,11 @@ class RouteMatcherTest {
     void shouldMatchPathWithVariables(RestMethod method) {
         // Given
         Route routeToMatch = new Route(method, "/api/users/{code}/{group}", mockHandler);
-        RouteMatcher matcher = createMatcher(routeToMatch);
+        Routes routes = createRoutes(routeToMatch);
         HttpRequest request = createRequest(method, "/api/users/234/Users");
 
         // When
-        Route matched = matcher.match(request);
+        Route matched = routes.findRouteOrDefault(request);
 
         // Then
         assertThat(matched).isEqualTo(routeToMatch);
@@ -83,11 +83,11 @@ class RouteMatcherTest {
     void shouldMatchPathWithVariablesAndQueryParameters(RestMethod method) {
         // Given
         Route routeToMatch = new Route(method, "/api/users/{code}/{group}", mockHandler);
-        RouteMatcher matcher = createMatcher(routeToMatch);
+        Routes routes = createRoutes(routeToMatch);
         HttpRequest request = createRequest(method, "/api/users/234/Users?param1=value1&param2=value2");
 
         // When
-        Route matched = matcher.match(request);
+        Route matched = routes.findRouteOrDefault(request);
 
         // Then
         assertThat(matched).isEqualTo(routeToMatch);
@@ -98,11 +98,11 @@ class RouteMatcherTest {
     void shouldMatchRootPath(RestMethod method) {
         // Given
         Route routeToMatch = new Route(method, "/", mockHandler);
-        RouteMatcher matcher = createMatcher(routeToMatch);
+        Routes routes = createRoutes(routeToMatch);
         HttpRequest request = createRequest(method, "/");
 
         // When
-        Route matched = matcher.match(request);
+        Route matched = routes.findRouteOrDefault(request);
 
         // Then
         assertThat(matched).isEqualTo(routeToMatch);
@@ -112,9 +112,9 @@ class RouteMatcherTest {
         return new DefaultHttpRequest(HTTP_1_1, HttpMethod.valueOf(method.name()), uri);
     }
 
-    private RouteMatcher createMatcher(Route... route) {
+    private Routes createRoutes(Route... route) {
         Routes routes = new Routes(defaultRoute);
         Arrays.stream(route).forEach(routes::add);
-        return new RouteMatcher(routes);
+        return routes;
     }
 }

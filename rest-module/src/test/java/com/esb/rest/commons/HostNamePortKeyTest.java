@@ -7,12 +7,12 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HostNamePortKeyTest {
+class HostNamePortKeyTest {
 
     private Map<HostNamePortKey,String> testMap = new HashMap<>();
 
     @Test
-    public void shouldContainsReturnTrue() {
+    void shouldContainsReturnTrue() {
         // Given
         String hostname = "www.esb.com";
         int port = 234;
@@ -27,7 +27,7 @@ public class HostNamePortKeyTest {
     }
 
     @Test
-    public void shouldContainsReturnFalse() {
+    void shouldContainsReturnFalse() {
         // Given
         String hostname = "www.esb.com";
         int port = 8091;

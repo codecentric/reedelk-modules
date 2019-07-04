@@ -5,7 +5,7 @@ import com.esb.rest.commons.HttpProtocol;
 import com.esb.rest.server.request.method.MethodStrategyBuilder;
 import com.esb.rest.server.route.Route;
 import com.esb.rest.server.route.RouteHandler;
-import com.esb.rest.server.route.RouteMatcher;
+import com.esb.rest.server.route.Routes;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpVersion;
@@ -19,18 +19,18 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
     private static final Logger logger = LoggerFactory.getLogger(ServerChannelHandler.class);
 
     private final HttpResponseMapper responseMapper;
-    private final RouteMatcher routeMatcher;
+    private final Routes routes;
 
-    ServerChannelHandler(HttpProtocol protocol, RouteMatcher routeMatcher) {
+    ServerChannelHandler(HttpProtocol protocol, Routes routes) {
         HttpVersion httpVersion = HttpVersion.valueOf(protocol.get());
         this.responseMapper = new HttpResponseMapper(httpVersion);
-        this.routeMatcher = routeMatcher;
+        this.routes = routes;
     }
 
     @Override
     protected FullHttpResponse handle(FullHttpRequest request) {
 
-        Route matchingRoute = routeMatcher.match(request);
+        Route matchingRoute = routes.findRouteOrDefault(request);
 
         RouteHandler routeHandler = matchingRoute.handler();
 

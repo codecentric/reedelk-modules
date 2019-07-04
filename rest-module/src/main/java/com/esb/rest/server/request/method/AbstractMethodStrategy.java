@@ -5,7 +5,6 @@ import com.esb.rest.commons.HeadersUtils;
 import com.esb.rest.commons.InboundProperty;
 import com.esb.rest.server.route.Route;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.QueryStringDecoder;
 
 import java.util.List;
 import java.util.Map;
@@ -26,8 +25,7 @@ abstract class AbstractMethodStrategy implements MethodStrategy {
         InboundProperty.PATH_PARAMS.set(inMessage, pathParams);
 
         // Query Params
-        QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
-        Map<String, List<String>> queryParams = decoder.parameters();
+        Map<String, List<String>> queryParams = matchingRoute.queryParameters(request);
         InboundProperty.QUERY_PARAMS.set(inMessage, queryParams);
 
         return inMessage;

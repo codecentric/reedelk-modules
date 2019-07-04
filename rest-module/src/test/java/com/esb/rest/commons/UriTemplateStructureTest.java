@@ -47,5 +47,4 @@ class UriTemplateStructureTest {
         // Then
         assertThat(structure.getVariableNames()).isEmpty();
     }
-
 }

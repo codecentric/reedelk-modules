@@ -6,10 +6,10 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UriTemplateTest {
+class UriTemplateTest {
 
     @Test
-    public void shouldMatchGivenCallUri() {
+    void shouldMatchGivenCallUri() {
         // Given
         String template = "/users/{groupId}/{securityLevel}";
         String callUri = "/users/group1/23";
@@ -24,7 +24,7 @@ public class UriTemplateTest {
     }
 
     @Test
-    public void shouldNotMatchGivenCallUri() {
+    void shouldNotMatchGivenCallUri() {
         // Given
         String template = "/users/{groupId}";
         String callUri = "/users";
@@ -39,7 +39,7 @@ public class UriTemplateTest {
     }
 
     @Test
-    public void shouldMatchGivenCallUriWhenEmptyAfterSlash() {
+    void shouldMatchGivenCallUriWhenEmptyAfterSlash() {
         // Given
         String template = "/users/{groupId}";
         String callUri = "/users/";
@@ -54,7 +54,7 @@ public class UriTemplateTest {
     }
 
     @Test
-    public void shouldBindVariableValuesCorrectly() {
+    void shouldBindVariableValuesCorrectly() {
         // Given
         String template = "/users/{groupId}/{securityLevel}";
         String callUri = "/users/admins/34";

@@ -34,11 +34,10 @@ public class Server {
     private NioEventLoopGroup workerGroup; // handles the traffic of the accepted connection once the boss accepts the connection and registers the accepted connection to the worker.
 
 
-    public Server(RestListenerConfiguration configuration) {
+    Server(RestListenerConfiguration configuration) {
         Route defaultRoute = new RouteNotFound();
         this.routes = new Routes(defaultRoute);
-        RouteMatcher routeMatcher = new RouteMatcher(routes);
-        ServerChannelHandler serverHandler = new ServerChannelHandler(configuration.getProtocol(), routeMatcher);
+        ServerChannelHandler serverHandler = new ServerChannelHandler(configuration.getProtocol(), routes);
         ServerChannelInitializer channelInitializer = new ServerChannelInitializer(serverHandler, configuration);
 
         this.port = configuration.getPort();
@@ -58,7 +57,18 @@ public class Server {
         this.serverBootstrap = serverBootstrap;
     }
 
-    public void start() {
+    public void addRoute(RestMethod method, String path, RouteHandler routeHandler) {
+        if (routes.isRouteAlreadyDefined(method, path)) {
+            throw new RouteAlreadyDefinedException(method, path);
+        }
+        routes.add(new Route(method, path, routeHandler));
+    }
+
+    public void removeRoute(RestMethod method, String path) {
+        routes.removeRoute(method, path);
+    }
+
+    void start() {
         try {
             SocketAddress address = new InetSocketAddress(hostname, port);
             channelFuture = serverBootstrap.bind(address);
@@ -67,7 +77,7 @@ public class Server {
         }
     }
 
-    public void stop() {
+    void stop() {
         shutdownGracefully(bossGroup);
         shutdownGracefully(workerGroup);
         try {
@@ -81,34 +91,15 @@ public class Server {
         }
     }
 
-    public void addRoute(RestMethod method, String path, RouteHandler routeHandler) {
-        if (routes.isRouteAlreadyDefined(method, path)) {
-            throw new RouteAlreadyDefinedException(method, path);
-        }
-        routes.add(new Route(method, path, routeHandler));
-    }
-
-    public void removeRoute(RestMethod method, String path) {
-        routes.removeRoute(method, path);
-    }
-
-    public boolean emptyRoutes() {
+    boolean emptyRoutes() {
         return routes.isEmpty();
     }
 
-    private void shutdownGracefully(EventExecutorGroup executionGroup) {
-        try {
-            executionGroup.shutdownGracefully(0, SHUTDOWN_TIMEOUT, SECONDS).sync();
-        } catch (InterruptedException e) {
-            logger.error("Executor Group Shutdown Error", e);
-        }
-    }
-
-    public int getPort() {
+    int getPort() {
         return port;
     }
 
-    public String getHostname() {
+    String getHostname() {
         return hostname;
     }
 
@@ -124,4 +115,11 @@ public class Server {
         }
     }
 
+    private void shutdownGracefully(EventExecutorGroup executionGroup) {
+        try {
+            executionGroup.shutdownGracefully(0, SHUTDOWN_TIMEOUT, SECONDS).sync();
+        } catch (InterruptedException e) {
+            logger.error("Executor Group Shutdown Error", e);
+        }
+    }
 }
