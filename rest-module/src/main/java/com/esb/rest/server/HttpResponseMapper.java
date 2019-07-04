@@ -64,7 +64,7 @@ public class HttpResponseMapper {
         return response;
     }
 
-    public FullHttpResponse fromStatus(HttpResponseStatus status) {
+    FullHttpResponse fromStatus(HttpResponseStatus status) {
         String content = status.reasonPhrase();
         byte[] bytes = content.getBytes(UTF_8);
         ByteBuf entity = Unpooled.wrappedBuffer(bytes);
