@@ -3,9 +3,7 @@ package com.esb.rest.server;
 
 import com.esb.rest.commons.RestMethod;
 import com.esb.rest.component.RestListenerConfiguration;
-import com.esb.rest.server.route.Route;
-import com.esb.rest.server.route.RouteHandler;
-import com.esb.rest.server.route.Routes;
+import com.esb.rest.server.route.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -28,7 +26,7 @@ public class Server {
 
     private final int port;
     private final String hostname;
-    private final Routes routes = new Routes();
+    private final Routes routes;
     private final ServerBootstrap serverBootstrap;
 
     private ChannelFuture channelFuture;
@@ -37,7 +35,10 @@ public class Server {
 
 
     public Server(RestListenerConfiguration configuration) {
-        ServerChannelHandler serverHandler = new ServerChannelHandler(configuration.getProtocol(), routes);
+        Route defaultRoute = new RouteNotFound();
+        this.routes = new Routes(defaultRoute);
+        RouteMatcher routeMatcher = new RouteMatcher(routes);
+        ServerChannelHandler serverHandler = new ServerChannelHandler(configuration.getProtocol(), routeMatcher);
         ServerChannelInitializer channelInitializer = new ServerChannelInitializer(serverHandler, configuration);
 
         this.port = configuration.getPort();
@@ -81,12 +82,14 @@ public class Server {
     }
 
     public void addRoute(RestMethod method, String path, RouteHandler routeHandler) {
+        if (routes.isRouteAlreadyDefined(method, path)) {
+            throw new RouteAlreadyDefinedException(method, path);
+        }
         routes.add(new Route(method, path, routeHandler));
     }
 
     public void removeRoute(RestMethod method, String path) {
-        routes.findRoute(method, path)
-                .ifPresent(routes::remove);
+        routes.removeRoute(method, path);
     }
 
     public boolean emptyRoutes() {

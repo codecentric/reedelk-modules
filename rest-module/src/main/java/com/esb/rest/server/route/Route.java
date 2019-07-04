@@ -4,16 +4,14 @@ import com.esb.rest.commons.RestMethod;
 import com.esb.rest.commons.UriTemplate;
 
 import java.util.Map;
-import java.util.Objects;
 
 import static com.esb.rest.commons.Preconditions.isNotNull;
 
 public class Route {
 
-    private final String path;
     private final RestMethod method;
-    private final RouteHandler routeHandler;
     private final UriTemplate uriTemplate;
+    private final RouteHandler routeHandler;
 
     public Route(RestMethod method, String uriTemplate, RouteHandler routeHandler) {
         isNotNull(method, "method");
@@ -21,17 +19,21 @@ public class Route {
         isNotNull(routeHandler, "routeHandler");
 
         this.method = method;
-        this.path = uriTemplate;
         this.routeHandler = routeHandler;
         this.uriTemplate = new UriTemplate(uriTemplate);
     }
 
-    public RestMethod getMethod() {
-        return method;
+    protected Route(UriTemplate uriTemplate, RouteHandler routeHandler) {
+        isNotNull(uriTemplate, "uriTemplate");
+        isNotNull(routeHandler, "routeHandler");
+
+        this.method = null;
+        this.uriTemplate = uriTemplate;
+        this.routeHandler = routeHandler;
     }
 
-    public String getPath() {
-        return path;
+    public RestMethod getMethod() {
+        return method;
     }
 
     public RouteHandler handler() {
@@ -39,24 +41,12 @@ public class Route {
     }
 
     boolean matches(RestMethod method, String path) {
-        return this.method.equals(method) && this.uriTemplate.matches(path);
+        return this.method.equals(method) &&
+                this.uriTemplate.matches(path);
     }
 
     public Map<String,String> bindPathParams(String requestUri) {
         return this.uriTemplate.bind(requestUri);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Route route = (Route) o;
-        return method.equals(route.method) &&
-                path.equals(route.path);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(method, path);
-    }
 }

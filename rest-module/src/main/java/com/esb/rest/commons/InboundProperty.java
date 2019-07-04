@@ -2,7 +2,6 @@ package com.esb.rest.commons;
 
 import com.esb.api.message.Message;
 import com.esb.api.message.MessageProperties;
-import io.netty.handler.codec.http.HttpHeaderNames;
 
 import java.util.Map;
 
@@ -25,22 +24,14 @@ public enum InboundProperty {
         inboundProperties.setProperty(name, value);
     }
 
-    @SuppressWarnings("unchecked")
-    public Map<String,String> getMap(Message message) {
-        return (Map<String,String>) message.getInboundProperties().getProperty(name);
+    public String getString(Message message) {
+        MessageProperties inboundProperties = message.getInboundProperties();
+        return (String) inboundProperties.getProperty(name);
     }
 
-    public enum Headers {
-
-        CONTENT_TYPE {
-            @Override
-            public String get(Message message) {
-                Map<String, String> headers = InboundProperty.HEADERS.getMap(message);
-                return headers.get(HttpHeaderNames.CONTENT_TYPE.toString());
-            }
-        };
-
-        public abstract String get(Message message);
-
+    @SuppressWarnings("unchecked")
+    public Map<String,String> getMap(Message message) {
+        MessageProperties inboundProperties = message.getInboundProperties();
+        return (Map<String, String>) inboundProperties.getProperty(name);
     }
 }

@@ -7,10 +7,10 @@ import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UriTemplateStructureTest {
+class UriTemplateStructureTest {
 
     @Test
-    public void shouldComputeTemplateRegexPatternCorrectly() {
+    void shouldComputeTemplateRegexPatternCorrectly() {
         // Given
         String template = "/api/users/{code}/{group}";
 
@@ -24,7 +24,7 @@ public class UriTemplateStructureTest {
     }
 
     @Test
-    public void shouldComputeTemplateVariableNamesCorrectly() {
+    void shouldComputeTemplateVariableNamesCorrectly() {
         // Given
         String template = "/api/test/{var1}/{var2}/{var3}";
 
@@ -37,7 +37,7 @@ public class UriTemplateStructureTest {
     }
 
     @Test
-    public void shouldReturnEmptyListWhenNoVariablesDefinedInTemplate() {
+    void shouldReturnEmptyListWhenNoVariablesDefinedInTemplate() {
         // Given
         String template = "/api/test/customer";
 

@@ -20,6 +20,11 @@ public enum OutboundProperty {
         return (Integer) get(message);
     }
 
+    public boolean isDefined(Message message) {
+        MessageProperties outboundProperties = message.getOutboundProperties();
+        return outboundProperties.containsKey(name);
+    }
+
     @SuppressWarnings("unchecked")
     public Map<String,String> getMap(Message message) {
         return (Map<String,String>) get(message);

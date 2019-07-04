@@ -7,9 +7,7 @@ public enum RestMethod {
     POST,
     PUT,
     DELETE,
-    CONNECT,
     OPTIONS,
-    TRACE,
     PATCH
 
 }

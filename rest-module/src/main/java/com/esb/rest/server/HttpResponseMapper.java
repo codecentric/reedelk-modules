@@ -7,6 +7,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
@@ -15,7 +16,7 @@ import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-class HttpResponseMapper {
+public class HttpResponseMapper {
 
     private final HttpVersion httpVersion;
 
@@ -35,9 +36,15 @@ class HttpResponseMapper {
 
         ByteBuf entity = Unpooled.wrappedBuffer(bytes);
 
-        Map<String, String> outboundHeaders = OutboundProperty.HEADERS.getMap(message);
-        boolean hasContentType = outboundHeaders.containsKey(CONTENT_TYPE.toString());
-        String contentType = hasContentType ? outboundHeaders.get(CONTENT_TYPE.toString()) : TEXT_PLAIN.toString();
+        String contentType = TEXT_PLAIN.toString();
+        Map<String, String> outboundHeaders = new HashMap<>();
+
+        if (OutboundProperty.HEADERS.isDefined(message)) {
+            outboundHeaders = OutboundProperty.HEADERS.getMap(message);
+            if (outboundHeaders.containsKey(CONTENT_TYPE.toString())) {
+                contentType = outboundHeaders.get(CONTENT_TYPE.toString());
+            }
+        }
 
         HttpResponseStatus httpStatus = valueOf(OutboundProperty.STATUS.getInt(message));
 
@@ -56,7 +63,7 @@ class HttpResponseMapper {
         return response;
     }
 
-    FullHttpResponse fromStatus(HttpResponseStatus status) {
+    public FullHttpResponse fromStatus(HttpResponseStatus status) {
         String content = status.reasonPhrase();
         byte[] bytes = content.getBytes(UTF_8);
         ByteBuf entity = Unpooled.wrappedBuffer(bytes);

@@ -17,6 +17,10 @@ public class UriTemplate {
         this.uriTemplateStructure = UriTemplateStructure.from(uriTemplate);
     }
 
+    protected UriTemplate() {
+        this.uriTemplateStructure = null;
+    }
+
     public boolean matches(String uri) {
         if (uri == null) return false;
 
@@ -40,5 +44,4 @@ public class UriTemplate {
         }
         return result;
     }
-
 }
