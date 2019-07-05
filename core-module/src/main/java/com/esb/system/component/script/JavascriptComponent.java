@@ -2,6 +2,7 @@ package com.esb.system.component.script;
 
 import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
+import com.esb.api.annotation.Script;
 import com.esb.api.component.Processor;
 import com.esb.api.exception.ESBException;
 import com.esb.api.message.*;
@@ -21,6 +22,7 @@ public class JavascriptComponent implements Processor {
     private ScriptEngineService service;
 
     @Property("Script")
+    @Script
     private String script;
 
     @Override
