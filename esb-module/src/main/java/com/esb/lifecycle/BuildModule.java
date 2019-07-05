@@ -79,6 +79,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
     }
 
 
+    // TODO: Extract in its own class
     private Flow buildFlow(Bundle bundle, JSONObject flowDefinition, DeserializedModule deserializedModule) {
         ExecutionGraph flowGraph = ExecutionGraph.build();
 
