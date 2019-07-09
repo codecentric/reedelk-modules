@@ -11,8 +11,13 @@ import javax.script.SimpleBindings;
 class ContextVariables extends SimpleBindings {
     ContextVariables(Message message) {
         put("message", message);
-        put("payload", message.getTypedContent().getContent());
         put("inboundProperties", message.getInboundProperties());
         put("outboundProperties", message.getOutboundProperties());
+
+        if (message.getTypedContent() != null) {
+            put("payload", message.getTypedContent().getContent());
+        } else {
+            put("payload", null);
+        }
     }
 }
