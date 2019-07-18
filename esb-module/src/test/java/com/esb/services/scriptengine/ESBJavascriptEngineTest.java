@@ -5,17 +5,18 @@ import com.esb.api.message.Message;
 import com.esb.api.message.MimeType;
 import com.esb.api.message.Type;
 import com.esb.api.service.ScriptEngineService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.script.ScriptException;
 
-public class ESBJavascriptEngineTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ESBJavascriptEngineTest {
 
     private ScriptEngineService service = ESBJavascriptEngine.INSTANCE;
 
     @Test
-    void shouldDoSomething() throws ScriptException {
+    void shouldCorrectlyEvaluateMessageInboundProperty() throws ScriptException {
         // Given
         Message message = new Message();
         Type contentType = new Type(MimeType.TEXT, String.class);
@@ -28,7 +29,8 @@ public class ESBJavascriptEngineTest {
         String property = service.evaluate(message, script, String.class);
 
         // Then
-        Assertions.assertThat(property).isNotNull();
+        assertThat(property).isNotNull();
+        assertThat(property).isEqualTo("test");
     }
 
 }

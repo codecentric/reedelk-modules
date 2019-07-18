@@ -7,10 +7,12 @@ import com.esb.api.component.Processor;
 import com.esb.api.exception.ESBException;
 import com.esb.api.message.*;
 import com.esb.api.service.ScriptEngineService;
+import com.esb.api.service.ScriptExecutionResult;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.script.ScriptException;
+import javax.script.SimpleBindings;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -28,8 +30,8 @@ public class JavascriptComponent implements Processor {
     @Override
     public Message apply(Message input) {
         try {
-            Object result = service.evaluate(input, script);
-            TypedContent<Object> content = new MemoryTypedContent<>(result, new Type(MimeType.ANY, Object.class));
+            ScriptExecutionResult result = service.evaluate(input, script, new ComponentVariableBindings(input));
+            TypedContent<Object> content = new MemoryTypedContent<>(result.getObject(), new Type(MimeType.ANY, Object.class));
             input.setTypedContent(content);
             return input;
         } catch (ScriptException e) {
@@ -39,5 +41,15 @@ public class JavascriptComponent implements Processor {
 
     public void setScript(String script) {
         this.script = script;
+    }
+
+    class ComponentVariableBindings extends SimpleBindings {
+        ComponentVariableBindings(Message message) {
+            if (message.getTypedContent() != null) {
+                put("payload", message.getTypedContent().getContent());
+            } else {
+                put("payload", null);
+            }
+        }
     }
 }

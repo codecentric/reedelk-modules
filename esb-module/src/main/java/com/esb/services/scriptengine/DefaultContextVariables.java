@@ -8,16 +8,10 @@ import javax.script.SimpleBindings;
  * Default Context Variables available during the
  * execution of a Javascript script.
  */
-class ContextVariables extends SimpleBindings {
-    ContextVariables(Message message) {
+class DefaultContextVariables extends SimpleBindings {
+    DefaultContextVariables(Message message) {
         put("message", message);
         put("inboundProperties", message.getInboundProperties());
         put("outboundProperties", message.getOutboundProperties());
-
-        if (message.getTypedContent() != null) {
-            put("payload", message.getTypedContent().getContent());
-        } else {
-            put("payload", null);
-        }
     }
 }

@@ -3,6 +3,7 @@ package com.esb.services.scriptengine;
 import com.esb.api.message.Message;
 import com.esb.api.service.ScriptEngineService;
 
+import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -21,13 +22,20 @@ public enum ESBJavascriptEngine implements ScriptEngineService {
 
     @Override
     public <T> T evaluate(Message message, String script, Class<T> returnType) throws ScriptException {
-        ContextVariables contextVariables = new ContextVariables(message);
-        return (T) engine.eval(script, contextVariables);
+        DefaultContextVariables defaultContextVariables = new DefaultContextVariables(message);
+        return (T) engine.eval(script, defaultContextVariables);
     }
 
     @Override
-    public Object evaluate(Message message, String script) throws ScriptException {
-        ContextVariables contextVariables = new ContextVariables(message);
-        return engine.eval(script, contextVariables);
+    public DefaultScriptExecutionResult evaluate(Message message, String script, Bindings additionalVariablesBindings) throws ScriptException {
+        DefaultContextVariables defaultContextVariables = new DefaultContextVariables(message);
+        defaultContextVariables.putAll(additionalVariablesBindings);
+
+        Bindings bindings = engine.createBindings();
+        bindings.putAll(defaultContextVariables);
+        bindings.putAll(additionalVariablesBindings);
+
+        Object evaluated = engine.eval(script, bindings);
+        return new DefaultScriptExecutionResult(evaluated, bindings);
     }
 }
