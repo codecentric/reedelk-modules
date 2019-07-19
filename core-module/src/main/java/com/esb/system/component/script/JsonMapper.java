@@ -39,8 +39,8 @@ public class JsonMapper implements Processor {
 
     @Script
     @Property("Mapping Script")
-    @AutocompleteVariable(variableName = "input", initValue = "{}", contextName = "inputContext")
-    @AutocompleteVariable(variableName = "output", initValue = "{}", contextName = "outputContext")
+    @Variable(variableName = "input", contextName = "inputContext")
+    @Variable(variableName = "output", contextName = "outputContext")
     private String mappingScript;
 
     @Override
