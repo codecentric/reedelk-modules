@@ -1,15 +1,16 @@
 package com.esb.system.component.logger;
 
-import com.esb.api.annotation.Default;
-import com.esb.api.annotation.ESBComponent;
-import com.esb.api.annotation.Property;
-import com.esb.api.annotation.Required;
+import com.esb.api.annotation.*;
 import com.esb.api.component.Processor;
+import com.esb.api.exception.ESBException;
 import com.esb.api.message.Message;
-import com.esb.api.message.TypedContent;
+import com.esb.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.script.ScriptException;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -19,19 +20,26 @@ public class LoggerComponent implements Processor {
 
     static final Logger logger = LoggerFactory.getLogger(LoggerComponent.class);
 
-    @Property("Logger Level")
-    @Default("INFO")
+    @Reference
+    private ScriptEngineService service;
+
     @Required
+    @Default("INFO")
+    @Property("Logger Level")
     private LoggerLevel level;
+
+    @Script
+    @Default("message")
+    @Property("Log message")
+    private String message;
 
     @Override
     public Message apply(Message input) {
-        TypedContent content = input.getTypedContent();
-        if (content != null) {
-            level.log(content.getContent());
-
-        } else {
-            level.log(null);
+        try {
+            Object result = service.evaluate(input, message, Object.class);
+            level.log(result);
+        } catch (ScriptException e) {
+            throw new ESBException(e);
         }
         return input;
     }
@@ -40,4 +48,7 @@ public class LoggerComponent implements Processor {
         this.level = level;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

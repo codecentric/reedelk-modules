@@ -37,7 +37,7 @@ public class JsonMapper implements Processor {
     @AutocompleteContext(name = "outputContext", type = AutocompleteType.JSON_SCHEMA)
     private String outputJsonSchema;
 
-    @Script
+    @Script(inline = false)
     @Property("Mapping Script")
     @Variable(variableName = "input", contextName = "inputContext")
     @Variable(variableName = "output", contextName = "outputContext")
