@@ -24,7 +24,7 @@ public class JavascriptComponent implements Processor {
     @Reference
     private ScriptEngineService service;
 
-    @Script
+    @Script(inline = false)
     @Property("Script")
     @Variable(variableName = "payload")
     private String script;
