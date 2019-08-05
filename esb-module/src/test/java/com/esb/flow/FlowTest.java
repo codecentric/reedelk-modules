@@ -2,6 +2,7 @@ package com.esb.flow;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Inbound;
+import com.esb.api.component.ResultCallback;
 import com.esb.api.message.Message;
 import com.esb.graph.ExecutionGraph;
 import com.esb.system.component.Stop;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -241,12 +243,20 @@ class FlowTest {
 
 
         // When
-        Message actualMessage = flow.onEvent(inMessage);
+        flow.onEvent(inMessage, new ResultCallback() {
+            @Override
+            public void onResult(Message actualMessage) {
+                // Then
+                assertThat(actualMessage).isEqualTo(inMessage);
+                verify(mockExecutionGraph).getRoot();
+                verify(mockExecutionGraph).successors(mockExecutionNode);
+            }
 
-        // Then
-        assertThat(actualMessage).isEqualTo(inMessage);
-        verify(mockExecutionGraph).getRoot();
-        verify(mockExecutionGraph).successors(mockExecutionNode);
+            @Override
+            public void onError(Throwable throwable) {
+                fail("Unexpected");
+            }
+        });
     }
 
 }

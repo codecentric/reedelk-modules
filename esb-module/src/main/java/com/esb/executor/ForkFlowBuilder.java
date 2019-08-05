@@ -1,27 +1,25 @@
 package com.esb.executor;
 
-import com.esb.api.component.Component;
-import com.esb.api.component.Join;
-import com.esb.api.message.Message;
-import com.esb.component.ForkWrapper;
 import com.esb.flow.ExecutionNode;
 import com.esb.graph.ExecutionGraph;
-import com.esb.internal.commons.SerializationUtils;
+import reactor.core.publisher.Flux;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
 
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
-import static com.esb.commons.Preconditions.checkState;
 
-public class ForkExecutor implements Executor {
+public class ForkFlowBuilder implements FlowBuilder {
+
+
+    private static ExecutionNode getNextNodeOrThrow(ExecutionGraph graph, ExecutionNode node, String message) {
+        Collection<ExecutionNode> successors = graph.successors(node);
+        return checkAtLeastOneAndGetOrThrow(successors.stream(), message);
+    }
+
 
     @Override
-    public ExecutionResult execute(final ExecutionNode executionNode, final Message message, final ExecutionGraph graph) {
-
+    public Flux<ReactiveMessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Flux<ReactiveMessageContext> parentFlux) {
+        /**
         ForkWrapper fork = (ForkWrapper) executionNode.getComponent();
 
         List<ExecutionNode> nextExecutionNodes = fork.apply(message);
@@ -29,7 +27,7 @@ public class ForkExecutor implements Executor {
         List<Callable<Message>> allTasks = new ArrayList<>();
 
         Function<ExecutionNode, Callable<Message>> mapper = currentExecutionNode ->
-                Executors.execute(currentExecutionNode,
+         ExecutionFlowBuilder.build(currentExecutionNode,
                         SerializationUtils.clone(message), graph)::getMessage;
 
         for (ExecutionNode nextExecutionNode : nextExecutionNodes) {
@@ -60,14 +58,8 @@ public class ForkExecutor implements Executor {
         } else {
             ExecutionNode nextOfJoin = getNextNodeOrThrow(graph, joinExecutionNode,
                     "Join must be followed by one node");
-            return Executors.execute(nextOfJoin, joinedMessage, graph);
-        }
+         return ExecutionFlowBuilder.build(nextOfJoin, joinedMessage, graph);
+         }**/
+        return parentFlux.flatMap(context -> Flux.empty());
     }
-
-    private static ExecutionNode getNextNodeOrThrow(ExecutionGraph graph, ExecutionNode node, String message) {
-        Collection<ExecutionNode> successors = graph.successors(node);
-        return checkAtLeastOneAndGetOrThrow(successors.stream(), message);
-    }
-
-
 }

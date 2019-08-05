@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class RouteODataTest {
 
-    private RouteHandler testHandler = request -> request;
+    private RouteHandler testHandler = (request, callback) -> callback.onResult(request);
 
     // GET /People
     @Test

@@ -1,5 +1,6 @@
 package com.esb.rest.server.route;
 
+import com.esb.api.component.ResultCallback;
 import com.esb.api.message.*;
 import com.esb.rest.commons.InboundProperty;
 import com.esb.rest.commons.OutboundProperty;
@@ -24,7 +25,12 @@ public class RouteNotFound extends Route implements RouteHandler {
     }
 
     @Override
-    public Message handle(Message request) throws Exception {
+    public Map<String, String> bindPathParams(HttpRequest request) {
+        return new HashMap<>();
+    }
+
+    @Override
+    public void handle(Message request, ResultCallback callback) throws Exception {
         Message response = new Message();
 
         // The payload is a message containing the Method and Path
@@ -40,11 +46,6 @@ public class RouteNotFound extends Route implements RouteHandler {
         // Set the response status to 404.
         OutboundProperty.STATUS.set(response, NOT_FOUND.code());
 
-        return response;
-    }
-
-    @Override
-    public Map<String, String> bindPathParams(HttpRequest request) {
-        return new HashMap<>();
+        callback.onResult(response);
     }
 }

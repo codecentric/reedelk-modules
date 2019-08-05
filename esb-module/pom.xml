@@ -43,6 +43,11 @@
             <version>${json.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>3.2.11.RELEASE</version>
+        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
@@ -84,6 +89,33 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
+                        <Import-Package>
+                            com.esb.api.annotation,
+                            com.esb.api.component,
+                            com.esb.api.exception,
+                            com.esb.api.message,
+                            com.esb.api.service,
+                            com.esb.commons;version="[1.0,2)",
+                            com.esb.graph;version="[1.0,2)",
+                            com.esb.module;version="[1.0,2)",
+                            com.esb.module.state;version="[1.0,2)",
+                            com.esb.services;version="[1.0,2)",
+                            com.esb.services.configuration;version="[1.0,2)",
+                            com.esb.services.hotswap;version="[1.0,2)",
+                            com.esb.services.module;version="[1.0,2)",
+                            com.esb.services.scriptengine;version="[1.0,2)",
+                            com.esb.system.api,
+
+                            javax.annotation,
+                            javax.annotation.meta,
+                            javax.script,
+
+                            org.json;version="[20180813.0,20180814)",
+                            org.osgi.framework;version="[1.8,2)",
+                            org.osgi.service.cm;version="[1.6,2)",
+                            org.slf4j;version="[1.7,2)",
+                            sun.misc
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>

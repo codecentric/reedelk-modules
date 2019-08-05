@@ -15,7 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RouteTest {
 
-    private RouteHandler testHandler = request -> request;
+    private RouteHandler testHandler = (request, callback) -> callback.onResult(request);
+
 
     @Test
     void shouldMatchCorrectlyMethodAndPath() {

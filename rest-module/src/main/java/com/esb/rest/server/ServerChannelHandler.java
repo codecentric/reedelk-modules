@@ -1,11 +1,14 @@
 package com.esb.rest.server;
 
+import com.esb.api.component.ResultCallback;
 import com.esb.api.message.Message;
 import com.esb.rest.commons.HttpProtocol;
 import com.esb.rest.server.request.method.MethodStrategyBuilder;
 import com.esb.rest.server.route.Route;
 import com.esb.rest.server.route.RouteHandler;
 import com.esb.rest.server.route.Routes;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpVersion;
@@ -28,7 +31,7 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
     }
 
     @Override
-    protected FullHttpResponse handle(FullHttpRequest request) {
+    protected void handle(FullHttpRequest request, ChannelHandlerContext context) {
 
         Route matchingRoute = routes.findRouteOrDefault(request);
 
@@ -42,18 +45,28 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
                     .execute(request, matchingRoute);
 
             // invoke the RouteHandler for this Message.
-            Message outMessage = routeHandler.handle(inMessage);
+            routeHandler.handle(inMessage, new ResultCallback() {
+                @Override
+                public void onResult(Message message) {
+                    // Map back the 'out' Message to HTTP Response
+                    FullHttpResponse response = responseMapper.map(message);
+                    context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+                }
 
-            // Map back the 'out' Message to HTTP Response
-            return responseMapper.map(outMessage);
+                @Override
+                public void onError(Throwable throwable) {
+                    // TODO: Serialize the error
+                    FullHttpResponse response = responseMapper.fromStatus(INTERNAL_SERVER_ERROR);
+                    context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+                }
+            });
 
         } catch (Exception exception) {
-
             logger.error("REST Listener", exception);
-
-            // TODO: I think that the exception should be encapsulated in the response.
-
-            return responseMapper.fromStatus(INTERNAL_SERVER_ERROR);
+            // Map back the 'out' Message to HTTP Response
+            FullHttpResponse response = responseMapper.fromStatus(INTERNAL_SERVER_ERROR);
+            context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         }
     }
+
 }

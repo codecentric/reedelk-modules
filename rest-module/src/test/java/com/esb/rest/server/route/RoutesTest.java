@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RoutesTest {
 
-    private RouteHandler mockHandler = request -> request;
+    private RouteHandler mockHandler = (request, callback) -> callback.onResult(request);
 
     private Route defaultRoute = new RouteNotFound();
 

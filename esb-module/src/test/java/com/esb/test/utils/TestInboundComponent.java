@@ -2,6 +2,7 @@ package com.esb.test.utils;
 
 import com.esb.api.component.Inbound;
 import com.esb.api.component.InboundEventListener;
+import com.esb.api.component.ResultCallback;
 import com.esb.api.message.Message;
 
 public class TestInboundComponent implements Inbound {
@@ -19,12 +20,12 @@ public class TestInboundComponent implements Inbound {
     }
 
     @Override
-    public void removeEventListener() {
+    public void onEvent(Message message, ResultCallback callback) {
         throw new UnsupportedOperationException("Test Only Inbound");
     }
 
     @Override
-    public Message onEvent(Message message) {
+    public void removeEventListener() {
         throw new UnsupportedOperationException("Test Only Inbound");
     }
 
@@ -40,4 +41,5 @@ public class TestInboundComponent implements Inbound {
     public void setMessage(String message) {
         this.message = message;
     }
+
 }

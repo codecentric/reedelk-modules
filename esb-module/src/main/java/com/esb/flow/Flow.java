@@ -2,6 +2,7 @@ package com.esb.flow;
 
 import com.esb.api.component.Inbound;
 import com.esb.api.component.InboundEventListener;
+import com.esb.api.component.ResultCallback;
 import com.esb.api.message.Message;
 import com.esb.executor.FlowExecutor;
 import com.esb.graph.ExecutionGraph;
@@ -84,9 +85,9 @@ public class Flow implements InboundEventListener {
     }
 
     @Override
-    public Message onEvent(Message message) {
+    public void onEvent(Message message, ResultCallback resultCallback) {
         try {
-            return flowExecutor.execute(message);
+            flowExecutor.onEvent(message, resultCallback);
         } catch (Exception exception) {
             String errorMessage = format("Exception while executing Flow with id=[%s]", flowId);
             logger.debug(errorMessage, exception);
