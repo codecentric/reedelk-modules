@@ -1,63 +1,54 @@
 package com.esb.component;
 
 import com.esb.api.exception.ESBException;
-import com.esb.api.message.Message;
-import com.esb.api.service.ScriptEngineService;
 import com.esb.flow.ExecutionNode;
-import com.esb.services.scriptengine.ESBJavascriptEngine;
 import com.esb.system.component.Router;
 
-import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
-public class RouterWrapper extends Router implements FlowControlComponent {
-
-    private static final ScriptEngineService ENGINE = ESBJavascriptEngine.INSTANCE;
+public class RouterWrapper extends Router {
 
     private List<PathExpressionPair> pathExpressionPairs = new ArrayList<>();
+    private ExecutionNode endOfRouterStopNode;
 
-    @Override
-    public List<ExecutionNode> apply(Message input) {
-        for (PathExpressionPair pathExpressionPair : pathExpressionPairs) {
-            if (pathExpressionPair.expression.equals(Router.DEFAULT_CONDITION)) continue;
-
-            if (pathExpressionPair.evaluate(input)) {
-                return singletonList(pathExpressionPair.pathReference);
-            }
-        }
-        return singletonList(getDefaultPathOrThrow().pathReference);
+    /**
+     * Returns all paths excluding the default.
+     */
+    public List<PathExpressionPair> getPathExpressionPairs() {
+        return pathExpressionPairs.stream()
+                .filter(pathExpressionPair -> !pathExpressionPair.expression.equals(DEFAULT_CONDITION))
+                .collect(toList());
     }
 
     public void addPathExpressionPair(String expression, ExecutionNode pathExecutionNode) {
         pathExpressionPairs.add(new PathExpressionPair(expression, pathExecutionNode));
     }
 
-    private PathExpressionPair getDefaultPathOrThrow() {
+    public PathExpressionPair getDefaultPathOrThrow() {
         return pathExpressionPairs.stream()
                 .filter(pathExpressionPair -> pathExpressionPair.expression.equals(DEFAULT_CONDITION))
                 .findFirst()
                 .orElseThrow(() -> new ESBException("Default router condition could not be found"));
     }
 
-    // The engine should be part of the context.
-    class PathExpressionPair {
-        final String expression;
-        final ExecutionNode pathReference;
+    public void setEndOfRouterStopNode(ExecutionNode endOfRouterStopNode) {
+        this.endOfRouterStopNode = endOfRouterStopNode;
+    }
+
+    public ExecutionNode getEndOfRouterStopNode() {
+        return endOfRouterStopNode;
+    }
+
+    public class PathExpressionPair {
+        public final String expression;
+        public final ExecutionNode pathReference;
 
         PathExpressionPair(String expression, ExecutionNode pathReference) {
             this.expression = expression;
             this.pathReference = pathReference;
-        }
-
-        boolean evaluate(Message message) {
-            try {
-                return ENGINE.evaluate(message, this.expression, boolean.class);
-            } catch (ScriptException e) {
-                throw new ESBException(e);
-            }
         }
     }
 }

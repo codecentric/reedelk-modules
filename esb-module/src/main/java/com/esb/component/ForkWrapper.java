@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class ForkWrapper extends Fork implements FlowControlComponent {
+public class ForkWrapper extends Fork {
 
     private List<ExecutionNode> forkNodes = new ArrayList<>();
 
@@ -16,10 +16,6 @@ public class ForkWrapper extends Fork implements FlowControlComponent {
 
     private ExecutionNode stopNode;
 
-    @Override
-    public List<ExecutionNode> apply(Message input) {
-        return forkNodes;
-    }
 
     public void addForkNode(ExecutionNode executionNode) {
         this.forkNodes.add(executionNode);

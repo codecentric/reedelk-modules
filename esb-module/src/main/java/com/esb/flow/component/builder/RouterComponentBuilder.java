@@ -58,6 +58,13 @@ class RouterComponentBuilder extends AbstractBuilder {
             graph.putEdge(currentNode, stopComponent);
         }
 
+        // We add the stop execution node related to this router,
+        // so that we can use it when building the flux definition
+        // for this Router node. Otherwise we would have to find
+        // the stop component by navigating the graph and finding the
+        // the common stop node across all the nodes in the Router scope.
+        routerWrapper.setEndOfRouterStopNode(stopComponent);
+
         return stopComponent;
     }
 

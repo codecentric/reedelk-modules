@@ -5,6 +5,7 @@ import com.esb.api.message.Message;
 import com.esb.flow.ExecutionNode;
 import com.esb.graph.ExecutionGraph;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 
@@ -16,7 +17,7 @@ public class ProcessorFlowBuilder implements FlowBuilder {
     public Flux<ReactiveMessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Flux<ReactiveMessageContext> parentFlux) {
         Processor processor = (Processor) executionNode.getComponent();
 
-        Flux<ReactiveMessageContext> newParent = parentFlux.flatMap(context -> asyncProcessor(processor, context));
+        Flux<ReactiveMessageContext> newParent = parentFlux.flatMap(context -> processorMono(processor, context));
 
         Collection<ExecutionNode> successors = graph.successors(executionNode);
 
@@ -26,7 +27,21 @@ public class ProcessorFlowBuilder implements FlowBuilder {
         return ExecutionFlowBuilder.build(next, graph, newParent);
     }
 
-    private Flux<ReactiveMessageContext> asyncProcessor(Processor processor, ReactiveMessageContext messageWrapper) {
+    @Override
+    public Mono<ReactiveMessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Mono<ReactiveMessageContext> parentFlux) {
+        Processor processor = (Processor) executionNode.getComponent();
+
+        Mono<ReactiveMessageContext> newParent = parentFlux.flatMap(context -> processorMono(processor, context));
+
+        Collection<ExecutionNode> successors = graph.successors(executionNode);
+
+        ExecutionNode next = checkAtLeastOneAndGetOrThrow(successors.stream(),
+                "Processor must be followed by exactly one node");
+
+        return ExecutionFlowBuilder.build(next, graph, newParent);
+    }
+
+    public static Mono<ReactiveMessageContext> processorMono(Processor processor, ReactiveMessageContext messageWrapper) {
 
         /**
          if (processor instanceof AsyncProcessor) {
@@ -46,14 +61,14 @@ public class ProcessorFlowBuilder implements FlowBuilder {
          } else if (processor instanceof SyncProcessor) {
          */
 
-        return Flux.create(messageWrapperFluxSink -> {
+        return Mono.create(sink -> {
             try {
                 Message outMessage = processor.apply(messageWrapper.getMessage());
                 messageWrapper.replace(outMessage);
-                messageWrapperFluxSink.next(messageWrapper);
+                sink.success(messageWrapper);
             } catch (Exception e) {
                 messageWrapper.onError(e);
-                messageWrapperFluxSink.complete();
+                sink.success();
             }
         });
             /*

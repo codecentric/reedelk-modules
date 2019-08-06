@@ -7,6 +7,7 @@ import com.esb.flow.ExecutionNode;
 import com.esb.graph.ExecutionGraph;
 import com.esb.system.component.Stop;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,10 +30,16 @@ public class ExecutionFlowBuilder {
     private ExecutionFlowBuilder() {
     }
 
-    public static Flux<ReactiveMessageContext> build(ExecutionNode next, ExecutionGraph graph, Flux<ReactiveMessageContext> parentFlux) {
+    public static Flux<ReactiveMessageContext> build(ExecutionNode next, ExecutionGraph graph, Flux<ReactiveMessageContext> parent) {
         Component component = next.getComponent();
         FlowBuilder flowBuilder = COMPONENT_EXECUTOR.getOrDefault(component.getClass(), DEFAULT_EXECUTOR);
-        return flowBuilder.build(next, graph, parentFlux);
+        return flowBuilder.build(next, graph, parent);
+    }
+
+    public static Mono<ReactiveMessageContext> build(ExecutionNode next, ExecutionGraph graph, Mono<ReactiveMessageContext> parent) {
+        Component component = next.getComponent();
+        FlowBuilder flowBuilder = COMPONENT_EXECUTOR.getOrDefault(component.getClass(), DEFAULT_EXECUTOR);
+        return flowBuilder.build(next, graph, parent);
     }
 
 }
