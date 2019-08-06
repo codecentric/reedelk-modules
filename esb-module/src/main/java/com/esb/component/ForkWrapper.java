@@ -1,21 +1,17 @@
 package com.esb.component;
 
-import com.esb.api.message.Message;
 import com.esb.flow.ExecutionNode;
 import com.esb.system.component.Fork;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.*;
 
 public class ForkWrapper extends Fork {
 
     private List<ExecutionNode> forkNodes = new ArrayList<>();
 
-    private CompletionService<Message> completionService;
-
     private ExecutionNode stopNode;
-
 
     public void addForkNode(ExecutionNode executionNode) {
         this.forkNodes.add(executionNode);
@@ -29,32 +25,7 @@ public class ForkWrapper extends Fork {
         this.stopNode = stopNode;
     }
 
-    public void setThreadPoolSize(int threadPoolSize) {
-        ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
-        completionService = new ExecutorCompletionService<>(executor);
-    }
-
-    public List<Message> invokeAllAndWait(List<Callable<Message>> allTasks) {
-        List<Message> results = new ArrayList<>();
-        try {
-            allTasks.forEach(messageCallable -> completionService.submit(messageCallable));
-            int received = 0;
-            boolean errors = false;
-
-            while (received < allTasks.size() && !errors) {
-                Future<Message> resultFuture = completionService.take();
-                try {
-                    Message result = resultFuture.get();
-                    received++;
-                    results.add(result);
-
-                } catch (Exception e) {
-                    errors = true;
-                }
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        return results;
+    public List<ExecutionNode> getForkNodes() {
+        return Collections.unmodifiableList(forkNodes);
     }
 }

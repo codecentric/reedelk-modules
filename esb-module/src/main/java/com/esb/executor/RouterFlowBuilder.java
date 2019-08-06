@@ -39,6 +39,7 @@ public class RouterFlowBuilder implements FlowBuilder {
             List<Mono<ReactiveMessageContext>> choiceFluxes = pathExpressionPairs.stream()
                     .map(pathExpressionPair -> createConditionalMonoFromExpressionPair(pathExpressionPair, context, graph))
                     .collect(toList());
+
             // Create a flow with all conditional flows, only the flow evaluating to true will be executed.
             return Flux.concat(choiceFluxes)
                     .take(1) // We just select the first one, in case there are more than one matching

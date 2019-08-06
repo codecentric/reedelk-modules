@@ -3,6 +3,7 @@ package com.esb.executor;
 import com.esb.api.component.ResultCallback;
 import com.esb.api.message.Message;
 import com.esb.commons.Preconditions;
+import com.esb.internal.commons.SerializationUtils;
 
 public class ReactiveMessageContext {
 
@@ -29,5 +30,10 @@ public class ReactiveMessageContext {
 
     public void onError(Throwable throwable) {
         callback.onError(throwable);
+    }
+
+    public ReactiveMessageContext copy() {
+        Message messageClone = SerializationUtils.clone(message);
+        return new ReactiveMessageContext(messageClone, callback);
     }
 }
