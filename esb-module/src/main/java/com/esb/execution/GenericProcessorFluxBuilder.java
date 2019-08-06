@@ -1,4 +1,4 @@
-package com.esb.executor;
+package com.esb.execution;
 
 import com.esb.api.component.Processor;
 import com.esb.api.message.Message;
@@ -11,37 +11,37 @@ import java.util.Collection;
 
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
-public class ProcessorFlowBuilder implements FlowBuilder {
+public class GenericProcessorFluxBuilder implements FluxBuilder {
 
     @Override
-    public Flux<ReactiveMessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Flux<ReactiveMessageContext> parentFlux) {
+    public Flux<MessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Flux<MessageContext> parentFlux) {
         Processor processor = (Processor) executionNode.getComponent();
 
-        Flux<ReactiveMessageContext> newParent = parentFlux.flatMap(context -> processorMono(processor, context));
+        Flux<MessageContext> newParent = parentFlux.flatMap(context -> processorMono(processor, context));
 
         Collection<ExecutionNode> successors = graph.successors(executionNode);
 
         ExecutionNode next = checkAtLeastOneAndGetOrThrow(successors.stream(),
                 "Processor must be followed by exactly one node");
 
-        return ExecutionFlowBuilder.build(next, graph, newParent);
+        return ExecutionFluxBuilder.build(next, graph, newParent);
     }
 
     @Override
-    public Mono<ReactiveMessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Mono<ReactiveMessageContext> parentFlux) {
+    public Mono<MessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Mono<MessageContext> parentFlux) {
         Processor processor = (Processor) executionNode.getComponent();
 
-        Mono<ReactiveMessageContext> newParent = parentFlux.flatMap(context -> processorMono(processor, context));
+        Mono<MessageContext> newParent = parentFlux.flatMap(context -> processorMono(processor, context));
 
         Collection<ExecutionNode> successors = graph.successors(executionNode);
 
         ExecutionNode next = checkAtLeastOneAndGetOrThrow(successors.stream(),
                 "Processor must be followed by exactly one node");
 
-        return ExecutionFlowBuilder.build(next, graph, newParent);
+        return ExecutionFluxBuilder.build(next, graph, newParent);
     }
 
-    public static Mono<ReactiveMessageContext> processorMono(Processor processor, ReactiveMessageContext messageWrapper) {
+    public static Mono<MessageContext> processorMono(Processor processor, MessageContext messageWrapper) {
 
         /**
          if (processor instanceof AsyncProcessor) {

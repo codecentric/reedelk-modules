@@ -1,4 +1,4 @@
-package com.esb.executor;
+package com.esb.execution;
 
 import com.esb.api.message.Message;
 import com.esb.api.service.ScriptEngineService;
@@ -21,22 +21,22 @@ import java.util.function.Function;
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 import static java.util.stream.Collectors.toList;
 
-public class RouterFlowBuilder implements FlowBuilder {
+public class RouterFluxBuilder implements FluxBuilder {
 
     private static final ScriptEngineService ENGINE = ESBJavascriptEngine.INSTANCE;
 
-    private static final Logger logger = LoggerFactory.getLogger(RouterFlowBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(RouterFluxBuilder.class);
 
     @Override
-    public Flux<ReactiveMessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Flux<ReactiveMessageContext> parentFlux) {
+    public Flux<MessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Flux<MessageContext> parentFlux) {
 
         RouterWrapper router = (RouterWrapper) executionNode.getComponent();
 
         List<RouterWrapper.PathExpressionPair> pathExpressionPairs = router.getPathExpressionPairs();
 
         // Need to keep going and continue to build the flow after the choice joins...
-        Flux<ReactiveMessageContext> newParent = parentFlux.flatMap((Function<ReactiveMessageContext, Publisher<ReactiveMessageContext>>) context -> {
-            List<Mono<ReactiveMessageContext>> choiceFluxes = pathExpressionPairs.stream()
+        Flux<MessageContext> newParent = parentFlux.flatMap((Function<MessageContext, Publisher<MessageContext>>) context -> {
+            List<Mono<MessageContext>> choiceFluxes = pathExpressionPairs.stream()
                     .map(pathExpressionPair -> createConditionalMonoFromExpressionPair(pathExpressionPair, context, graph))
                     .collect(toList());
 
@@ -56,25 +56,25 @@ public class RouterFlowBuilder implements FlowBuilder {
                 successors.stream(),
                 "End of router stop node must be followed by exactly one node");
 
-        return ExecutionFlowBuilder.build(nodeAfterRouterStopNode, graph, newParent);
+        return ExecutionFluxBuilder.build(nodeAfterRouterStopNode, graph, newParent);
     }
 
-    private Mono<ReactiveMessageContext> createDefaultMono(PathExpressionPair pair, ReactiveMessageContext message, ExecutionGraph graph) {
+    private Mono<MessageContext> createDefaultMono(PathExpressionPair pair, MessageContext message, ExecutionGraph graph) {
         ExecutionNode defaultExecutionNode = pair.pathReference;
 
-        Mono<ReactiveMessageContext> parent = Mono.just(message);
+        Mono<MessageContext> parent = Mono.just(message);
 
-        return ExecutionFlowBuilder.build(defaultExecutionNode, graph, parent);
+        return ExecutionFluxBuilder.build(defaultExecutionNode, graph, parent);
     }
 
-    private Mono<ReactiveMessageContext> createConditionalMonoFromExpressionPair(PathExpressionPair pair, ReactiveMessageContext message, ExecutionGraph graph) {
+    private Mono<MessageContext> createConditionalMonoFromExpressionPair(PathExpressionPair pair, MessageContext message, ExecutionGraph graph) {
         String expression = pair.expression;
         ExecutionNode pathExecutionNode = pair.pathReference;
 
-        Mono<ReactiveMessageContext> parent = Mono.just(message)
+        Mono<MessageContext> parent = Mono.just(message)
                 .filterWhen(value -> evaluate(expression, message.getMessage()));
 
-        return ExecutionFlowBuilder.build(pathExecutionNode, graph, parent);
+        return ExecutionFluxBuilder.build(pathExecutionNode, graph, parent);
     }
 
     private Mono<Boolean> evaluate(String expression, Message message) {

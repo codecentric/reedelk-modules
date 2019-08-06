@@ -4,7 +4,7 @@ import com.esb.api.component.Inbound;
 import com.esb.api.component.InboundEventListener;
 import com.esb.api.component.ResultCallback;
 import com.esb.api.message.Message;
-import com.esb.executor.FlowExecutor;
+import com.esb.execution.FlowExecutor;
 import com.esb.graph.ExecutionGraph;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;

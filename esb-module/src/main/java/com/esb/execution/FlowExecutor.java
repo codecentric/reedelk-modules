@@ -1,4 +1,4 @@
-package com.esb.executor;
+package com.esb.execution;
 
 import com.esb.api.component.ResultCallback;
 import com.esb.api.message.Message;
@@ -22,8 +22,8 @@ public class FlowExecutor {
     }
 
     private void buildExecutionChain() {
-        ConnectableFlux<ReactiveMessageContext> publisher =
-                Flux.<ReactiveMessageContext>create(sink -> listener = sink::next)
+        ConnectableFlux<MessageContext> publisher =
+                Flux.<MessageContext>create(sink -> listener = sink::next)
                         .publish();
 
         ExecutionNode root = graph.getRoot();
@@ -33,7 +33,7 @@ public class FlowExecutor {
                 nextExecutorNodes.stream(),
                 "Root must be followed by exactly one node");
 
-        ExecutionFlowBuilder.build(nodeAfterRoot, graph, publisher)
+        ExecutionFluxBuilder.build(nodeAfterRoot, graph, publisher)
                 .map(messageWrapper -> {
                     messageWrapper.onDone();
                     return messageWrapper;
@@ -43,11 +43,11 @@ public class FlowExecutor {
     }
 
     public void onEvent(Message message, ResultCallback resultCallback) {
-        listener.onInput(new ReactiveMessageContext(message, resultCallback));
+        listener.onInput(new MessageContext(message, resultCallback));
     }
 
     interface SinkListener {
-        void onInput(ReactiveMessageContext context);
+        void onInput(MessageContext context);
     }
 
 }

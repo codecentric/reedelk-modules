@@ -1,4 +1,4 @@
-package com.esb.executor;
+package com.esb.execution;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Join;
@@ -22,12 +22,12 @@ import java.util.function.Function;
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 import static java.util.stream.Collectors.toList;
 
-public class ForkFlowBuilder implements FlowBuilder {
+public class ForkFluxBuilder implements FluxBuilder {
 
     private Scheduler fluxExecutionScheduler = Schedulers.single();
 
     @Override
-    public Flux<ReactiveMessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Flux<ReactiveMessageContext> parentFlux) {
+    public Flux<MessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Flux<MessageContext> parentFlux) {
 
         ForkWrapper fork = (ForkWrapper) executionNode.getComponent();
 
@@ -51,12 +51,12 @@ public class ForkFlowBuilder implements FlowBuilder {
 
         Join join = (Join) joinComponent;
 
-        Flux<ReactiveMessageContext> newParent =
+        Flux<MessageContext> newParent =
                 parentFlux
                         .subscribeOn(fluxExecutionScheduler)
                         .flatMap(context -> {
                             // Create fluxes running on scheduler (fork step)
-                            List<Mono<ReactiveMessageContext>> forkFluxes = nextExecutionNodes.stream()
+                            List<Mono<MessageContext>> forkFluxes = nextExecutionNodes.stream()
                                     .map(forkExecutionNodePath ->
                                             createForkMonoFrom(forkExecutionNodePath, context, graph)
                                                     .subscribeOn(forkScheduler))
@@ -73,7 +73,7 @@ public class ForkFlowBuilder implements FlowBuilder {
         ExecutionNode nodeAfterJoin =
                 getNextNodeOrThrow(graph, joinExecutionNode, "Join must be followed by one node");
 
-        return ExecutionFlowBuilder.build(nodeAfterJoin, graph, newParent);
+        return ExecutionFluxBuilder.build(nodeAfterJoin, graph, newParent);
 
     }
 
@@ -82,41 +82,41 @@ public class ForkFlowBuilder implements FlowBuilder {
         return checkAtLeastOneAndGetOrThrow(successors.stream(), message);
     }
 
-    private Mono<ReactiveMessageContext> createForkMonoFrom(ExecutionNode executionNode, ReactiveMessageContext context, ExecutionGraph graph) {
-        ReactiveMessageContext messageCopy = context.copy();
-        Mono<ReactiveMessageContext> parent = Mono.just(messageCopy);
-        return ExecutionFlowBuilder
+    private Mono<MessageContext> createForkMonoFrom(ExecutionNode executionNode, MessageContext context, ExecutionGraph graph) {
+        MessageContext messageCopy = context.copy();
+        Mono<MessageContext> parent = Mono.just(messageCopy);
+        return ExecutionFluxBuilder
                 .build(executionNode, graph, parent);
     }
 
-    private static Function<Object[], ReactiveMessageContext[]> messagesCombinator() {
+    private static Function<Object[], MessageContext[]> messagesCombinator() {
         return objects -> {
-            ReactiveMessageContext[] messageContexts = new ReactiveMessageContext[objects.length];
+            MessageContext[] messageContexts = new MessageContext[objects.length];
             for (int i = 0; i < objects.length; i++) {
-                messageContexts[i] = (ReactiveMessageContext) objects[i];
+                messageContexts[i] = (MessageContext) objects[i];
             }
             return messageContexts;
         };
     }
 
-    class JoinConsumer implements Consumer<MonoSink<ReactiveMessageContext>> {
+    class JoinConsumer implements Consumer<MonoSink<MessageContext>> {
 
         private final Join join;
-        private final ReactiveMessageContext context;
-        private final ReactiveMessageContext[] messages;
+        private final MessageContext context;
+        private final MessageContext[] messages;
 
-        JoinConsumer(ReactiveMessageContext originalMessage, ReactiveMessageContext[] messagesToJoin, Join join) {
+        JoinConsumer(MessageContext originalMessage, MessageContext[] messagesToJoin, Join join) {
             this.join = join;
             this.context = originalMessage;
             this.messages = messagesToJoin;
         }
 
         @Override
-        public void accept(MonoSink<ReactiveMessageContext> sink) {
+        public void accept(MonoSink<MessageContext> sink) {
             try {
                 List<Message> collect = Arrays
                         .stream(messages)
-                        .map(ReactiveMessageContext::getMessage)
+                        .map(MessageContext::getMessage)
                         .collect(toList());
                 Message outMessage = join.apply(collect);
                 context.replace(outMessage);

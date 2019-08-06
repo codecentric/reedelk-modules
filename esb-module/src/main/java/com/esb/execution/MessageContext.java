@@ -1,16 +1,16 @@
-package com.esb.executor;
+package com.esb.execution;
 
 import com.esb.api.component.ResultCallback;
 import com.esb.api.message.Message;
 import com.esb.commons.Preconditions;
 import com.esb.internal.commons.SerializationUtils;
 
-public class ReactiveMessageContext {
+public class MessageContext {
 
     private final ResultCallback callback;
     private Message message;
 
-    public ReactiveMessageContext(Message message, ResultCallback callback) {
+    public MessageContext(Message message, ResultCallback callback) {
         this.message = message;
         this.callback = callback;
     }
@@ -32,8 +32,8 @@ public class ReactiveMessageContext {
         callback.onError(throwable);
     }
 
-    public ReactiveMessageContext copy() {
+    public MessageContext copy() {
         Message messageClone = SerializationUtils.clone(message);
-        return new ReactiveMessageContext(messageClone, callback);
+        return new MessageContext(messageClone, callback);
     }
 }
