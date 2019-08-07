@@ -11,22 +11,23 @@ import com.esb.system.component.Stop;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static java.lang.String.format;
 
 public class ExecutionFluxBuilder {
 
     private static final ExecutionFluxBuilder INSTANCE = new ExecutionFluxBuilder();
 
     private static final Map<Class, FluxBuilder> COMPONENT_FLUX_BUILDER;
+
     static {
         Map<Class, FluxBuilder> tmp = new HashMap<>();
         tmp.put(Stop.class, new StopFluxBuilder());
         tmp.put(ForkWrapper.class, new ForkFluxBuilder());
         tmp.put(RouterWrapper.class, new RouterFluxBuilder());
-        tmp.put(ProcessorSync.class, new GenericProcessorSyncFluxBuilder());
-        tmp.put(ProcessorAsync.class, new GenericProcessorAsyncFluxBuilder());
+        tmp.put(ProcessorSync.class, new ProcessorSyncFluxBuilder());
+        tmp.put(ProcessorAsync.class, new ProcessorAsyncFluxBuilder());
         COMPONENT_FLUX_BUILDER = Collections.unmodifiableMap(tmp);
     }
 
@@ -52,6 +53,22 @@ public class ExecutionFluxBuilder {
         if (COMPONENT_FLUX_BUILDER.containsKey(component.getClass())) {
             return COMPONENT_FLUX_BUILDER.get(component.getClass());
         }
-        throw new IllegalStateException(String.format("Could not find flux builder for class [%s]", component.getClass()));
+        // We check if any of the superclasses implement a known
+        // type for which a builder has been defined.
+        Class<?>[] interfaces = component.getClass().getInterfaces();
+        Set<Class> classes = COMPONENT_FLUX_BUILDER.keySet();
+        Class aClass = getContaining(interfaces, classes)
+                .orElseThrow(() ->
+                        new IllegalStateException(format("Could not find flux builder for class [%s]", component.getClass())));
+        return COMPONENT_FLUX_BUILDER.get(aClass);
+    }
+
+    public Optional<Class> getContaining(Class<?>[] interfaces, Set<Class> classes) {
+        for (Class interfaceClazz : interfaces) {
+            if (classes.contains(interfaceClazz)) {
+                return Optional.of(interfaceClazz);
+            }
+        }
+        return Optional.empty();
     }
 }

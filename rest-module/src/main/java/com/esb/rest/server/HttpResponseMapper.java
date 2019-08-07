@@ -9,6 +9,7 @@ import io.netty.handler.codec.http.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
@@ -51,19 +52,7 @@ public class HttpResponseMapper {
 
         HttpResponseStatus httpStatus = valueOf(OutboundProperty.STATUS.getInt(message));
 
-        buildResponse(entity, httpStatus, contentType, bytes.length, outboundHeaders);
-
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(httpVersion, httpStatus, entity);
-
-        HttpHeaders headers = response.headers();
-        headers.add(CONTENT_TYPE, contentType);
-        headers.add(CONTENT_LENGTH, bytes.length);
-
-        for (Map.Entry<String,String> header : outboundHeaders.entrySet()) {
-            headers.add(header.getKey(), header.getValue());
-        }
-
-        return response;
+        return buildResponse(entity, httpStatus, contentType, bytes.length, outboundHeaders);
     }
 
     FullHttpResponse fromStatus(HttpResponseStatus status) {
@@ -80,9 +69,18 @@ public class HttpResponseMapper {
         headers.add(CONTENT_LENGTH, length);
 
         for (Map.Entry<String,String> header : additionalHeaders.entrySet()) {
-            headers.add(header.getKey(), header.getValue());
+            getMatchingHeader(headers, header.getKey()).ifPresent(headers::remove);
+            headers.set(header.getKey(), header.getValue());
         }
-
         return response;
+    }
+
+    private Optional<String> getMatchingHeader(HttpHeaders headers, String targetHeaderName) {
+        for (String headerName : headers.names()) {
+            if (headerName.toLowerCase().equals(targetHeaderName.toLowerCase())) {
+                return Optional.of(headerName);
+            }
+        }
+        return Optional.empty();
     }
 }

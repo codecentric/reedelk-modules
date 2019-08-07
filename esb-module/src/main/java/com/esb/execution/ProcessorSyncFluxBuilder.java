@@ -11,13 +11,13 @@ import java.util.Collection;
 
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
-public class GenericProcessorSyncFluxBuilder implements FluxBuilder {
+public class ProcessorSyncFluxBuilder implements FluxBuilder {
 
     @Override
     public Flux<MessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Flux<MessageContext> parentFlux) {
         ProcessorSync processorSync = (ProcessorSync) executionNode.getComponent();
 
-        Flux<MessageContext> newParent = parentFlux.flatMap(context -> processorMono(processorSync, context));
+        Flux<MessageContext> newParent = parentFlux.flatMap(context -> processorSyncMono(processorSync, context));
 
         Collection<ExecutionNode> successors = graph.successors(executionNode);
 
@@ -32,7 +32,7 @@ public class GenericProcessorSyncFluxBuilder implements FluxBuilder {
     public Mono<MessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Mono<MessageContext> parentFlux) {
         ProcessorSync processorSync = (ProcessorSync) executionNode.getComponent();
 
-        Mono<MessageContext> newParent = parentFlux.flatMap(context -> processorMono(processorSync, context));
+        Mono<MessageContext> newParent = parentFlux.flatMap(context -> processorSyncMono(processorSync, context));
 
         Collection<ExecutionNode> successors = graph.successors(executionNode);
 
@@ -43,7 +43,7 @@ public class GenericProcessorSyncFluxBuilder implements FluxBuilder {
                 .build(next, graph, newParent);
     }
 
-    private static Mono<MessageContext> processorMono(ProcessorSync processorSync, MessageContext messageWrapper) {
+    private static Mono<MessageContext> processorSyncMono(ProcessorSync processorSync, MessageContext messageWrapper) {
         return Mono.create(sink -> {
             try {
                 Message outMessage = processorSync.apply(messageWrapper.getMessage());
