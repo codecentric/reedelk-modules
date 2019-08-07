@@ -4,7 +4,7 @@ import com.esb.api.component.Inbound;
 import com.esb.api.component.InboundEventListener;
 import com.esb.api.component.OnResult;
 import com.esb.api.message.Message;
-import com.esb.execution.FlowExecutor;
+import com.esb.execution.FlowExecutorEngine;
 import com.esb.graph.ExecutionGraph;
 import com.esb.graph.ExecutionNode;
 import org.osgi.framework.Bundle;
@@ -22,7 +22,7 @@ public class Flow implements InboundEventListener {
     private static final Logger logger = LoggerFactory.getLogger(Flow.class);
 
     private final String flowId;
-    private final FlowExecutor flowExecutor;
+    private final FlowExecutorEngine flowExecutorEngine;
     private final ExecutionGraph executionGraph;
 
     private boolean started = false;
@@ -30,7 +30,7 @@ public class Flow implements InboundEventListener {
     public Flow(final String flowId, final ExecutionGraph executionGraph) {
         this.flowId = flowId;
         this.executionGraph = executionGraph;
-        this.flowExecutor = new FlowExecutor(executionGraph);
+        this.flowExecutorEngine = new FlowExecutorEngine(executionGraph);
     }
 
     public String getFlowId() {
@@ -88,7 +88,7 @@ public class Flow implements InboundEventListener {
     @Override
     public void onEvent(Message message, OnResult onResult) {
         try {
-            flowExecutor.onEvent(message, onResult);
+            flowExecutorEngine.onEvent(message, onResult);
         } catch (Exception exception) {
             String errorMessage = format("Exception while executing Flow with id=[%s]", flowId);
             logger.debug(errorMessage, exception);

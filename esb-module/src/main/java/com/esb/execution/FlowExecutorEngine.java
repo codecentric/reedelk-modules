@@ -14,17 +14,17 @@ import java.util.function.Function;
 
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
-public class FlowExecutor {
+public class FlowExecutorEngine {
 
     private static final Scheduler ELASTIC = Schedulers.elastic();
 
     private SinkListener listener;
 
-    public FlowExecutor(ExecutionGraph graph) {
-        buildFlux(graph);
+    public FlowExecutorEngine(ExecutionGraph graph) {
+        buildFluxFromGraph(graph);
     }
 
-    private void buildFlux(ExecutionGraph graph) {
+    private void buildFluxFromGraph(ExecutionGraph graph) {
         ConnectableFlux<MessageContext> publisher =
                 Flux.<MessageContext>create(sink -> listener = sink::next)
                         .publishOn(ELASTIC)
