@@ -8,6 +8,7 @@ import com.esb.api.message.Message;
 import com.esb.component.ForkWrapper;
 import com.esb.component.RouterWrapper;
 import com.esb.system.component.Stop;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,6 +60,15 @@ class ExecutionFluxBuilderTest {
         assertBuilderForTargetClassIs(component, RouterFluxBuilder.class);
     }
 
+    @Test
+    void shouldGetComponentBuilderOrThrowThrowExceptionWhenComponentDoesNotImplementKnownInterface() {
+        // Given
+        Component component = new UndefinedComponentType();
+
+        Assertions.assertThrows(IllegalStateException.class, () ->
+                ExecutionFluxBuilder.get().getComponentBuilderOrThrow(component));
+    }
+
     private void assertBuilderForTargetClassIs(Component component, Class<? extends FluxBuilder> builderClass) {
         // When
         FluxBuilder builder = ExecutionFluxBuilder.get()
@@ -70,6 +80,10 @@ class ExecutionFluxBuilderTest {
     }
 
     interface NotRelatedInterface {
+    }
+
+    class UndefinedComponentType implements Component {
+
     }
 
     class TestProcessorAsync implements ProcessorAsync, NotRelatedInterface {
