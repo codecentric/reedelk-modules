@@ -39,34 +39,32 @@ public class ExecutionFluxBuilder {
     }
 
     public Flux<MessageContext> build(ExecutionNode next, ExecutionGraph graph, Flux<MessageContext> parent) {
-        FluxBuilder builder = getBuilderOrThrow(next);
+        FluxBuilder builder = getComponentBuilderOrThrow(next.getComponent());
         return builder.build(next, graph, parent);
     }
 
     public Mono<MessageContext> build(ExecutionNode next, ExecutionGraph graph, Mono<MessageContext> parent) {
-        FluxBuilder builder = getBuilderOrThrow(next);
+        FluxBuilder builder = getComponentBuilderOrThrow(next.getComponent());
         return builder.build(next, graph, parent);
     }
 
-    private FluxBuilder getBuilderOrThrow(ExecutionNode executionNode) {
-        Component component = executionNode.getComponent();
+    FluxBuilder getComponentBuilderOrThrow(Component component) {
         if (COMPONENT_FLUX_BUILDER.containsKey(component.getClass())) {
             return COMPONENT_FLUX_BUILDER.get(component.getClass());
         }
         // We check if any of the superclasses implement a known
         // type for which a builder has been defined.
-        Class<?>[] interfaces = component.getClass().getInterfaces();
-        Set<Class> classes = COMPONENT_FLUX_BUILDER.keySet();
-        Class aClass = getContaining(interfaces, classes)
+        Class<?>[] componentInterfaces = component.getClass().getInterfaces();
+        return getComponentFluxBuilder(componentInterfaces)
                 .orElseThrow(() ->
                         new IllegalStateException(format("Could not find flux builder for class [%s]", component.getClass())));
-        return COMPONENT_FLUX_BUILDER.get(aClass);
     }
 
-    public Optional<Class> getContaining(Class<?>[] interfaces, Set<Class> classes) {
-        for (Class interfaceClazz : interfaces) {
-            if (classes.contains(interfaceClazz)) {
-                return Optional.of(interfaceClazz);
+    private Optional<FluxBuilder> getComponentFluxBuilder(Class<?>[] componentInterfaces) {
+        Set<Class> fluxBuilderInterfaceNames = COMPONENT_FLUX_BUILDER.keySet();
+        for (Class interfaceClazz : componentInterfaces) {
+            if (fluxBuilderInterfaceNames.contains(interfaceClazz)) {
+                return Optional.of(COMPONENT_FLUX_BUILDER.get(interfaceClazz));
             }
         }
         return Optional.empty();
