@@ -7,6 +7,7 @@ import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.util.List;
 
 public enum ESBJavascriptEngine implements ScriptEngineService {
 
@@ -24,6 +25,17 @@ public enum ESBJavascriptEngine implements ScriptEngineService {
     public <T> T evaluate(Message message, String script, Class<T> returnType) throws ScriptException {
         DefaultContextVariables defaultContextVariables = new DefaultContextVariables(message);
         return (T) engine.eval(script, defaultContextVariables);
+    }
+
+    @Override
+    public DefaultScriptExecutionResult evaluate(List<Message> messages, String script) throws ScriptException {
+        JoinContextVariables defaultContextVariables = new JoinContextVariables(messages);
+
+        Bindings bindings = engine.createBindings();
+        bindings.putAll(defaultContextVariables);
+
+        Object evaluated = engine.eval(script, bindings);
+        return new DefaultScriptExecutionResult(evaluated, bindings);
     }
 
     @Override
