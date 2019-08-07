@@ -1,6 +1,6 @@
 package com.esb.component;
 
-import com.esb.flow.ExecutionNode;
+import com.esb.graph.ExecutionNode;
 import com.esb.system.component.Fork;
 
 import java.util.ArrayList;

@@ -4,7 +4,7 @@ import com.esb.api.annotation.Default;
 import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,7 +16,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Results to JSON")
 @Component(service = ResultSetToJsonComponent.class, scope = PROTOTYPE)
-public class ResultSetToJsonComponent implements Processor {
+public class ResultSetToJsonComponent implements ProcessorSync {
 
     @Property("Wrapper object name")
     @Required

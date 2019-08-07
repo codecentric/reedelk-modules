@@ -1,7 +1,5 @@
 package com.esb.graph;
 
-import com.esb.flow.ExecutionNode;
-
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;

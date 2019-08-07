@@ -1,9 +1,9 @@
 package com.esb.test.utils;
 
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.Message;
 
-public class AnotherTestComponent implements Processor {
+public class AnotherTestComponent implements ProcessorSync {
 
     private int property1;
     private long property2;
@@ -11,7 +11,7 @@ public class AnotherTestComponent implements Processor {
 
     @Override
     public Message apply(Message input) {
-        throw new UnsupportedOperationException("Test Only Processor");
+        throw new UnsupportedOperationException("Test Only ProcessorSync");
     }
 
     public int getProperty1() {

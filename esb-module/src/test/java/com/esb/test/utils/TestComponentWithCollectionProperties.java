@@ -1,6 +1,6 @@
 package com.esb.test.utils;
 
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.Message;
 
 import java.math.BigDecimal;
@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-public class TestComponentWithCollectionProperties implements Processor {
+public class TestComponentWithCollectionProperties implements ProcessorSync {
 
     private Collection<Long> myLongCollection;
     private Collection<Integer> myIntCollection;
@@ -45,7 +45,7 @@ public class TestComponentWithCollectionProperties implements Processor {
 
     @Override
     public Message apply(Message input) {
-        throw new UnsupportedOperationException("Test Only Processor");
+        throw new UnsupportedOperationException("Test Only ProcessorSync");
     }
 
     public Collection<Long> getMyLongCollection() {

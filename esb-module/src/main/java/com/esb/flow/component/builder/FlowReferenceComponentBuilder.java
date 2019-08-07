@@ -1,9 +1,9 @@
 package com.esb.flow.component.builder;
 
 import com.esb.api.exception.ESBException;
-import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
+import com.esb.graph.ExecutionNode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

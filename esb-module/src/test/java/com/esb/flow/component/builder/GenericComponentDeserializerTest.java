@@ -2,8 +2,8 @@ package com.esb.flow.component.builder;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Implementor;
-import com.esb.flow.ExecutionNode;
 import com.esb.flow.FlowBuilderContext;
+import com.esb.graph.ExecutionNode;
 import com.esb.test.utils.*;
 import org.json.JSONArray;
 import org.json.JSONObject;

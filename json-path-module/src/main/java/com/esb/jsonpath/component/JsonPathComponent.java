@@ -2,7 +2,7 @@ package com.esb.jsonpath.component;
 
 import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.*;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
@@ -13,7 +13,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Json Path")
 @Component(service = JsonPathComponent.class, scope = PROTOTYPE)
-public class JsonPathComponent implements Processor {
+public class JsonPathComponent implements ProcessorSync {
 
     @Property("JsonPath Expression")
     private String jsonPathExpression;

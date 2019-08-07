@@ -1,12 +1,12 @@
 package com.esb.test.utils;
 
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.Message;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class TestComponent implements Processor {
+public class TestComponent implements ProcessorSync {
 
     private String stringProperty;
     private long longProperty;
@@ -25,7 +25,7 @@ public class TestComponent implements Processor {
 
     @Override
     public Message apply(Message input) {
-        throw new UnsupportedOperationException("Test Only Processor");
+        throw new UnsupportedOperationException("Test Only ProcessorSync");
     }
 
     public String getStringProperty() {

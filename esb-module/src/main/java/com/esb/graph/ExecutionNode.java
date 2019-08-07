@@ -1,4 +1,4 @@
-package com.esb.flow;
+package com.esb.graph;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Implementor;
@@ -28,11 +28,11 @@ public class ExecutionNode {
         return componentReference.implementor;
     }
 
-    List<ReferencePair<Implementor>> getDependencyReferences() {
+    public List<ReferencePair<Implementor>> getDependencyReferences() {
         return dependencyReferences;
     }
 
-    void clearReferences() {
+    public void clearReferences() {
         componentReference.implementor = null;
         componentReference.serviceReference = null;
 
@@ -43,7 +43,7 @@ public class ExecutionNode {
         dependencyReferences.clear();
     }
 
-    boolean isUsingComponent(final String targetComponentName) {
+    public boolean isUsingComponent(final String targetComponentName) {
         String componentName = componentNameOf(componentReference);
         if (componentName.equals(targetComponentName)) return true;
 

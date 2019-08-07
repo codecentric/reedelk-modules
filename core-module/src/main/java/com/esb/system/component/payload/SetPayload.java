@@ -2,7 +2,7 @@ package com.esb.system.component.payload;
 
 import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.*;
 import org.osgi.service.component.annotations.Component;
 
@@ -10,7 +10,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Set Payload")
 @Component(service = SetPayload.class, scope = PROTOTYPE)
-public class SetPayload implements Processor {
+public class SetPayload implements ProcessorSync {
 
     @Property("Message Payload")
     private String payload;

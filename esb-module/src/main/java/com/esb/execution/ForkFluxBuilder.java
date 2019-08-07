@@ -5,8 +5,8 @@ import com.esb.api.component.Join;
 import com.esb.api.message.Message;
 import com.esb.commons.Preconditions;
 import com.esb.component.ForkWrapper;
-import com.esb.flow.ExecutionNode;
 import com.esb.graph.ExecutionGraph;
+import com.esb.graph.ExecutionNode;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
@@ -73,7 +73,8 @@ public class ForkFluxBuilder implements FluxBuilder {
         ExecutionNode nodeAfterJoin =
                 getNextNodeOrThrow(graph, joinExecutionNode, "Join must be followed by one node");
 
-        return ExecutionFluxBuilder.build(nodeAfterJoin, graph, newParent);
+        return ExecutionFluxBuilder.get()
+                .build(nodeAfterJoin, graph, newParent);
 
     }
 
@@ -85,7 +86,7 @@ public class ForkFluxBuilder implements FluxBuilder {
     private Mono<MessageContext> createForkMonoFrom(ExecutionNode executionNode, MessageContext context, ExecutionGraph graph) {
         MessageContext messageCopy = context.copy();
         Mono<MessageContext> parent = Mono.just(messageCopy);
-        return ExecutionFluxBuilder
+        return ExecutionFluxBuilder.get()
                 .build(executionNode, graph, parent);
     }
 

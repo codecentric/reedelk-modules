@@ -1,7 +1,7 @@
 package com.esb.system.component.logger;
 
 import com.esb.api.annotation.*;
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.exception.ESBException;
 import com.esb.api.message.Message;
 import com.esb.api.service.ScriptEngineService;
@@ -16,7 +16,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Logger")
 @Component(service = LoggerComponent.class, scope = PROTOTYPE)
-public class LoggerComponent implements Processor {
+public class LoggerComponent implements ProcessorSync {
 
     static final Logger logger = LoggerFactory.getLogger(LoggerComponent.class);
 

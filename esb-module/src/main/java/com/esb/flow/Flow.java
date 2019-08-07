@@ -2,10 +2,11 @@ package com.esb.flow;
 
 import com.esb.api.component.Inbound;
 import com.esb.api.component.InboundEventListener;
-import com.esb.api.component.ResultCallback;
+import com.esb.api.component.OnResult;
 import com.esb.api.message.Message;
 import com.esb.execution.FlowExecutor;
 import com.esb.graph.ExecutionGraph;
+import com.esb.graph.ExecutionNode;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,9 +86,9 @@ public class Flow implements InboundEventListener {
     }
 
     @Override
-    public void onEvent(Message message, ResultCallback resultCallback) {
+    public void onEvent(Message message, OnResult onResult) {
         try {
-            flowExecutor.onEvent(message, resultCallback);
+            flowExecutor.onEvent(message, onResult);
         } catch (Exception exception) {
             String errorMessage = format("Exception while executing Flow with id=[%s]", flowId);
             logger.debug(errorMessage, exception);

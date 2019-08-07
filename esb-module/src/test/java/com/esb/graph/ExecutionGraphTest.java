@@ -1,7 +1,6 @@
 package com.esb.graph;
 
-import com.esb.flow.ExecutionNode;
-import com.esb.flow.ExecutionNode.ReferencePair;
+import com.esb.graph.ExecutionNode.ReferencePair;
 import com.esb.test.utils.AnotherTestComponent;
 import com.esb.test.utils.TestComponent;
 import com.esb.test.utils.TestInboundComponent;

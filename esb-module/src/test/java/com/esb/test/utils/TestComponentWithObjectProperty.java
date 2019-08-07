@@ -1,15 +1,15 @@
 package com.esb.test.utils;
 
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.Message;
 
-public class TestComponentWithObjectProperty implements Processor {
+public class TestComponentWithObjectProperty implements ProcessorSync {
 
     private TestImplementor config;
 
     @Override
     public Message apply(Message input) {
-        throw new UnsupportedOperationException("Test Only Processor");
+        throw new UnsupportedOperationException("Test Only ProcessorSync");
     }
 
     public TestImplementor getConfig() {

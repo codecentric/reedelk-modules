@@ -6,7 +6,7 @@ import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
 import com.esb.api.component.AbstractInbound;
-import com.esb.api.component.ResultCallback;
+import com.esb.api.component.OnResult;
 import com.esb.api.message.Message;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class Scheduler extends AbstractInbound {
         this.scheduledFuture = scheduledService.scheduleAtFixedRate(() -> {
             try {
                 Message emptyMessage = new Message();
-                onEvent(emptyMessage, new ResultCallback() {
+                onEvent(emptyMessage, new OnResult() {
                 });
             } catch (Exception e) {
                 // we catch any exception, we want to keep the scheduler to run.

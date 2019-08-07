@@ -4,8 +4,8 @@ import com.esb.api.message.Message;
 import com.esb.api.service.ScriptEngineService;
 import com.esb.component.RouterWrapper;
 import com.esb.component.RouterWrapper.PathExpressionPair;
-import com.esb.flow.ExecutionNode;
 import com.esb.graph.ExecutionGraph;
+import com.esb.graph.ExecutionNode;
 import com.esb.services.scriptengine.ESBJavascriptEngine;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -56,7 +56,8 @@ public class RouterFluxBuilder implements FluxBuilder {
                 successors.stream(),
                 "End of router stop node must be followed by exactly one node");
 
-        return ExecutionFluxBuilder.build(nodeAfterRouterStopNode, graph, newParent);
+        return ExecutionFluxBuilder.get()
+                .build(nodeAfterRouterStopNode, graph, newParent);
     }
 
     private Mono<MessageContext> createDefaultMono(PathExpressionPair pair, MessageContext message, ExecutionGraph graph) {
@@ -64,7 +65,8 @@ public class RouterFluxBuilder implements FluxBuilder {
 
         Mono<MessageContext> parent = Mono.just(message);
 
-        return ExecutionFluxBuilder.build(defaultExecutionNode, graph, parent);
+        return ExecutionFluxBuilder.get()
+                .build(defaultExecutionNode, graph, parent);
     }
 
     private Mono<MessageContext> createConditionalMonoFromExpressionPair(PathExpressionPair pair, MessageContext message, ExecutionGraph graph) {
@@ -74,7 +76,8 @@ public class RouterFluxBuilder implements FluxBuilder {
         Mono<MessageContext> parent = Mono.just(message)
                 .filterWhen(value -> evaluate(expression, message.getMessage()));
 
-        return ExecutionFluxBuilder.build(pathExecutionNode, graph, parent);
+        return ExecutionFluxBuilder.get()
+                .build(pathExecutionNode, graph, parent);
     }
 
     private Mono<Boolean> evaluate(String expression, Message message) {

@@ -1,9 +1,9 @@
 package com.esb.flow.component.builder;
 
-import com.esb.flow.ExecutionNode;
-import com.esb.flow.ExecutionNode.ReferencePair;
 import com.esb.flow.FlowBuilderContext;
 import com.esb.graph.ExecutionGraph;
+import com.esb.graph.ExecutionNode;
+import com.esb.graph.ExecutionNode.ReferencePair;
 import com.esb.test.utils.ComponentsBuilder;
 import com.esb.test.utils.TestComponent;
 import org.json.JSONObject;

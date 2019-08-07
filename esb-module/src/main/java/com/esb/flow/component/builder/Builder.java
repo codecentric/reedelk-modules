@@ -1,6 +1,6 @@
 package com.esb.flow.component.builder;
 
-import com.esb.flow.ExecutionNode;
+import com.esb.graph.ExecutionNode;
 import org.json.JSONObject;
 
 // TODO: This should be named deserializer,  look at the plugin!!!

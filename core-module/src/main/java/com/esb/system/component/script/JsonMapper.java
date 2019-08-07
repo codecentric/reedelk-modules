@@ -1,7 +1,7 @@
 package com.esb.system.component.script;
 
 import com.esb.api.annotation.*;
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.exception.ESBException;
 import com.esb.api.message.*;
 import com.esb.api.service.ScriptEngineService;
@@ -16,7 +16,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("JSON Mapper")
 @Component(service = JsonMapper.class, scope = PROTOTYPE)
-public class JsonMapper implements Processor {
+public class JsonMapper implements ProcessorSync {
 
     private static final String EXECUTION_SCRIPT_TEMPLATE =
             "input = JSON.parse(input); " +

@@ -1,7 +1,7 @@
 package com.esb.component;
 
 import com.esb.api.exception.ESBException;
-import com.esb.flow.ExecutionNode;
+import com.esb.graph.ExecutionNode;
 import com.esb.system.component.Router;
 
 import java.util.ArrayList;

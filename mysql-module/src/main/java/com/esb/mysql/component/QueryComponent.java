@@ -4,7 +4,7 @@ import com.esb.api.annotation.Default;
 import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @ESBComponent("Database Query")
 @Component(service = QueryComponent.class, scope = ServiceScope.PROTOTYPE)
-public class QueryComponent implements Processor {
+public class QueryComponent implements ProcessorSync {
 
     @Property("Username")
     @Required

@@ -2,9 +2,10 @@ package com.esb.flow;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Inbound;
-import com.esb.api.component.ResultCallback;
+import com.esb.api.component.OnResult;
 import com.esb.api.message.Message;
 import com.esb.graph.ExecutionGraph;
+import com.esb.graph.ExecutionNode;
 import com.esb.system.component.Stop;
 import com.esb.test.utils.TestComponent;
 import org.junit.jupiter.api.Assertions;
@@ -243,7 +244,7 @@ class FlowTest {
 
 
         // When
-        flow.onEvent(inMessage, new ResultCallback() {
+        flow.onEvent(inMessage, new OnResult() {
             @Override
             public void onResult(Message actualMessage) {
                 // Then

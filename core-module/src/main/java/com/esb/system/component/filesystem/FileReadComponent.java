@@ -3,7 +3,7 @@ package com.esb.system.component.filesystem;
 import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.*;
 import org.osgi.service.component.annotations.Component;
 
@@ -17,7 +17,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("File Read")
 @Component(service = FileReadComponent.class, scope = PROTOTYPE)
-public class FileReadComponent implements Processor {
+public class FileReadComponent implements ProcessorSync {
 
     @Property("File path")
     @Required

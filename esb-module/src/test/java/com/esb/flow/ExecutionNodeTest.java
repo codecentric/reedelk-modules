@@ -2,7 +2,8 @@ package com.esb.flow;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Implementor;
-import com.esb.flow.ExecutionNode.ReferencePair;
+import com.esb.graph.ExecutionNode;
+import com.esb.graph.ExecutionNode.ReferencePair;
 import com.esb.test.utils.TestComponent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

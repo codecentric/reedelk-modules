@@ -1,6 +1,6 @@
 package com.esb.rest.server.route;
 
-import com.esb.api.component.ResultCallback;
+import com.esb.api.component.OnResult;
 import com.esb.api.message.*;
 import com.esb.rest.commons.InboundProperty;
 import com.esb.rest.commons.OutboundProperty;
@@ -30,7 +30,7 @@ public class RouteNotFound extends Route implements RouteHandler {
     }
 
     @Override
-    public void handle(Message request, ResultCallback callback) throws Exception {
+    public void handle(Message request, OnResult callback) throws Exception {
         Message response = new Message();
 
         // The payload is a message containing the Method and Path

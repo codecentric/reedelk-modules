@@ -4,7 +4,7 @@ import com.esb.api.annotation.Default;
 import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
-import com.esb.api.component.Processor;
+import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.Message;
 import com.esb.rest.commons.OutboundProperty;
 import org.osgi.service.component.annotations.Component;
@@ -13,7 +13,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Set Status")
 @Component(service = SetStatus.class, scope = PROTOTYPE)
-public class SetStatus implements Processor {
+public class SetStatus implements ProcessorSync {
 
     @Property("Response Status")
     @Default("200")

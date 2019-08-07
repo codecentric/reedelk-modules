@@ -1,6 +1,6 @@
 package com.esb.rest.server;
 
-import com.esb.api.component.ResultCallback;
+import com.esb.api.component.OnResult;
 import com.esb.api.message.Message;
 import com.esb.rest.commons.HttpProtocol;
 import com.esb.rest.server.request.method.MethodStrategyBuilder;
@@ -45,7 +45,7 @@ public class ServerChannelHandler extends AbstractServerChannelHandler {
                     .execute(request, matchingRoute);
 
             // invoke the RouteHandler for this Message.
-            routeHandler.handle(inMessage, new ResultCallback() {
+            routeHandler.handle(inMessage, new OnResult() {
                 @Override
                 public void onResult(Message message) {
                     // Map back the 'out' Message to HTTP Response
