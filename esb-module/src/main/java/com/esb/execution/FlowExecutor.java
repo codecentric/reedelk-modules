@@ -6,6 +6,8 @@ import com.esb.graph.ExecutionGraph;
 import com.esb.graph.ExecutionNode;
 import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -13,6 +15,8 @@ import java.util.function.Function;
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
 public class FlowExecutor {
+
+    private static final Scheduler ELASTIC = Schedulers.elastic();
 
     private SinkListener listener;
 
@@ -22,7 +26,9 @@ public class FlowExecutor {
 
     private void buildFlux(ExecutionGraph graph) {
         ConnectableFlux<MessageContext> publisher =
-                Flux.<MessageContext>create(sink -> listener = sink::next).publish();
+                Flux.<MessageContext>create(sink -> listener = sink::next)
+                        .publishOn(ELASTIC)
+                        .publish();
 
         ExecutionNode root = graph.getRoot();
         Collection<ExecutionNode> nextExecutorNodes = graph.successors(root);
@@ -51,5 +57,4 @@ public class FlowExecutor {
         messageContext.onDone();
         return messageContext;
     };
-
 }

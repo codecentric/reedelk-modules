@@ -44,7 +44,7 @@ public class RestListener extends AbstractInbound {
     public void onStart() {
         isNotNull(configuration, "Configuration was null");
         Server server = provider.get(configuration);
-        server.addRoute(method, path, RestListener.this::onEvent);
+        server.addRoute(method, path, (request, callback) -> RestListener.this.onEvent(request, callback));
     }
 
     @Override
