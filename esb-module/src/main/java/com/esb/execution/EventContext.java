@@ -27,14 +27,6 @@ class EventContext {
         this.message = message;
     }
 
-    void onDone() {
-        callback.onResult(message);
-    }
-
-    void onError(Throwable throwable) {
-        callback.onError(throwable);
-    }
-
     EventContext copy() {
         Message messageClone = SerializationUtils.clone(message);
         return new EventContext(messageClone, callback);

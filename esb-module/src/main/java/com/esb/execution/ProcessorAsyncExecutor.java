@@ -7,32 +7,28 @@ import com.esb.graph.ExecutionGraph;
 import com.esb.graph.ExecutionNode;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 public class ProcessorAsyncExecutor implements FlowExecutor {
 
-
     @Override
     public Publisher<EventContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<EventContext> publisher) {
-        /**
+
         ProcessorAsync processorAsync = (ProcessorAsync) executionNode.getComponent();
 
-         Flux<EventContext> newParent = publisher.flatMap(context -> processorAsyncMono(processorAsync, context));
+        Mono<EventContext> parent = Mono.from(publisher)
+                .flatMap(event -> mapProcessorAsync(processorAsync, event)
+                        .publishOn(Schedulers.elastic()));
 
-        Collection<ExecutionNode> successors = graph.successors(executionNode);
+        ExecutionNode next = ExecutionUtils.nextNodeOrThrow(executionNode, graph);
 
-        ExecutionNode next = checkAtLeastOneAndGetOrThrow(successors.stream(),
-                "ProcessorSync must be followed by exactly one node");
-
-         return FlowExecutorFactory.get()
-         .execute(next, graph, newParent);
-         */
-        return Mono.empty();
+        return FlowExecutorFactory.get().build(next, graph, parent);
     }
 
-    private static Mono<EventContext> processorAsyncMono(ProcessorAsync processorAsync, EventContext messageWrapper) {
+    private static Mono<EventContext> mapProcessorAsync(ProcessorAsync processor, EventContext messageWrapper) {
         return Mono.create(sink -> {
             try {
-                processorAsync.apply(messageWrapper.getMessage(), new OnResult() {
+                processor.apply(messageWrapper.getMessage(), new OnResult() {
                     @Override
                     public void onResult(Message message) {
                         messageWrapper.replaceWith(message);
@@ -41,15 +37,11 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
 
                     @Override
                     public void onError(Throwable e) {
-                        messageWrapper.onError(e);
-                        // Complete without any value (meaning the flow stops)
-                        sink.success();
+                        sink.error(e);
                     }
                 });
             } catch (Exception e) {
-                messageWrapper.onError(e);
-                // Complete without any value
-                sink.success();
+                sink.error(e);
             }
         });
     }

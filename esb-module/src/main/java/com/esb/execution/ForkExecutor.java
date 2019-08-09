@@ -12,12 +12,12 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.esb.execution.ExecutionUtils.nextNodeOrThrow;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static reactor.core.publisher.Mono.*;
 
@@ -93,16 +93,18 @@ public class ForkExecutor implements FlowExecutor {
         @Override
         public void accept(MonoSink<EventContext> sink) {
             try {
-                List<Message> collect = Arrays
-                        .stream(messages)
+                List<Message> collect = stream(messages)
                         .map(EventContext::getMessage)
                         .collect(toList());
+
                 Message outMessage = join.apply(collect);
+
                 context.replaceWith(outMessage);
+
                 sink.success(context);
+
             } catch (Exception e) {
-                context.onError(e);
-                sink.success();
+                sink.error(e);
             }
         }
     }
