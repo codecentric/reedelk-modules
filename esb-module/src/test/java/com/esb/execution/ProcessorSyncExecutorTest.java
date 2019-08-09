@@ -20,84 +20,84 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 class ProcessorSyncExecutorTest {
 
-    private ProcessorSyncExecutor builder = new ProcessorSyncExecutor();
+    private ProcessorSyncExecutor executor = new ProcessorSyncExecutor();
 
-    private ExecutionNode stopExecutionNode;
+    private ExecutionGraph graph = ExecutionGraph.build();
+
     private ExecutionNode inboundExecutionNode;
-    private ExecutionGraph executionGraph = ExecutionGraph.build();
+    private ExecutionNode stopExecutionNode;
 
     @BeforeEach
     void setUp() {
         stopExecutionNode = new ExecutionNode(new ExecutionNode.ReferencePair<>(new Stop()));
         inboundExecutionNode = new ExecutionNode(new ExecutionNode.ReferencePair<>(new TestInboundComponent()));
-        executionGraph.putEdge(null, inboundExecutionNode);
+        graph.putEdge(null, inboundExecutionNode);
     }
 
     @Test
     void shouldCorrectlyApplyProcessorToMessage() {
         // Given
         ExecutionNode processor = newExecutionNode(new TestSyncProcessor());
-        executionGraph.putEdge(inboundExecutionNode, processor);
-        executionGraph.putEdge(processor, stopExecutionNode);
+        graph.putEdge(inboundExecutionNode, processor);
+        graph.putEdge(processor, stopExecutionNode);
 
-        Message originalMessage = MessageBuilder.get()
-                .mimeType(MimeType.TEXT)
-                .content("inputContent")
-                .build();
+        Message originalMessage = MessageBuilder.get().text("inputContent").build();
 
         EventContext event = new NoActionResultEventContext(originalMessage);
 
         Mono<EventContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> flux = builder.execute(processor, executionGraph, publisher);
+        Publisher<EventContext> endPublisher = executor.execute(processor, graph, publisher);
 
         // Then
         String expectedOutput = "inputContent-postfix";
-        StepVerifier.create(flux).assertNext(messageContext -> {
-            String out = (String) messageContext.getMessage().getTypedContent().getContent();
-            assertThat(out).isEqualTo(expectedOutput);
-        }).verifyComplete();
+        StepVerifier.create(endPublisher)
+                .assertNext(messageContext -> {
+
+                    String out = (String) messageContext.getMessage().getTypedContent().getContent();
+
+                    assertThat(out).isEqualTo(expectedOutput);
+
+                }).verifyComplete();
     }
 
     @Test
-    void shouldCorrectlyCallGlobalErrorHandlerWhenProcessorThrowsException() {
+    void shouldCorrectlyThrowErrorWhenProcessorThrowsException() {
         // Given
         ExecutionNode processor = newExecutionNode(new TestSyncProcessorThrowingException());
-        executionGraph.putEdge(inboundExecutionNode, processor);
-        executionGraph.putEdge(processor, stopExecutionNode);
+        graph.putEdge(inboundExecutionNode, processor);
+        graph.putEdge(processor, stopExecutionNode);
 
-        Message originalMessage = MessageBuilder.get()
-                .mimeType(MimeType.TEXT)
-                .content("input")
-                .build();
+        Message originalMessage = MessageBuilder.get().text("input").build();
 
         OnResultVerifier onResultVerifier = new OnResultVerifier();
         EventContext inputEventContext = new EventContext(originalMessage, onResultVerifier);
 
-        Flux<EventContext> parentFlux = Flux.just(inputEventContext);
+        Publisher<EventContext> publisher = Flux.just(inputEventContext);
 
         // When
-        Publisher<EventContext> flux = builder.execute(processor, executionGraph, parentFlux);
+        Publisher<EventContext> endPublisher = executor.execute(processor, graph, publisher);
 
         // Then
-        StepVerifier.create(flux).verifyComplete();
-
-        assertThat(onResultVerifier.throwable).isInstanceOf(IllegalStateException.class);
-        assertThat(onResultVerifier.throwable).hasMessage("Input not valid");
+        StepVerifier.create(endPublisher).verifyError();
     }
 
+    // If the processor is the last node, then it must be present a Stop node.
+    // If a Stop node is not there, it means there has been an error while
+    // building the graph.
     @Test
-    void shouldThrowExceptionIfProcessorNotFollowedByOneNode() {
+    void shouldThrowExceptionIfProcessorNotFollowedByAnyOtherNode() {
         // Given
         ExecutionNode processor = newExecutionNode(new TestSyncProcessor());
-        executionGraph.putEdge(inboundExecutionNode, processor);
+        graph.putEdge(inboundExecutionNode, processor);
 
         // When
         Assertions.assertThrows(IllegalStateException.class, () ->
-                        builder.execute(processor, executionGraph, Flux.just()),
+                        executor.execute(processor, graph, Flux.just()),
                 "Expected processor sync to be followed by one node");
     }
 
