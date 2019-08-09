@@ -5,12 +5,13 @@ import com.esb.api.component.Join;
 import com.esb.api.message.Message;
 import com.esb.commons.Preconditions;
 import com.esb.component.ForkWrapper;
+import com.esb.concurrency.SchedulerProvider;
 import com.esb.graph.ExecutionGraph;
 import com.esb.graph.ExecutionNode;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
-import reactor.core.scheduler.Schedulers;
+import reactor.core.scheduler.Scheduler;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -26,8 +27,9 @@ public class ForkExecutor implements FlowExecutor {
     @Override
     public Publisher<EventContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<EventContext> publisher) {
 
-        // TODO: Fork pool property needs to be hooked up in the framework
         ForkWrapper fork = (ForkWrapper) executionNode.getComponent();
+
+        Scheduler forkScheduler = fork.getScheduler();
 
         List<ExecutionNode> nextExecutionNodes = fork.getForkNodes();
 
@@ -45,14 +47,14 @@ public class ForkExecutor implements FlowExecutor {
 
             // Create fork branches (Fork step)
             List<Mono<EventContext>> forkBranches = nextExecutionNodes.stream()
-                    .map(nextExecutionNode -> createForkBranch(nextExecutionNode, messageContext, graph))
+                    .map(nextExecutionNode ->
+                            createForkBranch(nextExecutionNode, messageContext, graph, forkScheduler))
                     .collect(toList());
 
             // Join fork branches (Join step)
             return zip(forkBranches, messagesCombinator())
-                    .flatMap(reactiveMessageContexts ->
-                            create(new JoinConsumer(messageContext, reactiveMessageContexts, join))
-                                    .publishOn(Schedulers.elastic()));
+                    .flatMap(eventsToJoin -> create(new JoinConsumer(messageContext, eventsToJoin, join)))
+                    .publishOn(SchedulerProvider.flow()); // back using the flow Threads
         });
 
 
@@ -62,9 +64,11 @@ public class ForkExecutor implements FlowExecutor {
         return FlowExecutorFactory.get().build(nodeAfterJoin, graph, mono);
     }
 
-    private Mono<EventContext> createForkBranch(ExecutionNode executionNode, EventContext context, ExecutionGraph graph) {
+    private Mono<EventContext> createForkBranch(ExecutionNode executionNode, EventContext context, ExecutionGraph graph, Scheduler forkScheduler) {
         EventContext messageCopy = context.copy();
-        Mono<EventContext> parent = Mono.just(messageCopy).publishOn(Schedulers.parallel());
+        Mono<EventContext> parent =
+                Mono.just(messageCopy)
+                        .publishOn(forkScheduler);
         return Mono.from(FlowExecutorFactory.get().build(executionNode, graph, parent));
     }
 

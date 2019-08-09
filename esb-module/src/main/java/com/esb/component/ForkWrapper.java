@@ -1,7 +1,9 @@
 package com.esb.component;
 
+import com.esb.concurrency.SchedulerProvider;
 import com.esb.graph.ExecutionNode;
 import com.esb.system.component.Fork;
+import reactor.core.scheduler.Scheduler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +12,8 @@ import java.util.List;
 public class ForkWrapper extends Fork {
 
     private List<ExecutionNode> forkNodes = new ArrayList<>();
+
+    private volatile Scheduler scheduler;
 
     private ExecutionNode stopNode;
 
@@ -27,5 +31,16 @@ public class ForkWrapper extends Fork {
 
     public List<ExecutionNode> getForkNodes() {
         return Collections.unmodifiableList(forkNodes);
+    }
+
+    public Scheduler getScheduler() {
+        if (scheduler == null) {
+            synchronized (this) {
+                if (scheduler == null) {
+                    scheduler = SchedulerProvider.fork(getThreadPoolSize());
+                }
+            }
+        }
+        return scheduler;
     }
 }

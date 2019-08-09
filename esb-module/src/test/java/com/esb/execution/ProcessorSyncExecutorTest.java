@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,12 +47,12 @@ class ProcessorSyncExecutorTest {
                 .content("inputContent")
                 .build();
 
-        EventContext inputEventContext = new NoActionResultEventContext(originalMessage);
+        EventContext event = new NoActionResultEventContext(originalMessage);
 
-        Flux<EventContext> parentFlux = Flux.just(inputEventContext);
+        Mono<EventContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> flux = builder.execute(processor, executionGraph, parentFlux);
+        Publisher<EventContext> flux = builder.execute(processor, executionGraph, publisher);
 
         // Then
         String expectedOutput = "inputContent-postfix";
