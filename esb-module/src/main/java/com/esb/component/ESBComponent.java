@@ -32,7 +32,7 @@ public class ESBComponent {
     }
 
     public static boolean is(Component componentObject) {
-        // TODO: Fix this
+        // TODO: Fix this is assignable is correct!???
         return COMPONENTS.keySet().stream().anyMatch(componentClassName -> {
             try {
                 Class<?> aClass = Class.forName(componentClassName);
