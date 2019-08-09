@@ -3,7 +3,6 @@ package com.esb.execution;
 import com.esb.api.component.Component;
 import com.esb.api.component.Join;
 import com.esb.api.message.Message;
-import com.esb.commons.Preconditions;
 import com.esb.component.ForkWrapper;
 import com.esb.concurrency.SchedulerProvider;
 import com.esb.graph.ExecutionGraph;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static com.esb.commons.Preconditions.checkState;
 import static com.esb.execution.ExecutionUtils.nextNodeOrThrow;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -38,7 +38,7 @@ public class ForkExecutor implements FlowExecutor {
         ExecutionNode joinNode = nextNodeOrThrow(stopNode, graph);
 
         Component joinComponent = joinNode.getComponent();
-        Preconditions.checkState(joinComponent instanceof Join,
+        checkState(joinComponent instanceof Join,
                 String.format("Fork must be followed by a component implementing %s interface", Join.class.getName()));
 
         Join join = (Join) joinComponent;

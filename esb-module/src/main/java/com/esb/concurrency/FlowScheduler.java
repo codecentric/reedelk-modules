@@ -7,12 +7,12 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class FlowScheduler {
+class FlowScheduler {
 
+    // TODO: This one should be a system property
     private static final int MAX_POOL_SIZE = 50;
 
-    public static final Scheduler INSTANCE;
-
+    static final Scheduler INSTANCE;
     static {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
                 0, MAX_POOL_SIZE,
