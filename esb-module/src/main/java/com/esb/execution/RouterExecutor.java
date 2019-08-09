@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 import javax.script.ScriptException;
 import java.util.List;
 
-import static com.esb.execution.ExecutionUtils.nextNodeOrThrow;
+import static com.esb.execution.ExecutionUtils.nextNode;
 import static java.util.stream.Collectors.toList;
 
 public class RouterExecutor implements FlowExecutor {
@@ -52,7 +52,7 @@ public class RouterExecutor implements FlowExecutor {
 
         ExecutionNode stopNode = router.getEndOfRouterStopNode();
 
-        ExecutionNode nodeAfterStop = nextNodeOrThrow(stopNode, graph);
+        ExecutionNode nodeAfterStop = nextNode(stopNode, graph);
 
         return FlowExecutorFactory.get().build(nodeAfterStop, graph, flux);
     }

@@ -7,7 +7,7 @@ import com.esb.graph.ExecutionNode;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
-import static com.esb.execution.ExecutionUtils.nextNodeOrThrow;
+import static com.esb.execution.ExecutionUtils.nextNode;
 import static com.esb.execution.ExecutionUtils.nullSafeMap;
 import static reactor.core.publisher.Mono.from;
 
@@ -33,7 +33,7 @@ public class ProcessorSyncExecutor implements FlowExecutor {
 
         }));
 
-        ExecutionNode next = nextNodeOrThrow(executionNode, graph);
+        ExecutionNode next = nextNode(executionNode, graph);
 
         // Move on building the flux for the following
         // processors in the execution graph definition.

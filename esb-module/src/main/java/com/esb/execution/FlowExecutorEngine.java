@@ -8,6 +8,8 @@ import com.esb.graph.ExecutionNode;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
+import static com.esb.execution.ExecutionUtils.nextNode;
+
 public class FlowExecutorEngine {
 
     private final ExecutionGraph graph;
@@ -29,7 +31,7 @@ public class FlowExecutorEngine {
 
         ExecutionNode root = graph.getRoot();
 
-        ExecutionNode nodeAfterRoot = ExecutionUtils.nextNodeOrThrow(root, graph);
+        ExecutionNode nodeAfterRoot = nextNode(root, graph);
 
         Publisher<EventContext> resultingPublisher =
                 FlowExecutorFactory

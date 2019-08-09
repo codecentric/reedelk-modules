@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.esb.commons.Preconditions.checkState;
-import static com.esb.execution.ExecutionUtils.nextNodeOrThrow;
+import static com.esb.execution.ExecutionUtils.nextNode;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static reactor.core.publisher.Mono.*;
@@ -35,7 +35,7 @@ public class ForkExecutor implements FlowExecutor {
 
         ExecutionNode stopNode = fork.getStopNode();
 
-        ExecutionNode joinNode = nextNodeOrThrow(stopNode, graph);
+        ExecutionNode joinNode = nextNode(stopNode, graph);
 
         Component joinComponent = joinNode.getComponent();
         checkState(joinComponent instanceof Join,
@@ -59,7 +59,7 @@ public class ForkExecutor implements FlowExecutor {
 
 
         // Continue to execute the flow after join
-        ExecutionNode nodeAfterJoin = nextNodeOrThrow(joinNode, graph);
+        ExecutionNode nodeAfterJoin = nextNode(joinNode, graph);
 
         return FlowExecutorFactory.get().build(nodeAfterJoin, graph, mono);
     }

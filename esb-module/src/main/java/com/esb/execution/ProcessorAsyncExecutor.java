@@ -9,6 +9,8 @@ import com.esb.graph.ExecutionNode;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
+import static com.esb.execution.ExecutionUtils.nextNode;
+
 public class ProcessorAsyncExecutor implements FlowExecutor {
 
     @Override
@@ -20,7 +22,7 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
                 .flatMap(event -> mapProcessorAsync(processorAsync, event)
                         .publishOn(SchedulerProvider.flow()));
 
-        ExecutionNode next = ExecutionUtils.nextNodeOrThrow(executionNode, graph);
+        ExecutionNode next = nextNode(executionNode, graph);
 
         return FlowExecutorFactory.get().build(next, graph, parent);
     }
@@ -29,15 +31,20 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
         return Mono.create(sink -> {
             try {
                 processor.apply(messageWrapper.getMessage(), new OnResult() {
+
                     @Override
                     public void onResult(Message message) {
+
                         messageWrapper.replaceWith(message);
+
                         sink.success(messageWrapper);
                     }
 
                     @Override
                     public void onError(Throwable e) {
+
                         sink.error(e);
+
                     }
                 });
             } catch (Exception e) {
