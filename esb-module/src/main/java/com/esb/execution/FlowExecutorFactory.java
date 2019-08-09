@@ -21,11 +21,11 @@ public class FlowExecutorFactory {
     private static final Map<Class, FlowExecutor> COMPONENT_FLUX_BUILDER;
     static {
         Map<Class, FlowExecutor> tmp = new HashMap<>();
-        tmp.put(Stop.class, new StopFlowExecutor());
-        tmp.put(ForkWrapper.class, new ForkFlowExecutor());
-        tmp.put(RouterWrapper.class, new RouterFlowExecutor());
-        tmp.put(ProcessorSync.class, new ProcessorSyncFlowExecutor());
-        tmp.put(ProcessorAsync.class, new ProcessorAsyncFlowExecutor());
+        tmp.put(Stop.class, new StopExecutor());
+        tmp.put(ForkWrapper.class, new ForkExecutor());
+        tmp.put(RouterWrapper.class, new RouterExecutor());
+        tmp.put(ProcessorSync.class, new ProcessorSyncExecutor());
+        tmp.put(ProcessorAsync.class, new ProcessorAsyncExecutor());
         COMPONENT_FLUX_BUILDER = Collections.unmodifiableMap(tmp);
     }
 
@@ -36,7 +36,7 @@ public class FlowExecutorFactory {
         return INSTANCE;
     }
 
-    public Publisher<MessageContext> build(ExecutionNode next, ExecutionGraph graph, Publisher<MessageContext> parent) {
+    public Publisher<EventContext> build(ExecutionNode next, ExecutionGraph graph, Publisher<EventContext> parent) {
         return getComponentBuilderOrThrow(next.getComponent())
                 .execute(next, graph, parent);
     }

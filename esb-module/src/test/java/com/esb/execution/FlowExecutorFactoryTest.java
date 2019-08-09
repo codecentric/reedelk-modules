@@ -21,7 +21,7 @@ class FlowExecutorFactoryTest {
         Component component = new TestProcessorSync();
 
         // Expect
-        assertBuilderForTargetClassIs(component, ProcessorSyncFlowExecutor.class);
+        assertBuilderForTargetClassIs(component, ProcessorSyncExecutor.class);
     }
 
     @Test
@@ -30,7 +30,7 @@ class FlowExecutorFactoryTest {
         Component component = new TestProcessorAsync();
 
         // Expect
-        assertBuilderForTargetClassIs(component, ProcessorAsyncFlowExecutor.class);
+        assertBuilderForTargetClassIs(component, ProcessorAsyncExecutor.class);
     }
 
     @Test
@@ -39,7 +39,7 @@ class FlowExecutorFactoryTest {
         Component component = new Stop();
 
         // Expect
-        assertBuilderForTargetClassIs(component, StopFlowExecutor.class);
+        assertBuilderForTargetClassIs(component, StopExecutor.class);
     }
 
     @Test
@@ -48,7 +48,7 @@ class FlowExecutorFactoryTest {
         Component component = new ForkWrapper();
 
         // Expect
-        assertBuilderForTargetClassIs(component, ForkFlowExecutor.class);
+        assertBuilderForTargetClassIs(component, ForkExecutor.class);
     }
 
     @Test
@@ -57,7 +57,7 @@ class FlowExecutorFactoryTest {
         Component component = new RouterWrapper();
 
         // Expect
-        assertBuilderForTargetClassIs(component, RouterFlowExecutor.class);
+        assertBuilderForTargetClassIs(component, RouterExecutor.class);
     }
 
     @Test

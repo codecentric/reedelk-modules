@@ -18,26 +18,26 @@ import java.util.List;
 import static com.esb.execution.ExecutionUtils.nextNodeOrThrow;
 import static java.util.stream.Collectors.toList;
 
-public class RouterFlowExecutor implements FlowExecutor {
+public class RouterExecutor implements FlowExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(RouterFlowExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(RouterExecutor.class);
 
     private static final ScriptEngineService ENGINE = ESBJavascriptEngine.INSTANCE;
 
     private final Mono<Boolean> FALSE = Mono.just(false);
 
     @Override
-    public Publisher<MessageContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<MessageContext> publisher) {
+    public Publisher<EventContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<EventContext> publisher) {
 
         RouterWrapper router = (RouterWrapper) executionNode.getComponent();
 
         List<RouterWrapper.PathExpressionPair> pathExpressionPairs = router.getPathExpressionPairs();
 
         // Need to keep going and continue to execute the flow after the choice joins...
-        Flux<MessageContext> flux = Flux.from(publisher).flatMap(messageContext -> {
+        Flux<EventContext> flux = Flux.from(publisher).flatMap(messageContext -> {
 
             // Create choice branches
-            List<Mono<MessageContext>> choiceBranches = pathExpressionPairs.stream()
+            List<Mono<EventContext>> choiceBranches = pathExpressionPairs.stream()
                     .map(pathExpressionPair -> createConditionalBranch(pathExpressionPair, messageContext, graph))
                     .collect(toList());
 
@@ -57,20 +57,20 @@ public class RouterFlowExecutor implements FlowExecutor {
         return FlowExecutorFactory.get().build(nodeAfterStop, graph, flux);
     }
 
-    private Mono<MessageContext> createDefaultMono(RouterWrapper.PathExpressionPair pair, MessageContext message, ExecutionGraph graph) {
+    private Mono<EventContext> createDefaultMono(RouterWrapper.PathExpressionPair pair, EventContext message, ExecutionGraph graph) {
         ExecutionNode defaultExecutionNode = pair.pathReference;
-        Flux<MessageContext> parent = Flux.just(message);
+        Flux<EventContext> parent = Flux.just(message);
         return Mono.from(FlowExecutorFactory.get()
                 .build(defaultExecutionNode, graph, parent));
     }
 
-    private Mono<MessageContext> createConditionalBranch(RouterWrapper.PathExpressionPair pair, MessageContext message, ExecutionGraph graph) {
+    private Mono<EventContext> createConditionalBranch(RouterWrapper.PathExpressionPair pair, EventContext message, ExecutionGraph graph) {
         String expression = pair.expression;
         ExecutionNode pathExecutionNode = pair.pathReference;
         // This Mono evaluates the expression. If the expression is true,
         // then the branch subflow gets executed, otherwise the message is dropped
         // and the flow is not executed.
-        Mono<MessageContext> parent = Mono.just(message)
+        Mono<EventContext> parent = Mono.just(message)
                 .filterWhen(value -> evaluate(expression, message.getMessage()));
 
         return Mono.from(FlowExecutorFactory.get().build(pathExecutionNode, graph, parent));

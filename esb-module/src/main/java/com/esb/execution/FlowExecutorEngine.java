@@ -21,10 +21,10 @@ public class FlowExecutorEngine {
      */
     public void onEvent(Message message, OnResult onResult) {
 
-        MessageContext messageWithContext = new MessageContext(message, onResult);
+        EventContext messageWithContext = new EventContext(message, onResult);
 
         // Create starting publisher with Elastic scheduler
-        Publisher<MessageContext> publisher =
+        Publisher<EventContext> publisher =
                 Mono.just(messageWithContext)
                         .publishOn(Schedulers.elastic());
 
@@ -32,7 +32,7 @@ public class FlowExecutorEngine {
 
         ExecutionNode nodeAfterRoot = ExecutionUtils.nextNodeOrThrow(root, graph);
 
-        Publisher<MessageContext> resultingPublisher =
+        Publisher<EventContext> resultingPublisher =
                 FlowExecutorFactory
                         .get()
                         .build(nodeAfterRoot, graph, publisher);

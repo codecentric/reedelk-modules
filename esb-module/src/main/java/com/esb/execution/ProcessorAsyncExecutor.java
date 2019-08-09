@@ -8,15 +8,15 @@ import com.esb.graph.ExecutionNode;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
-public class ProcessorAsyncFlowExecutor implements FlowExecutor {
+public class ProcessorAsyncExecutor implements FlowExecutor {
 
 
     @Override
-    public Publisher<MessageContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<MessageContext> publisher) {
+    public Publisher<EventContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<EventContext> publisher) {
         /**
         ProcessorAsync processorAsync = (ProcessorAsync) executionNode.getComponent();
 
-         Flux<MessageContext> newParent = publisher.flatMap(context -> processorAsyncMono(processorAsync, context));
+         Flux<EventContext> newParent = publisher.flatMap(context -> processorAsyncMono(processorAsync, context));
 
         Collection<ExecutionNode> successors = graph.successors(executionNode);
 
@@ -29,7 +29,7 @@ public class ProcessorAsyncFlowExecutor implements FlowExecutor {
         return Mono.empty();
     }
 
-    private static Mono<MessageContext> processorAsyncMono(ProcessorAsync processorAsync, MessageContext messageWrapper) {
+    private static Mono<EventContext> processorAsyncMono(ProcessorAsync processorAsync, EventContext messageWrapper) {
         return Mono.create(sink -> {
             try {
                 processorAsync.apply(messageWrapper.getMessage(), new OnResult() {

@@ -11,14 +11,14 @@ import static com.esb.execution.ExecutionUtils.nextNodeOrThrow;
 import static com.esb.execution.ExecutionUtils.nullSafeMap;
 import static reactor.core.publisher.Mono.from;
 
-public class ProcessorSyncFlowExecutor implements FlowExecutor {
+public class ProcessorSyncExecutor implements FlowExecutor {
 
     @Override
-    public Publisher<MessageContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<MessageContext> publisher) {
+    public Publisher<EventContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<EventContext> publisher) {
 
         ProcessorSync processorSync = (ProcessorSync) executionNode.getComponent();
 
-        Mono<MessageContext> mono = from(publisher).handle(nullSafeMap(messageContext -> {
+        Mono<EventContext> mono = from(publisher).handle(nullSafeMap(messageContext -> {
             // The context contains the input Flow Message.
             Message inMessage = messageContext.getMessage();
 

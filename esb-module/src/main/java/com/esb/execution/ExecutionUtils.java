@@ -19,10 +19,10 @@ class ExecutionUtils {
                 "Expected only one following node");
     }
 
-    static BiConsumer<MessageContext, SynchronousSink<MessageContext>> nullSafeMap(Function<MessageContext, MessageContext> mapper) {
+    static BiConsumer<EventContext, SynchronousSink<EventContext>> nullSafeMap(Function<EventContext, EventContext> mapper) {
         return (event, sink) -> {
             if (event != null) {
-                MessageContext result = mapper.apply(event);
+                EventContext result = mapper.apply(event);
                 sink.next(result);
             }
         };

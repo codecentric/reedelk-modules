@@ -19,9 +19,9 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProcessorSyncFlowExecutorTest {
+class ProcessorSyncExecutorTest {
 
-    private ProcessorSyncFlowExecutor builder = new ProcessorSyncFlowExecutor();
+    private ProcessorSyncExecutor builder = new ProcessorSyncExecutor();
 
     private ExecutionNode stopExecutionNode;
     private ExecutionNode inboundExecutionNode;
@@ -46,12 +46,12 @@ class ProcessorSyncFlowExecutorTest {
                 .content("inputContent")
                 .build();
 
-        MessageContext inputMessageContext = new NoActionResultMessageContext(originalMessage);
+        EventContext inputEventContext = new NoActionResultEventContext(originalMessage);
 
-        Flux<MessageContext> parentFlux = Flux.just(inputMessageContext);
+        Flux<EventContext> parentFlux = Flux.just(inputEventContext);
 
         // When
-        Publisher<MessageContext> flux = builder.execute(processor, executionGraph, parentFlux);
+        Publisher<EventContext> flux = builder.execute(processor, executionGraph, parentFlux);
 
         // Then
         String expectedOutput = "inputContent-postfix";
@@ -74,12 +74,12 @@ class ProcessorSyncFlowExecutorTest {
                 .build();
 
         OnResultVerifier onResultVerifier = new OnResultVerifier();
-        MessageContext inputMessageContext = new MessageContext(originalMessage, onResultVerifier);
+        EventContext inputEventContext = new EventContext(originalMessage, onResultVerifier);
 
-        Flux<MessageContext> parentFlux = Flux.just(inputMessageContext);
+        Flux<EventContext> parentFlux = Flux.just(inputEventContext);
 
         // When
-        Publisher<MessageContext> flux = builder.execute(processor, executionGraph, parentFlux);
+        Publisher<EventContext> flux = builder.execute(processor, executionGraph, parentFlux);
 
         // Then
         StepVerifier.create(flux).verifyComplete();
@@ -107,8 +107,8 @@ class ProcessorSyncFlowExecutorTest {
     private class EmptyResult implements OnResult {
     }
 
-    private class NoActionResultMessageContext extends MessageContext {
-        NoActionResultMessageContext(Message message) {
+    private class NoActionResultEventContext extends EventContext {
+        NoActionResultEventContext(Message message) {
             super(message, new EmptyResult());
         }
     }

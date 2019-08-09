@@ -6,12 +6,12 @@ import com.esb.internal.commons.SerializationUtils;
 
 import static com.esb.commons.Preconditions.checkState;
 
-class MessageContext {
+class EventContext {
 
     private final OnResult callback;
     private Message message;
 
-    MessageContext(Message message, OnResult callback) {
+    EventContext(Message message, OnResult callback) {
         checkState(message != null, "message");
         checkState(callback != null, "callback");
         this.message = message;
@@ -35,8 +35,8 @@ class MessageContext {
         callback.onError(throwable);
     }
 
-    MessageContext copy() {
+    EventContext copy() {
         Message messageClone = SerializationUtils.clone(message);
-        return new MessageContext(messageClone, callback);
+        return new EventContext(messageClone, callback);
     }
 }
