@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ForkSchedulerProvider {
 
-    public static Scheduler get(String name, int threads) {
+    public static Scheduler get(int threads) {
         ThreadPoolExecutor threadPoolExecutor =
                 new ThreadPoolExecutor(0, threads, 60L, TimeUnit.SECONDS,
                         new SynchronousQueue<>(),

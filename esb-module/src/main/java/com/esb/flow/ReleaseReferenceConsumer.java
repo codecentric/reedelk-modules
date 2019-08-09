@@ -60,7 +60,7 @@ public class ReleaseReferenceConsumer implements Consumer<ExecutionNode> {
     private <T extends Implementor> void unregisterOSGiReferences(BundleContext context, ExecutionNode.ReferencePair<T> referencePair) {
         ServiceReference<T> serviceReference = referencePair.getServiceReference();
         ServiceObjects<T> serviceObjects = context.getServiceObjects(serviceReference);
-        serviceObjects.ungetService(referencePair.getImplementor());
+        serviceObjects.ungetService(referencePair.getImplementor()); // TODO: What if this one throws something? I think we should try-catch to minimize issues
 
         boolean released = context.ungetService(serviceReference);
         if (released) warnServiceNotReleased(serviceReference);

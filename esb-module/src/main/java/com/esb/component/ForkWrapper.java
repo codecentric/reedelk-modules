@@ -17,16 +17,16 @@ public class ForkWrapper extends Fork {
 
     private ExecutionNode stopNode;
 
-    public void addForkNode(ExecutionNode executionNode) {
-        this.forkNodes.add(executionNode);
-    }
-
     public ExecutionNode getStopNode() {
         return this.stopNode;
     }
 
     public void setStopNode(ExecutionNode stopNode) {
         this.stopNode = stopNode;
+    }
+
+    public void addForkNode(ExecutionNode executionNode) {
+        this.forkNodes.add(executionNode);
     }
 
     public List<ExecutionNode> getForkNodes() {
@@ -42,5 +42,14 @@ public class ForkWrapper extends Fork {
             }
         }
         return scheduler;
+    }
+
+    @Override
+    public void dispose() {
+        if (scheduler != null) {
+            if (!scheduler.isDisposed()) {
+                scheduler.dispose();
+            }
+        }
     }
 }

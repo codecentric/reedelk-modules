@@ -2,6 +2,7 @@ package com.esb.graph;
 
 import com.esb.api.component.Component;
 import com.esb.api.component.Implementor;
+import com.esb.commons.ComponentDisposer;
 import org.osgi.framework.ServiceReference;
 
 import java.util.ArrayList;
@@ -33,13 +34,8 @@ public class ExecutionNode {
     }
 
     public void clearReferences() {
-        componentReference.implementor = null;
-        componentReference.serviceReference = null;
-
-        dependencyReferences.forEach(implementorReferencePair -> {
-            implementorReferencePair.implementor = null;
-            implementorReferencePair.serviceReference = null;
-        });
+        dispose(componentReference);
+        dependencyReferences.forEach(ExecutionNode::dispose);
         dependencyReferences.clear();
     }
 
@@ -55,6 +51,14 @@ public class ExecutionNode {
 
     private String componentNameOf(ReferencePair<? extends Implementor> referencePair) {
         return referencePair.getImplementor().getClass().getName();
+    }
+
+    private static void dispose(ReferencePair<? extends Implementor> componentReference) {
+        if (componentReference instanceof Component) {
+            ComponentDisposer.dispose((Component) componentReference.implementor);
+        }
+        componentReference.implementor = null;
+        componentReference.serviceReference = null;
     }
 
 
