@@ -5,6 +5,7 @@ import com.esb.api.component.Implementor;
 import com.esb.graph.ExecutionNode;
 import com.esb.graph.ExecutionNode.ReferencePair;
 import com.esb.test.utils.TestComponent;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,8 +17,7 @@ import org.osgi.framework.ServiceReference;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -26,10 +26,16 @@ class ExecutionNodeTest {
     @Mock
     private ServiceReference<Component> serviceReference;
 
+    private TestComponent testComponent;
+
+    @BeforeEach
+    void setUp() {
+        testComponent = new TestComponent();
+    }
+
     @Test
     void shouldReturnCorrectComponentReference() {
         // Given
-        TestComponent testComponent = new TestComponent();
         ReferencePair<Component> expectedReference = new ReferencePair<>(testComponent, serviceReference);
         ExecutionNode EN = new ExecutionNode(expectedReference);
 
@@ -43,7 +49,6 @@ class ExecutionNodeTest {
     @Test
     void shouldAddDependencyReferenceCorrectly() {
         // Given
-        TestComponent testComponent = new TestComponent();
         ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(testComponent, serviceReference);
 
         ReferencePair<Implementor> referencePairDependency1 = mockReferencePair(new Dependency());
@@ -63,7 +68,6 @@ class ExecutionNodeTest {
     @Test
     void shouldReturnCorrectComponent() {
         // Given
-        TestComponent testComponent = new TestComponent();
         ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(testComponent, serviceReference);
 
         // When
@@ -76,7 +80,6 @@ class ExecutionNodeTest {
     @Test
     void shouldClearReferencesRemoveAllReferences() {
         // Given
-        TestComponent testComponent = new TestComponent();
         ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(testComponent, serviceReference);
 
         ReferencePair<Implementor> dependencyReferencePair1 = mockReferencePair(new Dependency());
@@ -96,9 +99,42 @@ class ExecutionNodeTest {
     }
 
     @Test
+    void shouldClearReferencesClearReferencesForDependencies() {
+        // Given
+        ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(testComponent, serviceReference);
+
+        ReferencePair<Implementor> dependencyReferencePair1 = mockReferencePair(new Dependency());
+        testComponentEN.add(dependencyReferencePair1);
+
+        ReferencePair<Implementor> dependencyReferencePair2 = mockReferencePair(new Dependency());
+        testComponentEN.add(dependencyReferencePair2);
+
+        // When
+        testComponentEN.clearReferences();
+
+        // Then
+        assertThat(dependencyReferencePair1.getImplementor()).isNull();
+        assertThat(dependencyReferencePair1.getServiceReference()).isNull();
+        assertThat(dependencyReferencePair2.getImplementor()).isNull();
+        assertThat(dependencyReferencePair2.getServiceReference()).isNull();
+    }
+
+    @Test
+    void shouldClearReferencesCallDisposeWhenImplementorIsAComponent() {
+        // Given
+        Component testComponentSpy = spy(testComponent);
+        ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(testComponentSpy, serviceReference);
+
+        // When
+        testComponentEN.clearReferences();
+
+        // Then
+        verify(testComponentSpy).dispose();
+    }
+
+    @Test
     void shouldIsUsingComponentReturnTrueWhenExecutionNodeComponentMatches() {
         // Given
-        TestComponent testComponent = new TestComponent();
         ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(testComponent, serviceReference);
 
         // When
@@ -111,7 +147,6 @@ class ExecutionNodeTest {
     @Test
     void shouldIsUsingComponentReturnTrueWhenDependencyMatches() {
         // Given
-        TestComponent testComponent = new TestComponent();
         ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(testComponent, serviceReference);
 
         testComponentEN.add(mockReferencePair(new Dependency()));
@@ -127,7 +162,6 @@ class ExecutionNodeTest {
     @Test
     void shouldIsUsingComponentReturnFalse() {
         // Given
-        TestComponent testComponent = new TestComponent();
         ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(testComponent, serviceReference);
 
         testComponentEN.add(mockReferencePair(new Dependency()));

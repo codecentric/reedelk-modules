@@ -54,8 +54,9 @@ public class ExecutionNode {
     }
 
     private static void dispose(ReferencePair<? extends Implementor> componentReference) {
-        if (componentReference instanceof Component) {
-            ComponentDisposer.dispose((Component) componentReference.implementor);
+        Implementor implementor = componentReference.implementor;
+        if (implementor instanceof Component) {
+            ComponentDisposer.dispose((Component) implementor);
         }
         componentReference.implementor = null;
         componentReference.serviceReference = null;
