@@ -5,51 +5,29 @@ import com.esb.api.component.ProcessorAsync;
 import com.esb.api.message.Message;
 import com.esb.graph.ExecutionGraph;
 import com.esb.graph.ExecutionNode;
-import reactor.core.publisher.Flux;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
-import java.util.Collection;
-
-import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
-
-public class ProcessorAsyncFluxBuilder implements FluxBuilder {
+public class ProcessorAsyncFlowExecutor implements FlowExecutor {
 
 
     @Override
-    public Flux<MessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Flux<MessageContext> parentFlux) {
+    public Publisher<MessageContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<MessageContext> publisher) {
+        /**
         ProcessorAsync processorAsync = (ProcessorAsync) executionNode.getComponent();
 
-        Flux<MessageContext> newParent = parentFlux.flatMap(context -> processorAsyncMono(processorAsync, context));
+         Flux<MessageContext> newParent = publisher.flatMap(context -> processorAsyncMono(processorAsync, context));
 
         Collection<ExecutionNode> successors = graph.successors(executionNode);
 
         ExecutionNode next = checkAtLeastOneAndGetOrThrow(successors.stream(),
                 "ProcessorSync must be followed by exactly one node");
 
-        return ExecutionFluxBuilder.get()
-                .build(next, graph, newParent);
+         return FlowExecutorFactory.get()
+         .execute(next, graph, newParent);
+         */
+        return Mono.empty();
     }
-
-    @Override
-    public Mono<MessageContext> build(ExecutionNode executionNode, ExecutionGraph graph, Mono<MessageContext> parentFlux) {
-        Scheduler scheduler = Schedulers.newElastic("Elastic-AsyncProcessor");
-
-        ProcessorAsync processorSync = (ProcessorAsync) executionNode.getComponent();
-
-        Mono<MessageContext> newParent = parentFlux.flatMap(context ->
-                processorAsyncMono(processorSync, context).subscribeOn(scheduler));
-
-        Collection<ExecutionNode> successors = graph.successors(executionNode);
-
-        ExecutionNode next = checkAtLeastOneAndGetOrThrow(successors.stream(),
-                "ProcessorSync must be followed by exactly one node");
-
-        return ExecutionFluxBuilder.get()
-                .build(next, graph, newParent);
-    }
-
 
     private static Mono<MessageContext> processorAsyncMono(ProcessorAsync processorAsync, MessageContext messageWrapper) {
         return Mono.create(sink -> {
@@ -57,7 +35,7 @@ public class ProcessorAsyncFluxBuilder implements FluxBuilder {
                 processorAsync.apply(messageWrapper.getMessage(), new OnResult() {
                     @Override
                     public void onResult(Message message) {
-                        messageWrapper.replace(message);
+                        messageWrapper.replaceWith(message);
                         sink.success(messageWrapper);
                     }
 

@@ -4,57 +4,42 @@ import com.esb.api.component.OnResult;
 import com.esb.api.message.Message;
 import com.esb.graph.ExecutionGraph;
 import com.esb.graph.ExecutionNode;
-import reactor.core.publisher.ConnectableFlux;
-import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Scheduler;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
-import java.util.Collection;
-import java.util.function.Function;
-
-import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
 public class FlowExecutorEngine {
 
-    private static final Scheduler ELASTIC = Schedulers.elastic();
-
-    private SinkListener listener;
+    private final ExecutionGraph graph;
 
     public FlowExecutorEngine(ExecutionGraph graph) {
-        buildFluxFromGraph(graph);
+        this.graph = graph;
     }
 
-    private void buildFluxFromGraph(ExecutionGraph graph) {
-        ConnectableFlux<MessageContext> publisher =
-                Flux.<MessageContext>create(sink -> listener = sink::next)
-                        .publishOn(ELASTIC)
-                        .publish();
+    /**
+     * Executes the flow.
+     */
+    public void onEvent(Message message, OnResult onResult) {
+
+        MessageContext messageWithContext = new MessageContext(message, onResult);
+
+        // Create starting publisher with Elastic scheduler
+        Publisher<MessageContext> publisher =
+                Mono.just(messageWithContext)
+                        .publishOn(Schedulers.elastic());
 
         ExecutionNode root = graph.getRoot();
-        Collection<ExecutionNode> nextExecutorNodes = graph.successors(root);
 
-        ExecutionNode nodeAfterRoot = checkAtLeastOneAndGetOrThrow(
-                nextExecutorNodes.stream(),
-                "Root must be followed by exactly one node");
+        ExecutionNode nodeAfterRoot = ExecutionUtils.nextNodeOrThrow(root, graph);
 
-        ExecutionFluxBuilder.get()
-                .build(nodeAfterRoot, graph, publisher)
-                .map(notifyFluxComplete)
-                .subscribe();
+        Publisher<MessageContext> resultingPublisher =
+                FlowExecutorFactory
+                        .get()
+                        .build(nodeAfterRoot, graph, publisher);
 
-        publisher.connect();
+        Mono.from(resultingPublisher)
+                .doOnError(onResult::onError)
+                .subscribe(messageContext -> onResult.onResult(messageContext.getMessage()));
     }
 
-    public void onEvent(Message message, OnResult onResult) {
-        listener.onInput(new MessageContext(message, onResult));
-    }
-
-    interface SinkListener {
-        void onInput(MessageContext context);
-    }
-
-    private final Function<MessageContext, MessageContext> notifyFluxComplete = messageContext -> {
-        messageContext.onDone();
-        return messageContext;
-    };
 }

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ExecutionFluxBuilderTest {
+class FlowExecutorFactoryTest {
 
     @Test
     void shouldGetComponentBuilderOrThrowReturnCorrectlyForProcessorSync() {
@@ -21,7 +21,7 @@ class ExecutionFluxBuilderTest {
         Component component = new TestProcessorSync();
 
         // Expect
-        assertBuilderForTargetClassIs(component, ProcessorSyncFluxBuilder.class);
+        assertBuilderForTargetClassIs(component, ProcessorSyncFlowExecutor.class);
     }
 
     @Test
@@ -30,7 +30,7 @@ class ExecutionFluxBuilderTest {
         Component component = new TestProcessorAsync();
 
         // Expect
-        assertBuilderForTargetClassIs(component, ProcessorAsyncFluxBuilder.class);
+        assertBuilderForTargetClassIs(component, ProcessorAsyncFlowExecutor.class);
     }
 
     @Test
@@ -39,7 +39,7 @@ class ExecutionFluxBuilderTest {
         Component component = new Stop();
 
         // Expect
-        assertBuilderForTargetClassIs(component, StopFluxBuilder.class);
+        assertBuilderForTargetClassIs(component, StopFlowExecutor.class);
     }
 
     @Test
@@ -48,7 +48,7 @@ class ExecutionFluxBuilderTest {
         Component component = new ForkWrapper();
 
         // Expect
-        assertBuilderForTargetClassIs(component, ForkFluxBuilder.class);
+        assertBuilderForTargetClassIs(component, ForkFlowExecutor.class);
     }
 
     @Test
@@ -57,7 +57,7 @@ class ExecutionFluxBuilderTest {
         Component component = new RouterWrapper();
 
         // Expect
-        assertBuilderForTargetClassIs(component, RouterFluxBuilder.class);
+        assertBuilderForTargetClassIs(component, RouterFlowExecutor.class);
     }
 
     @Test
@@ -66,12 +66,12 @@ class ExecutionFluxBuilderTest {
         Component component = new UndefinedComponentType();
 
         Assertions.assertThrows(IllegalStateException.class, () ->
-                ExecutionFluxBuilder.get().getComponentBuilderOrThrow(component));
+                FlowExecutorFactory.get().getComponentBuilderOrThrow(component));
     }
 
-    private void assertBuilderForTargetClassIs(Component component, Class<? extends FluxBuilder> builderClass) {
+    private void assertBuilderForTargetClassIs(Component component, Class<? extends FlowExecutor> builderClass) {
         // When
-        FluxBuilder builder = ExecutionFluxBuilder.get()
+        FlowExecutor builder = FlowExecutorFactory.get()
                 .getComponentBuilderOrThrow(component);
 
         // Expect
@@ -82,7 +82,7 @@ class ExecutionFluxBuilderTest {
     interface NotRelatedInterface {
     }
 
-    class UndefinedComponentType implements Component {
+    private class UndefinedComponentType implements Component {
 
     }
 

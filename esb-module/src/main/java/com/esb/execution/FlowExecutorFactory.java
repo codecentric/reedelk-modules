@@ -8,47 +8,40 @@ import com.esb.component.RouterWrapper;
 import com.esb.graph.ExecutionGraph;
 import com.esb.graph.ExecutionNode;
 import com.esb.system.component.Stop;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.reactivestreams.Publisher;
 
 import java.util.*;
 
 import static java.lang.String.format;
 
-public class ExecutionFluxBuilder {
+public class FlowExecutorFactory {
 
-    private static final ExecutionFluxBuilder INSTANCE = new ExecutionFluxBuilder();
+    private static final FlowExecutorFactory INSTANCE = new FlowExecutorFactory();
 
-    private static final Map<Class, FluxBuilder> COMPONENT_FLUX_BUILDER;
-
+    private static final Map<Class, FlowExecutor> COMPONENT_FLUX_BUILDER;
     static {
-        Map<Class, FluxBuilder> tmp = new HashMap<>();
-        tmp.put(Stop.class, new StopFluxBuilder());
-        tmp.put(ForkWrapper.class, new ForkFluxBuilder());
-        tmp.put(RouterWrapper.class, new RouterFluxBuilder());
-        tmp.put(ProcessorSync.class, new ProcessorSyncFluxBuilder());
-        tmp.put(ProcessorAsync.class, new ProcessorAsyncFluxBuilder());
+        Map<Class, FlowExecutor> tmp = new HashMap<>();
+        tmp.put(Stop.class, new StopFlowExecutor());
+        tmp.put(ForkWrapper.class, new ForkFlowExecutor());
+        tmp.put(RouterWrapper.class, new RouterFlowExecutor());
+        tmp.put(ProcessorSync.class, new ProcessorSyncFlowExecutor());
+        tmp.put(ProcessorAsync.class, new ProcessorAsyncFlowExecutor());
         COMPONENT_FLUX_BUILDER = Collections.unmodifiableMap(tmp);
     }
 
-    private ExecutionFluxBuilder() {
+    private FlowExecutorFactory() {
     }
 
-    public static ExecutionFluxBuilder get() {
+    public static FlowExecutorFactory get() {
         return INSTANCE;
     }
 
-    public Flux<MessageContext> build(ExecutionNode next, ExecutionGraph graph, Flux<MessageContext> parent) {
-        FluxBuilder builder = getComponentBuilderOrThrow(next.getComponent());
-        return builder.build(next, graph, parent);
+    public Publisher<MessageContext> build(ExecutionNode next, ExecutionGraph graph, Publisher<MessageContext> parent) {
+        return getComponentBuilderOrThrow(next.getComponent())
+                .execute(next, graph, parent);
     }
 
-    public Mono<MessageContext> build(ExecutionNode next, ExecutionGraph graph, Mono<MessageContext> parent) {
-        FluxBuilder builder = getComponentBuilderOrThrow(next.getComponent());
-        return builder.build(next, graph, parent);
-    }
-
-    FluxBuilder getComponentBuilderOrThrow(Component component) {
+    FlowExecutor getComponentBuilderOrThrow(Component component) {
         if (COMPONENT_FLUX_BUILDER.containsKey(component.getClass())) {
             return COMPONENT_FLUX_BUILDER.get(component.getClass());
         }
@@ -60,7 +53,7 @@ public class ExecutionFluxBuilder {
                         new IllegalStateException(format("Could not find flux builder for class [%s]", component.getClass())));
     }
 
-    private Optional<FluxBuilder> getComponentFluxBuilder(Class<?>[] componentInterfaces) {
+    private Optional<FlowExecutor> getComponentFluxBuilder(Class<?>[] componentInterfaces) {
         Set<Class> fluxBuilderInterfaceNames = COMPONENT_FLUX_BUILDER.keySet();
         for (Class interfaceClazz : componentInterfaces) {
             if (fluxBuilderInterfaceNames.contains(interfaceClazz)) {

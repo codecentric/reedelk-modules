@@ -22,8 +22,8 @@ public class Flow implements InboundEventListener {
     private static final Logger logger = LoggerFactory.getLogger(Flow.class);
 
     private final String flowId;
-    private final FlowExecutorEngine flowExecutorEngine;
     private final ExecutionGraph executionGraph;
+    private final FlowExecutorEngine flowExecutorEngine;
 
     private boolean started = false;
 

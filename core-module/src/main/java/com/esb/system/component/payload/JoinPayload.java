@@ -27,6 +27,7 @@ public class JoinPayload implements Join {
 
     @Override
     public Message apply(List<Message> messagesToJoin) {
+
         String combinedPayload = messagesToJoin.stream()
                 .map(Message::getTypedContent)
                 .map(typedContent -> {
@@ -38,7 +39,12 @@ public class JoinPayload implements Join {
                 })
                 .collect(Collectors.joining(delimiter));
 
-        Message message = new Message();
+        Message message = null;
+        if (messagesToJoin.isEmpty()) {
+            message = new Message();
+        } else {
+            message = messagesToJoin.iterator().next();
+        }
         Type type = new Type(MimeType.TEXT, String.class);
         MemoryTypedContent<String> typedContent = new MemoryTypedContent<>(combinedPayload, type);
         message.setTypedContent(typedContent);

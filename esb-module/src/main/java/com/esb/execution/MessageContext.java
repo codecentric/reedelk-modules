@@ -2,8 +2,9 @@ package com.esb.execution;
 
 import com.esb.api.component.OnResult;
 import com.esb.api.message.Message;
-import com.esb.commons.Preconditions;
 import com.esb.internal.commons.SerializationUtils;
+
+import static com.esb.commons.Preconditions.checkState;
 
 class MessageContext {
 
@@ -11,6 +12,8 @@ class MessageContext {
     private Message message;
 
     MessageContext(Message message, OnResult callback) {
+        checkState(message != null, "message");
+        checkState(callback != null, "callback");
         this.message = message;
         this.callback = callback;
     }
@@ -19,8 +22,8 @@ class MessageContext {
         return message;
     }
 
-    void replace(Message message) {
-        Preconditions.checkState(message != null, "Message must not be null");
+    void replaceWith(Message message) {
+        checkState(message != null, "message");
         this.message = message;
     }
 
