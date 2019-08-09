@@ -51,7 +51,7 @@ class ProcessorSyncExecutorTest {
         Mono<EventContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher = executor.execute(processor, graph, publisher);
+        Publisher<EventContext> endPublisher = executor.execute(publisher, processor, graph);
 
         // Then
         String expectedOutput = "inputContent-postfix";
@@ -80,7 +80,7 @@ class ProcessorSyncExecutorTest {
         Publisher<EventContext> publisher = Flux.just(inputEventContext);
 
         // When
-        Publisher<EventContext> endPublisher = executor.execute(processor, graph, publisher);
+        Publisher<EventContext> endPublisher = executor.execute(publisher, processor, graph);
 
         // Then
         StepVerifier.create(endPublisher).verifyError();
@@ -97,7 +97,7 @@ class ProcessorSyncExecutorTest {
 
         // When
         Assertions.assertThrows(IllegalStateException.class, () ->
-                        executor.execute(processor, graph, Flux.just()),
+                        executor.execute(Flux.just(), processor, graph),
                 "Expected processor sync to be followed by one node");
     }
 

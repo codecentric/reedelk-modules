@@ -27,9 +27,9 @@ public class RouterExecutor implements FlowExecutor {
     private final Mono<Boolean> FALSE = Mono.just(false);
 
     @Override
-    public Publisher<EventContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<EventContext> publisher) {
+    public Publisher<EventContext> execute(Publisher<EventContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
 
-        RouterWrapper router = (RouterWrapper) executionNode.getComponent();
+        RouterWrapper router = (RouterWrapper) currentNode.getComponent();
 
         List<RouterWrapper.PathExpressionPair> pathExpressionPairs = router.getPathExpressionPairs();
 
@@ -54,14 +54,14 @@ public class RouterExecutor implements FlowExecutor {
 
         ExecutionNode nodeAfterStop = nextNode(stopNode, graph);
 
-        return FlowExecutorFactory.get().build(nodeAfterStop, graph, flux);
+        return FlowExecutorFactory.get().execute(flux, nodeAfterStop, graph);
     }
 
     private Mono<EventContext> createDefaultMono(RouterWrapper.PathExpressionPair pair, EventContext message, ExecutionGraph graph) {
         ExecutionNode defaultExecutionNode = pair.pathReference;
         Flux<EventContext> parent = Flux.just(message);
         return Mono.from(FlowExecutorFactory.get()
-                .build(defaultExecutionNode, graph, parent));
+                .execute(parent, defaultExecutionNode, graph));
     }
 
     private Mono<EventContext> createConditionalBranch(RouterWrapper.PathExpressionPair pair, EventContext message, ExecutionGraph graph) {
@@ -73,7 +73,7 @@ public class RouterExecutor implements FlowExecutor {
         Mono<EventContext> parent = Mono.just(message)
                 .filterWhen(value -> evaluate(expression, message.getMessage()));
 
-        return Mono.from(FlowExecutorFactory.get().build(pathExecutionNode, graph, parent));
+        return Mono.from(FlowExecutorFactory.get().execute(parent, pathExecutionNode, graph));
     }
 
     private Mono<Boolean> evaluate(String expression, Message message) {

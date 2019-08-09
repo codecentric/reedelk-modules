@@ -36,7 +36,7 @@ public class FlowExecutorEngine {
         Publisher<EventContext> resultingPublisher =
                 FlowExecutorFactory
                         .get()
-                        .build(nodeAfterRoot, graph, publisher);
+                        .execute(publisher, nodeAfterRoot, graph);
 
         Mono.from(resultingPublisher)
                 .doOnError(onResult::onError)

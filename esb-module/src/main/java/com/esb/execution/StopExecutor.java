@@ -10,7 +10,7 @@ public class StopExecutor implements FlowExecutor {
      * Nothing needs to be added to the flux anymore.
      */
     @Override
-    public Publisher<EventContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<EventContext> publisher) {
+    public Publisher<EventContext> execute(Publisher<EventContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
         return publisher;
     }
 }

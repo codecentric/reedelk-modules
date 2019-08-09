@@ -25,9 +25,9 @@ import static reactor.core.publisher.Mono.*;
 public class ForkExecutor implements FlowExecutor {
 
     @Override
-    public Publisher<EventContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<EventContext> publisher) {
+    public Publisher<EventContext> execute(Publisher<EventContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
 
-        ForkWrapper fork = (ForkWrapper) executionNode.getComponent();
+        ForkWrapper fork = (ForkWrapper) currentNode.getComponent();
 
         Scheduler forkScheduler = fork.getScheduler();
 
@@ -61,7 +61,7 @@ public class ForkExecutor implements FlowExecutor {
         // Continue to execute the flow after join
         ExecutionNode nodeAfterJoin = nextNode(joinNode, graph);
 
-        return FlowExecutorFactory.get().build(nodeAfterJoin, graph, mono);
+        return FlowExecutorFactory.get().execute(mono, nodeAfterJoin, graph);
     }
 
     private Mono<EventContext> createForkBranch(ExecutionNode executionNode, EventContext context, ExecutionGraph graph, Scheduler forkScheduler) {
@@ -69,7 +69,7 @@ public class ForkExecutor implements FlowExecutor {
         Mono<EventContext> parent =
                 Mono.just(messageCopy)
                         .publishOn(forkScheduler);
-        return Mono.from(FlowExecutorFactory.get().build(executionNode, graph, parent));
+        return Mono.from(FlowExecutorFactory.get().execute(parent, executionNode, graph));
     }
 
     private static Function<Object[], EventContext[]> messagesCombinator() {

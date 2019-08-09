@@ -36,24 +36,24 @@ public class FlowExecutorFactory {
         return INSTANCE;
     }
 
-    public Publisher<EventContext> build(ExecutionNode next, ExecutionGraph graph, Publisher<EventContext> parent) {
-        return getComponentBuilderOrThrow(next.getComponent())
-                .execute(next, graph, parent);
+    public Publisher<EventContext> execute(Publisher<EventContext> publisher, ExecutionNode next, ExecutionGraph graph) {
+        return executorOf(next.getComponent())
+                .execute(publisher, next, graph);
     }
 
-    FlowExecutor getComponentBuilderOrThrow(Component component) {
+    FlowExecutor executorOf(Component component) {
         if (COMPONENT_FLUX_BUILDER.containsKey(component.getClass())) {
             return COMPONENT_FLUX_BUILDER.get(component.getClass());
         }
         // We check if any of the superclasses implement a known
         // type for which a builder has been defined.
         Class<?>[] componentInterfaces = component.getClass().getInterfaces();
-        return getComponentFluxBuilder(componentInterfaces)
+        return executorOf(componentInterfaces)
                 .orElseThrow(() ->
                         new IllegalStateException(format("Could not find flux builder for class [%s]", component.getClass())));
     }
 
-    private Optional<FlowExecutor> getComponentFluxBuilder(Class<?>[] componentInterfaces) {
+    private Optional<FlowExecutor> executorOf(Class<?>[] componentInterfaces) {
         Set<Class> fluxBuilderInterfaceNames = COMPONENT_FLUX_BUILDER.keySet();
         for (Class interfaceClazz : componentInterfaces) {
             if (fluxBuilderInterfaceNames.contains(interfaceClazz)) {

@@ -66,13 +66,13 @@ class FlowExecutorFactoryTest {
         Component component = new UndefinedComponentType();
 
         Assertions.assertThrows(IllegalStateException.class, () ->
-                FlowExecutorFactory.get().getComponentBuilderOrThrow(component));
+                FlowExecutorFactory.get().executorOf(component));
     }
 
     private void assertBuilderForTargetClassIs(Component component, Class<? extends FlowExecutor> builderClass) {
         // When
         FlowExecutor builder = FlowExecutorFactory.get()
-                .getComponentBuilderOrThrow(component);
+                .executorOf(component);
 
         // Expect
         assertThat(builder).isNotNull();

@@ -14,20 +14,20 @@ import static com.esb.execution.ExecutionUtils.nextNode;
 public class ProcessorAsyncExecutor implements FlowExecutor {
 
     @Override
-    public Publisher<EventContext> execute(ExecutionNode executionNode, ExecutionGraph graph, Publisher<EventContext> publisher) {
+    public Publisher<EventContext> execute(Publisher<EventContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
 
-        ProcessorAsync processorAsync = (ProcessorAsync) executionNode.getComponent();
+        ProcessorAsync processorAsync = (ProcessorAsync) currentNode.getComponent();
 
         Mono<EventContext> parent = Mono.from(publisher)
-                .flatMap(event -> mapProcessorAsync(processorAsync, event)
+                .flatMap(event -> sinkFromCallback(processorAsync, event)
                         .publishOn(SchedulerProvider.flow()));
 
-        ExecutionNode next = nextNode(executionNode, graph);
+        ExecutionNode next = nextNode(currentNode, graph);
 
-        return FlowExecutorFactory.get().build(next, graph, parent);
+        return FlowExecutorFactory.get().execute(parent, next, graph);
     }
 
-    private static Mono<EventContext> mapProcessorAsync(ProcessorAsync processor, EventContext messageWrapper) {
+    private static Mono<EventContext> sinkFromCallback(ProcessorAsync processor, EventContext messageWrapper) {
         return Mono.create(sink -> {
             try {
                 processor.apply(messageWrapper.getMessage(), new OnResult() {

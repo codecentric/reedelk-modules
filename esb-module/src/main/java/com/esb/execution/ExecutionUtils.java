@@ -11,7 +11,6 @@ import java.util.function.Function;
 import static com.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
 class ExecutionUtils {
-
     /**
      * Returns the successor node of the current node and it throws
      * an exception if a node was not found.
@@ -30,6 +29,7 @@ class ExecutionUtils {
 
     static BiConsumer<EventContext, SynchronousSink<EventContext>> nullSafeMap(Function<EventContext, EventContext> mapper) {
         return (event, sink) -> {
+            // TODO:If it is null this still needs to notify the end otherwise we wouldneverreturn from HTTP request.
             if (event != null) {
                 EventContext result = mapper.apply(event);
                 sink.next(result);
