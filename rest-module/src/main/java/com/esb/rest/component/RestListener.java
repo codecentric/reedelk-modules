@@ -13,7 +13,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.esb.rest.commons.Preconditions.isNotNull;
+import static java.util.Objects.requireNonNull;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("REST Listener")
@@ -42,9 +42,10 @@ public class RestListener extends AbstractInbound {
 
     @Override
     public void onStart() {
-        isNotNull(configuration, "Configuration was null");
-        Server server = provider.get(configuration);
-        server.addRoute(method, path, (request, callback) -> RestListener.this.onEvent(request, callback));
+        requireNonNull(configuration, "configuration");
+        // TODO: What would happen if we cannot start the server?
+        provider.get(configuration)
+                .addRoute(method, path, (request, callback) -> RestListener.this.onEvent(request, callback));
     }
 
     @Override

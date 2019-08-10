@@ -17,11 +17,11 @@ import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class HttpResponseMapper {
+public class MapMessageToHttpResponse {
 
     private final HttpVersion httpVersion;
 
-    HttpResponseMapper(HttpVersion httpVersion) {
+    MapMessageToHttpResponse(HttpVersion httpVersion) {
         this.httpVersion = httpVersion;
     }
 

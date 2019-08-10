@@ -16,30 +16,27 @@
     <packaging>bundle</packaging>
 
     <properties>
+        <reactor.version>3.2.11.RELEASE</reactor.version>
         <junit.version>RELEASE</junit.version>
         <assertj.version>3.11.1</assertj.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport</artifactId>
-            <version>4.1.33.Final</version>
+            <groupId>io.projectreactor.netty</groupId>
+            <artifactId>reactor-netty</artifactId>
+            <version>0.8.10.RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http</artifactId>
-            <version>4.1.33.Final</version>
+            <groupId>io.projectreactor.addons</groupId>
+            <artifactId>reactor-extra</artifactId>
+            <version>3.2.3.RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler</artifactId>
-            <version>4.1.33.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okhttp</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>2.7.5</version>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>${reactor.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Test dependencies -->
@@ -75,14 +72,29 @@
                         <ESB-Module>true</ESB-Module>
                         <Import-Package>
                             sun.misc,
-                            com.esb.api.*,
+                            com.esb.api.annotation,
+                            com.esb.api.component,
+                            com.esb.api.exception,
+                            com.esb.api.message,
+                            com.esb.api.service,
+
                             javax.security.cert,
                             javax.net.ssl,
                             javax.net,
+
                             org.slf4j;version="[1.7,2)",
                             org.slf4j.helpers;version="[1.7,2)",
                             org.slf4j.spi;version="[1.7,2)",
-                            com.intellij.rt.debugger.agent
+
+                            com.intellij.rt.debugger.agent,
+
+                            org.reactivestreams;version="[1.0,2)",
+                            reactor.core;version="[3.2,4)",
+                            reactor.core.publisher;version="[3.2,4)",
+                            reactor.core.scheduler;version="[3.2,4)",
+                            reactor.util;version="[3.2,4)",
+                            reactor.util.concurrent;version="[3.2,4)",
+                            reactor.util.context;version="[3.2,4)
                         </Import-Package>
                     </instructions>
                 </configuration>

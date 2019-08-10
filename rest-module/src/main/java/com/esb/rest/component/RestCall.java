@@ -5,8 +5,7 @@ import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
 import com.esb.api.component.ProcessorSync;
-import com.esb.api.message.*;
-import com.esb.rest.client.Client;
+import com.esb.api.message.Message;
 import com.esb.rest.commons.RestMethod;
 import org.osgi.service.component.annotations.Component;
 
@@ -28,24 +27,7 @@ public class RestCall implements ProcessorSync {
 
     @Override
     public Message apply(Message input) {
-        Client client;
-        try {
-            client = new Client(requestUrl, method);
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
-
-        String restRequestResult = client.make();
-
-        Type contentType = new Type(MimeType.APPLICATION_JSON, String.class);
-
-        TypedContent<String> newContent = new MemoryTypedContent<>(restRequestResult, contentType);
-
-        Message message = new Message();
-
-        message.setTypedContent(newContent);
-
-        return message;
+        return input;
     }
 
     public void setRequestUrl(String requestUrl) {

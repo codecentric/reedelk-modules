@@ -18,18 +18,21 @@ public class ServerProvider {
         HostNamePortKey key = new HostNamePortKey(configuration.getHostname(), configuration.getPort());
         if (!serverMap.containsKey(key)) {
             Server server = new Server(configuration);
-            server.start();
             serverMap.put(key, server);
         }
         return serverMap.get(key);
     }
 
     public void release(Server server) {
-        if (server.emptyRoutes()) {
+        // We stop  if and only if there are no
+        // more routes associated to this server.
+        if (server.hasNoRoutes()) {
             server.stop();
-            HostNamePortKey key = new HostNamePortKey(server.getHostname(), server.getPort());
-            serverMap.remove(key);
+            serverMap.entrySet()
+                    .stream()
+                    .filter(key -> key.getValue() == server)
+                    .findFirst()
+                    .ifPresent(key -> serverMap.remove(key.getKey()));
         }
     }
-
 }
