@@ -6,7 +6,8 @@ import com.esb.api.annotation.Script;
 import com.esb.api.annotation.Variable;
 import com.esb.api.component.ProcessorSync;
 import com.esb.api.exception.ESBException;
-import com.esb.api.message.*;
+import com.esb.api.message.Message;
+import com.esb.api.message.MessageBuilder;
 import com.esb.api.service.ScriptEngineService;
 import com.esb.api.service.ScriptExecutionResult;
 import org.osgi.service.component.annotations.Component;
@@ -33,9 +34,8 @@ public class JavascriptComponent implements ProcessorSync {
     public Message apply(Message input) {
         try {
             ScriptExecutionResult result = service.evaluate(input, script, new ComponentVariableBindings(input));
-            TypedContent<Object> content = new MemoryTypedContent<>(result.getObject(), new Type(MimeType.ANY, Object.class));
-            input.setTypedContent(content);
-            return input;
+
+            return MessageBuilder.get().javaObject(result.getObject()).build();
         } catch (ScriptException e) {
             throw new ESBException(e);
         }
@@ -48,7 +48,7 @@ public class JavascriptComponent implements ProcessorSync {
     class ComponentVariableBindings extends SimpleBindings {
         ComponentVariableBindings(Message message) {
             if (message.getTypedContent() != null) {
-                put("payload", message.getTypedContent().getContent());
+                put("payload", message.getTypedContent().content());
             } else {
                 put("payload", null);
             }

@@ -5,7 +5,7 @@ import com.esb.api.component.OnResult;
 import com.esb.api.component.ProcessorSync;
 import com.esb.api.message.Message;
 import com.esb.api.message.MessageBuilder;
-import com.esb.api.message.MimeType;
+import com.esb.api.message.type.MimeType;
 import com.esb.graph.ExecutionGraph;
 import com.esb.graph.ExecutionNode;
 import com.esb.system.component.Stop;
@@ -58,7 +58,7 @@ class ProcessorSyncExecutorTest {
         StepVerifier.create(endPublisher)
                 .assertNext(messageContext -> {
 
-                    String out = (String) messageContext.getMessage().getTypedContent().getContent();
+                    String out = (String) messageContext.getMessage().getTypedContent().content();
 
                     assertThat(out).isEqualTo(expectedOutput);
 
@@ -117,7 +117,7 @@ class ProcessorSyncExecutorTest {
     private class TestSyncProcessor implements ProcessorSync {
         @Override
         public Message apply(Message input) {
-            String inputString = (String) input.getTypedContent().getContent();
+            String inputString = (String) input.getTypedContent().content();
             String outputString = inputString + "-postfix";
             return MessageBuilder.get()
                     .mimeType(MimeType.TEXT)

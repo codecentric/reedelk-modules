@@ -3,6 +3,7 @@ package com.esb.rest.commons;
 import com.esb.api.message.Message;
 import com.esb.api.message.MessageProperties;
 
+import java.io.Serializable;
 import java.util.Map;
 
 public enum OutboundProperty {
@@ -35,7 +36,7 @@ public enum OutboundProperty {
         return outboundProperties.getProperty(name);
     }
 
-    public void set(Message message, Object value) {
+    public void set(Message message, Serializable value) {
         MessageProperties outboundProperties = message.getOutboundProperties();
         outboundProperties.setProperty(name, value);
     }

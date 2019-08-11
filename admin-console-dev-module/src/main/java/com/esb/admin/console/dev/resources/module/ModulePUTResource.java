@@ -15,7 +15,7 @@ import org.takes.rs.RsWithStatus;
 import java.io.IOException;
 
 import static com.esb.admin.console.dev.commons.HttpHeader.CONTENT_TYPE;
-import static com.esb.api.message.MimeType.APPLICATION_JSON;
+import static com.esb.api.message.type.MimeType.APPLICATION_JSON;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 public class ModulePUTResource implements Take {

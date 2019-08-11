@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.esb.admin.console.dev.commons.HttpHeader.CONTENT_TYPE;
-import static com.esb.api.message.MimeType.APPLICATION_JSON;
+import static com.esb.api.message.type.MimeType.APPLICATION_JSON;
 import static java.util.stream.Collectors.toList;
 
 public class ModuleGETResource implements Take {

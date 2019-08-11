@@ -6,7 +6,8 @@ import com.esb.api.annotation.Script;
 import com.esb.api.annotation.Variable;
 import com.esb.api.component.Join;
 import com.esb.api.exception.ESBException;
-import com.esb.api.message.*;
+import com.esb.api.message.Message;
+import com.esb.api.message.MessageBuilder;
 import com.esb.api.service.ScriptEngineService;
 import com.esb.api.service.ScriptExecutionResult;
 import org.osgi.service.component.annotations.Component;
@@ -41,11 +42,7 @@ public class JavascriptJoin implements Join {
         try {
             String actualScript = String.format(BASE_TEMPLATE, script);
             ScriptExecutionResult result = service.evaluate(messagesToJoin, actualScript);
-
-            TypedContent<Object> content = new MemoryTypedContent<>(result.getObject(), new Type(MimeType.ANY, Object.class));
-            Message message = new Message();
-            message.setTypedContent(content);
-            return message;
+            return MessageBuilder.get().javaObject(result.getObject()).build();
         } catch (ScriptException e) {
             throw new ESBException(e);
         }

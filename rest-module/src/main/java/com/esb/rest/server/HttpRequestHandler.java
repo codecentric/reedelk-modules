@@ -4,13 +4,12 @@ import com.esb.api.component.InboundEventListener;
 import com.esb.api.component.OnResult;
 import com.esb.api.message.Message;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.Unpooled;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
-import java.nio.charset.StandardCharsets;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -24,21 +23,10 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
     @Override
     public Publisher<Void> apply(HttpServerRequest request, HttpServerResponse response) {
-        Message inMessage = MapHttpRequestToMessage.from(request);
-        return Mono.just(inMessage)
+        return Mono.just(MapHttpRequestToMessage.from(request))
                 .flatMap(mapProcessingPipeline()) // this one process the input message through the integration flow
-                .flatMap(outMessage -> {
-                    MapMessageToHttpResponse.from(outMessage, response);
-                    Object payload = outMessage.getTypedContent().getContent();
-
-                    if (payload instanceof String) {
-                        ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();
-                        buffer.writeCharSequence((CharSequence) payload, StandardCharsets.UTF_8);
-                        return Mono.from(response.sendObject(buffer));
-                    } else {
-                        return response.send();
-                    }
-                }).doOnError(throwable -> {
+                .flatMap(sendResponse(response)) // sends the response back to the Http response channel
+                .doOnError(throwable -> {
                     response.send(Mono.error(throwable)); // 500
                 });
     }
@@ -58,5 +46,17 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                 sink.error(throwable);
             }
         }));
+    }
+
+    /**
+     * Sends the given message to the Http Response channel.
+     */
+    private Function<Message, Mono<Void>> sendResponse(final HttpServerResponse response) {
+        return message -> {
+            MapMessageToHttpResponse.from(message, response);
+            byte[] responseBytes = message.getTypedContent().asByteArray();
+            ByteBuf byteBuf = Unpooled.wrappedBuffer(responseBytes);
+            return Mono.from(response.sendObject(byteBuf));
+        };
     }
 }

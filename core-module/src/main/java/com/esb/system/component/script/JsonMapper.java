@@ -3,7 +3,8 @@ package com.esb.system.component.script;
 import com.esb.api.annotation.*;
 import com.esb.api.component.ProcessorSync;
 import com.esb.api.exception.ESBException;
-import com.esb.api.message.*;
+import com.esb.api.message.Message;
+import com.esb.api.message.MessageBuilder;
 import com.esb.api.service.ScriptEngineService;
 import com.esb.api.service.ScriptExecutionResult;
 import org.osgi.service.component.annotations.Component;
@@ -52,9 +53,7 @@ public class JsonMapper implements ProcessorSync {
 
             Object mappedOutput = result.getBindings().get("output");
 
-            TypedContent<Object> content = new MemoryTypedContent<>(mappedOutput, new Type(MimeType.ANY, Object.class));
-
-            input.setTypedContent(content);
+            MessageBuilder.get().javaObject(mappedOutput).build();
 
             return input;
 
@@ -78,7 +77,7 @@ public class JsonMapper implements ProcessorSync {
     class ComponentVariableBindings extends SimpleBindings {
         ComponentVariableBindings(Message message) {
             if (message.getTypedContent() != null) {
-                put("input", message.getTypedContent().getContent());
+                put("input", message.getTypedContent().content());
             } else {
                 put("input", "{}");
             }

@@ -5,10 +5,8 @@ import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
 import com.esb.api.component.Join;
-import com.esb.api.message.MemoryTypedContent;
 import com.esb.api.message.Message;
-import com.esb.api.message.MimeType;
-import com.esb.api.message.Type;
+import com.esb.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.List;
@@ -27,28 +25,18 @@ public class JoinPayload implements Join {
 
     @Override
     public Message apply(List<Message> messagesToJoin) {
-
         String combinedPayload = messagesToJoin.stream()
                 .map(Message::getTypedContent)
                 .map(typedContent -> {
-                    if (typedContent.getType().getTypeClass().isAssignableFrom(String.class)) {
-                        return (String) typedContent.getContent();
+                    if (typedContent.type().getTypeClass().isAssignableFrom(String.class)) {
+                        return (String) typedContent.content();
                     } else {
                         return null;
                     }
                 })
                 .collect(Collectors.joining(delimiter));
 
-        Message message = null;
-        if (messagesToJoin.isEmpty()) {
-            message = new Message();
-        } else {
-            message = messagesToJoin.iterator().next();
-        }
-        Type type = new Type(MimeType.TEXT, String.class);
-        MemoryTypedContent<String> typedContent = new MemoryTypedContent<>(combinedPayload, type);
-        message.setTypedContent(typedContent);
-        return message;
+        return MessageBuilder.get().text(combinedPayload).build();
     }
 
     public void setDelimiter(String delimiter) {

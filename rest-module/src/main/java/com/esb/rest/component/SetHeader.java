@@ -32,7 +32,7 @@ public class SetHeader implements ProcessorSync {
             outboundHeaders = new HashMap<>();
         }
         outboundHeaders.put(name, value);
-        OutboundProperty.HEADERS.set(message, outboundHeaders);
+        OutboundProperty.HEADERS.set(message, new HashMap<>(outboundHeaders));
         return message;
     }
 

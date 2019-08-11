@@ -1,58 +1,70 @@
 package com.esb.rest.server;
 
-import com.esb.api.message.*;
+import com.esb.api.message.Message;
+import com.esb.api.message.MessageBuilder;
+import com.esb.api.message.type.MimeType;
+import com.esb.api.message.type.Type;
+import com.esb.rest.commons.AsSerializableMap;
 import com.esb.rest.commons.HttpHeadersAsMap;
-import com.esb.rest.commons.InboundProperty;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
-import reactor.netty.ByteBufFlux;
 import reactor.netty.http.server.HttpServerRequest;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
-public class MapHttpRequestToMessage {
+import static com.esb.rest.commons.InboundProperty.*;
 
-    public static Message from(HttpServerRequest request) {
-        Message inMessage = new Message();
+class MapHttpRequestToMessage {
 
-        // Path, Method and Headers
-        InboundProperty.PATH.set(inMessage, request.uri());
-        InboundProperty.METHOD.set(inMessage, request.method().name());
-        InboundProperty.HEADERS.set(inMessage, HttpHeadersAsMap.of(request.requestHeaders()));
+    private static final Logger logger = LoggerFactory.getLogger(MapHttpRequestToMessage.class);
 
-        // Path Params
-        Map<String, String> pathParams = request.params();
-        InboundProperty.PATH_PARAMS.set(inMessage, pathParams);
-
-        // Query Params
+    static Message from(HttpServerRequest request) {
         QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
         Map<String, List<String>> queryParameters = decoder.parameters();
-        InboundProperty.QUERY_PARAMS.set(inMessage, queryParameters);
 
-        MimeType payloadMimeType = getContentMimeTypeOrDefault(request, MimeType.TEXT);
+        MessageBuilder messageBuilder = MessageBuilder.get()
+                .addInboundProperty(path(), request.uri())
+                .addInboundProperty(method(), request.method().name())
+                .addInboundProperty(headers(), HttpHeadersAsMap.of(request.requestHeaders()))
+                .addInboundProperty(pathParams(), AsSerializableMap.of(request.params()))
+                .addInboundProperty(queryParams(), AsSerializableMap.of(queryParameters));
 
-        Type type;
-        if (payloadMimeType.equals(MimeType.APPLICATION_JSON) || payloadMimeType.equals(MimeType.TEXT)) {
-            type = new Type(payloadMimeType, String.class);
+        MimeType mimeType = mimeTypeOf(request);
+
+        // We set the mime type in the message
+        messageBuilder.mimeType(mimeType);
+
+        // We convert the flux to the correct type given the mime type
+        Class<?> javaClazz = Type.JavaFromMimeType.of(mimeType);
+        if (javaClazz == String.class) {
+            Charset charset = mimeType.getCharset().orElse(Charset.defaultCharset());
+            Flux<String> stringFlux = request.receive()
+                    .map(byteBuf -> byteBuf.toString(charset));
+            messageBuilder.content(stringFlux);
         } else {
-            type = new Type(payloadMimeType, byte[].class);
+            // In any other case this is just binary data
+            Flux<byte[]> map = request.receive().map(ByteBuf::array);
+            messageBuilder.content(map);
         }
 
-        // TODO: NOT Memory typed content. It is flux content
-        ByteBufFlux inputFlux = request.receive();
-        TypedContent<Flux<ByteBuf>> content = new MemoryTypedContent<>(inputFlux, type);
-        inMessage.setTypedContent(content);
-        return inMessage;
+        return messageBuilder.build();
     }
 
-    private static MimeType getContentMimeTypeOrDefault(HttpServerRequest request, MimeType defaultMimeType) {
+    private static MimeType mimeTypeOf(HttpServerRequest request) {
         if (request.requestHeaders().contains(HttpHeaderNames.CONTENT_TYPE)) {
             String contentType = request.requestHeaders().get(HttpHeaderNames.CONTENT_TYPE);
-            return MimeType.parse(contentType);
+            try {
+                return MimeType.parse(contentType);
+            } catch (Exception e) {
+                logger.warn(String.format("Could not parse content type '%s'", contentType), e);
+            }
         }
-        return defaultMimeType;
+        return MimeType.UNKNOWN;
     }
 }

@@ -5,7 +5,7 @@ import org.takes.facets.fork.Fork;
 import org.takes.tk.TkClasspath;
 import org.takes.tk.TkWithType;
 
-import static com.esb.api.message.MimeType.HTML;
+import static com.esb.api.message.type.MimeType.HTML;
 
 public class ConsoleHTMLResource extends AbstractConsoleResource {
 

@@ -4,7 +4,8 @@ import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
 import com.esb.api.component.ProcessorSync;
-import com.esb.api.message.*;
+import com.esb.api.message.Message;
+import com.esb.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
@@ -25,7 +26,6 @@ public class FileReadComponent implements ProcessorSync {
 
     @Override
     public Message apply(Message input) {
-
         StringBuilder contentBuilder = new StringBuilder();
 
         try (Stream<String> stream = Files.lines(Paths.get(filePath), StandardCharsets.UTF_8)) {
@@ -34,17 +34,10 @@ public class FileReadComponent implements ProcessorSync {
             throw new RuntimeException(e);
         }
 
+        // TODO: we should add a property to specify the mime type of the content...
         String fileContent = contentBuilder.toString();
 
-        Type contentType = new Type(MimeType.APPLICATION_JSON, String.class);
-
-        TypedContent<String> newContent = new MemoryTypedContent<>(fileContent, contentType);
-
-        Message output = new Message();
-
-        output.setTypedContent(newContent);
-
-        return output;
+        return MessageBuilder.get().text(fileContent).build();
     }
 
     public void setFilePath(String filePath) {

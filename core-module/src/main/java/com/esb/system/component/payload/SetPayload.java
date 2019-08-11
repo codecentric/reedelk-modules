@@ -3,7 +3,8 @@ package com.esb.system.component.payload;
 import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.component.ProcessorSync;
-import com.esb.api.message.*;
+import com.esb.api.message.Message;
+import com.esb.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -17,9 +18,9 @@ public class SetPayload implements ProcessorSync {
 
     @Override
     public Message apply(Message message) {
-        TypedContent<String> content = new MemoryTypedContent<>(payload, new Type(MimeType.TEXT, String.class));
-        message.setTypedContent(content);
-        return message;
+        return MessageBuilder.get()
+                .text(payload)
+                .build();
     }
 
     public void setPayload(String payload) {

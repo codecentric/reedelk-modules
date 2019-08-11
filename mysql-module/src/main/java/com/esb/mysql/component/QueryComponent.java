@@ -5,7 +5,9 @@ import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.annotation.Required;
 import com.esb.api.component.ProcessorSync;
-import com.esb.api.message.*;
+import com.esb.api.message.Message;
+import com.esb.api.message.type.MimeType;
+import com.esb.api.message.type.Type;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
 
@@ -44,11 +46,12 @@ public class QueryComponent implements ProcessorSync {
 
             Type contentType = new Type(MimeType.APPLICATION_JAVA, InternalResultSet.class);
 
-            TypedContent<InternalResultSet> newContent = new MemoryTypedContent<>(map, contentType);
+            // TODO: Fixme
+            //TypedContent newContent = new MemoryTypedContent<>(map, contentType);
 
             Message output = new Message();
 
-            output.setTypedContent(newContent);
+            // output.setTypedContent(newContent);
 
             return output;
 

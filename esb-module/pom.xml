@@ -102,6 +102,7 @@
                             com.esb.api.component,
                             com.esb.api.exception,
                             com.esb.api.message,
+                            com.esb.api.message.type,
                             com.esb.api.service,
                             com.esb.commons;version="[1.0,2)",
                             com.esb.graph;version="[1.0,2)",

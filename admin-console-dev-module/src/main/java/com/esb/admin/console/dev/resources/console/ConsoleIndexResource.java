@@ -7,7 +7,7 @@ import org.takes.tk.TkWithType;
 
 import java.io.InputStream;
 
-import static com.esb.api.message.MimeType.HTML;
+import static com.esb.api.message.type.MimeType.HTML;
 
 public class ConsoleIndexResource extends AbstractConsoleResource {
 

@@ -1,37 +1,24 @@
 package com.esb.rest.commons;
 
-import com.esb.api.message.Message;
-import com.esb.api.message.MessageProperties;
+public interface InboundProperty {
 
-import java.util.Map;
-
-public enum InboundProperty {
-
-    PATH("path"),
-    METHOD("method"),
-    HEADERS("headers"),
-    PATH_PARAMS("pathParams"),
-    QUERY_PARAMS("queryParams");
-
-    String name;
-
-    InboundProperty(String name) {
-        this.name = name;
+    static String path() {
+        return "path";
     }
 
-    public void set(Message message, Object value) {
-        MessageProperties inboundProperties = message.getInboundProperties();
-        inboundProperties.setProperty(name, value);
+    static String method() {
+        return "method";
     }
 
-    public String getString(Message message) {
-        MessageProperties inboundProperties = message.getInboundProperties();
-        return (String) inboundProperties.getProperty(name);
+    static String headers() {
+        return "headers";
     }
 
-    @SuppressWarnings("unchecked")
-    public Map<String,String> getMap(Message message) {
-        MessageProperties inboundProperties = message.getInboundProperties();
-        return (Map<String, String>) inboundProperties.getProperty(name);
+    static String pathParams() {
+        return "pathParams";
+    }
+
+    static String queryParams() {
+        return "queryParams";
     }
 }

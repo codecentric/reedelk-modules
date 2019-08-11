@@ -5,7 +5,7 @@ import org.takes.facets.fork.Fork;
 import org.takes.tk.TkClasspath;
 import org.takes.tk.TkWithType;
 
-import static com.esb.api.message.MimeType.JAVASCRIPT;
+import static com.esb.api.message.type.MimeType.JAVASCRIPT;
 
 public class ConsoleJavascriptResource extends AbstractConsoleResource {
 

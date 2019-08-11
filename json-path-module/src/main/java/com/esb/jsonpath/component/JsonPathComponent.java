@@ -3,12 +3,16 @@ package com.esb.jsonpath.component;
 import com.esb.api.annotation.ESBComponent;
 import com.esb.api.annotation.Property;
 import com.esb.api.component.ProcessorSync;
-import com.esb.api.message.*;
+import com.esb.api.message.Message;
+import com.esb.api.message.type.StringType;
+import com.esb.api.message.type.Type;
+import com.esb.api.message.type.TypedContent;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.osgi.service.component.annotations.Component;
 
+import static com.esb.api.message.type.MimeType.APPLICATION_JSON;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Json Path")
@@ -26,9 +30,9 @@ public class JsonPathComponent implements ProcessorSync {
             compiledExpression = JsonPath.compile(jsonPathExpression);
         }
 
-        TypedContent<String> typedContent = input.getTypedContent();
+        TypedContent typedContent = input.getTypedContent();
 
-        String inputJson = typedContent.getContent();
+        String inputJson = typedContent.asString();
 
         Object result = JsonPath.parse(inputJson).read(compiledExpression);
         String jsonResult = "";
@@ -42,9 +46,9 @@ public class JsonPathComponent implements ProcessorSync {
             jsonResult = (String) result;
         }
 
-        Type stringType = new Type(MimeType.APPLICATION_JSON, String.class);
+        Type applicationJsonType = new Type(APPLICATION_JSON);
 
-        TypedContent<String> outputContent = new MemoryTypedContent<>(jsonResult, stringType);
+        TypedContent outputContent = new StringType(jsonResult, applicationJsonType);
 
         Message outputMessage = new Message();
 
