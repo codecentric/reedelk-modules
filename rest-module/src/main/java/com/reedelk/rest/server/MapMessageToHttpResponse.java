@@ -15,6 +15,7 @@ import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 
+// TODO: This class needs to be reworked
 public class MapMessageToHttpResponse {
 
     private final HttpVersion httpVersion;
@@ -24,7 +25,6 @@ public class MapMessageToHttpResponse {
     }
 
     public static void from(Message message, HttpServerResponse response) {
-        // TODO: Handle the  payload
         String contentType = TEXT_PLAIN.toString();
         Map<String, String> outboundHeaders = new HashMap<>();
 
