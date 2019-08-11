@@ -32,6 +32,12 @@ public class Preconditions {
         }
     }
 
+    public static void checkNotNull(Object obj, String errorMessage) {
+        if (obj == null) {
+            throw new NullPointerException(errorMessage);
+        }
+    }
+
     public static <T> T checkAtLeastOneAndGetOrThrow(Stream<T> stream, String errorMessage, String... args) {
         return stream.findFirst().orElseThrow(() -> new IllegalStateException(String.format(errorMessage, args)));
     }
