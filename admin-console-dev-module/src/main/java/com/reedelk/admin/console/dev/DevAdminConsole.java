@@ -76,7 +76,7 @@ public class DevAdminConsole {
             public void run() {
                 logger.info(String.format("Dev admin console listening on http://%s:%d/console", bindAddress, listeningPort));
             }
-        }, 1000);
+        }, 500);
     }
 
 }
