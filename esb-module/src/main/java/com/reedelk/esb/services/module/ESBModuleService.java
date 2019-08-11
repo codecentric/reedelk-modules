@@ -15,8 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.reedelk.esb.commons.FunctionWrapper.uncheckedConsumer;
-import static com.reedelk.esb.commons.Preconditions.checkIsPresentAndGetOrThrow;
-import static com.reedelk.esb.commons.Preconditions.checkState;
+import static com.reedelk.esb.commons.Preconditions.*;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toSet;
@@ -42,10 +41,16 @@ public class ESBModuleService implements ModuleService {
         Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
         Bundle bundleAtPath = checkIsPresentAndGetOrThrow(optionalBundle, "Update failed: could not find registered bundle in target file path=%s", modulePath);
 
-        listener.moduleStopping(bundleAtPath.getBundleId());
-        executeOperation(bundleAtPath, Bundle::stop, Bundle::update, Bundle::start);
+        if (Bundle.INSTALLED == bundleAtPath.getState()) {
+            // It is installed but not started (we don't have to call listener's moduleStopping event)
+            executeOperation(bundleAtPath, Bundle::update, Bundle::start);
+        } else {
+            // It is installed and started (we must stop it, update it and start it again)
+            listener.moduleStopping(bundleAtPath.getBundleId());
+            executeOperation(bundleAtPath, Bundle::stop, Bundle::update, Bundle::start);
+        }
 
-        logger.debug("Module [{}] updated", bundleAtPath.getSymbolicName());
+        logger.info("Module [{}] updated", bundleAtPath.getSymbolicName());
 
         return bundleAtPath.getBundleId();
     }
@@ -58,7 +63,7 @@ public class ESBModuleService implements ModuleService {
         listener.moduleStopping(bundleAtPath.getBundleId());
         executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall);
 
-        logger.debug("Module [{}] uninstalled", bundleAtPath.getSymbolicName());
+        logger.info("Module [{}] uninstalled", bundleAtPath.getSymbolicName());
 
         return bundleAtPath.getBundleId();
     }
@@ -68,14 +73,11 @@ public class ESBModuleService implements ModuleService {
         Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
         checkState(!optionalBundle.isPresent(), format("Install failed: the bundle in target file path=%s is already installed. Did you mean update?", modulePath));
         try {
-
             Bundle installedBundle = context.installBundle(modulePath);
-            installedBundle.start();
-
-            logger.debug("Module [{}] installed", installedBundle.getSymbolicName());
-
-            return installedBundle.getBundleId();
+            logger.info("Module [{}] installed", installedBundle.getSymbolicName());
+            return start(installedBundle);
         } catch (BundleException e) {
+            logger.error(format("Could not install module from path [%s]", modulePath), e);
             throw new ESBException(e);
         }
     }
@@ -101,6 +103,18 @@ public class ESBModuleService implements ModuleService {
         return modules;
     }
 
+    private long start(Bundle installedBundle) {
+        try {
+            checkNotNull(installedBundle, "installedBundle");
+            installedBundle.start();
+            logger.info("Module [{}] started", installedBundle.getSymbolicName());
+            return installedBundle.getBundleId();
+        } catch (BundleException e) {
+            logger.error(format("Could not start module [%s]", installedBundle.getSymbolicName()), e);
+            throw new ESBException(e);
+        }
+    }
+
     private Optional<Bundle> getModuleAtPath(String bundlePath) {
         return Optional.ofNullable(context.getBundle(bundlePath));
     }
@@ -112,7 +126,7 @@ public class ESBModuleService implements ModuleService {
     private void executeOperation(Bundle bundle, Operation... operations) {
         stream(operations)
                 .forEachOrdered(
-                        uncheckedConsumer(operation -> operation.execute(bundle)));
+                        uncheckedConsumer(operation -> operation.execute(bundle), logger));
 
     }
 }

@@ -7,8 +7,7 @@ import java.util.Dictionary;
 
 import static com.reedelk.esb.commons.Preconditions.checkArgument;
 import static com.reedelk.esb.commons.ServiceReferenceProperty.COMPONENT_NAME;
-import static org.osgi.framework.BundleEvent.STARTED;
-import static org.osgi.framework.BundleEvent.STOPPED;
+import static org.osgi.framework.BundleEvent.*;
 import static org.osgi.framework.ServiceEvent.REGISTERED;
 import static org.osgi.framework.ServiceEvent.UNREGISTERING;
 
@@ -23,9 +22,17 @@ public class ESBEventService implements BundleListener, ServiceListener {
 
     @Override
     public void bundleChanged(BundleEvent bundleEvent) {
-        if (isNotModule(bundleEvent.getBundle())) return;
+        // We just  want to notify listeners if and only if
+        // the bundle event is related to an ESB Module.
+        if (isNotESBModule(bundleEvent.getBundle())) {
+            return;
+        }
 
         long bundleId = bundleEvent.getBundle().getBundleId();
+
+        if (INSTALLED == bundleEvent.getType()) {
+            listener.moduleInstalled(bundleId);
+        }
 
         if (STARTED == bundleEvent.getType()) {
             listener.moduleStarted(bundleId);
@@ -38,7 +45,11 @@ public class ESBEventService implements BundleListener, ServiceListener {
 
     @Override
     public void serviceChanged(ServiceEvent serviceEvent) {
-        if (isNotModule(serviceEvent.getServiceReference().getBundle())) return;
+        // We just  want to notify listeners if and only if
+        // the Service event is related to an ESB Module.
+        if (isNotESBModule(serviceEvent.getServiceReference().getBundle())) {
+            return;
+        }
 
         String componentName = COMPONENT_NAME.get(serviceEvent.getServiceReference());
         if (componentName == null) return;
@@ -52,7 +63,7 @@ public class ESBEventService implements BundleListener, ServiceListener {
         }
     }
 
-    private static boolean isNotModule(Bundle bundle) {
+    private static boolean isNotESBModule(Bundle bundle) {
         Dictionary<String, String> bundleHeaders = bundle.getHeaders();
         String isModule = bundleHeaders.get(ModuleProperties.Bundle.MODULE_HEADER_NAME);
         return !Boolean.parseBoolean(isModule);

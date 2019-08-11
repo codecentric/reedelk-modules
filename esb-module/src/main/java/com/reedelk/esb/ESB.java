@@ -61,10 +61,17 @@ public class ESB implements EventListener, HotSwapListener {
     }
 
     @Override
-    public synchronized void moduleStarted(long moduleId) {
+    public void moduleInstalled(long moduleId) {
         StepRunner.get(context, modulesManager, componentRegistry)
                 .next(new CreateModule())
                 .next(new AddModule())
+                .execute(moduleId);
+    }
+
+    @Override
+    public synchronized void moduleStarted(long moduleId) {
+        StepRunner.get(context, modulesManager, componentRegistry)
+                .next(new CheckModuleNotNull())
                 .next(new ResolveModuleDependencies())
                 .next(new BuildModule())
                 .next(new StartModule())
