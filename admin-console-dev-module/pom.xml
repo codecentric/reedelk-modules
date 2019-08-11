@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.esb</groupId>
+        <groupId>com.reedelk</groupId>
         <artifactId>modules</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -18,20 +18,20 @@
         <takes.version>1.13</takes.version>
         <jackson.version>2.9.7</jackson.version>
         <netty.version>5.0.0.Alpha2</netty.version>
-        <internal.rest.api.version>1.0.0-SNAPSHOT</internal.rest.api.version>
-        <internal.system.api.version>1.0.0-SNAPSHOT</internal.system.api.version>
+        <runtime.rest.api.version>1.0.0-SNAPSHOT</runtime.rest.api.version>
+        <runtime.system.api.version>1.0.0-SNAPSHOT</runtime.system.api.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.esb</groupId>
-            <artifactId>internal-rest-api</artifactId>
-            <version>${internal.rest.api.version}</version>
+            <groupId>com.reedelk</groupId>
+            <artifactId>runtime-rest-api</artifactId>
+            <version>${runtime.rest.api.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.esb</groupId>
-            <artifactId>internal-system-api</artifactId>
-            <version>${internal.system.api.version}</version>
+            <groupId>com.reedelk</groupId>
+            <artifactId>runtime-system-api</artifactId>
+            <version>${runtime.system.api.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- internal-rest-api depends on org.json -->
@@ -60,8 +60,8 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>
-                            com.esb.api.*,
-                            com.esb.system.api.*,
+                            com.reedelk.runtime.api.*,
+                            com.reedelk.runtime.system.api.*,
                             org.osgi.framework,
                             org.osgi.service.cm,
                             org.json,

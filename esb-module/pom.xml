@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <groupId>com.esb</groupId>
+        <groupId>com.reedelk</groupId>
         <artifactId>modules</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -16,26 +16,26 @@
 
     <properties>
         <reactor.version>3.2.11.RELEASE</reactor.version>
-        <internal.commons.version>1.0.0-SNAPSHOT</internal.commons.version>
-        <internal.system.api.version>1.0.0-SNAPSHOT</internal.system.api.version>
-        <internal.system.components.version>1.0.0-SNAPSHOT</internal.system.components.version>
+        <runtime.commons.version>1.0.0-SNAPSHOT</runtime.commons.version>
+        <runtime.system.api.version>1.0.0-SNAPSHOT</runtime.system.api.version>
+        <runtime.components.version>1.0.0-SNAPSHOT</runtime.components.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.esb</groupId>
-            <artifactId>internal-commons</artifactId>
-            <version>${internal.commons.version}</version>
+            <groupId>com.reedelk</groupId>
+            <artifactId>runtime-commons</artifactId>
+            <version>${runtime.commons.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.esb</groupId>
-            <artifactId>internal-system-components</artifactId>
-            <version>${internal.system.components.version}</version>
+            <groupId>com.reedelk</groupId>
+            <artifactId>runtime-components</artifactId>
+            <version>${runtime.components.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.esb</groupId>
-            <artifactId>internal-system-api</artifactId>
-            <version>${internal.system.api.version}</version>
+            <groupId>com.reedelk</groupId>
+            <artifactId>runtime-system-api</artifactId>
+            <version>${runtime.system.api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -98,22 +98,8 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>
-                            com.esb.api.annotation,
-                            com.esb.api.component,
-                            com.esb.api.exception,
-                            com.esb.api.message,
-                            com.esb.api.message.type,
-                            com.esb.api.service,
-                            com.esb.commons;version="[1.0,2)",
-                            com.esb.graph;version="[1.0,2)",
-                            com.esb.module;version="[1.0,2)",
-                            com.esb.module.state;version="[1.0,2)",
-                            com.esb.services;version="[1.0,2)",
-                            com.esb.services.configuration;version="[1.0,2)",
-                            com.esb.services.hotswap;version="[1.0,2)",
-                            com.esb.services.module;version="[1.0,2)",
-                            com.esb.services.scriptengine;version="[1.0,2)",
-                            com.esb.system.api,
+                            com.reedelk.runtime.api.*,
+                            com.reedelk.runtime.system.api.*,
 
                             javax.annotation,
                             javax.annotation.meta,
