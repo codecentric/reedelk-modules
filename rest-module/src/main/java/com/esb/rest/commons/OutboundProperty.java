@@ -17,7 +17,7 @@ public enum OutboundProperty {
     }
 
     public int getInt(Message message) {
-        return (Integer) get(message);
+        return (int) get(message);
     }
 
     public boolean isDefined(Message message) {

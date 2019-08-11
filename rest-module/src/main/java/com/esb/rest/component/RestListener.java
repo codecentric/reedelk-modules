@@ -44,8 +44,9 @@ public class RestListener extends AbstractInbound {
     public void onStart() {
         requireNonNull(configuration, "configuration");
         // TODO: What would happen if we cannot start the server?
-        provider.get(configuration)
-                .addRoute(method, path, (request, callback) -> RestListener.this.onEvent(request, callback));
+        Server server = provider.get(configuration);
+        server.addRoute(method, path,
+                (request, callback) -> RestListener.this.onEvent(request, callback));
     }
 
     @Override

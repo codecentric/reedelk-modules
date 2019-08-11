@@ -26,7 +26,7 @@ public class ServerProvider {
     public void release(Server server) {
         // We stop  if and only if there are no
         // more routes associated to this server.
-        if (server.hasNoRoutes()) {
+        if (server.hasEmptyRoutes()) {
             server.stop();
             serverMap.entrySet()
                     .stream()

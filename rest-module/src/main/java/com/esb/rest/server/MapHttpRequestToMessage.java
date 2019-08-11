@@ -35,7 +35,6 @@ public class MapHttpRequestToMessage {
         MimeType payloadMimeType = getContentMimeTypeOrDefault(request, MimeType.TEXT);
 
         Type type;
-
         if (payloadMimeType.equals(MimeType.APPLICATION_JSON) || payloadMimeType.equals(MimeType.TEXT)) {
             type = new Type(payloadMimeType, String.class);
         } else {
