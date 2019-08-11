@@ -59,6 +59,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
+                        <ESB-Module>false</ESB-Module>
                         <Import-Package>
                             com.reedelk.runtime.api.*,
                             com.reedelk.runtime.system.api.*,
