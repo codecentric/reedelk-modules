@@ -3,8 +3,6 @@ package com.reedelk.rest.server;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.Message;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerRequest;
@@ -23,7 +21,8 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
     @Override
     public Publisher<Void> apply(HttpServerRequest request, HttpServerResponse response) {
-        return Mono.just(MapHttpRequestToMessage.from(request))
+        Message inMessage = MapHttpRequestToMessage.from(request);
+        return Mono.just(inMessage)
                 .flatMap(mapProcessingPipeline()) // this one process the input message through the integration flow
                 .flatMap(sendResponse(response)) // sends the response back to the Http response channel
                 .doOnError(throwable -> {
@@ -54,9 +53,8 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
     private Function<Message, Mono<Void>> sendResponse(final HttpServerResponse response) {
         return message -> {
             MapMessageToHttpResponse.from(message, response);
-            byte[] responseBytes = message.getTypedContent().asByteArray();
-            ByteBuf byteBuf = Unpooled.wrappedBuffer(responseBytes);
-            return Mono.from(response.sendObject(byteBuf));
+            Publisher<byte[]> publisher = message.getTypedContent().asByteArrayStream();
+            return Mono.from(response.sendByteArray(publisher));
         };
     }
 }
