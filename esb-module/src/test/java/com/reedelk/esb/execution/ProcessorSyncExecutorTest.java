@@ -3,7 +3,6 @@ package com.reedelk.esb.execution;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.OnResult;
-import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -58,7 +57,7 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
     @Test
     void shouldCorrectlyThrowErrorWhenProcessorThrowsException() {
         // Given
-        ExecutionNode processor = newExecutionNode(new TestSyncProcessorThrowingException());
+        ExecutionNode processor = newExecutionNode(new ProcessorThrowingExceptionSync());
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
         Message message = MessageBuilder.get().text("input").build();
 
@@ -88,13 +87,6 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
         Assertions.assertThrows(IllegalStateException.class, () ->
                         executor.execute(Flux.just(), processor, graph),
                 "Expected processor sync to be followed by one node");
-    }
-
-    private class TestSyncProcessorThrowingException implements ProcessorSync {
-        @Override
-        public Message apply(Message input) {
-            throw new IllegalStateException("Input not valid");
-        }
     }
 
     class OnResultVerifier implements OnResult {

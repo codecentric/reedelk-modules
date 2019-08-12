@@ -19,7 +19,7 @@ class AbstractExecutionTest {
     ExecutionNode inbound = newExecutionNode(new TestInboundComponent());
     ExecutionNode stop = newExecutionNode(new Stop());
 
-    ExecutionNode newExecutionNode(Component component) {
+    static ExecutionNode newExecutionNode(Component component) {
         return new ExecutionNode(new ExecutionNode.ReferencePair<>(component));
     }
 
@@ -54,6 +54,14 @@ class AbstractExecutionTest {
             super(message, new EmptyResult());
         }
     }
+
+    class ProcessorThrowingExceptionSync implements ProcessorSync {
+        @Override
+        public Message apply(Message input) {
+            throw new IllegalStateException("Input not valid");
+        }
+    }
+
 
     class AddPostfixSyncProcessor implements ProcessorSync {
 
