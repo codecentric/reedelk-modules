@@ -2,6 +2,7 @@ package com.reedelk.esb;
 
 import com.reedelk.esb.component.ComponentRegistry;
 import com.reedelk.esb.component.ESBComponent;
+import com.reedelk.esb.configuration.ApplyRuntimeConfiguration;
 import com.reedelk.esb.lifecycle.*;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.services.ESBServicesManager;
@@ -51,6 +52,8 @@ public class ESB implements EventListener, HotSwapListener {
                 systemProperty,
                 configurationAdmin);
         servicesManager.registerServices(context);
+
+        ApplyRuntimeConfiguration.from(servicesManager.configurationService());
     }
 
     @Deactivate

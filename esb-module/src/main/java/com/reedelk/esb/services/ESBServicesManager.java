@@ -33,6 +33,8 @@ public class ESBServicesManager {
 
     private List<ServiceRegistration<?>> registeredServices = new ArrayList<>();
 
+    private ESBConfigurationService configurationService;
+
     public ESBServicesManager(EventListener eventListener,
                               HotSwapListener hotSwapListener,
                               ModulesManager modulesManager,
@@ -56,6 +58,10 @@ public class ESBServicesManager {
         registeredServices.forEach(ServiceRegistration::unregister);
     }
 
+    public ESBConfigurationService configurationService() {
+        return configurationService;
+    }
+
     private void registerHotSwapService(BundleContext context) {
         ESBHotSwapService service = new ESBHotSwapService(context, hotSwapListener);
         ServiceRegistration<HotSwapService> registration =
@@ -71,10 +77,10 @@ public class ESBServicesManager {
     }
 
     private void registerConfigurationService(BundleContext context) {
-        ESBConfigurationService service = new ESBConfigurationService(configurationAdmin, systemProperty);
-        service.initialize();
+        configurationService = new ESBConfigurationService(configurationAdmin, systemProperty);
+        configurationService.initialize();
         ServiceRegistration<ConfigurationService> registration =
-                context.registerService(ConfigurationService.class, service, NO_PROPERTIES);
+                context.registerService(ConfigurationService.class, configurationService, NO_PROPERTIES);
         registeredServices.add(registration);
     }
 

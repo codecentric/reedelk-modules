@@ -1,5 +1,6 @@
 package com.reedelk.esb.flow;
 
+import com.reedelk.esb.execution.scheduler.SchedulerProvider;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.TestComponent;
@@ -50,6 +51,7 @@ class FlowTest {
 
     @BeforeEach
     void setUp() {
+        SchedulerProvider.initialize(3);
         doReturn(mockContext).when(bundle).getBundleContext();
         doReturn(Bundle.ACTIVE).when(bundle).getState();
     }

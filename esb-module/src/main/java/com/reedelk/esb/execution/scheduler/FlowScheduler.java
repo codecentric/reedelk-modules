@@ -9,15 +9,32 @@ import java.util.concurrent.TimeUnit;
 
 class FlowScheduler {
 
-    // TODO: This one should be a system property
-    private static final int MAX_POOL_SIZE = 50;
+    private static volatile FlowScheduler INSTANCE;
 
-    static final Scheduler INSTANCE;
-    static {
+    final Scheduler scheduler;
+
+    private FlowScheduler(int flowPoolMaxSize) {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-                0, MAX_POOL_SIZE,
+                0, flowPoolMaxSize,
                 60L, TimeUnit.SECONDS,
                 new SynchronousQueue<>(), new DefaultThreadFactory("Flow-pool"));
-        INSTANCE = Schedulers.fromExecutorService(threadPoolExecutor, "Flow-pool");
+        scheduler = Schedulers.fromExecutorService(threadPoolExecutor, "Flow-pool");
+    }
+
+    static void initialize(int flowPoolMaxSize) {
+        if (INSTANCE == null) {
+            synchronized (FlowScheduler.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new FlowScheduler(flowPoolMaxSize);
+                }
+            }
+        }
+    }
+
+    static Scheduler scheduler() {
+        if (INSTANCE == null) {
+            throw new IllegalStateException("Error, scheduler not initialized");
+        }
+        return INSTANCE.scheduler;
     }
 }
