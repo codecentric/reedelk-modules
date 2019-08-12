@@ -1,6 +1,6 @@
 package com.reedelk.esb.component;
 
-import com.reedelk.esb.concurrency.SchedulerProvider;
+import com.reedelk.esb.execution.scheduler.SchedulerProvider;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.component.Fork;
 import reactor.core.scheduler.Scheduler;

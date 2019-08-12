@@ -1,4 +1,4 @@
-package com.reedelk.esb.concurrency;
+package com.reedelk.esb.execution.scheduler;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;

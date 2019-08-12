@@ -1,7 +1,7 @@
 package com.reedelk.esb.execution;
 
 import com.reedelk.esb.component.ForkWrapper;
-import com.reedelk.esb.concurrency.SchedulerProvider;
+import com.reedelk.esb.execution.scheduler.SchedulerProvider;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Component;

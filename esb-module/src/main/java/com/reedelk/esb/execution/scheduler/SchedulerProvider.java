@@ -1,4 +1,4 @@
-package com.reedelk.esb.concurrency;
+package com.reedelk.esb.execution.scheduler;
 
 import reactor.core.scheduler.Scheduler;
 
