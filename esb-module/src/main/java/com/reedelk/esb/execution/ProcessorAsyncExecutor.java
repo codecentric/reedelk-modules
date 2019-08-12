@@ -7,6 +7,7 @@ import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
 import com.reedelk.runtime.api.message.Message;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
@@ -23,7 +24,7 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
 
         ProcessorAsync processorAsync = (ProcessorAsync) currentNode.getComponent();
 
-        Mono<EventContext> parent = Mono.from(publisher)
+        Publisher<EventContext> parent = Flux.from(publisher)
                 .flatMap(event -> sinkFromCallback(processorAsync, event)
                         .publishOn(SchedulerProvider.flow())); // TODO: Add a timeout!???
 

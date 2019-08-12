@@ -49,6 +49,13 @@ class AbstractExecutionTest {
         };
     }
 
+    Consumer<EventContext> assertMessageContainsOneOf(String... expected) {
+        return event -> {
+            String out = event.getMessage().getTypedContent().asString();
+            assertThat(expected).contains(out);
+        };
+    }
+
     class NoActionResultEventContext extends EventContext {
         NoActionResultEventContext(Message message) {
             super(message, new EmptyResult());
