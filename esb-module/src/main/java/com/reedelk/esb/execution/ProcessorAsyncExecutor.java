@@ -51,11 +51,17 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
         return FlowExecutorFactory.get().execute(parent, next, graph);
     }
 
+    /**
+     * Returns optionally the async processor timeout value.
+     * Note that if the timeout is < 0, then the timeout is disabled.
+     */
     Optional<Long> asyncCallbackTimeout() {
         long asyncProcessorTimeout = RuntimeConfigurationProvider.get()
                 .getFlowSchedulerConfig()
                 .getAsyncProcessorTimeout();
-        return Optional.of(asyncProcessorTimeout);
+        return asyncProcessorTimeout < 0 ?
+                Optional.empty() :
+                Optional.of(asyncProcessorTimeout);
     }
 
     Scheduler flowScheduler() {
