@@ -11,6 +11,11 @@ import reactor.core.publisher.Mono;
 
 import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
 
+/**
+ * Executes an asynchronous processor in a different Scheduler thread.
+ * Waits for the processor to complete until any of the OnResult callback
+ * is called by the implementing processor.
+ */
 public class ProcessorAsyncExecutor implements FlowExecutor {
 
     @Override
@@ -20,33 +25,31 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
 
         Mono<EventContext> parent = Mono.from(publisher)
                 .flatMap(event -> sinkFromCallback(processorAsync, event)
-                        .publishOn(SchedulerProvider.flow()));
+                        .publishOn(SchedulerProvider.flow())); // TODO: Add a timeout!???
 
         ExecutionNode next = nextNode(currentNode, graph);
 
         return FlowExecutorFactory.get().execute(parent, next, graph);
     }
 
-    private static Mono<EventContext> sinkFromCallback(ProcessorAsync processor, EventContext messageWrapper) {
+    private static Mono<EventContext> sinkFromCallback(ProcessorAsync processor, EventContext event) {
         return Mono.create(sink -> {
+
+            OnResult callback = new OnResult() {
+                @Override
+                public void onResult(Message message) {
+                    event.replaceWith(message);
+                    sink.success(event);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    sink.error(e);
+                }
+            };
+
             try {
-                processor.apply(messageWrapper.getMessage(), new OnResult() {
-
-                    @Override
-                    public void onResult(Message message) {
-
-                        messageWrapper.replaceWith(message);
-
-                        sink.success(messageWrapper);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                        sink.error(e);
-
-                    }
-                });
+                processor.apply(event.getMessage(), callback);
             } catch (Exception e) {
                 sink.error(e);
             }

@@ -2,80 +2,68 @@ package com.reedelk.esb.execution;
 
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.esb.test.utils.TestInboundComponent;
-import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.component.Stop;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
-
-class ProcessorSyncExecutorTest {
+class ProcessorSyncExecutorTest extends AbstractExecutionTest {
 
     private ProcessorSyncExecutor executor = new ProcessorSyncExecutor();
-
-    private ExecutionGraph graph = ExecutionGraph.build();
-
-    private ExecutionNode inboundExecutionNode;
-    private ExecutionNode stopExecutionNode;
-
-    @BeforeEach
-    void setUp() {
-        stopExecutionNode = new ExecutionNode(new ExecutionNode.ReferencePair<>(new Stop()));
-        inboundExecutionNode = new ExecutionNode(new ExecutionNode.ReferencePair<>(new TestInboundComponent()));
-        graph.putEdge(null, inboundExecutionNode);
-    }
+    private ExecutionNode processor = newExecutionNode(new AddPostfixSyncProcessor("-postfix"));
 
     @Test
     void shouldCorrectlyApplyProcessorToMessage() {
         // Given
-        ExecutionNode processor = newExecutionNode(new TestSyncProcessor());
-        graph.putEdge(inboundExecutionNode, processor);
-        graph.putEdge(processor, stopExecutionNode);
-
-        Message originalMessage = MessageBuilder.get().text("inputContent").build();
-
-        EventContext event = new NoActionResultEventContext(originalMessage);
-
-        Mono<EventContext> publisher = Mono.just(event);
+        ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
+        EventContext event = newEventWithContent("input");
+        Publisher<EventContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher = executor.execute(publisher, processor, graph);
+        Publisher<EventContext> endPublisher =
+                executor.execute(publisher, processor, graph);
 
         // Then
-        String expectedOutput = "inputContent-postfix";
         StepVerifier.create(endPublisher)
-                .assertNext(messageContext -> {
+                .assertNext(assertMessageContains("input-postfix"))
+                .verifyComplete();
+    }
 
-                    String out = (String) messageContext.getMessage().getTypedContent().content();
+    @Test
+    void shouldCorrectlyApplyProcessorToEachMessageInTheStream() {
+        // Given
+        ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
+        EventContext event1 = newEventWithContent("input1");
+        EventContext event2 = newEventWithContent("input2");
+        Publisher<EventContext> publisher = Flux.just(event1, event2);
 
-                    assertThat(out).isEqualTo(expectedOutput);
+        // When
+        Publisher<EventContext> endPublisher =
+                executor.execute(publisher, processor, graph);
 
-                }).verifyComplete();
+        // Then
+        StepVerifier.create(endPublisher)
+                .assertNext(assertMessageContains("input1-postfix"))
+                .assertNext(assertMessageContains("input2-postfix"))
+                .verifyComplete();
     }
 
     @Test
     void shouldCorrectlyThrowErrorWhenProcessorThrowsException() {
         // Given
         ExecutionNode processor = newExecutionNode(new TestSyncProcessorThrowingException());
-        graph.putEdge(inboundExecutionNode, processor);
-        graph.putEdge(processor, stopExecutionNode);
-
-        Message originalMessage = MessageBuilder.get().text("input").build();
+        ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
+        Message message = MessageBuilder.get().text("input").build();
 
         OnResultVerifier onResultVerifier = new OnResultVerifier();
-        EventContext inputEventContext = new EventContext(originalMessage, onResultVerifier);
+        EventContext inputEventContext = new EventContext(message, onResultVerifier);
 
         Publisher<EventContext> publisher = Flux.just(inputEventContext);
 
@@ -83,7 +71,8 @@ class ProcessorSyncExecutorTest {
         Publisher<EventContext> endPublisher = executor.execute(publisher, processor, graph);
 
         // Then
-        StepVerifier.create(endPublisher).verifyError();
+        StepVerifier.create(endPublisher)
+                .verifyErrorMatches(throwable -> throwable instanceof IllegalStateException);
     }
 
     // If the processor is the last node, then it must be present a Stop node.
@@ -92,38 +81,13 @@ class ProcessorSyncExecutorTest {
     @Test
     void shouldThrowExceptionIfProcessorNotFollowedByAnyOtherNode() {
         // Given
-        ExecutionNode processor = newExecutionNode(new TestSyncProcessor());
-        graph.putEdge(inboundExecutionNode, processor);
+        ExecutionNode processor = newExecutionNode(new AddPostfixSyncProcessor("exception"));
+        ExecutionGraph graph = newGraphSequence(inbound, processor);
 
         // When
         Assertions.assertThrows(IllegalStateException.class, () ->
                         executor.execute(Flux.just(), processor, graph),
                 "Expected processor sync to be followed by one node");
-    }
-
-    private ExecutionNode newExecutionNode(Component component) {
-        return new ExecutionNode(new ExecutionNode.ReferencePair<>(component));
-    }
-
-    private class EmptyResult implements OnResult {
-    }
-
-    private class NoActionResultEventContext extends EventContext {
-        NoActionResultEventContext(Message message) {
-            super(message, new EmptyResult());
-        }
-    }
-
-    private class TestSyncProcessor implements ProcessorSync {
-        @Override
-        public Message apply(Message input) {
-            String inputString = (String) input.getTypedContent().content();
-            String outputString = inputString + "-postfix";
-            return MessageBuilder.get()
-                    .mimeType(MimeType.TEXT)
-                    .content(outputString)
-                    .build();
-        }
     }
 
     private class TestSyncProcessorThrowingException implements ProcessorSync {
@@ -135,7 +99,6 @@ class ProcessorSyncExecutorTest {
 
     class OnResultVerifier implements OnResult {
         Throwable throwable;
-
         @Override
         public void onError(Throwable throwable) {
             this.throwable = throwable;

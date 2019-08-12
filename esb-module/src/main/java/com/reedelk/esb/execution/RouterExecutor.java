@@ -34,7 +34,7 @@ public class RouterExecutor implements FlowExecutor {
         List<RouterWrapper.PathExpressionPair> pathExpressionPairs = router.getPathExpressionPairs();
 
         // Need to keep going and continue to execute the flow after the choice joins...
-        Flux<EventContext> flux = Flux.from(publisher).flatMap(messageContext -> {
+        Publisher<EventContext> flux = Flux.from(publisher).flatMap(messageContext -> {
 
             // Create choice branches
             List<Mono<EventContext>> choiceBranches = pathExpressionPairs.stream()
@@ -59,19 +59,19 @@ public class RouterExecutor implements FlowExecutor {
 
     private Mono<EventContext> createDefaultMono(RouterWrapper.PathExpressionPair pair, EventContext message, ExecutionGraph graph) {
         ExecutionNode defaultExecutionNode = pair.pathReference;
-        Flux<EventContext> parent = Flux.just(message);
+        Publisher<EventContext> parent = Flux.just(message);
         return Mono.from(FlowExecutorFactory.get()
                 .execute(parent, defaultExecutionNode, graph));
     }
 
-    private Mono<EventContext> createConditionalBranch(RouterWrapper.PathExpressionPair pair, EventContext message, ExecutionGraph graph) {
+    private Mono<EventContext> createConditionalBranch(RouterWrapper.PathExpressionPair pair, EventContext event, ExecutionGraph graph) {
         String expression = pair.expression;
         ExecutionNode pathExecutionNode = pair.pathReference;
         // This Mono evaluates the expression. If the expression is true,
         // then the branch subflow gets executed, otherwise the message is dropped
         // and the flow is not executed.
-        Mono<EventContext> parent = Mono.just(message)
-                .filterWhen(value -> evaluate(expression, message.getMessage()));
+        Mono<EventContext> parent = Mono.just(event)
+                .filterWhen(value -> evaluate(expression, event.getMessage()));
 
         return Mono.from(FlowExecutorFactory.get().execute(parent, pathExecutionNode, graph));
     }
