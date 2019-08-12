@@ -61,21 +61,39 @@ public class ESB implements EventListener, HotSwapListener {
     }
 
     @Override
-    public void moduleInstalled(long moduleId) {
+    public synchronized void moduleInstalled(long moduleId) {
         StepRunner.get(context, modulesManager, componentRegistry)
                 .next(new CreateModule())
                 .next(new AddModule())
                 .execute(moduleId);
     }
 
+    /**
+     * Note that a module might be started already when this callback is called.
+     * It is started when we update an already installed module.
+     * Install:
+     * - moduleInstalled: state=INSTALLED
+     * - moduleStarted: state=STARTED
+     * <p>
+     * Update (e.g. because component source code was changed - no hotswap -):
+     * - moduleStopping: state=RESOLVED
+     * - componentUnregistering: state=UNRESOLVED
+     * - moduleStopped: state=UNRESOLVED (no-op)
+     * - componentRegistered: state=STARTED (auto-start when all components are resolved)
+     * - moduleStarted: state=STARTED (no-op)
+     * <p>
+     * This is why we have this isModuleStarted check: the module might have been already started.
+     */
     @Override
     public synchronized void moduleStarted(long moduleId) {
-        StepRunner.get(context, modulesManager, componentRegistry)
-                .next(new CheckModuleNotNull())
-                .next(new ResolveModuleDependencies())
-                .next(new BuildModule())
-                .next(new StartModule())
-                .execute(moduleId);
+        if (!modulesManager.isModuleStarted(moduleId)) {
+            StepRunner.get(context, modulesManager, componentRegistry)
+                    .next(new CheckModuleNotNull())
+                    .next(new ResolveModuleDependencies())
+                    .next(new BuildModule())
+                    .next(new StartModule())
+                    .execute(moduleId);
+        }
     }
 
     @Override
@@ -83,7 +101,6 @@ public class ESB implements EventListener, HotSwapListener {
         StepRunner.get(context, modulesManager)
                 .next(new CheckModuleNotNull())
                 .next(new StopModuleAndReleaseReferences())
-                .next(new RemoveModule())
                 .execute(moduleId);
     }
 
@@ -95,9 +112,18 @@ public class ESB implements EventListener, HotSwapListener {
      */
     @Override
     public synchronized void moduleStopped(long moduleId) {
+        if (modulesManager.isModuleStarted(moduleId)) {
+            StepRunner.get(context, modulesManager)
+                    .next(new CheckModuleNotNull())
+                    .next(new StopModuleAndReleaseReferences())
+                    .execute(moduleId);
+        }
+    }
+
+    @Override
+    public synchronized void moduleUninstalled(long moduleId) {
         if (modulesManager.isModuleRegistered(moduleId)) {
             StepRunner.get(context, modulesManager)
-                    .next(new StopModuleAndReleaseReferences())
                     .next(new RemoveModule())
                     .execute(moduleId);
         }
@@ -107,27 +133,25 @@ public class ESB implements EventListener, HotSwapListener {
     public synchronized void componentRegistered(String componentName) {
         componentRegistry.registerComponent(componentName);
 
-        modulesManager.findUnresolvedModules()
-                .forEach(unresolvedModule ->
-                        StepRunner.get(context, modulesManager)
-                                .next(new CheckModuleNotNull())
-                                .next(new UpdateRegisteredComponent(componentName))
-                                .next(new BuildModule())
-                                .next(new StartModule())
-                                .execute(unresolvedModule.id()));
+        modulesManager.findUnresolvedModules().forEach(unresolvedModule ->
+                StepRunner.get(context, modulesManager)
+                        .next(new CheckModuleNotNull())
+                        .next(new UpdateRegisteredComponent(componentName))
+                        .next(new BuildModule())
+                        .next(new StartModule())
+                        .execute(unresolvedModule.id()));
     }
 
     @Override
     public synchronized void componentUnregistering(String componentName) {
         componentRegistry.unregisterComponent(componentName);
 
-        modulesManager.findModulesUsingComponent(componentName)
-                .forEach(moduleUsingComponent ->
-                        StepRunner.get(context, modulesManager)
-                                .next(new CheckModuleNotNull())
-                                .next(new StopModuleAndReleaseReferences())
-                                .next(new UpdateUnregisteredComponent(componentName))
-                                .execute(moduleUsingComponent.id()));
+        modulesManager.findModulesUsingComponent(componentName).forEach(moduleUsingComponent ->
+                StepRunner.get(context, modulesManager)
+                        .next(new CheckModuleNotNull())
+                        .next(new StopModuleAndReleaseReferences())
+                        .next(new UpdateUnregisteredComponent(componentName))
+                        .execute(moduleUsingComponent.id()));
     }
 
     @Override

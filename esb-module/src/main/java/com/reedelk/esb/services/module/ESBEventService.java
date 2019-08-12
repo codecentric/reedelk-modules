@@ -41,6 +41,10 @@ public class ESBEventService implements BundleListener, ServiceListener {
         if (STOPPED == bundleEvent.getType()) {
             listener.moduleStopped(bundleId);
         }
+
+        if (UNINSTALLED == bundleEvent.getType()) {
+            listener.moduleUninstalled(bundleId);
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.reedelk.esb.module;
 
+import com.reedelk.esb.commons.ModuleStateLogger;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.module.state.Error;
 import com.reedelk.esb.module.state.*;
@@ -44,7 +45,7 @@ public class Module implements State {
         this.moduleId = moduleId;
         this.deserializer = deserializer;
         this.moduleFilePath = moduleFilePath;
-        this.state = new Installed();
+        setState(new Installed());
     }
 
     public static Builder builder() {
@@ -69,24 +70,24 @@ public class Module implements State {
 
     public void unresolve(Collection<String> unresolvedComponents, Collection<String> resolvedComponents) {
         isAllowedTransition(Unresolved.class);
-        state = new Unresolved(resolvedComponents, unresolvedComponents);
+        setState(new Unresolved(resolvedComponents, unresolvedComponents));
     }
 
     public void resolve(Collection<String> resolvedComponents) {
         isAllowedTransition(Resolved.class);
-        state = new Resolved(resolvedComponents);
+        setState(new Resolved(resolvedComponents));
     }
 
     public void start(Collection<Flow> flows) {
         isAllowedTransition(Started.class);
         Collection<String> resolvedComponents = state.resolvedComponents();
-        state = new Started(flows, resolvedComponents);
+        setState(new Started(flows, resolvedComponents));
     }
 
     public void stop(Collection<Flow> flows) {
         isAllowedTransition(Stopped.class);
         Collection<String> resolvedComponents = state.resolvedComponents();
-        state = new Stopped(flows, resolvedComponents);
+        setState(new Stopped(flows, resolvedComponents));
     }
 
     /**
@@ -100,9 +101,10 @@ public class Module implements State {
      */
     public void error(Collection<Exception> exceptions) {
         isAllowedTransition(Error.class);
-        state = state instanceof Installed ?
+        Error newState = state instanceof Installed ?
                 new Error(exceptions, emptyList()) :
                 new Error(exceptions, state.resolvedComponents());
+        setState(newState);
     }
 
     public void error(Exception exception) {
@@ -141,6 +143,11 @@ public class Module implements State {
 
         checkState(allowed, format("Module cannot transition from state=%s to state=%s",
                 state.getClass().getSimpleName(), transitionTo.getSimpleName()));
+    }
+
+    private void setState(State newState) {
+        state = newState;
+        ModuleStateLogger.log(this);
     }
 
     public DeserializedModule deserialize() {

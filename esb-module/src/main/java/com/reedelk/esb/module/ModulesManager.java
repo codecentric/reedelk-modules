@@ -37,6 +37,12 @@ public class ModulesManager {
         return idModulesMap.containsKey(moduleId);
     }
 
+    public boolean isModuleStarted(long moduleId) {
+        if (!isModuleRegistered(moduleId)) return false;
+        Module module = idModulesMap.get(moduleId);
+        return module.state() == STARTED;
+    }
+
     public Module getModuleById(long moduleId) {
         return idModulesMap.get(moduleId);
     }

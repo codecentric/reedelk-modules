@@ -32,7 +32,7 @@ public class ESBHotSwapService implements HotSwapService {
 
         listener.hotSwap(bundleAtPath.getBundleId(), resourcesRootDirectory);
 
-        logger.info("Module [{}] flows refreshed", bundleAtPath.getSymbolicName());
+        logger.info("Module [{}] flows updated", bundleAtPath.getSymbolicName());
         return bundleAtPath.getBundleId();
     }
 

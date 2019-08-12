@@ -10,8 +10,9 @@ public interface EventListener {
 
     void moduleStopped(long moduleId);
 
+    void moduleUninstalled(long moduleId);
+
     void componentRegistered(String componentName);
 
     void componentUnregistering(String componentName);
-
 }

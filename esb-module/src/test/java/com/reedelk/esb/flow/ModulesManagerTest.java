@@ -10,9 +10,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,6 +79,58 @@ class ModulesManagerTest {
     }
 
     @Test
+    void shouldIsModuleStartedReturnFalseWhenNotRegistered() {
+        // When
+        boolean actualValue = manager.isModuleStarted(Long.MAX_VALUE);
+
+        // Then
+        assertThat(actualValue).isFalse();
+    }
+
+    @Test
+    void shouldIsModuleStartedReturnFalseWhenNotStarted() {
+        // Given
+        Module module = Module.builder()
+                .moduleId(moduleId)
+                .name(testModuleName)
+                .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
+                .build();
+        manager.add(module);
+
+        // When
+        boolean actualValue = manager.isModuleStarted(moduleId);
+
+        // Then
+        assertThat(actualValue).isFalse();
+    }
+
+    @Test
+    void shouldIsModuleStartedReturnTrueWhenStarted() {
+        // Given
+        Module module = Module.builder()
+                .moduleId(moduleId)
+                .name(testModuleName)
+                .version(testVersion)
+                .deserializer(deserializer)
+                .moduleFilePath(testLocation)
+                .build();
+        manager.add(module);
+
+        module.unresolve(emptyList(), emptyList());
+        module.resolve(emptyList());
+        module.stop(emptySet());
+        module.start(emptySet());
+
+        // When
+        boolean actualValue = manager.isModuleStarted(moduleId);
+
+        // Then
+        assertThat(actualValue).isTrue();
+    }
+
+    @Test
     void shouldAllModulesReturnAllRegisteredModules() {
         // Given
         Module module1 = Module.builder().moduleId(1L).name("TestModule1").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
@@ -132,7 +185,7 @@ class ModulesManagerTest {
         module1.unresolve(unresolvedComponents, resolvedComponents);
 
         Module module2 = Module.builder().moduleId(2L).name("TestModule2").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
-        module2.error(Collections.emptyList());
+        module2.error(emptyList());
 
         Module module3 = Module.builder().moduleId(3L).name("TestModule3").moduleFilePath(testLocation).deserializer(deserializer).version(testVersion).build();
         module3.unresolve(unresolvedComponents, resolvedComponents);
