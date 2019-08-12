@@ -1,6 +1,7 @@
 package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.commons.UniquePropertyValueValidator;
+import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.flow.ErrorStateFlow;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.flow.FlowBuilder;
@@ -82,10 +83,11 @@ public class BuildModule extends AbstractStep<Module, Module> {
     // TODO: Extract in its own class
     private Flow buildFlow(Bundle bundle, JSONObject flowDefinition, DeserializedModule deserializedModule) {
         ExecutionGraph flowGraph = ExecutionGraph.build();
+        FlowExecutorEngine executionEngine = new FlowExecutorEngine(flowGraph);
 
         // TODO: This should be part of the validation process of the flow with JSON schema.
         if (invalidFlowId(flowDefinition)) {
-            return new ErrorStateFlow(flowGraph,
+            return new ErrorStateFlow(flowGraph, executionEngine,
                     new ESBException("\"id\" property must be defined in the flow definition"));
         }
 
@@ -96,11 +98,11 @@ public class BuildModule extends AbstractStep<Module, Module> {
         FlowBuilder flowBuilder = new FlowBuilder(context);
         try {
             flowBuilder.build(flowGraph, flowDefinition);
-            return new Flow(flowId, flowGraph);
+            return new Flow(flowId, flowGraph, executionEngine);
         } catch (Exception exception) {
             String message = format("Error building flow with id [%s]", flowId);
             logger.error(message, exception);
-            return new ErrorStateFlow(flowId, flowGraph, exception);
+            return new ErrorStateFlow(flowId, flowGraph, executionEngine, exception);
         }
     }
 

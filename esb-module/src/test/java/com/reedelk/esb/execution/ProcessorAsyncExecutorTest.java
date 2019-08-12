@@ -1,6 +1,5 @@
 package com.reedelk.esb.execution;
 
-import com.reedelk.esb.execution.scheduler.SchedulerProvider;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.OnResult;
@@ -10,21 +9,33 @@ import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
-import static com.reedelk.esb.execution.scheduler.FlowScheduler.FlowSchedulerConfig;
+import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
 
-    private ProcessorAsyncExecutor executor = new ProcessorAsyncExecutor();
+    private ProcessorAsyncExecutor executor;
 
     @BeforeEach
     void setUp() {
-        FlowSchedulerConfig config = new FlowSchedulerConfig(1, 2, 10);
-        SchedulerProvider.initialize(config);
+        executor = spy(new ProcessorAsyncExecutor());
+        doReturn(Schedulers.elastic()).when(executor).flowScheduler();
+        doReturn(Optional.of(500L)).when(executor).asyncCallbackTimeout();
     }
 
     @Test
@@ -85,6 +96,23 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
                 .verifyErrorMatches(throwable -> throwable instanceof IllegalStateException);
     }
 
+    @Test
+    void shouldCorrectlyThrowTimeoutErrorWhenProcessorAsyncWaitsTooLong() {
+        // Given
+        ExecutionNode processor = newExecutionNode(new ProcessorAsyncTakingTooLong());
+        ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
+        EventContext inputEventContext = newEventWithContent("input");
+
+        Publisher<EventContext> publisher = Flux.just(inputEventContext);
+
+        // When
+        Publisher<EventContext> endPublisher = executor.execute(publisher, processor, graph);
+
+        // Then
+        StepVerifier.create(endPublisher)
+                .verifyErrorMatches(throwable -> throwable instanceof TimeoutException);
+    }
+
     // If the processor is the last node, then it must be present a Stop node.
     // If a Stop node is not there, it means there has been an error while
     // building the graph.
@@ -98,6 +126,20 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
         Assertions.assertThrows(IllegalStateException.class, () ->
                         executor.execute(Flux.just(), processor, graph),
                 "Expected processor sync to be followed by one node");
+    }
+
+    class ProcessorAsyncTakingTooLong implements ProcessorAsync {
+        @Override
+        public void apply(Message input, OnResult callback) {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // nothing to do
+                }
+                callback.onResult(MessageBuilder.get().text("hello").build());
+            });
+        }
     }
 
     class ProcessorThrowingExceptionAsync implements ProcessorAsync {

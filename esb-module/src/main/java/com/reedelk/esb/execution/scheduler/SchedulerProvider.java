@@ -4,8 +4,8 @@ import reactor.core.scheduler.Scheduler;
 
 public class SchedulerProvider {
 
-    public static void initialize(FlowScheduler.FlowSchedulerConfig flowSchedulerConfig) {
-        FlowScheduler.initialize(flowSchedulerConfig);
+    public static void initialize() {
+        FlowScheduler.initialize();
     }
 
     public static Scheduler flow() {

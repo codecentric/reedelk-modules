@@ -1,7 +1,6 @@
 package com.reedelk.esb.flow;
 
-import com.reedelk.esb.execution.scheduler.FlowScheduler;
-import com.reedelk.esb.execution.scheduler.SchedulerProvider;
+import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.TestComponent;
@@ -49,13 +48,11 @@ class FlowTest {
     private ExecutionNode mockExecutionNode;
     @Mock
     private ExecutionGraph mockExecutionGraph;
+    @Mock
+    private FlowExecutorEngine executionEngine;
 
     @BeforeEach
     void setUp() {
-        FlowScheduler.FlowSchedulerConfig config =
-                new FlowScheduler.FlowSchedulerConfig(0, 3, 10);
-        SchedulerProvider.initialize(config);
-
         doReturn(mockContext).when(bundle).getBundleContext();
         doReturn(Bundle.ACTIVE).when(bundle).getState();
     }
@@ -63,7 +60,7 @@ class FlowTest {
     @Test
     void shouldReturnCorrectFlowId() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
 
         // When
         String actualFlowId = flow.getFlowId();
@@ -75,7 +72,7 @@ class FlowTest {
     @Test
     void shouldIsUsingComponentThrowExceptionWhenTargetComponentIsNull() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
 
         // Expect
         IllegalArgumentException illegalArgumentException = Assertions.assertThrows(IllegalArgumentException.class,
@@ -89,7 +86,7 @@ class FlowTest {
     @Test
     void shouldIsUsingComponentReturnFalse() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
         doReturn(Optional.empty()).when(mockExecutionGraph).findOne(ArgumentMatchers.any());
 
         // When
@@ -102,7 +99,7 @@ class FlowTest {
     @Test
     void shouldIsUsingComponentReturnTrue() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
 
         TestComponent testComponent = new TestComponent();
         ServiceReference<Component> serviceReference = mock(ServiceReference.class);
@@ -120,7 +117,7 @@ class FlowTest {
     @Test
     void shouldReleaseReferencesDelegateToGraphTheCorrectConsumer() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
 
         // When
         flow.releaseReferences(bundle);
@@ -132,7 +129,7 @@ class FlowTest {
     @Test
     void shouldFlowStartCallComponentOnStartAndAddInboundEventListener() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
 
@@ -147,7 +144,7 @@ class FlowTest {
     @Test
     void shouldReturnIsStartedFalseWhenNotStarted() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
 
         // When
         boolean actualIsStarted = flow.isStarted();
@@ -159,7 +156,7 @@ class FlowTest {
     @Test
     void shouldReturnIsStartedTrueWhenStarted() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
         flow.start();
@@ -174,7 +171,7 @@ class FlowTest {
     @Test
     void shouldStopFlowCallComponentOnShutdownAndRemoveListener() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
         flow.start();
@@ -190,7 +187,7 @@ class FlowTest {
     @Test
     void shouldStopFlowNotCallComponentOnShutdownIfAlreadyStarted() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
 
@@ -205,7 +202,7 @@ class FlowTest {
     @Test
     void shouldForceStopCallComponentOnShutdownAndRemoveListenerIfNotStarted() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
 
@@ -220,7 +217,7 @@ class FlowTest {
     @Test
     void shouldForceStopCallComponentOnShutdownAndRemoveListenerIfStarted() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
         flow.start();
@@ -236,7 +233,7 @@ class FlowTest {
     @Test
     void shouldOnEventDelegateExecutionToExecutor() {
         // Given
-        Flow flow = new Flow(flowId, mockExecutionGraph);
+        Flow flow = new Flow(flowId, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
 
@@ -257,6 +254,7 @@ class FlowTest {
                 assertThat(actualMessage).isEqualTo(inMessage);
                 verify(mockExecutionGraph).getRoot();
                 verify(mockExecutionGraph).successors(mockExecutionNode);
+                verify(executionEngine).onEvent(inMessage, this);
             }
 
             @Override
@@ -265,5 +263,4 @@ class FlowTest {
             }
         });
     }
-
 }

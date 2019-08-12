@@ -23,14 +23,14 @@ public class Flow implements InboundEventListener {
 
     private final String flowId;
     private final ExecutionGraph executionGraph;
-    private final FlowExecutorEngine flowExecutorEngine;
+    private final FlowExecutorEngine executionEngine;
 
     private boolean started = false;
 
-    public Flow(final String flowId, final ExecutionGraph executionGraph) {
+    public Flow(final String flowId, final ExecutionGraph executionGraph, final FlowExecutorEngine executionEngine) {
         this.flowId = flowId;
         this.executionGraph = executionGraph;
-        this.flowExecutorEngine = new FlowExecutorEngine(executionGraph);
+        this.executionEngine = executionEngine;
     }
 
     public String getFlowId() {
@@ -88,7 +88,7 @@ public class Flow implements InboundEventListener {
     @Override
     public void onEvent(Message message, OnResult onResult) {
         try {
-            flowExecutorEngine.onEvent(message, onResult);
+            executionEngine.onEvent(message, onResult);
         } catch (Exception exception) {
             String errorMessage = format("Exception while executing Flow with id=[%s]", flowId);
             logger.debug(errorMessage, exception);
