@@ -7,25 +7,36 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-class FlowScheduler {
+public class FlowScheduler {
+
+    public static class FlowSchedulerConfig {
+        private final int poolMinSize;
+        private final int poolMaxSize;
+        private final int keepAliveTime;
+
+        public FlowSchedulerConfig(int poolMinSize, int poolMaxSize, int keepAliveTime) {
+            this.poolMinSize = poolMinSize;
+            this.poolMaxSize = poolMaxSize;
+            this.keepAliveTime = keepAliveTime;
+        }
+    }
 
     private static volatile FlowScheduler INSTANCE;
 
-    final Scheduler scheduler;
+    private final Scheduler scheduler;
 
-    private FlowScheduler(int flowPoolMaxSize) {
+    private FlowScheduler(FlowSchedulerConfig config) {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-                0, flowPoolMaxSize,
-                60L, TimeUnit.SECONDS,
+                config.poolMinSize, config.poolMaxSize, config.keepAliveTime, TimeUnit.SECONDS,
                 new SynchronousQueue<>(), new DefaultThreadFactory("Flow-pool"));
         scheduler = Schedulers.fromExecutorService(threadPoolExecutor, "Flow-pool");
     }
 
-    static void initialize(int flowPoolMaxSize) {
+    static void initialize(FlowSchedulerConfig config) {
         if (INSTANCE == null) {
             synchronized (FlowScheduler.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new FlowScheduler(flowPoolMaxSize);
+                    INSTANCE = new FlowScheduler(config);
                 }
             }
         }
