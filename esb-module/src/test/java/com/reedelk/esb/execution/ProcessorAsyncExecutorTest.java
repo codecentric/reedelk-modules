@@ -29,11 +29,10 @@ import static org.mockito.Mockito.spy;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
 
-    private ProcessorAsyncExecutor executor;
+    private ProcessorAsyncExecutor executor = spy(new ProcessorAsyncExecutor());
 
     @BeforeEach
     void setUp() {
-        executor = spy(new ProcessorAsyncExecutor());
         doReturn(Schedulers.elastic()).when(executor).flowScheduler();
         doReturn(Optional.of(500L)).when(executor).asyncCallbackTimeout();
     }

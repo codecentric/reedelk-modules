@@ -54,7 +54,7 @@ public class ForkExecutor implements FlowExecutor {
             // Join fork branches (Join step)
             return zip(forkBranches, messagesCombinator())
                     .flatMap(eventsToJoin -> create(new JoinConsumer(messageContext, eventsToJoin, join)))
-                    .publishOn(SchedulerProvider.flow()); // back using the flow Threads
+                    .publishOn(flowScheduler()); // switch back using the flow threads
         });
 
 
@@ -62,6 +62,10 @@ public class ForkExecutor implements FlowExecutor {
         ExecutionNode nodeAfterJoin = nextNode(joinNode, graph);
 
         return FlowExecutorFactory.get().execute(mono, nodeAfterJoin, graph);
+    }
+
+    Scheduler flowScheduler() {
+        return SchedulerProvider.flow();
     }
 
     private Mono<EventContext> createForkBranch(ExecutionNode executionNode, EventContext context, ExecutionGraph graph, Scheduler forkScheduler) {

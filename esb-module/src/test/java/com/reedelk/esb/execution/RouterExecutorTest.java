@@ -220,7 +220,6 @@ class RouterExecutorTest extends AbstractExecutionTest {
         class ConditionWithSequence {
             String condition;
             List<ExecutionNode> sequence;
-
             ConditionWithSequence(String condition, ExecutionNode[] sequence) {
                 this.sequence = Arrays.asList(sequence);
                 this.condition = condition;
