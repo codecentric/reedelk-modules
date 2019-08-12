@@ -16,27 +16,22 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <reactor.version>3.2.11.RELEASE</reactor.version>
         <junit.version>RELEASE</junit.version>
         <assertj.version>3.11.1</assertj.version>
+        <reactor.addons.version>3.2.3.RELEASE</reactor.addons.version>
+        <reactor.netty.version>0.8.10.RELEASE</reactor.netty.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>io.projectreactor.netty</groupId>
             <artifactId>reactor-netty</artifactId>
-            <version>0.8.10.RELEASE</version>
+            <version>${reactor.netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.projectreactor.addons</groupId>
             <artifactId>reactor-extra</artifactId>
-            <version>3.2.3.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-core</artifactId>
-            <version>${reactor.version}</version>
-            <scope>provided</scope>
+            <version>${reactor.addons.version}</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -75,9 +70,9 @@
 
                             sun.misc,
 
-                            javax.security.cert,
-                            javax.net.ssl,
                             javax.net,
+                            javax.net.ssl,
+                            javax.security.cert,
 
                             org.slf4j;version="[1.7,2)",
                             org.slf4j.helpers;version="[1.7,2)",
@@ -86,6 +81,7 @@
                             com.intellij.rt.debugger.agent,
 
                             org.reactivestreams;version="[1.0,2)",
+
                             reactor.core;version="[3.2,4)",
                             reactor.core.publisher;version="[3.2,4)",
                             reactor.core.scheduler;version="[3.2,4)",
@@ -129,6 +125,4 @@
             </build>
         </profile>
     </profiles>
-
-
 </project>
