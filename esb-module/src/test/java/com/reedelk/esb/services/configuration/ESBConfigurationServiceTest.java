@@ -186,6 +186,78 @@ class ESBConfigurationServiceTest {
         assertThat(actualConfigProperty).isEqualTo(653333);
     }
 
+    // Long property
+    @Test
+    void shouldReturnSystemLongConfigProperty() {
+        // Given
+        long expectedValue = 54L;
+
+        doReturn(expectedValue)
+                .when(service)
+                .getLongSystemProperty(TEST_CONFIG_KEY);
+
+        // When
+        long actualConfigProperty = service.getLongConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, 11L);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(expectedValue);
+    }
+
+    @Test
+    void shouldReturnLongConfigPropertyFromConfigurationAdminServiceWhenLongAlready() throws IOException {
+        // Given
+        long expectedValue = 658L;
+
+        doReturn(null)
+                .when(service)
+                .getStringSystemProperty(TEST_CONFIG_KEY);
+
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put(TEST_CONFIG_KEY, expectedValue);
+        mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
+
+        // When
+        long actualConfigProperty = service.getLongConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, 88L);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(expectedValue);
+    }
+
+    @Test
+    void shouldReturnLongConfigPropertyFromConfigurationAdminServiceWhenString() throws IOException {
+        // Given
+        long expectedValue = Long.MAX_VALUE;
+
+        doReturn(null)
+                .when(service)
+                .getStringSystemProperty(TEST_CONFIG_KEY);
+
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put(TEST_CONFIG_KEY, Long.toString(expectedValue));
+        mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
+
+        // When
+        long actualConfigProperty = service.getLongConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, 11109L);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(expectedValue);
+    }
+
+    @Test
+    void shouldReturnDefaultLongConfigProperty() throws IOException {
+        // Given
+        doReturn(null)
+                .when(service)
+                .getStringSystemProperty(TEST_CONFIG_KEY);
+        mockConfigurationWithProperties(TEST_CONFIG_PID, null);
+
+        // When
+        long actualConfigProperty = service.getLongConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, Long.MIN_VALUE);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(Long.MIN_VALUE);
+    }
+
     @Test
     void getConfigAdminPropertyShouldReturnDefaultValueWhenPropertyNotDefinedInDictionary() throws IOException {
         // Given
