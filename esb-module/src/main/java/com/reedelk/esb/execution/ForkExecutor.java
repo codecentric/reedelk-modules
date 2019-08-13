@@ -8,6 +8,7 @@ import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Join;
 import com.reedelk.runtime.api.message.Message;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 import reactor.core.scheduler.Scheduler;
@@ -16,11 +17,13 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static com.reedelk.esb.commons.Preconditions.checkNotNull;
 import static com.reedelk.esb.commons.Preconditions.checkState;
 import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
+import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
-import static reactor.core.publisher.Mono.*;
+
 
 public class ForkExecutor implements FlowExecutor {
 
@@ -36,14 +39,15 @@ public class ForkExecutor implements FlowExecutor {
         ExecutionNode stopNode = fork.getStopNode();
 
         ExecutionNode joinNode = nextNode(stopNode, graph);
+        checkNotNull(joinNode, "Join component is mandatory after Fork");
 
         Component joinComponent = joinNode.getComponent();
         checkState(joinComponent instanceof Join,
-                String.format("Fork must be followed by a component implementing %s interface", Join.class.getName()));
+                format("Fork must be followed by a component implementing [%s] interface", Join.class.getName()));
 
         Join join = (Join) joinComponent;
 
-        Mono<EventContext> mono = from(publisher).flatMap(messageContext -> {
+        Flux<EventContext> mono = Flux.from(publisher).flatMap(messageContext -> {
 
             // Create fork branches (Fork step)
             List<Mono<EventContext>> forkBranches = nextExecutionNodes.stream()
@@ -52,8 +56,8 @@ public class ForkExecutor implements FlowExecutor {
                     .collect(toList());
 
             // Join fork branches (Join step)
-            return zip(forkBranches, messagesCombinator())
-                    .flatMap(eventsToJoin -> create(new JoinConsumer(messageContext, eventsToJoin, join)))
+            return Flux.zip(forkBranches, messagesCombinator())
+                    .flatMap(eventsToJoin -> Mono.create(new JoinConsumer(messageContext, eventsToJoin, join)))
                     .publishOn(flowScheduler()); // switch back using the flow threads
         });
 

@@ -7,11 +7,13 @@ import com.reedelk.runtime.api.component.Join;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.component.Stop;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
@@ -21,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.util.stream.Collectors.joining;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -33,6 +36,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
     private ExecutionNode fork1Node;
     private ExecutionNode fork2Node;
     private ExecutionNode joinNode;
+    private ExecutionNode nodeFollowingJoin;
 
     @BeforeEach
     void setUp() {
@@ -44,10 +48,11 @@ class ForkExecutorTest extends AbstractExecutionTest {
         joinNode = newExecutionNode(new JoinString());
         fork1Node = newExecutionNode(new AddPostfixSyncProcessor("-fork1"));
         fork2Node = newExecutionNode(new AddPostfixSyncProcessor("-fork2"));
+        nodeFollowingJoin = newExecutionNode(new AddPostfixSyncProcessor("-following-join"));
     }
 
     @Test
-    void shouldExecuteCorrectBranchForGivenCondition() {
+    void shouldForkAndJoinCorrectlyThePayload() {
         // Given
         ExecutionGraph graph = GraphWithForkBuilder.get()
                 .fork(forkNode)
@@ -65,8 +70,134 @@ class ForkExecutorTest extends AbstractExecutionTest {
 
         // Then
         StepVerifier.create(endPublisher)
-                .assertNext(assertMessageContains("Route2-route2-following-stop"))
+                .assertNext(assertMessageContains("ForkTest-fork1,ForkTest-fork2"))
                 .verifyComplete();
+    }
+
+    @Test
+    void shouldForkAndJoinCorrectlyForAnyMessageInTheStream() {
+        // Given
+        ExecutionGraph graph = GraphWithForkBuilder.get()
+                .fork(forkNode)
+                .inbound(inbound)
+                .forkSequence(fork1Node)
+                .forkSequence(fork2Node)
+                .join(joinNode)
+                .build();
+
+        EventContext event1 = newEventWithContent("ForkTest1");
+        EventContext event2 = newEventWithContent("ForkTest2");
+        Publisher<EventContext> publisher = Flux.just(event1, event2);
+
+        // When
+        Publisher<EventContext> endPublisher = executor.execute(publisher, forkNode, graph);
+
+        // Then
+        StepVerifier.create(endPublisher)
+                .assertNext(assertMessageContains("ForkTest1-fork1,ForkTest1-fork2"))
+                .assertNext(assertMessageContains("ForkTest2-fork1,ForkTest2-fork2"))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldForkAndJoinCorrectlyAndContinueExecutionUntilTheEndOfTheGraph() {
+        // Given
+        ExecutionGraph graph = GraphWithForkBuilder.get()
+                .fork(forkNode)
+                .inbound(inbound)
+                .forkSequence(fork1Node)
+                .forkSequence(fork2Node)
+                .join(joinNode)
+                .afterForkSequence(nodeFollowingJoin)
+                .build();
+
+        EventContext event = newEventWithContent("ForkTest");
+        Publisher<EventContext> publisher = Mono.just(event);
+
+        // When
+        Publisher<EventContext> endPublisher = executor.execute(publisher, forkNode, graph);
+
+        // Then
+        StepVerifier.create(endPublisher)
+                .assertNext(assertMessageContains("ForkTest-fork1,ForkTest-fork2-following-join"))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldThrowExceptionAndStopExecutionWhenBranchProcessorThrowsException() {
+        // Given
+        ExecutionNode processorThrowingException = newExecutionNode(new ProcessorThrowingExceptionSync());
+
+        ExecutionGraph graph = GraphWithForkBuilder.get()
+                .fork(forkNode)
+                .inbound(inbound)
+                .forkSequence(fork1Node)
+                .forkSequence(processorThrowingException)
+                .join(joinNode)
+                .afterForkSequence(nodeFollowingJoin)
+                .build();
+
+        EventContext event = newEventWithContent("ForkTest");
+        Publisher<EventContext> publisher = Mono.just(event);
+
+        // When
+        Publisher<EventContext> endPublisher =
+                executor.execute(publisher, forkNode, graph);
+
+        // Then
+        StepVerifier.create(endPublisher)
+                .verifyErrorMatches(throwable -> throwable instanceof IllegalStateException);
+    }
+
+    @Test
+    void shouldThrowExceptionAndStopExecutionWhenJoinProcessorThrowsException() {
+        // Given
+        ExecutionNode joinThrowingException = newExecutionNode(new JoinThrowingException());
+
+        ExecutionGraph graph = GraphWithForkBuilder.get()
+                .fork(forkNode)
+                .inbound(inbound)
+                .forkSequence(fork1Node)
+                .forkSequence(fork2Node)
+                .join(joinThrowingException)
+                .afterForkSequence(nodeFollowingJoin)
+                .build();
+
+        EventContext event = newEventWithContent("ForkTest");
+        Publisher<EventContext> publisher = Mono.just(event);
+
+        // When
+        Publisher<EventContext> endPublisher =
+                executor.execute(publisher, forkNode, graph);
+
+        // Then
+        StepVerifier.create(endPublisher)
+                .verifyErrorMatches(throwable -> throwable instanceof IllegalStateException);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenJoinDoesNotImplementJoinInterface() {
+        // Given
+        ExecutionNode incorrectJoinType = newExecutionNode(new AddPostfixSyncProcessor("incorrect-join"));
+
+        ExecutionGraph graph = GraphWithForkBuilder.get()
+                .fork(forkNode)
+                .inbound(inbound)
+                .forkSequence(fork1Node)
+                .forkSequence(fork2Node)
+                .join(incorrectJoinType)
+                .build();
+
+        EventContext event = newEventWithContent("ForkTest");
+        Publisher<EventContext> publisher = Mono.just(event);
+
+        // When
+        IllegalStateException thrown = assertThrows(IllegalStateException.class,
+                () -> executor.execute(publisher, forkNode, graph));
+
+        // Then
+        Assertions.assertThat(thrown.getMessage())
+                .isEqualTo("Fork must be followed by a component implementing [com.reedelk.runtime.api.component.Join] interface");
     }
 
     class JoinString implements Join {
@@ -76,6 +207,13 @@ class ForkExecutorTest extends AbstractExecutionTest {
                     .map(message -> message.getTypedContent().asString())
                     .collect(joining(","));
             return MessageBuilder.get().text(joined).build();
+        }
+    }
+
+    class JoinThrowingException implements Join {
+        @Override
+        public Message apply(List<Message> messagesToJoin) {
+            throw new IllegalStateException("Join not valid");
         }
     }
 
@@ -127,6 +265,9 @@ class ForkExecutorTest extends AbstractExecutionTest {
             forkWrapper.setStopNode(endOfFork);
             for (ForkSequence sequence : forkSequenceList) {
                 buildSequence(graph, fork, endOfFork, sequence.sequence);
+                if (sequence.sequence.size() > 0) {
+                    forkWrapper.addForkNode(sequence.sequence.get(0));
+                }
             }
 
             ExecutionNode last = endOfFork;
