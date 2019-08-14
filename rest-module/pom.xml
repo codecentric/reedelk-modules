@@ -69,6 +69,8 @@
                             com.reedelk.runtime.api.*,
 
                             sun.misc,
+                            jdk.internal.misc,
+                            jdk.internal.miscjavax.net,
 
                             javax.net,
                             javax.net.ssl,
