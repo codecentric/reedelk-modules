@@ -258,6 +258,79 @@ class ESBConfigurationServiceTest {
         assertThat(actualConfigProperty).isEqualTo(Long.MIN_VALUE);
     }
 
+    // Boolean property
+    @Test
+    void shouldReturnSystemBooleanConfigProperty() {
+        // Given
+        boolean expectedValue = true;
+
+        doReturn(expectedValue)
+                .when(service)
+                .getBooleanSystemProperty(TEST_CONFIG_KEY);
+
+        // When
+        boolean actualConfigProperty = service.getBooleanConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, false);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(expectedValue);
+    }
+
+    @Test
+    void shouldReturnBooleanConfigPropertyFromConfigurationAdminServiceWhenBooleanAlready() throws IOException {
+        // Given
+        boolean expectedValue = true;
+
+        doReturn(null)
+                .when(service)
+                .getStringSystemProperty(TEST_CONFIG_KEY);
+
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put(TEST_CONFIG_KEY, expectedValue);
+        mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
+
+        // When
+        boolean actualConfigProperty = service.getBooleanConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, false);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(expectedValue);
+    }
+
+    @Test
+    void shouldReturnBooleanConfigPropertyFromConfigurationAdminServiceWhenString() throws IOException {
+        // Given
+        boolean expectedValue = true;
+
+        doReturn(null)
+                .when(service)
+                .getStringSystemProperty(TEST_CONFIG_KEY);
+
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put(TEST_CONFIG_KEY, Boolean.toString(expectedValue));
+        mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
+
+        // When
+        boolean actualConfigProperty = service.getBooleanConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, false);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(expectedValue);
+    }
+
+    @Test
+    void shouldReturnDefaultBooleanConfigProperty() throws IOException {
+        // Given
+        doReturn(null)
+                .when(service)
+                .getStringSystemProperty(TEST_CONFIG_KEY);
+        mockConfigurationWithProperties(TEST_CONFIG_PID, null);
+
+        // When
+        boolean actualConfigProperty = service.getBooleanConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, true);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(true);
+    }
+
+    // Get config admin property
     @Test
     void getConfigAdminPropertyShouldReturnDefaultValueWhenPropertyNotDefinedInDictionary() throws IOException {
         // Given
