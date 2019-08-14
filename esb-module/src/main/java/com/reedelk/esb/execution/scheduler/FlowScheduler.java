@@ -10,7 +10,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class FlowScheduler {
+class FlowScheduler {
 
     private static final String THREAD_POOL_NAME_PREFIX = "Flow-pool";
     private static volatile FlowScheduler INSTANCE;
