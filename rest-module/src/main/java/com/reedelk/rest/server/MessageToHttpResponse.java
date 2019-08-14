@@ -16,11 +16,11 @@ import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 
 // TODO: This class needs to be reworked
-public class MapMessageToHttpResponse {
+public class MessageToHttpResponse {
 
     private final HttpVersion httpVersion;
 
-    MapMessageToHttpResponse(HttpVersion httpVersion) {
+    MessageToHttpResponse(HttpVersion httpVersion) {
         this.httpVersion = httpVersion;
     }
 

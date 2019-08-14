@@ -5,27 +5,31 @@ import com.reedelk.rest.commons.HttpHeadersAsMap;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
+import com.reedelk.runtime.api.message.type.TypedContent;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.util.IllegalReferenceCountException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.SynchronousSink;
 import reactor.netty.http.server.HttpServerRequest;
 
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import static com.reedelk.rest.commons.InboundProperty.*;
 
-class MapHttpRequestToMessage {
+class HttpRequestToMessage {
 
-    private static final Logger logger = LoggerFactory.getLogger(MapHttpRequestToMessage.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestToMessage.class);
 
     static Message from(HttpServerRequest request) {
+
         QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
+
         Map<String, List<String>> queryParameters = decoder.parameters();
 
         MessageBuilder messageBuilder = MessageBuilder.get()
@@ -37,21 +41,25 @@ class MapHttpRequestToMessage {
 
         MimeType mimeType = mimeTypeOf(request);
 
-        // We set the mime type in the message
-        messageBuilder.mimeType(mimeType);
 
-        // We convert the flux to the correct type given the mime type
-        Class<?> javaClazz = Type.JavaFromMimeType.of(mimeType);
-        if (javaClazz == String.class) {
-            Charset charset = mimeType.getCharset().orElse(Charset.defaultCharset());
-            Flux<String> stringFlux = request.receive()
-                    .map(byteBuf -> byteBuf.toString(charset));
-            messageBuilder.content(stringFlux);
-        } else {
-            // In any other case this is just binary data
-            Flux<byte[]> map = request.receive().map(ByteBuf::array);
-            messageBuilder.content(map);
-        }
+        Flux<byte[]> map = request.receive().retain().handle(new BiConsumer<ByteBuf, SynchronousSink<byte[]>>() {
+            @Override
+            public void accept(ByteBuf byteBuffer, SynchronousSink<byte[]> sink) {
+                try {
+                    byte[] bytes = new byte[byteBuffer.readableBytes()];
+                    byteBuffer.readBytes(bytes);
+                    sink.next(bytes);
+                    byteBuffer.release();
+                } catch (IllegalReferenceCountException e) {
+                    sink.complete();
+                }
+            }
+        });
+
+
+        TypedContent content = new HttpRequestTypedContent(map, mimeType);
+
+        messageBuilder.typedContent(content);
 
         return messageBuilder.build();
     }

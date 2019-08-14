@@ -38,7 +38,6 @@ public class HttpRouteHandler implements BiFunction<HttpServerRequest, HttpServe
     public boolean matchesExactly(HttpMethod method, String uri) {
         Objects.requireNonNull(method, "method");
         Objects.requireNonNull(uri, "uri");
-        return method.equals(condition.method) &&
-                uri.equals(condition.uri);
+        return method.equals(condition.method) && uri.equals(condition.uri);
     }
 }

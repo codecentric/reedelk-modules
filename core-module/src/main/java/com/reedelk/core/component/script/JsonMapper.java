@@ -77,7 +77,7 @@ public class JsonMapper implements ProcessorSync {
     class ComponentVariableBindings extends SimpleBindings {
         ComponentVariableBindings(Message message) {
             if (message.getTypedContent() != null) {
-                put("input", message.getTypedContent().content());
+                put("input", message.getTypedContent().asObject());
             } else {
                 put("input", "{}");
             }

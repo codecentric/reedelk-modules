@@ -36,6 +36,9 @@ public class LoggerComponent implements ProcessorSync {
     @Override
     public Message apply(Message input) {
         try {
+            // The logger should just Print the Stream object if it is a stream,
+            //  otherwise if the stream was resolved (hence loaded into memory)
+            //  it should print the value.
             Object result = service.evaluate(input, message, Object.class);
             level.log(result);
         } catch (ScriptException e) {

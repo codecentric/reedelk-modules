@@ -48,7 +48,7 @@ public class JavascriptComponent implements ProcessorSync {
     class ComponentVariableBindings extends SimpleBindings {
         ComponentVariableBindings(Message message) {
             if (message.getTypedContent() != null) {
-                put("payload", message.getTypedContent().content());
+                put("payload", message.getTypedContent().asObject());
             } else {
                 put("payload", null);
             }
