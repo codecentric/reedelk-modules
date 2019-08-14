@@ -58,6 +58,15 @@ public class ESBConfigurationService implements ConfigurationService {
                         getConfigAdminProperty(configPid, configKey, defaultValue, TO_LONG));
     }
 
+    @Override
+    public boolean getBooleanConfigProperty(String configPid, String configKey, boolean defaultValue) {
+        return Optional
+                .ofNullable(getBooleanSystemProperty(configKey))
+                .orElseGet(() ->
+                        getConfigAdminProperty(configPid, configKey, defaultValue, TO_BOOLEAN));
+
+    }
+
     /**
      * Applies a given Configurer object to each config file found in the config directory.
      * For a given file type (e.g .property) there might be multiple configurers.
@@ -82,6 +91,12 @@ public class ESBConfigurationService implements ConfigurationService {
         return getStringSystemProperty(key) == null ?
                 null :
                 Long.valueOf(getStringSystemProperty(key));
+    }
+
+    Boolean getBooleanSystemProperty(String key) {
+        return getStringSystemProperty(key) == null ?
+                null :
+                Boolean.valueOf(getStringSystemProperty(key));
     }
 
     String getStringSystemProperty(String key) {
@@ -111,10 +126,9 @@ public class ESBConfigurationService implements ConfigurationService {
     }
 
     static final DataMapper<String> TO_STRING = input -> (String) input;
-
-    private static final DataMapper<Integer> TO_INT = input -> input instanceof String ? Integer.valueOf((String) input) : (Integer) input;
-
     private static final DataMapper<Long> TO_LONG = input -> input instanceof String ? Long.valueOf((String) input) : (Long) input;
+    private static final DataMapper<Integer> TO_INT = input -> input instanceof String ? Integer.valueOf((String) input) : (Integer) input;
+    private static final DataMapper<Boolean> TO_BOOLEAN = input -> input instanceof String ? Boolean.valueOf((String) input) : (Boolean) input;
 
     private interface DataMapper<O> {
         O map(Object input);

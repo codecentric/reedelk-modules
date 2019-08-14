@@ -9,7 +9,7 @@ public class RuntimeConfigurationProvider {
     private static volatile RuntimeConfigurationProvider INSTANCE;
 
     private final ESBConfigurationService configService;
-    private FlowSchedulerConfig flowSchedulerConfig;
+    private FlowExecutorConfig executorConfig;
 
     private RuntimeConfigurationProvider(ESBConfigurationService configService) {
         this.configService = configService;
@@ -20,28 +20,8 @@ public class RuntimeConfigurationProvider {
         return INSTANCE;
     }
 
-    private void loadProperties() {
-        int flowPoolMinSize = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
-                "executor.scheduler.flow.min.pool.size", 1);
-
-        int flowPoolMaxSize = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
-                "executor.scheduler.flow.max.pool.size", 30);
-
-        long flowPoolKeepAliveTime = configService.getLongConfigProperty(RUNTIME_CONFIG_FILE_PID,
-                "executor.scheduler.flow.keep.alive.time", 60);
-
-        long asyncProcessorTimeout = configService.getLongConfigProperty(RUNTIME_CONFIG_FILE_PID,
-                "executor.scheduler.flow.async.processor.timeout", 120000);
-
-        this.flowSchedulerConfig = new FlowSchedulerConfig(
-                flowPoolMinSize,
-                flowPoolMaxSize,
-                flowPoolKeepAliveTime,
-                asyncProcessorTimeout);
-    }
-
-    public FlowSchedulerConfig getFlowSchedulerConfig() {
-        return flowSchedulerConfig;
+    public FlowExecutorConfig getFlowExecutorConfig() {
+        return executorConfig;
     }
 
     static void initialize(ESBConfigurationService configService) {
@@ -54,33 +34,30 @@ public class RuntimeConfigurationProvider {
         }
     }
 
-    public static class FlowSchedulerConfig {
-        private final long asyncProcessorTimeout;
-        private final long keepAliveTime;
-        private final int poolMinSize;
-        private final int poolMaxSize;
+    private void loadProperties() {
+        boolean isUnbounded = configService.getBooleanConfigProperty(RUNTIME_CONFIG_FILE_PID,
+                "executor.scheduler.flow.unbounded", true);
 
-        private FlowSchedulerConfig(int poolMinSize, int poolMaxSize, long keepAliveTime, long asyncProcessorTimeout) {
-            this.asyncProcessorTimeout = asyncProcessorTimeout;
-            this.keepAliveTime = keepAliveTime;
-            this.poolMinSize = poolMinSize;
-            this.poolMaxSize = poolMaxSize;
+        SchedulerConfig schedulerConfig;
+        if (isUnbounded) {
+            int keepAliveTimeSeconds = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
+                    "executor.scheduler.flow.unbounded.keep.alive.time", 60);
+            schedulerConfig = new UnboundedSchedulerConfig(keepAliveTimeSeconds);
+
+        } else {
+            int poolMinSize = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
+                    "executor.scheduler.flow.bounded.min.pool.size", 1);
+            int poolMaxSize = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
+                    "executor.scheduler.flow.bounded.max.pool.size", 30);
+            int keepAliveTimeSeconds = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
+                    "executor.scheduler.flow.bounded.keep.alive.time", 60);
+            schedulerConfig = new BoundedSchedulerConfig(poolMinSize, poolMaxSize, keepAliveTimeSeconds);
         }
 
-        public long getAsyncProcessorTimeout() {
-            return asyncProcessorTimeout;
-        }
+        long asyncProcessorTimeoutMillis = configService.getLongConfigProperty(RUNTIME_CONFIG_FILE_PID,
+                "executor.scheduler.flow.async.processor.timeout", 120000);
 
-        public long getKeepAliveTime() {
-            return keepAliveTime;
-        }
 
-        public int getPoolMinSize() {
-            return poolMinSize;
-        }
-
-        public int getPoolMaxSize() {
-            return poolMaxSize;
-        }
+        executorConfig = new FlowExecutorConfig(asyncProcessorTimeoutMillis, schedulerConfig);
     }
 }

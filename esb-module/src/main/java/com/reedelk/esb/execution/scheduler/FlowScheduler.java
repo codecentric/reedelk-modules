@@ -1,6 +1,8 @@
 package com.reedelk.esb.execution.scheduler;
 
+import com.reedelk.esb.configuration.FlowExecutorConfig;
 import com.reedelk.esb.configuration.RuntimeConfigurationProvider;
+import com.reedelk.esb.configuration.SchedulerConfig;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
@@ -8,19 +10,23 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.reedelk.esb.configuration.RuntimeConfigurationProvider.FlowSchedulerConfig;
-
 public class FlowScheduler {
 
+    private static final String THREAD_POOL_NAME_PREFIX = "Flow-pool";
     private static volatile FlowScheduler INSTANCE;
 
     private final Scheduler scheduler;
 
-    private FlowScheduler(FlowSchedulerConfig config) {
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-                config.getPoolMinSize(), config.getPoolMaxSize(), config.getKeepAliveTime(), TimeUnit.MILLISECONDS,
-                new SynchronousQueue<>(), new DefaultThreadFactory("Flow-pool"));
-        scheduler = Schedulers.fromExecutorService(threadPoolExecutor, "Flow-pool");
+    private FlowScheduler(SchedulerConfig config) {
+        if (config.isBounded()) {
+            ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
+                    config.poolMinSize(), config.poolMaxSize(), config.keepAliveTime(), TimeUnit.SECONDS,
+                    new SynchronousQueue<>(), new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX));
+            scheduler = Schedulers.fromExecutorService(threadPoolExecutor, THREAD_POOL_NAME_PREFIX);
+
+        } else {
+            scheduler = Schedulers.newElastic(THREAD_POOL_NAME_PREFIX, config.keepAliveTime());
+        }
     }
 
     static void initialize() {
@@ -28,7 +34,8 @@ public class FlowScheduler {
             synchronized (FlowScheduler.class) {
                 if (INSTANCE == null) {
                     RuntimeConfigurationProvider configProvider = RuntimeConfigurationProvider.get();
-                    FlowSchedulerConfig schedulerConfig = configProvider.getFlowSchedulerConfig();
+                    FlowExecutorConfig executorConfig = configProvider.getFlowExecutorConfig();
+                    SchedulerConfig schedulerConfig = executorConfig.schedulerConfig();
                     INSTANCE = new FlowScheduler(schedulerConfig);
                 }
             }
