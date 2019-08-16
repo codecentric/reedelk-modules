@@ -4,6 +4,7 @@ import com.reedelk.rest.commons.AsSerializableMap;
 import com.reedelk.rest.commons.HttpHeadersAsMap;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.type.ByteArrayStreamType;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -51,7 +52,7 @@ class HttpRequestToMessage {
         });
 
 
-        TypedContent content = new HttpRequestTypedContent(map, mimeType);
+        TypedContent content = new ByteArrayStreamType(map, mimeType);
 
         messageBuilder.typedContent(content);
 
