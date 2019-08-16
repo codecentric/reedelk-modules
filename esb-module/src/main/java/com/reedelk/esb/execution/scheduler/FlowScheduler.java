@@ -6,7 +6,8 @@ import com.reedelk.esb.configuration.SchedulerConfig;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -19,9 +20,10 @@ class FlowScheduler {
 
     private FlowScheduler(SchedulerConfig config) {
         if (config.isBounded()) {
+            BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(config.queueSize());
             ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
                     config.poolMinSize(), config.poolMaxSize(), config.keepAliveTime(), TimeUnit.SECONDS,
-                    new SynchronousQueue<>(), new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX));
+                    queue, new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX));
             scheduler = Schedulers.fromExecutorService(threadPoolExecutor, THREAD_POOL_NAME_PREFIX);
 
         } else {

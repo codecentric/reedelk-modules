@@ -8,8 +8,6 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 
@@ -25,8 +23,6 @@ import static java.nio.file.StandardOpenOption.WRITE;
 @ESBComponent("WriteFile")
 @Component(service = WriteFile.class, scope = ServiceScope.PROTOTYPE)
 public class WriteFile implements ProcessorAsync {
-
-    private static final Logger logger = LoggerFactory.getLogger(WriteFile.class);
 
     @Property("Upload directory")
     private String uploadDirectory;
@@ -52,7 +48,6 @@ public class WriteFile implements ProcessorAsync {
                         throw Exceptions.propagate(e);
                     }
                 })
-                .log()
                 .doOnSuccessOrError((out, throwable) -> {
                     try {
                         out.close();

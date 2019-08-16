@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
+import java.util.concurrent.RejectedExecutionException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -25,8 +26,16 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         return Mono.just(inMessage)
                 .flatMap(mapProcessingPipeline()) // this one process the input message through the integration flow
                 .flatMap(sendResponse(response)) // sends the response back to the Http response channel
-                .doOnError(throwable -> {
-                    response.send(Mono.error(throwable)); // 500
+                .onErrorResume(Exception.class, exception -> {
+                    if (exception instanceof RejectedExecutionException) {
+                        // Server is too  busy, there are not enough Threads able to handle the request.
+                        response.status(503);
+                        return Mono.from(response.sendString(Mono.just("503 Service Temporarily Unavailable (Server is too busy)")));
+                    } else {
+                        // Map any other exception not handled downstream.
+                        response.status(500);
+                        return Mono.error(exception);
+                    }
                 });
     }
 

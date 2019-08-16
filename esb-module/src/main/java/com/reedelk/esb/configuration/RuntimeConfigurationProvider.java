@@ -51,7 +51,9 @@ public class RuntimeConfigurationProvider {
                     "executor.scheduler.flow.bounded.max.pool.size", 30);
             int keepAliveTimeSeconds = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
                     "executor.scheduler.flow.bounded.keep.alive.time", 60);
-            schedulerConfig = new BoundedSchedulerConfig(poolMinSize, poolMaxSize, keepAliveTimeSeconds);
+            int queueSize = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
+                    "executor.scheduler.flow.bounded.queue.size", 200);
+            schedulerConfig = new BoundedSchedulerConfig(poolMinSize, poolMaxSize, keepAliveTimeSeconds, queueSize);
         }
 
         long asyncProcessorTimeoutMillis = configService.getLongConfigProperty(RUNTIME_CONFIG_FILE_PID,

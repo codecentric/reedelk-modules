@@ -2,11 +2,13 @@ package com.reedelk.esb.configuration;
 
 public class BoundedSchedulerConfig implements SchedulerConfig {
 
+    private final int queueSize;
     private final int poolMinSize;
     private final int poolMaxSize;
     private final int keepAliveTime;
 
-    public BoundedSchedulerConfig(int poolMinSize, int poolMaxSize, int keepAliveTime) {
+    BoundedSchedulerConfig(int poolMinSize, int poolMaxSize, int keepAliveTime, int queueSize) {
+        this.queueSize = queueSize;
         this.poolMinSize = poolMinSize;
         this.poolMaxSize = poolMaxSize;
         this.keepAliveTime = keepAliveTime;
@@ -30,5 +32,10 @@ public class BoundedSchedulerConfig implements SchedulerConfig {
     @Override
     public int poolMaxSize() {
         return poolMaxSize;
+    }
+
+    @Override
+    public int queueSize() {
+        return queueSize;
     }
 }

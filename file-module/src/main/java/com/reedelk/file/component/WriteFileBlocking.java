@@ -7,8 +7,6 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,8 +23,6 @@ import static java.nio.file.StandardOpenOption.WRITE;
 @Component(service = WriteFileBlocking.class, scope = ServiceScope.PROTOTYPE)
 public class WriteFileBlocking implements ProcessorSync {
 
-    private static final Logger logger = LoggerFactory.getLogger(WriteFileBlocking.class);
-
     @Property("Upload directory")
     private String uploadDirectory;
     @Property("Upload extension")
@@ -38,7 +34,6 @@ public class WriteFileBlocking implements ProcessorSync {
 
         byte[] bytes = message.getTypedContent().asByteArray();
         try {
-            logger.warn("Writing blocking from thread: " + Thread.currentThread());
             Files.write(path, bytes,WRITE, CREATE_NEW);
         } catch (IOException e) {
             e.printStackTrace();

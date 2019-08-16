@@ -10,4 +10,6 @@ public interface SchedulerConfig {
 
     int poolMaxSize();
 
+    int queueSize();
+
 }

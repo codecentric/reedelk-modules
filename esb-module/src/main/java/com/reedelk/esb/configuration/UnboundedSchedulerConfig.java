@@ -4,7 +4,7 @@ public class UnboundedSchedulerConfig implements SchedulerConfig {
 
     private final int keepAliveTime;
 
-    public UnboundedSchedulerConfig(int keepAliveTime) {
+    UnboundedSchedulerConfig(int keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
     }
 
@@ -25,6 +25,11 @@ public class UnboundedSchedulerConfig implements SchedulerConfig {
 
     @Override
     public int poolMaxSize() {
+        throw new UnsupportedOperationException("Config not supported for unbounded scheduler");
+    }
+
+    @Override
+    public int queueSize() {
         throw new UnsupportedOperationException("Config not supported for unbounded scheduler");
     }
 }
