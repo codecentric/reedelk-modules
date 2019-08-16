@@ -6,19 +6,16 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.TypedContent;
-import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.util.IllegalReferenceCountException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.SynchronousSink;
 import reactor.netty.http.server.HttpServerRequest;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import static com.reedelk.rest.commons.InboundProperty.*;
 
@@ -42,17 +39,14 @@ class HttpRequestToMessage {
         MimeType mimeType = mimeTypeOf(request);
 
 
-        Flux<byte[]> map = request.receive().retain().handle(new BiConsumer<ByteBuf, SynchronousSink<byte[]>>() {
-            @Override
-            public void accept(ByteBuf byteBuffer, SynchronousSink<byte[]> sink) {
-                try {
-                    byte[] bytes = new byte[byteBuffer.readableBytes()];
-                    byteBuffer.readBytes(bytes);
-                    sink.next(bytes);
-                    byteBuffer.release();
-                } catch (IllegalReferenceCountException e) {
-                    sink.complete();
-                }
+        Flux<byte[]> map = request.receive().retain().handle((byteBuffer, sink) -> {
+            try {
+                byte[] bytes = new byte[byteBuffer.readableBytes()];
+                byteBuffer.readBytes(bytes);
+                sink.next(bytes);
+                byteBuffer.release();
+            } catch (IllegalReferenceCountException e) {
+                sink.complete();
             }
         });
 

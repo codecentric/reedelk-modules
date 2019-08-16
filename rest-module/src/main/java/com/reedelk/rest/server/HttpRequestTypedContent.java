@@ -13,7 +13,7 @@ import java.util.List;
 
 // TODO: THE TO STRING SHOULD RETURN the actual toString value
 // if and only if the Flux has been resolved already with getAsBytes, otherwise not!!!!!!!!
-public class HttpRequestTypedContent implements TypedContent {
+public class HttpRequestTypedContent implements TypedContent<Flux<byte[]>> {
 
     private final Type type;
     private final Flux<byte[]> byteArrayStream;
@@ -30,8 +30,8 @@ public class HttpRequestTypedContent implements TypedContent {
     }
 
     @Override
-    public byte[] asObject() {
-        return getAsBytes();
+    public Flux<byte[]> content() {
+        return byteArrayStream;
     }
 
     @Override
