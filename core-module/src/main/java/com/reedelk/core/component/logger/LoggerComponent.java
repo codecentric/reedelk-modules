@@ -36,15 +36,25 @@ public class LoggerComponent implements ProcessorSync {
     @Override
     public Message apply(Message input) {
         try {
-            // The logger should just Print the Stream object if it is a stream,
-            //  otherwise if the stream was resolved (hence loaded into memory)
-            //  it should print the value.
-            Object result = service.evaluate(input, message, Object.class);
-            level.log(result);
+            if (LoggerLevel.DEBUG.equals(level)) {
+                // When level is DEBUG, we only debug if the debug is enabled.
+                if (logger.isDebugEnabled()) {
+                    debug(input);
+                }
+            } else {
+                debug(input);
+            }
         } catch (ScriptException e) {
             throw new ESBException(e);
         }
         return input;
+    }
+
+    private void debug(Message input) throws ScriptException {
+        // The logger should just Print the Stream object if it is a stream, otherwise if
+        // the stream was resolved (hence loaded into memory) it should print the value.
+        Object result = service.evaluate(input, message, Object.class);
+        level.log(result);
     }
 
     public void setLevel(LoggerLevel level) {
