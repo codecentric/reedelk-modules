@@ -1,9 +1,15 @@
-package com.reedelk.rest.commons;
+package com.reedelk.rest.server;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class UriTemplateTest {
 
-    /**
-     @Test void shouldMatchGivenCallUri() {
+     @Test
+     void shouldMatchGivenCallUri() {
      // Given
      String template = "/users/{groupId}/{securityLevel}";
      String callUri = "/users/group1/23";
@@ -60,5 +66,5 @@ class UriTemplateTest {
      assertThat(bindings).containsKeys("groupId", "securityLevel");
      assertThat(bindings.get("groupId")).isEqualTo("admins");
      assertThat(bindings.get("securityLevel")).isEqualTo("34");
-     }*/
+     }
 }

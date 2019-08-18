@@ -2,9 +2,9 @@ package com.reedelk.rest.server;
 
 import com.reedelk.rest.commons.AsSerializableMap;
 import com.reedelk.rest.commons.HttpHeadersAsMap;
+import com.reedelk.rest.commons.QueryParameters;
 import com.reedelk.runtime.api.message.type.MimeType;
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.QueryStringDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.netty.ByteBufFlux;
@@ -12,7 +12,6 @@ import reactor.netty.http.server.HttpServerRequest;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 public class HttpRequestWrapper {
@@ -46,9 +45,7 @@ public class HttpRequestWrapper {
     }
 
     public HashMap<String,List<String>> queryParams() {
-        QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
-        Map<String, List<String>> queryParameters = decoder.parameters();
-        return AsSerializableMap.of(queryParameters);
+       return QueryParameters.from(request.uri());
     }
 
     public HashMap<String, String> params() {

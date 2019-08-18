@@ -58,7 +58,7 @@ public class HttpPredicate implements Predicate<HttpServerRequest>, Function<Obj
     final String uri;
     final HttpMethod method;
     final HttpVersion protocol;
-    final UriPathTemplate template;
+    final UriTemplate template;
 
     @SuppressWarnings("unused")
     public HttpPredicate(String uri) {
@@ -69,7 +69,7 @@ public class HttpPredicate implements Predicate<HttpServerRequest>, Function<Obj
         this.protocol = protocol;
         this.uri = uri;
         this.method = method;
-        this.template = uri != null ? new UriPathTemplate(uri) : null;
+        this.template = uri != null ? new UriTemplate(uri) : null;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class HttpPredicate implements Predicate<HttpServerRequest>, Function<Obj
         if (template == null) {
             return null;
         }
-        Map<String, String> headers = template.match(key.toString());
+        Map<String, String> headers = template.bind(key.toString());
         if (null != headers && !headers.isEmpty()) {
             return headers;
         }
