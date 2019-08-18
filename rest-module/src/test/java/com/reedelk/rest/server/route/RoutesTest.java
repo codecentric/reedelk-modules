@@ -93,7 +93,7 @@ class RoutesTest {
      }
 
      private HttpRequest createRequest(RestMethod method, String uri) {
-     return new DefaultHttpRequest(HTTP_1_1, HttpMethod.valueOf(method.name()), uri);
+     return new DefaultHttpRequest(HTTP, HttpMethod.valueOf(method.name()), uri);
      }
 
      private Routes createRoutes(Route... route) {

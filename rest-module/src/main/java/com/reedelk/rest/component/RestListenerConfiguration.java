@@ -22,8 +22,12 @@ public class RestListenerConfiguration implements Implementor {
     private int port;
 
     @Property("Protocol")
-    @Default("HTTP_1_1")
+    @Default("HTTP")
     private HttpProtocol protocol;
+
+    @Property("Base path")
+    private String basePath;
+
     @Property("Keep alive")
     @Default("true")
     private Boolean keepAlive;
@@ -40,17 +44,17 @@ public class RestListenerConfiguration implements Implementor {
     @Property("Validate headers")
     private Boolean validateHeaders;
 
+    @Property("Compress response")
+    private Boolean compress;
+
     @Property("Max Chunk Size")
     private Integer maxChunkSize;
-
-    @Property("Max initial line length")
-    private Integer maxInitialLineLength;
 
     @Property("Max length of all headers")
     private Integer maxLengthOfAllHeaders;
 
-    @Property("Max content size")
-    private Integer maxContentSize;
+    @Property("Security")
+    private SecurityConfiguration securityConfiguration;
 
     public String getHostname() {
         return hostname;
@@ -100,6 +104,14 @@ public class RestListenerConfiguration implements Implementor {
         this.connectionTimeoutMillis = connectionTimeoutMillis;
     }
 
+    public Boolean getCompress() {
+        return compress;
+    }
+
+    public void setCompress(Boolean compress) {
+        this.compress = compress;
+    }
+
     public Integer getSocketBacklog() {
         return socketBacklog;
     }
@@ -124,14 +136,6 @@ public class RestListenerConfiguration implements Implementor {
         this.maxChunkSize = maxChunkSize;
     }
 
-    public Integer getMaxInitialLineLength() {
-        return maxInitialLineLength;
-    }
-
-    public void setMaxInitialLineLength(Integer maxInitialLineLength) {
-        this.maxInitialLineLength = maxInitialLineLength;
-    }
-
     public Integer getMaxLengthOfAllHeaders() {
         return maxLengthOfAllHeaders;
     }
@@ -140,11 +144,19 @@ public class RestListenerConfiguration implements Implementor {
         this.maxLengthOfAllHeaders = maxLengthOfAllHeaders;
     }
 
-    public Integer getMaxContentSize() {
-        return maxContentSize;
+    public SecurityConfiguration getSecurityConfiguration() {
+        return securityConfiguration;
     }
 
-    public void setMaxContentSize(Integer maxContentSize) {
-        this.maxContentSize = maxContentSize;
+    public void setSecurityConfiguration(SecurityConfiguration securityConfiguration) {
+        this.securityConfiguration = securityConfiguration;
+    }
+
+    public String getBasePath() {
+        return basePath;
+    }
+
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
     }
 }

@@ -2,6 +2,7 @@ package com.reedelk.rest.server;
 
 
 import com.reedelk.rest.commons.RestMethod;
+import com.reedelk.rest.commons.StringUtils;
 import com.reedelk.rest.component.RestListenerConfiguration;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -25,26 +26,26 @@ public class Server {
     private DisposableServer server;
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
+    private final RestListenerConfiguration configuration;
 
     Server(RestListenerConfiguration configuration) {
         this.routes = new DefaultServerRoutes();
         this.bossGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
+        this.configuration = configuration;
 
-        TcpServer bootstrap = TcpServer.create()
-                .bootstrap(serverBootstrap -> {
-                    serverBootstrap.channel(NioServerSocketChannel.class);
-                    serverBootstrap.group(bossGroup, workerGroup);
-                    return serverBootstrap;
-                });
+        TcpServer bootstrap = TcpServer.create();
+        bootstrap = ServerConfigurer.configureSecurity(bootstrap, configuration);
+        bootstrap = bootstrap.bootstrap(serverBootstrap -> {
+                    ServerConfigurer.configure(serverBootstrap, configuration);
+                    return serverBootstrap
+                            .channel(NioServerSocketChannel.class)
+                            .group(bossGroup, workerGroup);
+                })
+                .doOnConnection(ServerConfigurer.onConnection(configuration));
 
-        this.server = HttpServer.from(bootstrap)
-                .handle(routes)
-                .port(configuration.getPort())
-                .host(configuration.getHostname())
-                .bindNow();
-
-        requireNonNull(this.server, "server");
+        HttpServer httpServer = HttpServer.from(bootstrap).handle(routes);
+        this.server = ServerConfigurer.configure(httpServer, configuration).bindNow();
     }
 
     void stop() {
@@ -58,14 +59,19 @@ public class Server {
         requireNonNull(method, "method");
         requireNonNull(path, "path");
 
+        String realPath = getRealPath(path);
+
         HttpRequestHandler handler = new HttpRequestHandler(listener);
-        method.addRoute(routes, path, handler);
+        method.addRoute(routes, realPath, handler);
     }
 
     public void removeRoute(RestMethod method, String path) {
         requireNonNull(method, "method");
         requireNonNull(path, "path");
-        routes.remove(HttpMethod.valueOf(method.name()), path);
+
+        String realPath = getRealPath(path);
+
+        routes.remove(HttpMethod.valueOf(method.name()), realPath);
     }
 
     boolean hasEmptyRoutes() {
@@ -96,5 +102,18 @@ public class Server {
                 logger.warn("Error while disposing Http server", e);
             }
         }
+    }
+
+    /**
+     * Returns the real path, with the base path prefixed to the given
+     * path if it is not blank.
+     * @param path the original path.
+     * @return the base path + original path if the base path is not blank,
+     * otherwise the original path is returned.
+     */
+    private String getRealPath(String path) {
+        return StringUtils.isNotBlank(configuration.getBasePath()) ?
+                configuration.getBasePath() + path :
+                path;
     }
 }
