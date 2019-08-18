@@ -26,6 +26,7 @@ public class Server {
     private DisposableServer server;
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
+
     private final RestListenerConfiguration configuration;
 
     Server(RestListenerConfiguration configuration) {
