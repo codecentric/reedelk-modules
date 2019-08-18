@@ -49,10 +49,8 @@ public class Server {
         this.server = ServerConfigurer.configure(httpServer, configuration).bindNow();
     }
 
-    void stop() {
-        shutdownSilently(server);
-        shutdownGracefully(bossGroup);
-        shutdownGracefully(workerGroup);
+    public String getBasePath() {
+        return configuration.getBasePath();
     }
 
     public void addRoute(RestMethod method, String path, InboundEventListener listener) {
@@ -73,6 +71,12 @@ public class Server {
         String realPath = getRealPath(path);
 
         routes.remove(HttpMethod.valueOf(method.name()), realPath);
+    }
+
+    void stop() {
+        shutdownSilently(server);
+        shutdownGracefully(bossGroup);
+        shutdownGracefully(workerGroup);
     }
 
     boolean hasEmptyRoutes() {

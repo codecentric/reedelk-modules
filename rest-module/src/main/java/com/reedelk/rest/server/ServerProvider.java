@@ -5,6 +5,7 @@ import com.reedelk.rest.component.RestListenerConfiguration;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
@@ -20,7 +21,9 @@ public class ServerProvider {
             Server server = new Server(configuration);
             serverMap.put(key, server);
         }
-        return serverMap.get(key);
+        Server server = serverMap.get(key);
+        checkBasePathIsConsistent(configuration, server);
+        return server;
     }
 
     public void release(Server server) {
@@ -33,6 +36,19 @@ public class ServerProvider {
                     .filter(key -> key.getValue() == server)
                     .findFirst()
                     .ifPresent(key -> serverMap.remove(key.getKey()));
+        }
+    }
+
+    /**
+     * If a server bound on a given hostname and port exists already, we
+     * make sure that the server and the config have the same base path.
+     * If they don't, it means that there are multiple configurations
+     * defined on the same host and port but with different base paths.
+     */
+    private void checkBasePathIsConsistent(RestListenerConfiguration configuration, Server server) {
+        if (!Objects.equals(configuration.getBasePath(), server.getBasePath())) {
+            throw new IllegalStateException("There are two server configurations " +
+                    "on the same host and port with different base paths");
         }
     }
 }

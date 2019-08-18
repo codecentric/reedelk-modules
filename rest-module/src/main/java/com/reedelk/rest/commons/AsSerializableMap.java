@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class AsSerializableMap {
 
-    public static HashMap<String, ?> of(Map<String, ?> original) {
+    public static <ValueType> HashMap<String, ValueType> of(Map<String, ValueType> original) {
         return original == null ?
                 new HashMap<>() :
                 new HashMap<>(original);

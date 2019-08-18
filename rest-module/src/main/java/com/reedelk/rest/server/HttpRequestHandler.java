@@ -22,7 +22,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
     @Override
     public Publisher<Void> apply(HttpServerRequest request, HttpServerResponse response) {
-        Message inMessage = HttpRequestToMessage.from(request);
+        Message inMessage = HttpRequestToMessage.from(new HttpRequestWrapper(request));
         return Mono.just(inMessage)
                 .flatMap(mapProcessingPipeline()) // this one process the input message through the integration flow
                 .flatMap(sendResponse(response)) // sends the response back to the Http response channel

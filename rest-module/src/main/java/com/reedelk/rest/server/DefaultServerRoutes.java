@@ -31,6 +31,7 @@ public class DefaultServerRoutes implements HttpServerRoutes {
         }
 
         HttpRouteHandler routeHandler = new HttpRouteHandler(condition, handler, condition);
+
         handlers.add(routeHandler);
         return routeHandler;
     }
