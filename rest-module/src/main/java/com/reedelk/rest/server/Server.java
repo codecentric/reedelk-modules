@@ -36,16 +36,7 @@ public class Server {
         this.bossGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
 
-        TcpServer bootstrap = TcpServer.create();
-        bootstrap = ServerConfigurer.configureSecurity(bootstrap, configuration);
-        bootstrap = bootstrap.bootstrap(serverBootstrap -> {
-                    ServerConfigurer.configure(serverBootstrap, configuration);
-                    return serverBootstrap
-                            .channel(NioServerSocketChannel.class)
-                            .group(bossGroup, workerGroup);
-                })
-                .doOnConnection(ServerConfigurer.onConnection(configuration));
-
+        TcpServer bootstrap = createTcpServer(configuration);
         HttpServer httpServer = HttpServer.from(bootstrap).handle(routes);
         this.server = ServerConfigurer.configure(httpServer, configuration).bindNow();
     }
@@ -90,6 +81,19 @@ public class Server {
                 "host=" + server.host() +
                 ", port=" + server.port() +
                 '}';
+    }
+
+    private TcpServer createTcpServer(RestListenerConfiguration configuration) {
+        TcpServer bootstrap = TcpServer.create();
+        bootstrap = ServerConfigurer.configureSecurity(bootstrap, configuration);
+        bootstrap = bootstrap.bootstrap(serverBootstrap -> {
+            ServerConfigurer.configure(serverBootstrap, configuration);
+            return serverBootstrap
+                    .channel(NioServerSocketChannel.class)
+                    .group(bossGroup, workerGroup);
+        })
+                .doOnConnection(ServerConfigurer.onConnection(configuration));
+        return bootstrap;
     }
 
     private static void shutdownGracefully(EventExecutorGroup executionGroup) {
