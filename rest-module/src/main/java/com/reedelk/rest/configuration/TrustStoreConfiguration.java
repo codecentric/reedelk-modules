@@ -1,4 +1,4 @@
-package com.reedelk.rest.component;
+package com.reedelk.rest.configuration;
 
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.Implementor;
@@ -6,8 +6,8 @@ import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@Component(service = KeyStoreConfiguration.class, scope = PROTOTYPE)
-public class KeyStoreConfiguration implements Implementor {
+@Component(service = TrustStoreConfiguration.class, scope = PROTOTYPE)
+public class TrustStoreConfiguration implements Implementor {
 
     @Property("Path")
     private String path;

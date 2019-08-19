@@ -1,10 +1,10 @@
 package com.reedelk.rest.server;
 
 import com.reedelk.rest.commons.HttpProtocol;
-import com.reedelk.rest.component.KeyStoreConfiguration;
-import com.reedelk.rest.component.RestListenerConfiguration;
-import com.reedelk.rest.component.SecurityConfiguration;
-import com.reedelk.rest.component.TrustStoreConfiguration;
+import com.reedelk.rest.configuration.KeyStoreConfiguration;
+import com.reedelk.rest.configuration.RestListenerConfiguration;
+import com.reedelk.rest.configuration.SecurityConfiguration;
+import com.reedelk.rest.configuration.TrustStoreConfiguration;
 import com.reedelk.runtime.api.exception.ESBException;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
@@ -57,8 +57,8 @@ class ServerConfigurer {
     }
 
     private static HttpServer configureHost(HttpServer server, RestListenerConfiguration configuration) {
-        if (configuration.getHostname() != null) {
-            return server.host(configuration.getHostname());
+        if (configuration.getHost() != null) {
+            return server.host(configuration.getHost());
         }
         return server;
     }

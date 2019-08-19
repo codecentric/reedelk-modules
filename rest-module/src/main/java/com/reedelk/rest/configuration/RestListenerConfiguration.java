@@ -1,4 +1,4 @@
-package com.reedelk.rest.component;
+package com.reedelk.rest.configuration;
 
 import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.runtime.api.annotation.Default;
@@ -13,9 +13,9 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = RestListenerConfiguration.class, scope = PROTOTYPE)
 public class RestListenerConfiguration implements Implementor {
 
-    @Property("Hostname")
+    @Property("Host")
     @Default("localhost")
-    private String hostname;
+    private String host;
 
     @Property("Port")
     @Default("8080")
@@ -56,12 +56,12 @@ public class RestListenerConfiguration implements Implementor {
     @Property("Security")
     private SecurityConfiguration securityConfiguration;
 
-    public String getHostname() {
-        return hostname;
+    public String getHost() {
+        return host;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public int getPort() {

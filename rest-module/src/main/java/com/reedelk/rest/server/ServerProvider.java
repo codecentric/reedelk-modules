@@ -1,7 +1,7 @@
 package com.reedelk.rest.server;
 
 import com.reedelk.rest.commons.HostNamePortKey;
-import com.reedelk.rest.component.RestListenerConfiguration;
+import com.reedelk.rest.configuration.RestListenerConfiguration;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;
@@ -16,7 +16,7 @@ public class ServerProvider {
     private Map<HostNamePortKey, Server> serverMap = new ConcurrentHashMap<>();
 
     public Server get(RestListenerConfiguration configuration) {
-        HostNamePortKey key = new HostNamePortKey(configuration.getHostname(), configuration.getPort());
+        HostNamePortKey key = new HostNamePortKey(configuration.getHost(), configuration.getPort());
         if (!serverMap.containsKey(key)) {
             Server server = new Server(configuration);
             serverMap.put(key, server);

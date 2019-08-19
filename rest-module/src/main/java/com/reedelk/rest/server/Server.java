@@ -3,7 +3,7 @@ package com.reedelk.rest.server;
 
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.commons.StringUtils;
-import com.reedelk.rest.component.RestListenerConfiguration;
+import com.reedelk.rest.configuration.RestListenerConfiguration;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
