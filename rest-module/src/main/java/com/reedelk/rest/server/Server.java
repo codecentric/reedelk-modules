@@ -30,10 +30,11 @@ public class Server {
     private final RestListenerConfiguration configuration;
 
     Server(RestListenerConfiguration configuration) {
+        this.configuration = configuration;
+
         this.routes = new DefaultServerRoutes();
         this.bossGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
-        this.configuration = configuration;
 
         TcpServer bootstrap = TcpServer.create();
         bootstrap = ServerConfigurer.configureSecurity(bootstrap, configuration);
