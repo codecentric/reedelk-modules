@@ -86,12 +86,13 @@ public class Server {
     private TcpServer createTcpServer(RestListenerConfiguration configuration) {
         TcpServer bootstrap = TcpServer.create();
         bootstrap = ServerConfigurer.configureSecurity(bootstrap, configuration);
-        bootstrap = bootstrap.bootstrap(serverBootstrap -> {
-            ServerConfigurer.configure(serverBootstrap, configuration);
-            return serverBootstrap
-                    .channel(NioServerSocketChannel.class)
-                    .group(bossGroup, workerGroup);
-        })
+        bootstrap = bootstrap
+                .bootstrap(serverBootstrap -> {
+                    ServerConfigurer.configure(serverBootstrap, configuration);
+                    return serverBootstrap
+                            .channel(NioServerSocketChannel.class)
+                            .group(bossGroup, workerGroup);
+                })
                 .doOnConnection(ServerConfigurer.onConnection(configuration));
         return bootstrap;
     }
