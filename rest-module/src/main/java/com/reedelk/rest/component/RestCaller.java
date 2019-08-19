@@ -83,11 +83,43 @@ public class RestCaller implements ProcessorSync {
         return input;
     }
 
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public void setMethod(RestMethod method) {
+        this.method = method;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
+    public void setQueryParameters(Map<String, String> queryParameters) {
+        this.queryParameters = queryParameters;
+    }
+
+    public void setUriParameters(Map<String, String> uriParameters) {
+        this.uriParameters = uriParameters;
+    }
+
+    public void setConfiguration(RestCallerConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public void setFollowRedirects(Boolean followRedirects) {
+        this.followRedirects = followRedirects;
+    }
+
     /**
-     * Interpret  path dynamic values and  add query parameters.
+     * Interpret path dynamic values and  add query parameters.
      */
     private String interpretPath(String path) {
-        return null;
+        return path;
     }
 
     private ResponseReceiver getClient() {
