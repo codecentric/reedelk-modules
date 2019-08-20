@@ -18,6 +18,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import reactor.core.publisher.Flux;
+import reactor.netty.http.client.HttpClient;
 import reactor.netty.http.client.HttpClientRequest;
 
 import java.util.Map;
@@ -45,13 +46,13 @@ public class RestCaller implements ProcessorSync {
     private String body;
 
     @Property("Headers")
-    private Map<String,String> headers;
+    private Map<String, String> headers;
 
     @Property("Query parameters")
-    private Map<String,String> queryParameters;
+    private Map<String, String> queryParameters;
 
     @Property("URI parameters")
-    private Map<String,String> uriParameters;
+    private Map<String, String> uriParameters;
 
     @Property("Configuration")
     private RestCallerConfiguration configuration;
@@ -59,13 +60,12 @@ public class RestCaller implements ProcessorSync {
     @Property("Follow redirects")
     private Boolean followRedirects;
 
-
     private volatile ResponseReceiver<?> client;
 
     @Override
     public Message apply(Message input) {
 
-        ResponseReceiver<?> receiver = getClient();
+        HttpClient.ResponseReceiver<?> receiver = getClient();
 
         Flux<byte[]> bytes = receiver.uri(interpretPath(path)).response((response, byteBufFlux) -> {
             // Set headers  and status to the message data...
@@ -76,7 +76,6 @@ public class RestCaller implements ProcessorSync {
             // Extract message data
             return byteBufFlux.asByteArray();
         });
-
 
         TypedContent content = new ByteArrayStreamType(bytes, new Type(MimeType.APPLICATION_JSON));
         input.setTypedContent(content);
@@ -140,9 +139,9 @@ public class RestCaller implements ProcessorSync {
                 .port(configuration.getPort())
                 .host(configuration.getHost())
                 .baseUrl(configuration.getBasePath())
-                .keepAlive(configuration.isPersistentConnections())
+                .keepAlive(configuration.getPersistentConnections())
                 .responseBufferSize(configuration.getResponseBufferSize())
-                .connectionIdleTimeout(configuration.getConnectionIdleTimeout())
+                    .connectionIdleTimeout(configuration.getConnectionIdleTimeout())
                 .onRequestConsumer((request, connection) -> interpretAndAddHeaders(request))
                 .build();
     }

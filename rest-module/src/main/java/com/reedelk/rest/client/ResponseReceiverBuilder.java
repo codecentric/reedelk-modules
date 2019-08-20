@@ -35,20 +35,26 @@ public class ResponseReceiverBuilder {
         return this;
     }
 
-    public ResponseReceiverBuilder connectionIdleTimeout(int timeoutMillis) {
-        client = client.tcpConfiguration(tcpClient ->
-                tcpClient.option(CONNECT_TIMEOUT_MILLIS, timeoutMillis));
+    public ResponseReceiverBuilder connectionIdleTimeout(Integer connectionIdleTimeoutMillis) {
+        if (connectionIdleTimeoutMillis != null) {
+            client = client.tcpConfiguration(tcpClient ->
+                    tcpClient.option(CONNECT_TIMEOUT_MILLIS, connectionIdleTimeoutMillis));
+        }
         return this;
     }
 
-    public ResponseReceiverBuilder responseBufferSize(int responseBufferSize) {
-        client = client.tcpConfiguration(tcpClient ->
-                tcpClient.option(SO_RCVBUF, responseBufferSize));
+    public ResponseReceiverBuilder responseBufferSize(Integer responseBufferSize) {
+        if (responseBufferSize != null) {
+            client = client.tcpConfiguration(tcpClient ->
+                    tcpClient.option(SO_RCVBUF, responseBufferSize));
+        }
         return this;
     }
 
-    public ResponseReceiverBuilder keepAlive(boolean keepAlive) {
-        client = client.keepAlive(keepAlive);
+    public ResponseReceiverBuilder keepAlive(Boolean keepAlive) {
+        if (keepAlive != null) {
+            client = client.keepAlive(keepAlive);
+        }
         return this;
     }
 
@@ -60,8 +66,8 @@ public class ResponseReceiverBuilder {
     }
 
     public ResponseReceiverBuilder followRedirects(Boolean followRedirects) {
-        if (followRedirects != null && followRedirects) {
-            client = client.followRedirect(true);
+        if (followRedirects != null) {
+            client = client.followRedirect(followRedirects);
         }
         return this;
     }

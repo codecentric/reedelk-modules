@@ -21,7 +21,7 @@ public class RestCallerConfiguration implements Implementor {
 
     @Property("Port")
     @Default("80")
-    private int port;
+    private Integer port;
 
     @Property("Protocol")
     @Default("HTTP")
@@ -31,13 +31,13 @@ public class RestCallerConfiguration implements Implementor {
     private String basePath;
 
     @Property("Use persistent connections")
-    private boolean persistentConnections;
+    private Boolean persistentConnections;
 
     @Property("Connection idle timeout")
-    private int connectionIdleTimeout;
+    private Integer connectionIdleTimeout;
 
     @Property("Response buffer size")
-    private int responseBufferSize;
+    private Integer responseBufferSize;
 
     @Property("Authentication")
     @Default("NONE")
@@ -55,11 +55,11 @@ public class RestCallerConfiguration implements Implementor {
         this.host = host;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 
@@ -79,27 +79,27 @@ public class RestCallerConfiguration implements Implementor {
         this.basePath = basePath;
     }
 
-    public boolean isPersistentConnections() {
+    public Boolean getPersistentConnections() {
         return persistentConnections;
     }
 
-    public void setPersistentConnections(boolean persistentConnections) {
+    public void setPersistentConnections(Boolean persistentConnections) {
         this.persistentConnections = persistentConnections;
     }
 
-    public int getConnectionIdleTimeout() {
+    public Integer getConnectionIdleTimeout() {
         return connectionIdleTimeout;
     }
 
-    public void setConnectionIdleTimeout(int connectionIdleTimeout) {
+    public void setConnectionIdleTimeout(Integer connectionIdleTimeout) {
         this.connectionIdleTimeout = connectionIdleTimeout;
     }
 
-    public int getResponseBufferSize() {
+    public Integer getResponseBufferSize() {
         return responseBufferSize;
     }
 
-    public void setResponseBufferSize(int responseBufferSize) {
+    public void setResponseBufferSize(Integer responseBufferSize) {
         this.responseBufferSize = responseBufferSize;
     }
 
