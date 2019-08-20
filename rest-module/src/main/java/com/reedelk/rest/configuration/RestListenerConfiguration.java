@@ -53,7 +53,7 @@ public class RestListenerConfiguration implements Implementor {
     @Property("Max length of all headers")
     private Integer maxLengthOfAllHeaders;
 
-    @Property("Security")
+    @Property("Security configuration")
     private SecurityConfiguration securityConfiguration;
 
     public String getHost() {

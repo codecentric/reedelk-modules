@@ -1,10 +1,7 @@
 package com.reedelk.rest.server;
 
 import com.reedelk.rest.commons.HttpProtocol;
-import com.reedelk.rest.configuration.KeyStoreConfiguration;
-import com.reedelk.rest.configuration.RestListenerConfiguration;
-import com.reedelk.rest.configuration.SecurityConfiguration;
-import com.reedelk.rest.configuration.TrustStoreConfiguration;
+import com.reedelk.rest.configuration.*;
 import com.reedelk.runtime.api.exception.ESBException;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
@@ -18,6 +15,7 @@ import reactor.netty.tcp.TcpServer;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.TrustManagerFactory;
+import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.util.function.Consumer;
@@ -102,14 +100,29 @@ class ServerConfigurer {
         SecurityConfiguration securityConfig = configuration.getSecurityConfiguration();
 
         return bootstrap.secure(sslContextSpec -> {
-            KeyStoreConfiguration keyStoreConfig =
-                    requireNonNull(securityConfig.getKeyStoreConfiguration(), "key store config");
 
-            SslContextBuilder contextBuilder = SslContextBuilder.forServer(getKeyManagerFactory(keyStoreConfig));
+            SslContextBuilder contextBuilder;
 
-            TrustStoreConfiguration trustStoreConfiguration = securityConfig.getTrustStoreConfiguration();
-            if (trustStoreConfiguration != null) {
-                contextBuilder.trustManager(getTrustManagerFactory(trustStoreConfiguration));
+            ServerSecurityType configurationType = securityConfig.getConfigurationType();
+            if (ServerSecurityType.KEY_STORE.equals(configurationType)) {
+                KeyStoreConfiguration keyStoreConfig = requireNonNull(securityConfig.getKeyStoreConfiguration(), "key store config");
+                contextBuilder = SslContextBuilder.forServer(getKeyManagerFactory(keyStoreConfig));
+
+            } else if (ServerSecurityType.CERTIFICATE_AND_PRIVATE_KEY.equals(configurationType)) {
+                CertificateAndPrivateKeyConfiguration config =
+                        requireNonNull(securityConfig.getCertificateAndPrivateKeyConfiguration(), "certificate and private key configuration");
+                File certificateFile = new File(config.getCertificateFile());
+                File privateKeyFile = new File(config.getPrivateKeyFile());
+                contextBuilder = SslContextBuilder.forServer(certificateFile, privateKeyFile);
+
+            } else {
+                throw new ESBException("Wrong config");
+            }
+
+            if (securityConfig.getUseTrustStore() != null && securityConfig.getUseTrustStore()) {
+                TrustStoreConfiguration trustStoreConfiguration =
+                        requireNonNull(securityConfig.getTrustStoreConfiguration(), "trust store config");
+                    contextBuilder.trustManager(getTrustManagerFactory(trustStoreConfiguration));
             }
 
             try {

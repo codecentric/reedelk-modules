@@ -141,7 +141,7 @@ public class RestCaller implements ProcessorSync {
                 .baseUrl(configuration.getBasePath())
                 .keepAlive(configuration.getPersistentConnections())
                 .responseBufferSize(configuration.getResponseBufferSize())
-                    .connectionIdleTimeout(configuration.getConnectionIdleTimeout())
+                .connectionIdleTimeout(configuration.getConnectionIdleTimeout())
                 .onRequestConsumer((request, connection) -> interpretAndAddHeaders(request))
                 .build();
     }
