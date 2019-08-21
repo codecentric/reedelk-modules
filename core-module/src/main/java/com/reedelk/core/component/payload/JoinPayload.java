@@ -3,7 +3,6 @@ package com.reedelk.core.component.payload;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.Required;
 import com.reedelk.runtime.api.component.Join;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -20,7 +19,6 @@ public class JoinPayload implements Join {
 
     @Property("Delimiter")
     @Default(",")
-    @Required
     private String delimiter;
 
     @Override

@@ -3,7 +3,6 @@ package com.reedelk.mysql.component;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.Required;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
@@ -20,19 +19,15 @@ import java.util.List;
 public class QueryComponent implements ProcessorSync {
 
     @Property("Username")
-    @Required
     private String username;
 
     @Property("Password")
-    @Required
     private String password;
 
     @Property("Query")
-    @Required
     private String query;
 
     @Property("Database URL")
-    @Required
     @Default("jdbc:mysql://localhost/mydatabase")
     private String databaseURL;
 

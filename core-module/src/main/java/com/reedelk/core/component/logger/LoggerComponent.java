@@ -1,6 +1,9 @@
 package com.reedelk.core.component.logger;
 
-import com.reedelk.runtime.api.annotation.*;
+import com.reedelk.runtime.api.annotation.Default;
+import com.reedelk.runtime.api.annotation.ESBComponent;
+import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.runtime.api.annotation.Script;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
@@ -23,7 +26,6 @@ public class LoggerComponent implements ProcessorSync {
     @Reference
     private ScriptEngineService service;
 
-    @Required
     @Default("INFO")
     @Property("Logger Level")
     private LoggerLevel level;

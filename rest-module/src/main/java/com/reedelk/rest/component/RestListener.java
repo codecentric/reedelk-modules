@@ -7,7 +7,6 @@ import com.reedelk.rest.server.ServerProvider;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.Required;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -28,15 +27,12 @@ public class RestListener extends AbstractInbound {
 
     @Property("Path")
     @Default("/")
-    @Required
     private String path;
 
     @Property("Method")
     @Default("GET")
-    @Required
     private RestMethod method;
 
-    @Required
     @Property("Listener Configuration")
     private RestListenerConfiguration configuration;
 

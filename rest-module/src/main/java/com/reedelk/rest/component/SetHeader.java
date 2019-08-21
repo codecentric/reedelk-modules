@@ -3,7 +3,6 @@ package com.reedelk.rest.component;
 import com.reedelk.rest.commons.OutboundProperty;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.Required;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.Message;
 import org.osgi.service.component.annotations.Component;
@@ -18,11 +17,9 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class SetHeader implements ProcessorSync {
 
     @Property("Header Name")
-    @Required
     private String name;
 
     @Property("Header Value")
-    @Required
     private String value;
 
     @Override
