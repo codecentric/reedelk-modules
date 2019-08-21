@@ -1,7 +1,7 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.RestListenerConfiguration;
+import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.rest.server.Server;
 import com.reedelk.rest.server.ServerProvider;
 import com.reedelk.runtime.api.annotation.Default;

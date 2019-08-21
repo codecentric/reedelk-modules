@@ -26,7 +26,6 @@ public class LoggerComponent implements ProcessorSync {
     @Reference
     private ScriptEngineService service;
 
-    @Default("INFO")
     @Property("Logger Level")
     private LoggerLevel level;
 

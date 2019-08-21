@@ -1,11 +1,13 @@
-package com.reedelk.rest.commons;
+package com.reedelk.rest.configuration;
 
 import com.reedelk.rest.server.HttpRequestHandler;
 import com.reedelk.rest.server.HttpServerRoutes;
+import com.reedelk.runtime.api.annotation.Default;
 import reactor.netty.http.client.HttpClient;
 
 import static reactor.netty.http.client.HttpClient.ResponseReceiver;
 
+@Default("GET")
 public enum RestMethod {
 
     GET {

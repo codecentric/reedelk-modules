@@ -13,15 +13,15 @@ public class SecurityConfiguration implements Implementor {
 
     @Property("Type")
     @Default("CERTIFICATE_AND_PRIVATE_KEY")
-    private ServerSecurityType configurationType;
+    private ServerSecurityType type;
 
     @Property("X.509 Certificate and PKCS#8 private key (PEM format)")
-    @When(propertyName = "configurationType", propertyValue = "CERTIFICATE_AND_PRIVATE_KEY")
-    private CertificateAndPrivateKeyConfiguration certificateAndPrivateKeyConfiguration;
+    @When(propertyName = "type", propertyValue = "CERTIFICATE_AND_PRIVATE_KEY")
+    private CertificateAndPrivateKeyConfiguration certificateAndPrivateKey;
 
     @Property("Key store")
-    @When(propertyName = "configurationType", propertyValue = "KEY_STORE")
-    private KeyStoreConfiguration keyStoreConfiguration;
+    @When(propertyName = "type", propertyValue = "KEY_STORE")
+    private KeyStoreConfiguration keyStore;
 
     @Property("Use trust store")
     @Default("false")
@@ -31,28 +31,28 @@ public class SecurityConfiguration implements Implementor {
     @When(propertyName = "useTrustStore", propertyValue = "true")
     private TrustStoreConfiguration trustStoreConfiguration;
 
-    public ServerSecurityType getConfigurationType() {
-        return configurationType;
+    public ServerSecurityType getType() {
+        return type;
     }
 
-    public void setConfigurationType(ServerSecurityType configurationType) {
-        this.configurationType = configurationType;
+    public void setType(ServerSecurityType type) {
+        this.type = type;
     }
 
-    public CertificateAndPrivateKeyConfiguration getCertificateAndPrivateKeyConfiguration() {
-        return certificateAndPrivateKeyConfiguration;
+    public CertificateAndPrivateKeyConfiguration getCertificateAndPrivateKey() {
+        return certificateAndPrivateKey;
     }
 
-    public void setCertificateAndPrivateKeyConfiguration(CertificateAndPrivateKeyConfiguration certificateAndPrivateKeyConfiguration) {
-        this.certificateAndPrivateKeyConfiguration = certificateAndPrivateKeyConfiguration;
+    public void setCertificateAndPrivateKey(CertificateAndPrivateKeyConfiguration certificateAndPrivateKey) {
+        this.certificateAndPrivateKey = certificateAndPrivateKey;
     }
 
-    public KeyStoreConfiguration getKeyStoreConfiguration() {
-        return keyStoreConfiguration;
+    public KeyStoreConfiguration getKeyStore() {
+        return keyStore;
     }
 
-    public void setKeyStoreConfiguration(KeyStoreConfiguration keyStoreConfiguration) {
-        this.keyStoreConfiguration = keyStoreConfiguration;
+    public void setKeyStore(KeyStoreConfiguration keyStore) {
+        this.keyStore = keyStore;
     }
 
     public Boolean getUseTrustStore() {

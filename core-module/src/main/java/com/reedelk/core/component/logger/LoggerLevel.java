@@ -1,5 +1,8 @@
 package com.reedelk.core.component.logger;
 
+import com.reedelk.runtime.api.annotation.Default;
+
+@Default("INFO")
 public enum LoggerLevel implements MessageLogger {
 
     INFO {

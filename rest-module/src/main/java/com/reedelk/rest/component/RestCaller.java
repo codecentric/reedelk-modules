@@ -1,8 +1,8 @@
 package com.reedelk.rest.component;
 
 import com.reedelk.rest.client.ResponseReceiverBuilder;
-import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.RestCallerConfiguration;
+import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
@@ -38,7 +38,6 @@ public class RestCaller implements ProcessorSync {
     private String path;
 
     @Property("Method")
-    @Default("GET")
     private RestMethod method;
 
     @Property("Body")

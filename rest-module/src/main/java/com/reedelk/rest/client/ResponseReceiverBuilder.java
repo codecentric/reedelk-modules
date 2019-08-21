@@ -1,7 +1,7 @@
 package com.reedelk.rest.client;
 
-import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.commons.StringUtils;
+import com.reedelk.rest.configuration.RestMethod;
 import reactor.netty.Connection;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.http.client.HttpClient.ResponseReceiver;

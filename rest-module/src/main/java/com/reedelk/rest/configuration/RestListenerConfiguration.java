@@ -1,6 +1,5 @@
 package com.reedelk.rest.configuration;
 
-import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.annotation.Shareable;

@@ -1,6 +1,5 @@
 package com.reedelk.rest.server;
 
-import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.configuration.*;
 import com.reedelk.runtime.api.exception.ESBException;
 import io.netty.bootstrap.ServerBootstrap;
@@ -103,14 +102,14 @@ class ServerConfigurer {
 
             SslContextBuilder contextBuilder;
 
-            ServerSecurityType configurationType = securityConfig.getConfigurationType();
+            ServerSecurityType configurationType = securityConfig.getType();
             if (ServerSecurityType.KEY_STORE.equals(configurationType)) {
-                KeyStoreConfiguration keyStoreConfig = requireNonNull(securityConfig.getKeyStoreConfiguration(), "key store config");
+                KeyStoreConfiguration keyStoreConfig = requireNonNull(securityConfig.getKeyStore(), "key store config");
                 contextBuilder = SslContextBuilder.forServer(getKeyManagerFactory(keyStoreConfig));
 
             } else if (ServerSecurityType.CERTIFICATE_AND_PRIVATE_KEY.equals(configurationType)) {
                 CertificateAndPrivateKeyConfiguration config =
-                        requireNonNull(securityConfig.getCertificateAndPrivateKeyConfiguration(), "certificate and private key configuration");
+                        requireNonNull(securityConfig.getCertificateAndPrivateKey(), "certificate and private key configuration");
                 File certificateFile = new File(config.getCertificateFile());
                 File privateKeyFile = new File(config.getPrivateKeyFile());
                 contextBuilder = SslContextBuilder.forServer(certificateFile, privateKeyFile);
