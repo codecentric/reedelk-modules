@@ -2,6 +2,7 @@ package com.reedelk.rest.configuration;
 
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.runtime.api.annotation.When;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
@@ -14,16 +15,20 @@ public class SecurityConfiguration implements Implementor {
     @Default("CERTIFICATE_AND_PRIVATE_KEY")
     private ServerSecurityType configurationType;
 
-    @Property("X.509 Certificate and private key")
+    @Property("X.509 Certificate and PKCS#8 private key (PEM format)")
+    @When(propertyName = "configurationType", propertyValue = "CERTIFICATE_AND_PRIVATE_KEY")
     private CertificateAndPrivateKeyConfiguration certificateAndPrivateKeyConfiguration;
 
     @Property("Key store")
+    @When(propertyName = "configurationType", propertyValue = "KEY_STORE")
     private KeyStoreConfiguration keyStoreConfiguration;
 
     @Property("Use trust store")
-    private Boolean useTrustStore;
+    @Default("false")
+    private boolean useTrustStore;
 
     @Property("Trust store configuration")
+    @When(propertyName = "useTrustStore", propertyValue = "true")
     private TrustStoreConfiguration trustStoreConfiguration;
 
     public ServerSecurityType getConfigurationType() {

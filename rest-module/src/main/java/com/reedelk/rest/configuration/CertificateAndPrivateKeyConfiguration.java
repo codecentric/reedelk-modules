@@ -11,10 +11,10 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class CertificateAndPrivateKeyConfiguration implements Implementor {
 
     @File
-    @Property("X.509 certificate (PEM format)")
+    @Property("Certificate")
     private String certificateFile;
     @File
-    @Property("PKCS#8 private key (PEM format)")
+    @Property("Private key")
     private String privateKeyFile;
 
     public String getCertificateFile() {

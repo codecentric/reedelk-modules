@@ -4,6 +4,7 @@ import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.annotation.Shareable;
+import com.reedelk.runtime.api.annotation.When;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
@@ -53,7 +54,10 @@ public class RestListenerConfiguration implements Implementor {
     @Property("Max length of all headers")
     private Integer maxLengthOfAllHeaders;
 
+    // The security configuration is visible and serializable if and
+    // only if the chosen protocol is HTTPS.
     @Property("Security configuration")
+    @When(propertyName = "protocol", propertyValue = "HTTPS")
     private SecurityConfiguration securityConfiguration;
 
     public String getHost() {
