@@ -28,6 +28,7 @@ public class RestCallerConfiguration implements Implementor {
     private String basePath;
 
     @Property("Follow redirects")
+    @Default("true")
     private Boolean followRedirects;
 
     @Property("Use persistent connections")
