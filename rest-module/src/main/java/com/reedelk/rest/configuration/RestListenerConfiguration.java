@@ -2,14 +2,14 @@ package com.reedelk.rest.configuration;
 
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.Shareable;
+import com.reedelk.runtime.api.annotation.Shared;
 import com.reedelk.runtime.api.annotation.When;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@Shareable
+@Shared
 @Component(service = RestListenerConfiguration.class, scope = PROTOTYPE)
 public class RestListenerConfiguration implements Implementor {
 

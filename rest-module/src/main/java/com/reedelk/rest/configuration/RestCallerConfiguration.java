@@ -2,13 +2,13 @@ package com.reedelk.rest.configuration;
 
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.Shareable;
+import com.reedelk.runtime.api.annotation.Shared;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@Shareable
+@Shared
 @Component(service = RestCallerConfiguration.class, scope = PROTOTYPE)
 public class RestCallerConfiguration implements Implementor {
 
@@ -26,6 +26,9 @@ public class RestCallerConfiguration implements Implementor {
 
     @Property("Base path")
     private String basePath;
+
+    @Property("Follow redirects")
+    private Boolean followRedirects;
 
     @Property("Use persistent connections")
     private Boolean persistentConnections;
@@ -74,6 +77,14 @@ public class RestCallerConfiguration implements Implementor {
 
     public void setBasePath(String basePath) {
         this.basePath = basePath;
+    }
+
+    public Boolean getFollowRedirects() {
+        return followRedirects;
+    }
+
+    public void setFollowRedirects(Boolean followRedirects) {
+        this.followRedirects = followRedirects;
     }
 
     public Boolean getPersistentConnections() {

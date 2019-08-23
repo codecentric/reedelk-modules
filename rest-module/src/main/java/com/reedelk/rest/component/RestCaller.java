@@ -6,6 +6,7 @@ import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.runtime.api.annotation.TabGroup;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.ByteArrayStreamType;
@@ -44,20 +45,20 @@ public class RestCaller implements ProcessorSync {
     @Default("payload")
     private String body;
 
-    @Property("Headers")
-    private Map<String, String> headers;
-
-    @Property("Query parameters")
-    private Map<String, String> queryParameters;
-
-    @Property("URI parameters")
-    private Map<String, String> uriParameters;
-
     @Property("Configuration")
     private RestCallerConfiguration configuration;
 
-    @Property("Follow redirects")
-    private Boolean followRedirects;
+    @TabGroup("Headers and parameters")
+    @Property("Headers")
+    private Map<String, String> headers;
+
+    @TabGroup("Headers and parameters")
+    @Property("Path params")
+    private Map<String, String> uriParameters;
+
+    @TabGroup("Headers and parameters")
+    @Property("Query params")
+    private Map<String, String> queryParameters;
 
     private volatile ResponseReceiver<?> client;
 
@@ -93,24 +94,20 @@ public class RestCaller implements ProcessorSync {
         this.body = body;
     }
 
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
+    public void setConfiguration(RestCallerConfiguration configuration) {
+        this.configuration = configuration;
     }
 
-    public void setQueryParameters(Map<String, String> queryParameters) {
-        this.queryParameters = queryParameters;
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
     }
 
     public void setUriParameters(Map<String, String> uriParameters) {
         this.uriParameters = uriParameters;
     }
 
-    public void setConfiguration(RestCallerConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    public void setFollowRedirects(Boolean followRedirects) {
-        this.followRedirects = followRedirects;
+    public void setQueryParameters(Map<String, String> queryParameters) {
+        this.queryParameters = queryParameters;
     }
 
     /**
@@ -134,11 +131,11 @@ public class RestCaller implements ProcessorSync {
     private ResponseReceiver createClient() {
         return ResponseReceiverBuilder.get()
                 .method(method)
-                .followRedirects(followRedirects)
                 .port(configuration.getPort())
                 .host(configuration.getHost())
                 .baseUrl(configuration.getBasePath())
                 .keepAlive(configuration.getPersistentConnections())
+                .followRedirects(configuration.getFollowRedirects())
                 .responseBufferSize(configuration.getResponseBufferSize())
                 .connectionIdleTimeout(configuration.getConnectionIdleTimeout())
                 .onRequestConsumer((request, connection) -> interpretAndAddHeaders(request))
