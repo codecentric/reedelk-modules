@@ -3,6 +3,8 @@ package com.reedelk.rest.client;
 import com.reedelk.rest.commons.QueryParams;
 import com.reedelk.rest.commons.RemoveQueryParams;
 import com.reedelk.rest.commons.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +21,8 @@ import static java.util.stream.Collectors.joining;
 
 
 public class UriComponent {
+
+    private static final Logger logger = LoggerFactory.getLogger(UriComponent.class);
 
     /**
      * Captures URI template variable names.

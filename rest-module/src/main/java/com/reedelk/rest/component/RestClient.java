@@ -149,7 +149,9 @@ public class RestClient implements ProcessorSync {
     }
 
     private void interpretAndAddHeaders(HttpClientRequest request) {
-        // Interpret headers and add them to the request.
-        request.addHeader("Content-Type", "application/json");
+        // Interpret headers
+        if (headers != null) {
+            headers.forEach(request::addHeader);
+        }
     }
 }
