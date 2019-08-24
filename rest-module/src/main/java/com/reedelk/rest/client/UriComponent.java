@@ -128,6 +128,6 @@ public class UriComponent {
         }
     };
 
-    private static final UnaryOperator<String> PATH_ENCODER = original -> PathEncoder.encodePath(original);
+    private static final UnaryOperator<String> PATH_ENCODER = PathEncoder::encodePath;
 
 }
