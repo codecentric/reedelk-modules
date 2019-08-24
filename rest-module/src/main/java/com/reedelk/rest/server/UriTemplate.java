@@ -1,6 +1,8 @@
 package com.reedelk.rest.server;
 
 
+import com.reedelk.rest.commons.RemoveQueryParams;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +16,13 @@ class UriTemplate {
 
     UriTemplate(String uriTemplate) {
         requireNonNull(uriTemplate, "Uri Template");
-        String uriTemplateWithoutQueryParams = filterQueryParams(uriTemplate);
+        String uriTemplateWithoutQueryParams = RemoveQueryParams.from(uriTemplate);
         this.uriTemplateStructure = UriTemplateStructure.from(uriTemplateWithoutQueryParams);
     }
 
     boolean matches(String uri) {
         if (uri == null) return false;
-        String uriWithoutQueryParams = filterQueryParams(uri);
+        String uriWithoutQueryParams = RemoveQueryParams.from(uri);
         Matcher matcher = uriTemplateStructure.getPattern().matcher(uriWithoutQueryParams);
         return matcher.matches();
     }
@@ -40,14 +42,5 @@ class UriTemplate {
             }
         }
         return result;
-    }
-
-    private static String filterQueryParams(String uri) {
-        int hasQuery = uri.lastIndexOf("?");
-        if (hasQuery != -1) {
-            return uri.substring(0, hasQuery);
-        } else {
-            return uri;
-        }
     }
 }

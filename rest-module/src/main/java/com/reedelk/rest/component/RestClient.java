@@ -1,6 +1,7 @@
 package com.reedelk.rest.component;
 
 import com.reedelk.rest.client.ResponseReceiverBuilder;
+import com.reedelk.rest.client.UriComponent;
 import com.reedelk.rest.configuration.RestCallerConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.annotation.Default;
@@ -28,8 +29,8 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 import static reactor.netty.http.client.HttpClient.ResponseReceiver;
 
 @ESBComponent("REST Client")
-@Component(service = RestCaller.class, scope = PROTOTYPE)
-public class RestCaller implements ProcessorSync {
+@Component(service = RestClient.class, scope = PROTOTYPE)
+public class RestClient implements ProcessorSync {
 
     @Reference
     private ScriptEngineService service;
@@ -62,12 +63,15 @@ public class RestCaller implements ProcessorSync {
 
     private volatile ResponseReceiver<?> client;
 
+    private UriComponent uriComponent;
+
     @Override
     public Message apply(Message input) {
 
         HttpClient.ResponseReceiver<?> receiver = getClient();
 
-        Flux<byte[]> bytes = receiver.uri(interpretPath(path)).response((response, byteBufFlux) -> {
+        String uri = buildUri();
+        Flux<byte[]> bytes = receiver.uri(uri).response((response, byteBufFlux) -> {
             // Set headers  and status to the message data...
             HttpHeaders entries = response.responseHeaders();
             HttpResponseStatus status = response.status();
@@ -111,10 +115,11 @@ public class RestCaller implements ProcessorSync {
     }
 
     /**
-     * Interpret path dynamic values and  add query parameters.
+     * It replaces from the original path all the path parameters,
+     * and it appends query parameters at the end.
      */
-    private String interpretPath(String path) {
-        return path;
+    private String buildUri() {
+        return uriComponent.expand(uriParameters, queryParameters);
     }
 
     private ResponseReceiver getClient() {
@@ -122,6 +127,7 @@ public class RestCaller implements ProcessorSync {
             synchronized (this) {
                 if (client == null) {
                     client = createClient();
+                    uriComponent = new UriComponent(path);
                 }
             }
         }

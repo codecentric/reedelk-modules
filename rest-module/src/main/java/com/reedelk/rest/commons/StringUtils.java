@@ -2,6 +2,8 @@ package com.reedelk.rest.commons;
 
 public class StringUtils {
 
+    public static final String EMPTY = "";
+
     public static boolean isBlank(final CharSequence sequence) {
         if (sequence == null) return true;
 
