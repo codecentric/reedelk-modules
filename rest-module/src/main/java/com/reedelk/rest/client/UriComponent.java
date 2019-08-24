@@ -6,8 +6,8 @@ import com.reedelk.rest.commons.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -119,8 +119,13 @@ public class UriComponent {
     }
 
     private static final UnaryOperator<String> QUERY_PARAM_ENCODER = original -> {
-        return URLEncoder.encode(original, StandardCharsets.UTF_8)
-                .replaceAll("\\+", "%20"); // Apparently spaces encoded  as '+' are not good.
+        try {
+            return URLEncoder.encode(original, "UTF-8")
+                    .replaceAll("\\+", "%20"); // Apparently spaces encoded  as '+' are not good.
+        } catch (UnsupportedEncodingException e) {
+            logger.warn("UTF-8 not supported", e);
+            return original;
+        }
     };
 
     private static final UnaryOperator<String> PATH_ENCODER = original -> PathEncoder.encodePath(original);
