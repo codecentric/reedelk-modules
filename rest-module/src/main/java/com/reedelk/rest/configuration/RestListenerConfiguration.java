@@ -1,9 +1,6 @@
 package com.reedelk.rest.configuration;
 
-import com.reedelk.runtime.api.annotation.Default;
-import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.Shared;
-import com.reedelk.runtime.api.annotation.When;
+import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
@@ -15,10 +12,12 @@ public class RestListenerConfiguration implements Implementor {
 
     @Property("Host")
     @Default("localhost")
+    @Hint("localhost")
     private String host;
 
     @Property("Port")
     @Default("8080")
+    @Hint("8080")
     private int port;
 
     @Property("Protocol")
@@ -26,6 +25,7 @@ public class RestListenerConfiguration implements Implementor {
     private HttpProtocol protocol;
 
     @Property("Base path")
+    @Hint("/api")
     private String basePath;
 
     @Property("Keep alive")

@@ -5,10 +5,7 @@ import com.reedelk.rest.client.ResponseReceiverBuilder;
 import com.reedelk.rest.client.UriComponent;
 import com.reedelk.rest.configuration.RestCallerConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
-import com.reedelk.runtime.api.annotation.Default;
-import com.reedelk.runtime.api.annotation.ESBComponent;
-import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.TabGroup;
+import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
@@ -35,19 +32,30 @@ public class RestClient implements ProcessorSync {
     @Reference
     private ScriptEngineService service;
 
-    @Property("Path")
-    @Default("/")
-    private String path;
-
     @Property("Method")
     private RestMethod method;
 
-    @Property("Body")
+    @Property("Use client config")
+    @Default("false")
+    private boolean useConfiguration;
+
+    @Property("Base URL")
+    @Hint("https://api.example.com")
+    @When(propertyName = "useConfiguration", propertyValue = "false")
+    private String baseUrl;
+
+    @Property("Client config")
+    @When(propertyName = "useConfiguration", propertyValue = "true")
+    private RestCallerConfiguration configuration;
+
+    @Property("Path")
+    @Hint("/resource/{id}")
+    private String path;
+
+    @Property("Request body")
+    @Hint("payload")
     @Default("payload")
     private String body;
-
-    @Property("Configuration")
-    private RestCallerConfiguration configuration;
 
     @TabGroup("Headers and parameters")
     @Property("Headers")
@@ -104,6 +112,14 @@ public class RestClient implements ProcessorSync {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public void setUseConfiguration(boolean useConfiguration) {
+        this.useConfiguration = useConfiguration;
     }
 
     public void setConfiguration(RestCallerConfiguration configuration) {
