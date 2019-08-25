@@ -1,5 +1,6 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.rest.client.Client;
 import com.reedelk.rest.client.ResponseReceiverBuilder;
 import com.reedelk.rest.client.UriComponent;
 import com.reedelk.rest.configuration.RestCallerConfiguration;
@@ -9,6 +10,7 @@ import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.annotation.TabGroup;
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.ByteArrayStreamType;
 import com.reedelk.runtime.api.message.type.MimeType;
@@ -20,13 +22,11 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import reactor.core.publisher.Flux;
-import reactor.netty.http.client.HttpClient;
 import reactor.netty.http.client.HttpClientRequest;
 
 import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
-import static reactor.netty.http.client.HttpClient.ResponseReceiver;
 
 @ESBComponent("REST Client")
 @Component(service = RestClient.class, scope = PROTOTYPE)
@@ -61,29 +61,37 @@ public class RestClient implements ProcessorSync {
     @Property("Query params")
     private Map<String, String> queryParameters;
 
-    private volatile ResponseReceiver<?> client;
+    private volatile Client client;
 
     private UriComponent uriComponent;
 
     @Override
     public Message apply(Message input) {
 
-        HttpClient.ResponseReceiver<?> receiver = getClient();
+        Client client = getClient();
 
         String uri = buildUri();
-        Flux<byte[]> bytes = receiver.uri(uri).response((response, byteBufFlux) -> {
-            // Set headers  and status to the message data...
-            HttpHeaders entries = response.responseHeaders();
-            HttpResponseStatus status = response.status();
-            // e.g message.setStatus blab bla
+        try {
+            Flux<byte[]> bytes = client.execute(uri, (response, byteBufFlux) -> {
+                // Set headers  and status to the message data...
+                HttpHeaders entries = response.responseHeaders();
+                HttpResponseStatus status = response.status();
+                // e.g message.setStatus blab bla
 
-            // Extract message data
-            return byteBufFlux.asByteArray();
-        });
+                // Extract message data
+                return byteBufFlux.asByteArray();
+            });
 
-        TypedContent content = new ByteArrayStreamType(bytes, new Type(MimeType.APPLICATION_JSON));
-        input.setTypedContent(content);
-        return input;
+
+            TypedContent content = new ByteArrayStreamType(bytes, new Type(MimeType.APPLICATION_JSON));
+            input.setTypedContent(content);
+            return input;
+
+        } catch (Exception e) {
+            throw new ESBException(e);
+        }
+
+
     }
 
     public void setPath(String path) {
@@ -122,7 +130,7 @@ public class RestClient implements ProcessorSync {
         return uriComponent.expand(uriParameters, queryParameters);
     }
 
-    private ResponseReceiver getClient() {
+    private Client getClient() {
         if (client == null) {
             synchronized (this) {
                 if (client == null) {
@@ -134,16 +142,15 @@ public class RestClient implements ProcessorSync {
         return client;
     }
 
-    private ResponseReceiver createClient() {
+    private Client createClient() {
         return ResponseReceiverBuilder.get()
                 .method(method)
                 .port(configuration.getPort())
                 .host(configuration.getHost())
-                .baseUrl(configuration.getBasePath())
+                .protocol(configuration.getProtocol())
+                .basePath(configuration.getBasePath())
                 .keepAlive(configuration.getPersistentConnections())
                 .followRedirects(configuration.getFollowRedirects())
-                .responseBufferSize(configuration.getResponseBufferSize())
-                .connectionIdleTimeout(configuration.getConnectionIdleTimeout())
                 .onRequestConsumer((request, connection) -> interpretAndAddHeaders(request))
                 .build();
     }
