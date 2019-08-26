@@ -140,11 +140,107 @@ class ClientBuilderTest {
         HttpClientWrapper actual = builder.build();
 
         // Then
+        verify(mockWrapper, never()).followRedirects(anyBoolean());
+        verify(mockWrapper, never()).keepAlive(anyBoolean());
         verify(mockWrapper).doOnRequest(requestConsumer);
         verify(mockWrapper).port(7618);
         verify(mockWrapper).baseUrl("http://www.reedelk.com/v1");
         verify(mockWrapper).method(RestMethod.POST);
         assertThat(actual).isEqualTo(mockWrapper);
+    }
+
+    @Test
+    void shouldBuildClientWrapperCorrectlyNotAssignPortWhenPortIsNullWhenUseConfigurationIsTrue() {
+        // Given
+        RestClientConfiguration configuration = new RestClientConfiguration();
+        configuration.setBasePath("/v1");
+        configuration.setHost("www.reedelk.com");
+        configuration.setProtocol(HttpProtocol.HTTP);
+
+        builder.useConfiguration(true)
+                .onRequestConsumer(requestConsumer)
+                .method(RestMethod.POST)
+                .configuration(configuration);
+
+        // When
+        HttpClientWrapper actual = builder.build();
+
+        // Then
+        verify(mockWrapper, never()).port(anyInt());
+        assertThat(actual).isEqualTo(mockWrapper);
+    }
+
+    @Test
+    void shouldBuildClientWrapperCorrectlyAndSetFollowRedirectsWhenUseConfigurationIsTrue() {
+        // Given
+        RestClientConfiguration configuration = new RestClientConfiguration();
+        configuration.setBasePath("/v1");
+        configuration.setHost("www.reedelk.com");
+        configuration.setFollowRedirects(false);
+        configuration.setProtocol(HttpProtocol.HTTP);
+
+        builder.useConfiguration(true)
+                .onRequestConsumer(requestConsumer)
+                .method(RestMethod.DELETE)
+                .configuration(configuration);
+
+        // When
+        HttpClientWrapper actual = builder.build();
+
+        // Then
+        verify(mockWrapper).followRedirects(false);
+        assertThat(actual).isEqualTo(mockWrapper);
+    }
+
+    @Test
+    void shouldBuildClientWrapperCorrectlyAndSetKeepAliveWhenUseConfigurationIsTrue() {
+        // Given
+        RestClientConfiguration configuration = new RestClientConfiguration();
+        configuration.setBasePath("/v1");
+        configuration.setHost("www.reedelk.com");
+        configuration.setKeepAlive(true);
+        configuration.setProtocol(HttpProtocol.HTTP);
+
+        builder.useConfiguration(true)
+                .onRequestConsumer(requestConsumer)
+                .method(RestMethod.OPTIONS)
+                .configuration(configuration);
+
+        // When
+        HttpClientWrapper actual = builder.build();
+
+        // Then
+        verify(mockWrapper).keepAlive(true);
+        assertThat(actual).isEqualTo(mockWrapper);
+    }
+
+    @Test
+    void shouldBuildClientWrapperThrowExceptionWhenConfigurationIsNullAndUseConfigurationIsTrue() {
+        // Given
+        builder.useConfiguration(true)
+                .onRequestConsumer(requestConsumer)
+                .method(RestMethod.HEAD);
+
+        // When
+        ESBException thrown =
+                assertThrows(ESBException.class, () -> builder.build());
+
+        assertThat(thrown.getMessage()).isEqualTo("Configuration must not be null");
+    }
+
+    @Test
+    void shouldBuildClientWrapperThrowExceptionWhenMethodIsNullAndUseConfigurationIsTrue() {
+        // Given
+        RestClientConfiguration configuration = new RestClientConfiguration();
+        builder.useConfiguration(true)
+                .onRequestConsumer(requestConsumer)
+                .configuration(configuration);
+
+        // When
+        ESBException thrown =
+                assertThrows(ESBException.class, () -> builder.build());
+
+        assertThat(thrown.getMessage()).isEqualTo("HTTP method must not be null");
     }
 
     private BiConsumer<HttpClientRequest,Connection> requestConsumer = (request, connection) -> {
