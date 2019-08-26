@@ -9,7 +9,6 @@ import java.net.URISyntaxException;
 
 import static com.reedelk.rest.commons.Preconditions.requireNotBlank;
 import static com.reedelk.rest.commons.Preconditions.requireNotNull;
-import static com.reedelk.rest.commons.StringUtils.isBlank;
 import static com.reedelk.rest.commons.StringUtils.isNotBlank;
 
 public class BaseUrl {
@@ -36,11 +35,7 @@ public class BaseUrl {
     private static String getHost(String host) {
         try {
             URI uri = new URI(host);
-            String realHost = uri.getHost();
-            if (isBlank(realHost)) {
-                throw new ESBException(String.format("Could not extract host from [%s]", host));
-            }
-            return realHost;
+            return uri.getHost();
         } catch (URISyntaxException e) {
             throw new ESBException(e);
         }
