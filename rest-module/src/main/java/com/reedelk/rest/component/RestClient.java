@@ -8,6 +8,7 @@ import com.reedelk.rest.configuration.RestClientConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.ByteArrayType;
 import com.reedelk.runtime.api.message.type.Type;
@@ -82,14 +83,17 @@ public class RestClient implements ProcessorSync {
 
         RequestData data = new RequestData();
         Mono<byte[]> dataHolder = client.execute(uri, (response, byteBufMono) -> {
-
             data.headers = response.responseHeaders();
             data.status = response.status();
             return byteBufMono.asByteArray();
-            // Body provider only if it is POST
+            // Body provider only if it is POST, PUT ...
         }, () -> Flux.just(Unpooled.wrappedBuffer(input.getTypedContent().asByteArray())));
 
         byte[] bytes = dataHolder.block();
+
+        if (data.status != HttpResponseStatus.OK) {
+            throw new ESBException("Status is " + data.status);
+        }
 
         Type type = ExtractTypeFromHeaders.from(data.headers);
         TypedContent content = new ByteArrayType(bytes, type);

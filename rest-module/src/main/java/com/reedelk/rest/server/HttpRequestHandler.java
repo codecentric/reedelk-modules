@@ -34,7 +34,9 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                     } else {
                         // Map any other exception not handled downstream.
                         response.status(500);
-                        return Mono.error(exception);
+                        // TODO: This has to be verified
+                        // It used to be: return Mono.error(exception); (Postman gives parse error)
+                        return Mono.from(response.sendString(Mono.just(exception.getMessage())));
                     }
                 });
     }
