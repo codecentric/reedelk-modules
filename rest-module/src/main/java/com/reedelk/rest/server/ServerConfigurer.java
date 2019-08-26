@@ -108,7 +108,7 @@ class ServerConfigurer {
                 contextBuilder = SslContextBuilder.forServer(getKeyManagerFactory(keyStoreConfig));
 
             } else if (ServerSecurityType.CERTIFICATE_AND_PRIVATE_KEY.equals(configurationType)) {
-                // TODO: Error handilng
+                // TODO: Error handling
                 CertificateAndPrivateKeyConfiguration config =
                         requireNonNull(securityConfig.getCertificateAndPrivateKey(), "certificate and private key configuration");
                 File certificateFile = new File(config.getCertificateFile());

@@ -10,7 +10,5 @@ public enum Authentication {
     @DisplayName("Basic")
     BASIC,
     @DisplayName("Digest")
-    DIGEST,
-    @DisplayName("NTLM")
-    NTLM
+    DIGEST
 }

@@ -27,6 +27,30 @@ public class HttpClientWrapper {
         this.client = HttpClient.create();
     }
 
+    /**
+    void proxy(int proxy) {
+        client = client.tcpConfiguration(new Function<TcpClient, TcpClient>() {
+            @Override
+            public TcpClient apply(TcpClient tcpClient) {
+                return tcpClient.proxy(new Consumer<ProxyProvider.TypeSpec>() {
+                    @Override
+                    public void accept(ProxyProvider.TypeSpec typeSpec) {
+                        typeSpec.type(ProxyProvider.Proxy.HTTP)
+                                .host("localhost")
+                                .port(123)
+                                .username("user")
+                                .password(new Function<String, String>() {
+                                    @Override
+                                    public String apply(String s) {
+                                        return "sadf";
+                                    }
+                                });
+                    }
+                });
+            }
+        });
+    }*/
+
     void port(int port) {
         client = client.port(port);
     }

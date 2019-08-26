@@ -8,7 +8,5 @@ public enum Proxy {
     @DisplayName("None")
     NONE,
     @DisplayName("Proxy")
-    PROXY,
-    @DisplayName("NTLM")
-    NTLM
+    PROXY
 }
