@@ -32,6 +32,8 @@ public enum RestMethod {
         public ResponseReceiver addForClient(HttpClient client) {
             return client.post();
         }
+
+
     },
 
     PUT {

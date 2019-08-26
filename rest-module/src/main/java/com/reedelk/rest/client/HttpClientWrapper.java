@@ -26,29 +26,6 @@ public class HttpClientWrapper {
         this.client = HttpClient.create();
     }
 
-    /**
-     * void proxy(int proxy) {
-     * client = client.tcpConfiguration(new Function<TcpClient, TcpClient>() {
-     *
-     * @Override public TcpClient apply(TcpClient tcpClient) {
-     * return tcpClient.proxy(new Consumer<ProxyProvider.TypeSpec>() {
-     * @Override public void accept(ProxyProvider.TypeSpec typeSpec) {
-     * typeSpec.type(ProxyProvider.Proxy.HTTP)
-     * .host("localhost")
-     * .port(123)
-     * .username("user")
-     * .password(new Function<String, String>() {
-     * @Override public String apply(String s) {
-     * return "sadf";
-     * }
-     * });
-     * }
-     * });
-     * }
-     * });
-     * }
-     */
-
     void port(int port) {
         client = client.port(port);
     }
@@ -81,31 +58,45 @@ public class HttpClientWrapper {
         receiver = method.addForClient(client);
     }
 
-    public <T> Mono<T> execute(String uri, BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler) {
-        return executeInternal(baseUrl + uri, handler);
+    public <T> Mono<T> execute(String uri, BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler, BodyProvider bodyProvider) {
+        return executeInternal(baseUrl + uri, handler, bodyProvider);
     }
 
-    private <T> Mono<T> executeInternal(String uri, BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler) {
-        return receiver.uri(uri).responseSingle((response, byteBufMono) -> {
-            if (followRedirects && isRedirect(response)) {
-                return handleRedirect(handler, response);
-            } else {
-                return handler.apply(response, byteBufMono);
-            }
-        });
+    private <T> Mono<T> executeInternal(String uri, BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler, BodyProvider bodyProvider) {
+        if (receiver instanceof HttpClient.RequestSender) {
+            return ((HttpClient.RequestSender) receiver)
+                    .uri(uri)
+                    .send(bodyProvider.provide())
+                    .responseSingle((response, byteBufMono) -> {
+                        if (followRedirects && isRedirect(response)) {
+                            return handleRedirect(handler, response, bodyProvider);
+                        } else {
+                            return handler.apply(response, byteBufMono);
+                        }
+                    });
+        } else {
+            return receiver.uri(uri).responseSingle((response, byteBufMono) -> {
+                if (followRedirects && isRedirect(response)) {
+                    return handleRedirect(handler, response, bodyProvider);
+                } else {
+                    return handler.apply(response, byteBufMono);
+                }
+            });
+        }
     }
 
     private <T> Mono<T> handleRedirect(
             BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler,
-            HttpClientResponse response) {
+            HttpClientResponse response,
+            BodyProvider bodyProvider) {
 
         String redirectUrl = getLocationHeader(response);
         // Absolute
         if (redirectUrl.startsWith("http")) {
-            return executeInternal(redirectUrl, handler);
+            return executeInternal(redirectUrl, handler, bodyProvider);
             // Location is relative
         } else {
-            return executeInternal(baseUrl + redirectUrl, handler);
+            return executeInternal(baseUrl + redirectUrl, handler, bodyProvider);
         }
     }
 
@@ -118,4 +109,27 @@ public class HttpClientWrapper {
                 response.status() == HttpResponseStatus.FOUND ||
                 response.status() == HttpResponseStatus.SEE_OTHER;
     }
+
+    /**
+     * void proxy(int proxy) {
+     * client = client.tcpConfiguration(new Function<TcpClient, TcpClient>() {
+     *
+     * @Override public TcpClient apply(TcpClient tcpClient) {
+     * return tcpClient.proxy(new Consumer<ProxyProvider.TypeSpec>() {
+     * @Override public void accept(ProxyProvider.TypeSpec typeSpec) {
+     * typeSpec.type(ProxyProvider.Proxy.HTTP)
+     * .host("localhost")
+     * .port(123)
+     * .username("user")
+     * .password(new Function<String, String>() {
+     * @Override public String apply(String s) {
+     * return "sadf";
+     * }
+     * });
+     * }
+     * });
+     * }
+     * });
+     * }
+     */
 }

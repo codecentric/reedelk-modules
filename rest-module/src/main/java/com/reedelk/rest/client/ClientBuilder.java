@@ -123,4 +123,5 @@ public class ClientBuilder {
     HttpClientWrapper newWrapper() {
         return new HttpClientWrapper();
     }
+
 }

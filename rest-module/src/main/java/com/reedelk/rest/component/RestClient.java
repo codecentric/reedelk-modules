@@ -13,10 +13,12 @@ import com.reedelk.runtime.api.message.type.ByteArrayType;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import com.reedelk.runtime.api.service.ScriptEngineService;
+import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientRequest;
 
@@ -80,10 +82,12 @@ public class RestClient implements ProcessorSync {
 
         RequestData data = new RequestData();
         Mono<byte[]> dataHolder = client.execute(uri, (response, byteBufMono) -> {
+
             data.headers = response.responseHeaders();
             data.status = response.status();
             return byteBufMono.asByteArray();
-        });
+            // Body provider only if it is POST
+        }, () -> Flux.just(Unpooled.wrappedBuffer(input.getTypedContent().asByteArray())));
 
         byte[] bytes = dataHolder.block();
 
