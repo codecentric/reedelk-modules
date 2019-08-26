@@ -27,6 +27,9 @@ public class RestCallerConfiguration implements Implementor {
     @Property("Base path")
     private String basePath;
 
+    @Property("Keep alive")
+    private Boolean keepAlive;
+
     @Property("Follow redirects")
     @Default("true")
     private Boolean followRedirects;
@@ -78,6 +81,14 @@ public class RestCallerConfiguration implements Implementor {
 
     public void setBasePath(String basePath) {
         this.basePath = basePath;
+    }
+
+    public Boolean getKeepAlive() {
+        return keepAlive;
+    }
+
+    public void setKeepAlive(Boolean keepAlive) {
+        this.keepAlive = keepAlive;
     }
 
     public Boolean getFollowRedirects() {

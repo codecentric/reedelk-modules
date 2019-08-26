@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
 
-class ResponseReceiverBuilderTest {
+class HttpClientWrapperBuilderTest {
 
     @Test
     void shouldDoSomething() throws URISyntaxException {

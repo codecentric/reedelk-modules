@@ -1,33 +1,58 @@
 package com.reedelk.rest.client;
 
+import com.reedelk.rest.configuration.RestMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.netty.ByteBufFlux;
+import reactor.netty.Connection;
 import reactor.netty.http.client.HttpClient;
+import reactor.netty.http.client.HttpClientRequest;
 import reactor.netty.http.client.HttpClientResponse;
 
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public class Client {
+public class HttpClientWrapper {
 
     private String baseUrl;
     private boolean followRedirects = true;
 
+    private RestMethod method;
+
+    private HttpClient client;
     private HttpClient.ResponseReceiver<?> receiver;
 
-    Client(HttpClient.ResponseReceiver<?> receiver) {
-        this.receiver = receiver;
+    HttpClientWrapper() {
+        this.client = HttpClient.create();
+    }
+
+    void port(int port) {
+        client = client.port(port);
     }
 
     void baseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
 
-    void followRedirects(Boolean followRedirects) {
-        if (followRedirects != null) {
-            this.followRedirects = followRedirects;
-        }
+    void method(RestMethod method) {
+        this.method = method;
+    }
+
+    void keepAlive(boolean keepAlive) {
+        client = client.keepAlive(keepAlive);
+    }
+
+    void followRedirects(boolean followRedirects) {
+        client = client.followRedirect(followRedirects);
+    }
+
+    void doOnRequest(BiConsumer<HttpClientRequest, Connection> handler) {
+        client = client.doOnRequest(handler);
+    }
+
+    void initialize() {
+        receiver = method.addForClient(client);
     }
 
     public Flux<byte[]> execute(String uri, BiFunction<HttpClientResponse, ByteBufFlux, Publisher<byte[]>> handler) {
@@ -36,28 +61,25 @@ public class Client {
 
     private Flux<byte[]> executeInternal(String uri, BiFunction<HttpClientResponse, ByteBufFlux, Publisher<byte[]>> handler) {
         return receiver.uri(uri).response((response, byteBufFlux) -> {
-            if (followRedirects) {
-                return handleFollowRedirects(handler, response, byteBufFlux);
+            if (followRedirects && isRedirect(response)) {
+                return handleRedirect(handler, response);
             } else {
                 return handler.apply(response, byteBufFlux);
             }
         });
     }
 
-    private Publisher<byte[]> handleFollowRedirects(BiFunction<HttpClientResponse, ByteBufFlux, Publisher<byte[]>> handler, HttpClientResponse response, ByteBufFlux byteBufFlux) {
-        if (isRedirect(response)) {
-            String redirectUrl = getLocationHeader(response);
-            // Absolute
-            if (redirectUrl.startsWith("http")) {
-                return executeInternal(redirectUrl, handler);
+    private Publisher<byte[]> handleRedirect(
+            BiFunction<HttpClientResponse, ByteBufFlux, Publisher<byte[]>> handler,
+            HttpClientResponse response) {
 
-                // Location is relative
-            } else {
-                return executeInternal(baseUrl + redirectUrl, handler);
-            }
-            // No redirect
+        String redirectUrl = getLocationHeader(response);
+        // Absolute
+        if (redirectUrl.startsWith("http")) {
+            return executeInternal(redirectUrl, handler);
+            // Location is relative
         } else {
-            return handler.apply(response, byteBufFlux);
+            return executeInternal(baseUrl + redirectUrl, handler);
         }
     }
 
@@ -70,5 +92,4 @@ public class Client {
                 response.status() == HttpResponseStatus.FOUND ||
                 response.status() == HttpResponseStatus.SEE_OTHER;
     }
-
 }

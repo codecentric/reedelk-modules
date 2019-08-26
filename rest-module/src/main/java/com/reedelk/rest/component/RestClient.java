@@ -1,7 +1,7 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.client.Client;
-import com.reedelk.rest.client.ResponseReceiverBuilder;
+import com.reedelk.rest.client.ClientBuilder;
+import com.reedelk.rest.client.HttpClientWrapper;
 import com.reedelk.rest.client.UriComponent;
 import com.reedelk.rest.configuration.RestCallerConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
@@ -69,14 +69,14 @@ public class RestClient implements ProcessorSync {
     @Property("Query params")
     private Map<String, String> queryParameters;
 
-    private volatile Client client;
+    private volatile HttpClientWrapper client;
 
     private UriComponent uriComponent;
 
     @Override
     public Message apply(Message input) {
 
-        Client client = getClient();
+        HttpClientWrapper client = getClient();
 
         String uri = buildUri();
         try {
@@ -98,8 +98,6 @@ public class RestClient implements ProcessorSync {
         } catch (Exception e) {
             throw new ESBException(e);
         }
-
-
     }
 
     public void setPath(String path) {
@@ -146,7 +144,7 @@ public class RestClient implements ProcessorSync {
         return uriComponent.expand(uriParameters, queryParameters);
     }
 
-    private Client getClient() {
+    private HttpClientWrapper getClient() {
         if (client == null) {
             synchronized (this) {
                 if (client == null) {
@@ -158,16 +156,13 @@ public class RestClient implements ProcessorSync {
         return client;
     }
 
-    private Client createClient() {
-        return ResponseReceiverBuilder.get()
+    private HttpClientWrapper createClient() {
+        return ClientBuilder.get()
                 .method(method)
-                .port(configuration.getPort())
-                .host(configuration.getHost())
-                .protocol(configuration.getProtocol())
-                .basePath(configuration.getBasePath())
-                .keepAlive(configuration.getPersistentConnections())
-                .followRedirects(configuration.getFollowRedirects())
-                .onRequestConsumer((request, connection) -> interpretAndAddHeaders(request))
+                .baseUrl(baseUrl)
+                .configuration(configuration)
+                .useConfiguration(useConfiguration)
+                .onRequestConsumer(((request, connection) -> interpretAndAddHeaders(request)))
                 .build();
     }
 
