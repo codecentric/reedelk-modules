@@ -34,16 +34,16 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
             // Build a Mono out of the async processor callback.
             Mono<EventContext> callbackMono =
                     sinkFromCallback(processorAsync, event)
+                            // TODO: should this one use its own scheduler?
+                            // TODO: You might have a batch job, which you don't want
+                            //  to run in the same scheduler Threads.
                             .publishOn(flowScheduler());
 
             // If a timeout has been defined for the async processor callback,
             // then we set it here.
-            Optional<Long> optAsyncTimeout = asyncCallbackTimeout();
-            if (optAsyncTimeout.isPresent()) {
-                return callbackMono.timeout(ofMillis(optAsyncTimeout.get()));
-            } else {
-                return callbackMono;
-            }
+            return asyncCallbackTimeout()
+                    .map(timeout -> callbackMono.timeout(ofMillis(timeout)))
+                    .orElse(callbackMono);
         });
 
         ExecutionNode next = nextNode(currentNode, graph);

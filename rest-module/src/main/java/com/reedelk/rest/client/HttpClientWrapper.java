@@ -2,9 +2,8 @@ package com.reedelk.rest.client;
 
 import com.reedelk.rest.configuration.RestMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.netty.ByteBufFlux;
+import reactor.core.publisher.Mono;
+import reactor.netty.ByteBufMono;
 import reactor.netty.Connection;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.http.client.HttpClientRequest;
@@ -28,28 +27,27 @@ public class HttpClientWrapper {
     }
 
     /**
-    void proxy(int proxy) {
-        client = client.tcpConfiguration(new Function<TcpClient, TcpClient>() {
-            @Override
-            public TcpClient apply(TcpClient tcpClient) {
-                return tcpClient.proxy(new Consumer<ProxyProvider.TypeSpec>() {
-                    @Override
-                    public void accept(ProxyProvider.TypeSpec typeSpec) {
-                        typeSpec.type(ProxyProvider.Proxy.HTTP)
-                                .host("localhost")
-                                .port(123)
-                                .username("user")
-                                .password(new Function<String, String>() {
-                                    @Override
-                                    public String apply(String s) {
-                                        return "sadf";
-                                    }
-                                });
-                    }
-                });
-            }
-        });
-    }*/
+     * void proxy(int proxy) {
+     * client = client.tcpConfiguration(new Function<TcpClient, TcpClient>() {
+     *
+     * @Override public TcpClient apply(TcpClient tcpClient) {
+     * return tcpClient.proxy(new Consumer<ProxyProvider.TypeSpec>() {
+     * @Override public void accept(ProxyProvider.TypeSpec typeSpec) {
+     * typeSpec.type(ProxyProvider.Proxy.HTTP)
+     * .host("localhost")
+     * .port(123)
+     * .username("user")
+     * .password(new Function<String, String>() {
+     * @Override public String apply(String s) {
+     * return "sadf";
+     * }
+     * });
+     * }
+     * });
+     * }
+     * });
+     * }
+     */
 
     void port(int port) {
         client = client.port(port);
@@ -61,6 +59,10 @@ public class HttpClientWrapper {
 
     void method(RestMethod method) {
         this.method = method;
+    }
+
+    void compress(boolean compress) {
+        client = client.compress(compress);
     }
 
     void keepAlive(boolean keepAlive) {
@@ -79,22 +81,22 @@ public class HttpClientWrapper {
         receiver = method.addForClient(client);
     }
 
-    public Flux<byte[]> execute(String uri, BiFunction<HttpClientResponse, ByteBufFlux, Publisher<byte[]>> handler) {
+    public <T> Mono<T> execute(String uri, BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler) {
         return executeInternal(baseUrl + uri, handler);
     }
 
-    private Flux<byte[]> executeInternal(String uri, BiFunction<HttpClientResponse, ByteBufFlux, Publisher<byte[]>> handler) {
-        return receiver.uri(uri).response((response, byteBufFlux) -> {
+    private <T> Mono<T> executeInternal(String uri, BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler) {
+        return receiver.uri(uri).responseSingle((response, byteBufMono) -> {
             if (followRedirects && isRedirect(response)) {
                 return handleRedirect(handler, response);
             } else {
-                return handler.apply(response, byteBufFlux);
+                return handler.apply(response, byteBufMono);
             }
         });
     }
 
-    private Publisher<byte[]> handleRedirect(
-            BiFunction<HttpClientResponse, ByteBufFlux, Publisher<byte[]>> handler,
+    private <T> Mono<T> handleRedirect(
+            BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler,
             HttpClientResponse response) {
 
         String redirectUrl = getLocationHeader(response);

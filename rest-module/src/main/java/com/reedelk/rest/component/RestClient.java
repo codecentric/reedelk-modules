@@ -1,16 +1,15 @@
 package com.reedelk.rest.component;
 
 import com.reedelk.rest.client.ClientBuilder;
+import com.reedelk.rest.client.ExtractTypeFromHeaders;
 import com.reedelk.rest.client.HttpClientWrapper;
 import com.reedelk.rest.client.UriComponent;
 import com.reedelk.rest.configuration.RestClientConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.ByteArrayStreamType;
-import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.message.type.ByteArrayType;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import com.reedelk.runtime.api.service.ScriptEngineService;
@@ -18,7 +17,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientRequest;
 
 import java.util.Map;
@@ -75,29 +74,28 @@ public class RestClient implements ProcessorSync {
 
     @Override
     public Message apply(Message input) {
-
         HttpClientWrapper client = getClient();
 
         String uri = buildUri();
-        try {
-            Flux<byte[]> bytes = client.execute(uri, (response, byteBufFlux) -> {
-                // Set headers  and status to the message data...
-                HttpHeaders entries = response.responseHeaders();
-                HttpResponseStatus status = response.status();
-                // e.g message.setStatus blab bla
 
-                // Extract message data
-                return byteBufFlux.asByteArray();
-            });
+        RequestData data = new RequestData();
+        Mono<byte[]> dataHolder = client.execute(uri, (response, byteBufMono) -> {
+            data.headers = response.responseHeaders();
+            data.status = response.status();
+            return byteBufMono.asByteArray();
+        });
 
+        byte[] bytes = dataHolder.block();
 
-            TypedContent content = new ByteArrayStreamType(bytes, new Type(MimeType.APPLICATION_JSON));
-            input.setTypedContent(content);
-            return input;
+        Type type = ExtractTypeFromHeaders.from(data.headers);
+        TypedContent content = new ByteArrayType(bytes, type);
+        input.setTypedContent(content);
+        return input;
+    }
 
-        } catch (Exception e) {
-            throw new ESBException(e);
-        }
+    private class RequestData {
+        private HttpHeaders headers;
+        private HttpResponseStatus status;
     }
 
     public void setPath(String path) {

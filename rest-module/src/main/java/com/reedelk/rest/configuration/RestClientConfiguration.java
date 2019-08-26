@@ -28,14 +28,15 @@ public class RestClientConfiguration implements Implementor {
     private String basePath;
 
     @Property("Keep alive")
+    @Default("true")
     private Boolean keepAlive;
 
     @Property("Follow redirects")
     @Default("true")
     private Boolean followRedirects;
 
-    @Property("Use persistent connections")
-    private Boolean persistentConnections;
+    @Property("Compress")
+    private Boolean compress;
 
     @Property("Connection idle timeout")
     private Integer connectionIdleTimeout;
@@ -99,12 +100,12 @@ public class RestClientConfiguration implements Implementor {
         this.followRedirects = followRedirects;
     }
 
-    public Boolean getPersistentConnections() {
-        return persistentConnections;
+    public Boolean getCompress() {
+        return compress;
     }
 
-    public void setPersistentConnections(Boolean persistentConnections) {
-        this.persistentConnections = persistentConnections;
+    public void setCompress(Boolean compress) {
+        this.compress = compress;
     }
 
     public Integer getConnectionIdleTimeout() {
