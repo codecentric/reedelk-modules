@@ -114,14 +114,14 @@ public class RestClient implements ProcessorSync {
     }
 
     private boolean isNotSuccessfulResponseStatus(HttpResponseStatus status) {
-        return status != HttpResponseStatus.OK ||
-                status != HttpResponseStatus.CREATED ||
-                status != HttpResponseStatus.ACCEPTED ||
-                status != HttpResponseStatus.NO_CONTENT ||
-                status != HttpResponseStatus.MULTI_STATUS ||
-                status != HttpResponseStatus.RESET_CONTENT ||
-                status != HttpResponseStatus.PARTIAL_CONTENT ||
-                status != HttpResponseStatus.NON_AUTHORITATIVE_INFORMATION;
+        return !(status == HttpResponseStatus.OK ||
+                status == HttpResponseStatus.CREATED ||
+                status == HttpResponseStatus.ACCEPTED ||
+                status == HttpResponseStatus.NO_CONTENT ||
+                status == HttpResponseStatus.MULTI_STATUS ||
+                status == HttpResponseStatus.RESET_CONTENT ||
+                status == HttpResponseStatus.PARTIAL_CONTENT ||
+                status == HttpResponseStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 
     private Publisher<ByteBuf> requestBody(Message input) {

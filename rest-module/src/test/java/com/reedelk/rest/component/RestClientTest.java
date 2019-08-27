@@ -52,7 +52,7 @@ class RestClientTest {
                         .withBody("Test response body"));
 
         Message payload = MessageBuilder.get().text("Payload").build();
-        component.setBaseUrl("http://localhost:8787");
+        component.setBaseUrl("http://localhost:" + PORT);
         component.setPath("/v1/resource");
         component.setMethod(RestMethod.GET);
 
