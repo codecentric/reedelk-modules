@@ -4,6 +4,7 @@ import com.reedelk.rest.client.ClientBuilder;
 import com.reedelk.rest.client.ExtractTypeFromHeaders;
 import com.reedelk.rest.client.HttpClientWrapper;
 import com.reedelk.rest.client.UriComponent;
+import com.reedelk.rest.commons.IsNotSuccessful;
 import com.reedelk.rest.configuration.RestClientConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.annotation.*;
@@ -99,7 +100,7 @@ public class RestClient implements ProcessorSync {
         byte[] bytes = bytesMono.block();
 
         // If the response is not in the Range 2xx, we throw an exception.
-        if (isNotSuccessfulResponseStatus(dataHolder.status)) {
+        if (IsNotSuccessful.from(dataHolder.status)) {
             throw new ESBException(dataHolder.status.toString());
         }
 
@@ -111,17 +112,6 @@ public class RestClient implements ProcessorSync {
         TypedContent content = new ByteArrayType(bytes, type);
         input.setTypedContent(content);
         return input;
-    }
-
-    private boolean isNotSuccessfulResponseStatus(HttpResponseStatus status) {
-        return !(status == HttpResponseStatus.OK ||
-                status == HttpResponseStatus.CREATED ||
-                status == HttpResponseStatus.ACCEPTED ||
-                status == HttpResponseStatus.NO_CONTENT ||
-                status == HttpResponseStatus.MULTI_STATUS ||
-                status == HttpResponseStatus.RESET_CONTENT ||
-                status == HttpResponseStatus.PARTIAL_CONTENT ||
-                status == HttpResponseStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 
     private Publisher<ByteBuf> requestBody(Message input) {
