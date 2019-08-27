@@ -50,7 +50,7 @@ class ClientBuilderTest {
 
         // Then
         verify(mockWrapper).doOnRequest(requestConsumer);
-        verify(mockWrapper).baseUrl(expectedBaseUrl);
+        verify(mockWrapper).baseURL(expectedBaseUrl);
         verify(mockWrapper).method(RestMethod.GET);
         assertThat(actual).isEqualTo(mockWrapper);
     }
@@ -70,7 +70,7 @@ class ClientBuilderTest {
 
         // Then
         String expectedBaseUrl = "http://www.reedelk.com";
-        verify(mockWrapper).baseUrl(expectedBaseUrl);
+        verify(mockWrapper).baseURL(expectedBaseUrl);
         assertThat(actual).isEqualTo(mockWrapper);
     }
 
@@ -144,7 +144,7 @@ class ClientBuilderTest {
         verify(mockWrapper, never()).keepAlive(anyBoolean());
         verify(mockWrapper).doOnRequest(requestConsumer);
         verify(mockWrapper).port(7618);
-        verify(mockWrapper).baseUrl("http://www.reedelk.com/v1");
+        verify(mockWrapper).baseURL("http://www.reedelk.com/v1");
         verify(mockWrapper).method(RestMethod.POST);
         assertThat(actual).isEqualTo(mockWrapper);
     }

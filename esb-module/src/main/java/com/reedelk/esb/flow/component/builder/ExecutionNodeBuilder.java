@@ -36,9 +36,35 @@ public class ExecutionNodeBuilder {
     private ExecutionNodeBuilder() {
     }
 
+    public static ExecutionNodeBuilder get() {
+        return new ExecutionNodeBuilder();
+    }
+
+    public ExecutionNodeBuilder graph(ExecutionGraph graph) {
+        this.graph = graph;
+        return this;
+    }
+
+    public ExecutionNodeBuilder parent(ExecutionNode parent) {
+        this.parent = parent;
+        return this;
+    }
+
     public ExecutionNodeBuilder context(FlowBuilderContext context) {
         this.context = context;
         return this;
+    }
+
+    public ExecutionNodeBuilder componentDefinition(JSONObject componentDefinition) {
+        this.componentDefinition = componentDefinition;
+        return this;
+    }
+
+    public ExecutionNode build() {
+        String componentName = JsonParser.Implementor.name(componentDefinition);
+        Class<? extends Builder> builderClazz = COMPONENT_NAME_HANDLER.getOrDefault(componentName, GENERIC_HANDLER);
+
+        return instantiateBuilder(graph, context, builderClazz).build(parent, componentDefinition);
     }
 
     private static Builder instantiateBuilder(ExecutionGraph graph, FlowBuilderContext context, Class<? extends Builder> builderClazz) {
@@ -50,31 +76,4 @@ public class ExecutionNodeBuilder {
             throw new ESBException(e);
         }
     }
-
-    public ExecutionNodeBuilder parent(ExecutionNode parent) {
-        this.parent = parent;
-        return this;
-    }
-
-    public ExecutionNodeBuilder componentDefinition(JSONObject componentDefinition) {
-        this.componentDefinition = componentDefinition;
-        return this;
-    }
-
-    public static ExecutionNodeBuilder get() {
-        return new ExecutionNodeBuilder();
-    }
-
-    public ExecutionNode build() {
-        String componentName = JsonParser.Implementor.name(componentDefinition);
-        Class<? extends Builder> builderClazz = COMPONENT_NAME_HANDLER.getOrDefault(componentName, GENERIC_HANDLER);
-
-        return instantiateBuilder(graph, context, builderClazz).build(parent, componentDefinition);
-    }
-
-    public ExecutionNodeBuilder graph(ExecutionGraph graph) {
-        this.graph = graph;
-        return this;
-    }
-
 }

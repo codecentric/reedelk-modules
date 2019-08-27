@@ -1,26 +1,25 @@
 package com.reedelk.rest.client;
 
+import com.reedelk.rest.client.strategy.ExecutionStrategy;
+import com.reedelk.rest.client.strategy.ResponseHandler;
+import com.reedelk.rest.client.strategy.StrategyBuilder;
 import com.reedelk.rest.configuration.RestMethod;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import reactor.core.publisher.Mono;
-import reactor.netty.ByteBufMono;
 import reactor.netty.Connection;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.http.client.HttpClientRequest;
-import reactor.netty.http.client.HttpClientResponse;
 
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 
-public class HttpClientWrapper {
-
-    private String baseUrl;
-    private boolean followRedirects = true;
-
-    private RestMethod method;
+public class HttpClientWrapper implements ExecutionStrategy {
 
     private HttpClient client;
-    private HttpClient.ResponseReceiver<?> receiver;
+    private RestMethod method;
+    private ExecutionStrategy delegate;
+
+    private String baseURL;
+    private boolean followRedirects;
+
 
     HttpClientWrapper() {
         this.client = HttpClient.create();
@@ -30,8 +29,8 @@ public class HttpClientWrapper {
         client = client.port(port);
     }
 
-    void baseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+    void baseURL(String baseURL) {
+        this.baseURL = baseURL;
     }
 
     void method(RestMethod method) {
@@ -47,7 +46,7 @@ public class HttpClientWrapper {
     }
 
     void followRedirects(boolean followRedirects) {
-        client = client.followRedirect(followRedirects);
+        this.followRedirects = followRedirects;
     }
 
     void doOnRequest(BiConsumer<HttpClientRequest, Connection> handler) {
@@ -55,60 +54,19 @@ public class HttpClientWrapper {
     }
 
     void initialize() {
-        receiver = method.addForClient(client);
+        delegate = StrategyBuilder.get()
+                .client(client)
+                .method(method)
+                .baseURL(baseURL)
+                .followRedirects(followRedirects)
+                .build();
     }
 
-    public <T> Mono<T> execute(String uri, BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler, BodyProvider bodyProvider) {
-        return executeInternal(baseUrl + uri, handler, bodyProvider);
+    @Override
+    public <T> Mono<T> execute(String uri, BodyProvider bodyProvider, ResponseHandler<T> handler) {
+        return delegate.execute(uri, bodyProvider, handler);
     }
 
-    private <T> Mono<T> executeInternal(String uri, BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler, BodyProvider bodyProvider) {
-        if (receiver instanceof HttpClient.RequestSender) {
-            return ((HttpClient.RequestSender) receiver)
-                    .uri(uri)
-                    .send(bodyProvider.provide())
-                    .responseSingle((response, byteBufMono) -> {
-                        if (followRedirects && isRedirect(response)) {
-                            return handleRedirect(handler, response, bodyProvider);
-                        } else {
-                            return handler.apply(response, byteBufMono);
-                        }
-                    });
-        } else {
-            return receiver.uri(uri).responseSingle((response, byteBufMono) -> {
-                if (followRedirects && isRedirect(response)) {
-                    return handleRedirect(handler, response, bodyProvider);
-                } else {
-                    return handler.apply(response, byteBufMono);
-                }
-            });
-        }
-    }
-
-    private <T> Mono<T> handleRedirect(
-            BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> handler,
-            HttpClientResponse response,
-            BodyProvider bodyProvider) {
-
-        String redirectUrl = getLocationHeader(response);
-        // Absolute
-        if (redirectUrl.startsWith("http")) {
-            return executeInternal(redirectUrl, handler, bodyProvider);
-            // Location is relative
-        } else {
-            return executeInternal(baseUrl + redirectUrl, handler, bodyProvider);
-        }
-    }
-
-    private String getLocationHeader(HttpClientResponse response) {
-        return response.responseHeaders().get("Location");
-    }
-
-    private boolean isRedirect(HttpClientResponse response) {
-        return response.status() == HttpResponseStatus.MOVED_PERMANENTLY ||
-                response.status() == HttpResponseStatus.FOUND ||
-                response.status() == HttpResponseStatus.SEE_OTHER;
-    }
 
     /**
      * void proxy(int proxy) {

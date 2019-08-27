@@ -91,7 +91,7 @@ public class ClientBuilder {
         }
 
         String baseUrl = BaseUrl.from(configuration);
-        client.baseUrl(baseUrl);
+        client.baseURL(baseUrl);
         client.method(method);
         client.initialize();
         return client;
@@ -114,7 +114,7 @@ public class ClientBuilder {
             client.doOnRequest(onRequestHandler);
         }
 
-        client.baseUrl(baseUrl);
+        client.baseURL(baseUrl);
         client.method(method);
         client.initialize();
         return client;

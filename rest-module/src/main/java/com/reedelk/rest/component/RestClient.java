@@ -14,11 +14,13 @@ import com.reedelk.runtime.api.message.type.ByteArrayType;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import com.reedelk.runtime.api.service.ScriptEngineService;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientRequest;
@@ -81,27 +83,57 @@ public class RestClient implements ProcessorSync {
 
         String uri = buildUri();
 
-        RequestData data = new RequestData();
-        Mono<byte[]> dataHolder = client.execute(uri, (response, byteBufMono) -> {
-            data.headers = response.responseHeaders();
-            data.status = response.status();
-            return byteBufMono.asByteArray();
-            // Body provider only if it is POST, PUT ...
-        }, () -> Flux.just(Unpooled.wrappedBuffer(input.getTypedContent().asByteArray())));
+        final ResponseData dataHolder = new ResponseData();
+        Mono<byte[]> bytesMono = client.execute(uri,
+                () -> requestBody(input),
+                (response, byteBufMono) -> {
+                    dataHolder.status = response.status();
+                    dataHolder.headers = response.responseHeaders();
+                    return byteBufMono.asByteArray();
+                    // Body provider only if it is POST, PUT ...
+                });
 
-        byte[] bytes = dataHolder.block();
+        // We block and wait until the whole response has been received
+        // note that because of this line, this component is not supporting
+        // a stream (inbound), but it does support streaming outbound...
+        byte[] bytes = bytesMono.block();
 
-        if (data.status != HttpResponseStatus.OK) {
-            throw new ESBException("Status is " + data.status);
+        // If the response is not in the Range 2xx, we throw an exception.
+        if (isNotSuccessfulResponseStatus(dataHolder.status)) {
+            throw new ESBException(dataHolder.status.toString());
         }
 
-        Type type = ExtractTypeFromHeaders.from(data.headers);
+        // We set the type of the content according to the
+        // Content type header.
+        Type type = ExtractTypeFromHeaders.from(dataHolder.headers);
+
+        // We set the content
         TypedContent content = new ByteArrayType(bytes, type);
         input.setTypedContent(content);
         return input;
     }
 
-    private class RequestData {
+    private boolean isNotSuccessfulResponseStatus(HttpResponseStatus status) {
+        return status != HttpResponseStatus.OK ||
+                status != HttpResponseStatus.CREATED ||
+                status != HttpResponseStatus.ACCEPTED ||
+                status != HttpResponseStatus.NO_CONTENT ||
+                status != HttpResponseStatus.MULTI_STATUS ||
+                status != HttpResponseStatus.RESET_CONTENT ||
+                status != HttpResponseStatus.PARTIAL_CONTENT ||
+                status != HttpResponseStatus.NON_AUTHORITATIVE_INFORMATION;
+    }
+
+    private Publisher<ByteBuf> requestBody(Message input) {
+        // TODO: Take the body and interpret it..(might be javascript)
+        // Request body has to be provided if and only if it is a POST,PUT.
+        // Also if the body is null, don't bother to do anything, just
+        // send empty byte array buffer.
+        // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
+        return Flux.just(Unpooled.wrappedBuffer(input.getTypedContent().asByteArray()));
+    }
+
+    private class ResponseData {
         private HttpHeaders headers;
         private HttpResponseStatus status;
     }

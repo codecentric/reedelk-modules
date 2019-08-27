@@ -41,7 +41,7 @@ public class QueryComponent implements ProcessorSync {
 
             Type contentType = new Type(MimeType.APPLICATION_JAVA, InternalResultSet.class);
 
-            // TODO: Fixme
+
             //TypedContent newContent = new MemoryTypedContent<>(map, contentType);
 
             Message output = new Message();

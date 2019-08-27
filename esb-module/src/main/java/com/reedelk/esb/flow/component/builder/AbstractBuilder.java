@@ -12,5 +12,4 @@ public abstract class AbstractBuilder implements Builder {
         this.graph = graph;
         this.context = context;
     }
-
 }
