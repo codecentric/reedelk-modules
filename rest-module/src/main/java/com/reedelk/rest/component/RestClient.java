@@ -120,7 +120,8 @@ public class RestClient implements ProcessorSync {
         // Also if the body is null, don't bother to do anything, just
         // send empty byte array buffer.
         // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
-        return Flux.just(Unpooled.wrappedBuffer(input.getTypedContent().asByteArray()));
+        String body = input.getTypedContent().asString();
+        return Flux.just(Unpooled.wrappedBuffer(body.getBytes()));
     }
 
     private class ResponseData {

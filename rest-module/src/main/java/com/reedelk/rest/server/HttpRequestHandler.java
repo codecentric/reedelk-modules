@@ -4,6 +4,8 @@ import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.Message;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
@@ -13,6 +15,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpServerResponse, Publisher<Void>> {
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestHandler.class);
 
     private final InboundEventListener listener;
 
@@ -27,6 +31,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                 .flatMap(mapProcessingPipeline()) // this one process the input message through the integration flow
                 .flatMap(sendResponse(response)) // sends the response back to the Http response channel
                 .onErrorResume(Exception.class, exception -> {
+                    logger.warn("Error", exception);
                     if (exception instanceof RejectedExecutionException) {
                         // Server is too  busy, there are not enough Threads able to handle the request.
                         response.status(503);
