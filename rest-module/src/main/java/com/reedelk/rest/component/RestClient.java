@@ -82,33 +82,11 @@ public class RestClient implements ProcessorSync {
         String uri = buildUri();
 
         final ResponseData dataHolder = new ResponseData();
-        Mono<byte[]> bytesMono = client.execute(uri, new BodyProvider() {
-            @Override
-            public BodyProviderData data() {
-                // TODO: Take the body and interpret it..(might be javascript)
-                // Request body has to be provided if and only if it is a POST,PUT,DELETE.
-                // Also if the body is null, don't bother to do anything, just
-                // send empty byte array buffer.
-                // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
-                byte[] bodyAsBytes = input.getTypedContent().asByteArray();
-                return new BodyProviderData() {
-                    @Override
-                    public Publisher<? extends ByteBuf> provide() {
-                        return Flux.just(Unpooled.wrappedBuffer(bodyAsBytes));
-                    }
-
-                    @Override
-                    public int length() {
-                        return bodyAsBytes.length;
-                    }
-                };
-            }
-        },
+        Mono<byte[]> bytesMono = client.execute(uri, bodyProviderOf(input),
                 (response, byteBufMono) -> {
                     dataHolder.status = response.status();
                     dataHolder.headers = response.responseHeaders();
                     return byteBufMono.asByteArray();
-                    // Body provider only if it is POST, PUT ...
                 });
 
         // We block and wait until the whole response has been received
@@ -129,6 +107,30 @@ public class RestClient implements ProcessorSync {
         TypedContent content = new ByteArrayContent(bytes, type);
         input.setTypedContent(content);
         return input;
+    }
+
+    private BodyProvider bodyProviderOf(Message input) {
+        // This code is only executed if and only if the request is
+        // either POST,PUT or DELETE. For all other HTTP methods this is not executed.
+        return () -> {
+            // TODO: Take the body and interpret it..(might be javascript)
+            // Request body has to be provided if and only if it is a POST,PUT,DELETE.
+            // Also if the body is null, don't bother to do anything, just
+            // send empty byte array buffer.
+            // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
+            byte[] bodyAsBytes = input.getTypedContent().asByteArray();
+            return new BodyProviderData() {
+                @Override
+                public Publisher<? extends ByteBuf> provide() {
+                    return Flux.just(Unpooled.wrappedBuffer(bodyAsBytes));
+                }
+
+                @Override
+                public int length() {
+                    return bodyAsBytes.length;
+                }
+            };
+        };
     }
 
     private class ResponseData {
