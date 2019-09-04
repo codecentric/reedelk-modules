@@ -4,13 +4,9 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.configuration.RestMethod.DELETE;
-import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
 
 
@@ -29,9 +25,6 @@ class RestClientDeleteTest extends RestClientAbstractTest {
                         .withBody("DELETE was successful")));
 
         RestClient component = componentWith(baseURL, path, DELETE);
-        Map<String,String> headers = new HashMap<>();
-        headers.put(CONTENT_TYPE, APPLICATION_JSON.toString());
-        component.setHeaders(headers);
 
         Message payload = MessageBuilder.get().json(requestBody).build();
 

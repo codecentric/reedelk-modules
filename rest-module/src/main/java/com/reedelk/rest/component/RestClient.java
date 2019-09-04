@@ -1,7 +1,11 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.client.*;
+import com.reedelk.rest.client.ClientBuilder;
+import com.reedelk.rest.client.ExtractTypeFromHeaders;
+import com.reedelk.rest.client.HttpClientWrapper;
+import com.reedelk.rest.client.UriComponent;
 import com.reedelk.rest.commons.IsNotSuccessful;
+import com.reedelk.rest.commons.MessageBodyProvider;
 import com.reedelk.rest.configuration.RestClientConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.annotation.*;
@@ -12,14 +16,10 @@ import com.reedelk.runtime.api.message.type.ByteArrayContent;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientRequest;
 
@@ -82,7 +82,9 @@ public class RestClient implements ProcessorSync {
         String uri = buildUri();
 
         final ResponseData dataHolder = new ResponseData();
-        Mono<byte[]> bytesMono = client.execute(uri, bodyProviderOf(input),
+        Mono<byte[]> bytesMono = client.execute(
+                uri,
+                MessageBodyProvider.from(input),
                 (response, byteBufMono) -> {
                     dataHolder.status = response.status();
                     dataHolder.headers = response.responseHeaders();
@@ -95,6 +97,7 @@ public class RestClient implements ProcessorSync {
         byte[] bytes = bytesMono.block();
 
         // If the response is not in the Range 2xx, we throw an exception.
+        // TODO: We must propagate the response to the caller.
         if (IsNotSuccessful.from(dataHolder.status)) {
             throw new ESBException(dataHolder.status.toString());
         }
@@ -185,29 +188,5 @@ public class RestClient implements ProcessorSync {
         if (headers != null) {
             headers.forEach(request::addHeader);
         }
-    }
-
-    private BodyProvider bodyProviderOf(Message input) {
-        // This code is only executed if and only if the request is
-        // either POST,PUT or DELETE. For all other HTTP methods this is not executed.
-        return () -> {
-            // TODO: Take the body and interpret it..(might be javascript)
-            // Request body has to be provided if and only if it is a POST,PUT,DELETE.
-            // Also if the body is null, don't bother to do anything, just
-            // send empty byte array buffer.
-            // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
-            byte[] bodyAsBytes = input.getTypedContent().asByteArray();
-            return new BodyProviderData() {
-                @Override
-                public Publisher<? extends ByteBuf> provide() {
-                    return Flux.just(Unpooled.wrappedBuffer(bodyAsBytes));
-                }
-
-                @Override
-                public int length() {
-                    return bodyAsBytes.length;
-                }
-            };
-        };
     }
 }
