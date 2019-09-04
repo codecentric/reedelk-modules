@@ -2,7 +2,6 @@ package com.reedelk.rest.component;
 
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.MimeType;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.reedelk.rest.configuration.RestMethod.DELETE;
+import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
 
 
@@ -20,8 +20,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         // Given
         String requestBody = "{\"Name\":\"John\"}";
 
-        mockServer.stubFor(
-                delete(urlEqualTo(path))
+        mockServer.stubFor(delete(urlEqualTo(path))
                 .withRequestBody(equalToJson(requestBody))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", TEXT.toString())
@@ -30,7 +29,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
 
         RestClient component = componentWith(baseURL, path, DELETE);
         Map<String,String> headers = new HashMap<>();
-        headers.put("Content-Type", MimeType.APPLICATION_JSON.toString());
+        headers.put("Content-Type", APPLICATION_JSON.toString());
         component.setHeaders(headers);
 
         Message payload = MessageBuilder.get().json(requestBody).build();
@@ -44,9 +43,10 @@ class RestClientDeleteTest extends RestClientAbstractTest {
     }
 
     @Test
-    void shouldDeleteWithoutBodyExecuteCorrectlyWhenResponse200() {
+    void shouldDeleteWithEmptyBodyExecuteCorrectlyWhenResponse200() {
         // Given
         mockServer.stubFor(delete(urlEqualTo(path))
+                .withRequestBody(binaryEqualTo(new byte[0]))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", TEXT.toString())
                         .withStatus(200)

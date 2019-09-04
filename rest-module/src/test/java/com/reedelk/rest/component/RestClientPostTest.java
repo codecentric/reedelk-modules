@@ -1,32 +1,35 @@
 package com.reedelk.rest.component;
 
-class RestClientGETTest1 extends RestClientAbstractTest {
+class RestClientPostTest extends RestClientAbstractTest {
 /**
     @Test
-    void shouldGETExecuteCorrectlyWhenResponse200() throws InterruptedException {
+    void shouldPOSTExecuteCorrectlyWhenResponse200() {
         // Given
         HttpRequest request = request()
-                .withMethod(GET.name())
+                .withMethod(POST.name())
+                .withBody("my POST test body")
                 .withPath("/v1/resource");
+
         mockServer.when(request)
                 .respond(response()
                         .withStatusCode(OK_200.code())
                         .withHeader("Content-Type", MimeType.TEXT.toString())
-                        .withBody("Test response body"));
+                        .withBody("POST was successful"));
 
         String path = "/v1/resource";
         String baseURL = "http://localhost:" + PORT;
-        RestClient component = componentWith(baseURL, path, GET);
+        RestClient component = componentWith(baseURL, path, POST);
 
-        Message payload = MessageBuilder.get().text("Payload").build();
+        Message payload = MessageBuilder.get().text("my POST test body").build();
 
         // When
         Message outMessage = component.apply(payload);
 
         // Then
-        assertThatContentIs(outMessage, "Test response body");
+        assertThatContentIs(outMessage, "POST was successful");
         assertThatMimeTypeIs(outMessage, MimeType.TEXT);
 
         mockServer.clear(request, ClearType.ALL);
-    }*/
+    }
+*/
 }
