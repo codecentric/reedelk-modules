@@ -13,29 +13,27 @@ import static com.reedelk.rest.configuration.RestMethod.DELETE;
 import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
 
 
-class RestClientDeleteTest1 extends RestClientAbstractTest {
+class RestClientDeleteTest extends RestClientAbstractTest {
 
     @Test
     void shouldDeleteWithBodyExecuteCorrectlyWhenResponse200() {
         // Given
-        String body = "{\"Name\":\"John\"}";
+        String requestBody = "{\"Name\":\"John\"}";
 
         mockServer.stubFor(
                 delete(urlEqualTo(path))
-                .withRequestBody(equalToJson(body))
+                .withRequestBody(equalToJson(requestBody))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", TEXT.toString())
                         .withStatus(200)
                         .withBody("DELETE was successful")));
 
-
-        String baseURL = "http://localhost:" + PORT;
         RestClient component = componentWith(baseURL, path, DELETE);
         Map<String,String> headers = new HashMap<>();
         headers.put("Content-Type", MimeType.APPLICATION_JSON.toString());
         component.setHeaders(headers);
 
-        Message payload = MessageBuilder.get().json(body).build();
+        Message payload = MessageBuilder.get().json(requestBody).build();
 
         // When
         Message outMessage = component.apply(payload);
@@ -54,7 +52,6 @@ class RestClientDeleteTest1 extends RestClientAbstractTest {
                         .withStatus(200)
                         .withBody("It works")));
 
-        String baseURL = "http://localhost:" + PORT;
         RestClient component = componentWith(baseURL, path, DELETE);
 
         Message emptyPayload = MessageBuilder.get().build();

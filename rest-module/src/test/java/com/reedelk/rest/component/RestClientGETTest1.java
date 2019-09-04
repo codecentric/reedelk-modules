@@ -1,9 +1,6 @@
 package com.reedelk.rest.component;
 
-import org.junit.jupiter.api.Tag;
-
-@Tag("integration")
-class RestClientGETTest extends RestClientAbstractTest {
+class RestClientGETTest1 extends RestClientAbstractTest {
 /**
     @Test
     void shouldGETExecuteCorrectlyWhenResponse200() throws InterruptedException {

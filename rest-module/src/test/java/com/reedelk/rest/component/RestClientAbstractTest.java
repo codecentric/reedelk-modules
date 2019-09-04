@@ -19,6 +19,7 @@ abstract class RestClientAbstractTest {
     static WireMockServer mockServer;
 
     static String path = "/v1/resource";
+    static String baseURL = "http://localhost:" + PORT;
 
 
     @BeforeAll

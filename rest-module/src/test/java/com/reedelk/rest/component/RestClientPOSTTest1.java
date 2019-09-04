@@ -1,6 +1,6 @@
 package com.reedelk.rest.component;
 
-class RestClientPOSTTest extends RestClientAbstractTest {
+class RestClientPOSTTest1 extends RestClientAbstractTest {
 /**
     @Test
     void shouldPOSTExecuteCorrectlyWhenResponse200() {

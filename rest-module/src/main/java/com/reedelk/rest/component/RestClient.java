@@ -8,7 +8,7 @@ import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.ByteArrayType;
+import com.reedelk.runtime.api.message.type.ByteArrayContent;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import com.reedelk.runtime.api.service.ScriptEngineService;
@@ -90,8 +90,7 @@ public class RestClient implements ProcessorSync {
                 // Also if the body is null, don't bother to do anything, just
                 // send empty byte array buffer.
                 // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
-                String body = input.getTypedContent().asString();
-                byte[] bodyAsBytes = body.getBytes();
+                byte[] bodyAsBytes = input.getTypedContent().asByteArray();
                 return new BodyProviderData() {
                     @Override
                     public Publisher<? extends ByteBuf> provide() {
@@ -127,13 +126,9 @@ public class RestClient implements ProcessorSync {
         Type type = ExtractTypeFromHeaders.from(dataHolder.headers);
 
         // We set the content
-        TypedContent content = new ByteArrayType(bytes, type);
+        TypedContent content = new ByteArrayContent(bytes, type);
         input.setTypedContent(content);
         return input;
-    }
-
-    private Publisher<ByteBuf> requestBody(Message input) {
-        return null;
     }
 
     private class ResponseData {

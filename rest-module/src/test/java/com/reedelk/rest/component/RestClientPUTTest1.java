@@ -1,4 +1,4 @@
 package com.reedelk.rest.component;
 
-public class RestClientPUTTest {
+public class RestClientPUTTest1 {
 }

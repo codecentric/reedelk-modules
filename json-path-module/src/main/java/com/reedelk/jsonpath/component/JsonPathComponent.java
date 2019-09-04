@@ -5,7 +5,7 @@ import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.StringType;
+import com.reedelk.runtime.api.message.type.StringContent;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import net.minidev.json.JSONArray;
@@ -48,7 +48,7 @@ public class JsonPathComponent implements ProcessorSync {
 
         Type applicationJsonType = new Type(APPLICATION_JSON);
 
-        TypedContent outputContent = new StringType(jsonResult, applicationJsonType);
+        TypedContent outputContent = new StringContent(jsonResult, applicationJsonType);
 
         Message outputMessage = new Message();
 

@@ -57,10 +57,10 @@ class HttpRequestToMessage {
                 Charset conversionCharset = charset.orElseGet(Charset::defaultCharset);
                 return new String(bytes, conversionCharset);
             });
-            return new StringStreamType(stringStream, mimeType);
+            return new StringStreamContent(stringStream, mimeType);
         }
 
-        return new ByteArrayStreamType(byteArrayStream, mimeType);
+        return new ByteArrayStreamContent(byteArrayStream, mimeType);
     }
 
     private static BiConsumer<ByteBuf, SynchronousSink<byte[]>> byteBuffSink() {
