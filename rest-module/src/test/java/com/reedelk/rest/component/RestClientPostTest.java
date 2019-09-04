@@ -1,35 +1,36 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageBuilder;
+import org.junit.jupiter.api.Test;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.reedelk.rest.configuration.RestMethod.POST;
+import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
+
 class RestClientPostTest extends RestClientAbstractTest {
-/**
+
     @Test
-    void shouldPOSTExecuteCorrectlyWhenResponse200() {
+    void shouldPostWithBodyExecuteCorrectlyWhenResponse200() {
         // Given
-        HttpRequest request = request()
-                .withMethod(POST.name())
-                .withBody("my POST test body")
-                .withPath("/v1/resource");
+        String requestBody = "{\"Name\":\"John\"}";
 
-        mockServer.when(request)
-                .respond(response()
-                        .withStatusCode(OK_200.code())
-                        .withHeader("Content-Type", MimeType.TEXT.toString())
-                        .withBody("POST was successful"));
+        mockServer.stubFor(post(urlEqualTo(path))
+                .withRequestBody(equalToJson(requestBody))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", TEXT.toString())
+                        .withStatus(200)
+                        .withBody("POST was successful")));
 
-        String path = "/v1/resource";
-        String baseURL = "http://localhost:" + PORT;
         RestClient component = componentWith(baseURL, path, POST);
 
-        Message payload = MessageBuilder.get().text("my POST test body").build();
+        Message payload = MessageBuilder.get().json(requestBody).build();
 
         // When
         Message outMessage = component.apply(payload);
 
         // Then
         assertThatContentIs(outMessage, "POST was successful");
-        assertThatMimeTypeIs(outMessage, MimeType.TEXT);
-
-        mockServer.clear(request, ClearType.ALL);
+        assertThatMimeTypeIs(outMessage, TEXT);
     }
-*/
 }

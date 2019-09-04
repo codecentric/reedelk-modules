@@ -21,6 +21,6 @@ public class PutStrategy extends AbstractExecutionStrategy {
             request.addHeader("Content-Length", String.valueOf(data.length()));
             return nettyOutbound.send(data.provide());
         });
-        return _request(sender, handler, uri);
+        return _request(receiver, handler, uri);
     }
 }
