@@ -109,30 +109,6 @@ public class RestClient implements ProcessorSync {
         return input;
     }
 
-    private BodyProvider bodyProviderOf(Message input) {
-        // This code is only executed if and only if the request is
-        // either POST,PUT or DELETE. For all other HTTP methods this is not executed.
-        return () -> {
-            // TODO: Take the body and interpret it..(might be javascript)
-            // Request body has to be provided if and only if it is a POST,PUT,DELETE.
-            // Also if the body is null, don't bother to do anything, just
-            // send empty byte array buffer.
-            // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
-            byte[] bodyAsBytes = input.getTypedContent().asByteArray();
-            return new BodyProviderData() {
-                @Override
-                public Publisher<? extends ByteBuf> provide() {
-                    return Flux.just(Unpooled.wrappedBuffer(bodyAsBytes));
-                }
-
-                @Override
-                public int length() {
-                    return bodyAsBytes.length;
-                }
-            };
-        };
-    }
-
     private class ResponseData {
         private HttpHeaders headers;
         private HttpResponseStatus status;
@@ -209,5 +185,29 @@ public class RestClient implements ProcessorSync {
         if (headers != null) {
             headers.forEach(request::addHeader);
         }
+    }
+
+    private BodyProvider bodyProviderOf(Message input) {
+        // This code is only executed if and only if the request is
+        // either POST,PUT or DELETE. For all other HTTP methods this is not executed.
+        return () -> {
+            // TODO: Take the body and interpret it..(might be javascript)
+            // Request body has to be provided if and only if it is a POST,PUT,DELETE.
+            // Also if the body is null, don't bother to do anything, just
+            // send empty byte array buffer.
+            // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
+            byte[] bodyAsBytes = input.getTypedContent().asByteArray();
+            return new BodyProviderData() {
+                @Override
+                public Publisher<? extends ByteBuf> provide() {
+                    return Flux.just(Unpooled.wrappedBuffer(bodyAsBytes));
+                }
+
+                @Override
+                public int length() {
+                    return bodyAsBytes.length;
+                }
+            };
+        };
     }
 }
