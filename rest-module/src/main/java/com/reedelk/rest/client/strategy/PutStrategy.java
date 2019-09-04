@@ -1,6 +1,7 @@
 package com.reedelk.rest.client.strategy;
 
 import com.reedelk.rest.client.BodyProvider;
+import com.reedelk.rest.client.BodyProviderData;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
@@ -15,7 +16,11 @@ public class PutStrategy extends AbstractExecutionStrategy {
 
     @Override
     public <T> Mono<T> execute(String uri, BodyProvider bodyProvider, ResponseHandler<T> handler) {
-        HttpClient.ResponseReceiver<?> sender = this.sender.send(bodyProvider.provide());
+        HttpClient.ResponseReceiver<?> receiver = sender.send((request, nettyOutbound) -> {
+            BodyProviderData data = bodyProvider.data();
+            request.addHeader("Content-Length", String.valueOf(data.length()));
+            return nettyOutbound.send(data.provide());
+        });
         return _request(sender, handler, uri);
     }
 }

@@ -1,9 +1,6 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.client.ClientBuilder;
-import com.reedelk.rest.client.ExtractTypeFromHeaders;
-import com.reedelk.rest.client.HttpClientWrapper;
-import com.reedelk.rest.client.UriComponent;
+import com.reedelk.rest.client.*;
 import com.reedelk.rest.commons.IsNotSuccessful;
 import com.reedelk.rest.configuration.RestClientConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
@@ -85,8 +82,29 @@ public class RestClient implements ProcessorSync {
         String uri = buildUri();
 
         final ResponseData dataHolder = new ResponseData();
-        Mono<byte[]> bytesMono = client.execute(uri,
-                () -> requestBody(input),
+        Mono<byte[]> bytesMono = client.execute(uri, new BodyProvider() {
+            @Override
+            public BodyProviderData data() {
+                // TODO: Take the body and interpret it..(might be javascript)
+                // Request body has to be provided if and only if it is a POST,PUT,DELETE.
+                // Also if the body is null, don't bother to do anything, just
+                // send empty byte array buffer.
+                // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
+                String body = input.getTypedContent().asString();
+                byte[] bodyAsBytes = body.getBytes();
+                return new BodyProviderData() {
+                    @Override
+                    public Publisher<? extends ByteBuf> provide() {
+                        return Flux.just(Unpooled.wrappedBuffer(bodyAsBytes));
+                    }
+
+                    @Override
+                    public int length() {
+                        return bodyAsBytes.length;
+                    }
+                };
+            }
+        },
                 (response, byteBufMono) -> {
                     dataHolder.status = response.status();
                     dataHolder.headers = response.responseHeaders();
@@ -115,13 +133,7 @@ public class RestClient implements ProcessorSync {
     }
 
     private Publisher<ByteBuf> requestBody(Message input) {
-        // TODO: Take the body and interpret it..(might be javascript)
-        // Request body has to be provided if and only if it is a POST,PUT.
-        // Also if the body is null, don't bother to do anything, just
-        // send empty byte array buffer.
-        // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
-        String body = input.getTypedContent().asString();
-        return Flux.just(Unpooled.wrappedBuffer(body.getBytes()));
+        return null;
     }
 
     private class ResponseData {
