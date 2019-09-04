@@ -5,19 +5,20 @@ import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.configuration.RestMethod.GET;
 import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 
 class RestClientGetTest extends RestClientAbstractTest {
 
     @Test
-    void shouldGetExecuteCorrectlyWhenResponse200() throws InterruptedException {
+    void shouldGetExecuteCorrectlyWhenResponse200() {
         // Given
         String responseBody = "{\"Name\":\"John\"}";
 
         mockServer.stubFor(get(urlEqualTo(path))
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", APPLICATION_JSON.toString())
+                        .withHeader(CONTENT_TYPE, APPLICATION_JSON.toString())
                         .withStatus(200)
                         .withBody(responseBody)));
 

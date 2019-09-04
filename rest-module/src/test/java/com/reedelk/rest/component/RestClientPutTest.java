@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.configuration.RestMethod.PUT;
 import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
@@ -18,17 +19,18 @@ class RestClientPutTest extends RestClientAbstractTest {
     void shouldPutWithBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String requestBody = "{\"Name\":\"John\"}";
+        String expectedResponseBody = "PUT was successful";
 
         mockServer.stubFor(put(urlEqualTo(path))
                 .withRequestBody(equalToJson(requestBody))
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", TEXT.toString())
+                        .withHeader(CONTENT_TYPE, TEXT.toString())
                         .withStatus(200)
-                        .withBody("PUT was successful")));
+                        .withBody(expectedResponseBody)));
 
         RestClient component = componentWith(baseURL, path, PUT);
         Map<String,String> headers = new HashMap<>();
-        headers.put("Content-Type", APPLICATION_JSON.toString());
+        headers.put(CONTENT_TYPE, APPLICATION_JSON.toString());
         component.setHeaders(headers);
 
         Message payload = MessageBuilder.get().json(requestBody).build();

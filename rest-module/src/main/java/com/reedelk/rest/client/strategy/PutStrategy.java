@@ -5,6 +5,8 @@ import com.reedelk.rest.client.BodyProviderData;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_LENGTH;
+
 public class PutStrategy extends AbstractExecutionStrategy {
 
     private final HttpClient.RequestSender sender;
@@ -18,7 +20,7 @@ public class PutStrategy extends AbstractExecutionStrategy {
     public <T> Mono<T> execute(String uri, BodyProvider bodyProvider, ResponseHandler<T> handler) {
         HttpClient.ResponseReceiver<?> receiver = sender.send((request, nettyOutbound) -> {
             BodyProviderData data = bodyProvider.data();
-            request.addHeader("Content-Length", String.valueOf(data.length()));
+            request.addHeader(CONTENT_LENGTH, String.valueOf(data.length()));
             return nettyOutbound.send(data.provide());
         });
         return _request(receiver, handler, uri);
