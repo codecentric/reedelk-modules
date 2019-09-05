@@ -39,8 +39,8 @@ public class FlowExecutorEngine {
                 FlowExecutorFactory.get().execute(publisher, nodeAfterRoot, graph);
 
         Mono.from(resultingPublisher)
-                .doOnError(onResult::onError)
-                .subscribe(messageContext -> onResult.onResult(messageContext.getMessage()));
+                .doOnError(throwable -> onResult.onError(throwable, defaultContext))
+                .subscribe(messageContext -> onResult.onResult(messageContext.getMessage(), defaultContext));
     }
 
 }

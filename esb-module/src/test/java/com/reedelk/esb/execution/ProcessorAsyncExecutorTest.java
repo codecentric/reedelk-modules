@@ -137,7 +137,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
                 } catch (InterruptedException e) {
                     // nothing to do
                 }
-                callback.onResult(MessageBuilder.get().text("hello").build());
+                callback.onResult(MessageBuilder.get().text("hello").build(), context);
             });
         }
     }
@@ -151,7 +151,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
                 } catch (InterruptedException e) {
                     // nothing to do
                 }
-                callback.onError(new IllegalStateException("Error"));
+                callback.onError(new IllegalStateException("Error"), context);
             }).start();
         }
     }
@@ -175,7 +175,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
                 String inputString = input.getTypedContent().asString();
                 String outputString = inputString + postfix;
                 Message out = MessageBuilder.get().text(outputString).build();
-                callback.onResult(out);
+                callback.onResult(out, context);
             }).start();
         }
     }

@@ -6,6 +6,7 @@ import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -72,13 +73,13 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
         return Mono.create(sink -> {
             OnResult callback = new OnResult() {
                 @Override
-                public void onResult(Message message) {
+                public void onResult(Message message, Context context) {
                     event.replaceWith(message);
                     sink.success(event);
                 }
 
                 @Override
-                public void onError(Throwable e) {
+                public void onError(Throwable e, Context context) {
                     sink.error(e);
                 }
             };

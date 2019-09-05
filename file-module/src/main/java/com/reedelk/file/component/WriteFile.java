@@ -55,7 +55,7 @@ public class WriteFile implements ProcessorAsync {
                         Message done = MessageBuilder.get()
                                 .text("Written on path: " + path.toString())
                                 .build();
-                        callback.onResult(done);
+                        callback.onResult(done, context);
                     } catch (IOException e) {
                         throw Exceptions.propagate(e);
                     }

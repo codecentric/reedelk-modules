@@ -2,6 +2,7 @@ package com.reedelk.rest.server;
 
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
@@ -24,7 +25,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
     public Publisher<Void> apply(HttpServerRequest request, HttpServerResponse response) {
         Message inMessage = HttpRequestToMessage.from(new HttpRequestWrapper(request));
         return Mono.just(inMessage)
-                .flatMap(mapProcessingPipeline()) // this one process the input message through the integration flow
+                .flatMap(processPipeline(response)) // this one process the input message through the integration flow
                 .flatMap(sendResponse(response)) // sends the response back to the Http response channel
                 .onErrorResume(Exception.class, exception -> {
                     if (exception instanceof RejectedExecutionException) {
@@ -44,15 +45,17 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
     /**
      * The listener Invokes the integration flow processor pipeline.
      */
-    private Function<Message, Mono<Message>> mapProcessingPipeline() {
+    private Function<Message, Mono<Message>> processPipeline(final HttpServerResponse response) {
         return message -> Mono.create(sink -> listener.onEvent(message, new OnResult() {
             @Override
-            public void onResult(Message outMessage) {
+            public void onResult(Message outMessage, Context context) {
+                // copy values to be put in the response
+                MessageToHttpResponse.from(message, context, response);
                 sink.success(outMessage);
             }
 
             @Override
-            public void onError(Throwable throwable) {
+            public void onError(Throwable throwable, Context context) {
                 sink.error(throwable);
             }
         }));
@@ -63,7 +66,6 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
      */
     private Function<Message, Mono<Void>> sendResponse(final HttpServerResponse response) {
         return message -> {
-            MessageToHttpResponse.from(message, response);
             Publisher<byte[]> publisher = message.getTypedContent().asByteArrayStream();
             return Mono.from(response.sendByteArray(publisher));
         };

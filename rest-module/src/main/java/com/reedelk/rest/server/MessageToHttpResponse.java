@@ -1,6 +1,7 @@
 package com.reedelk.rest.server;
 
 import com.reedelk.rest.commons.OutboundProperty;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -17,8 +18,14 @@ import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 // TODO: This class needs to be reworked
 public class MessageToHttpResponse {
 
-    public static void from(Message message, HttpServerResponse response) {
+    public static void from(Message message, Context context, HttpServerResponse response) {
+        // Determining the Content type of the response:
+        // 1. If exists a header specifying content type, than use that one,
+        // 2. otherwise use the content type from the Message payload
+        // 3. otherwise unknown
+
         String contentType = TEXT_PLAIN.toString();
+
         Map<String, String> outboundHeaders = new HashMap<>();
 
         if (OutboundProperty.HEADERS.isDefined(message)) {

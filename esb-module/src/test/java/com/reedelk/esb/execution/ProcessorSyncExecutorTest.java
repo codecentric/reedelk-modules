@@ -3,6 +3,7 @@ package com.reedelk.esb.execution;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.OnResult;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +22,7 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
     @Test
     void shouldCorrectlyApplyProcessorToMessage() {
         // Given
-        ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
+        ExecutionGraph graph = newGraphSequence(inbound, processor,     stop);
         MessageAndContext event = newEventWithContent("input");
         Publisher<MessageAndContext> publisher = Mono.just(event);
 
@@ -91,7 +92,7 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
     class OnResultVerifier implements OnResult {
         Throwable throwable;
         @Override
-        public void onError(Throwable throwable) {
+        public void onError(Throwable throwable, Context context) {
             this.throwable = throwable;
         }
     }

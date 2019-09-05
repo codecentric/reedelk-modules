@@ -1,6 +1,8 @@
 package com.reedelk.rest.component;
 
 import com.reedelk.rest.configuration.RestListenerConfiguration;
+import com.reedelk.rest.configuration.RestListenerErrorResponse;
+import com.reedelk.rest.configuration.RestListenerResponse;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.rest.server.Server;
 import com.reedelk.rest.server.ServerProvider;
@@ -38,6 +40,11 @@ public class RestListener extends AbstractInbound {
     @Property("Listener Configuration")
     private RestListenerConfiguration configuration;
 
+    @Property("Response")
+    private RestListenerResponse response;
+
+    @Property("Error response")
+    private RestListenerErrorResponse errorResponse;
 
     @Override
     public void onStart() {
@@ -69,5 +76,13 @@ public class RestListener extends AbstractInbound {
 
     public void setConfiguration(RestListenerConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public void setResponse(RestListenerResponse response) {
+        this.response = response;
+    }
+
+    public void setErrorResponse(RestListenerErrorResponse errorResponse) {
+        this.errorResponse = errorResponse;
     }
 }

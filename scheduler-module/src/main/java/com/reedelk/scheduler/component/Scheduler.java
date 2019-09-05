@@ -40,6 +40,7 @@ public class Scheduler extends AbstractInbound {
     public void onStart() {
         this.scheduledFuture = scheduledService.scheduleAtFixedRate(() -> {
             try {
+                // TODO: In the start message the attribute "firedAt" specifyng the time in milliseconds should be provided.
                 Message emptyMessage = new Message();
                 onEvent(emptyMessage, new OnResult() {});
             } catch (Exception e) {
