@@ -82,7 +82,7 @@ public class RestClient implements ProcessorSync {
         String uri = buildUri();
 
         final ResponseData dataHolder = new ResponseData();
-        Mono<byte[]> bytesMono = client.execute(
+        Mono<byte[]> responseBytes = client.execute(
                 uri,
                 MessageBodyProvider.from(input),
                 (response, byteBufMono) -> {
@@ -94,7 +94,7 @@ public class RestClient implements ProcessorSync {
         // We block and wait until the whole response has been received
         // note that because of this line, this component is not supporting
         // a stream (inbound), but it does support streaming outbound...
-        byte[] bytes = bytesMono.block();
+        byte[] bytes = responseBytes.block();
 
         // If the response is not in the Range 2xx, we throw an exception.
         // TODO: We must propagate the response to the caller.

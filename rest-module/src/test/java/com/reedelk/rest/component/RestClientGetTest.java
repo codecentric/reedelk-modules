@@ -11,6 +11,8 @@ import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 
 class RestClientGetTest extends RestClientAbstractTest {
 
+    private RestClient component = componentWith(baseURL, path, GET);
+
     @Test
     void shouldGetExecuteCorrectlyWhenResponse200() {
         // Given
@@ -22,15 +24,12 @@ class RestClientGetTest extends RestClientAbstractTest {
                         .withStatus(200)
                         .withBody(responseBody)));
 
-        RestClient component = componentWith(baseURL, path, GET);
-
         Message payload = MessageBuilder.get().build();
 
         // When
         Message outMessage = component.apply(payload);
 
         // Then
-        assertThatContentIs(outMessage, responseBody);
-        assertThatMimeTypeIs(outMessage, APPLICATION_JSON);
+        assertContentIs(outMessage, responseBody, APPLICATION_JSON);
     }
 }

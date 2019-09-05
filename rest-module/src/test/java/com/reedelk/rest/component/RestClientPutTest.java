@@ -1,19 +1,20 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.configuration.RestMethod.PUT;
-import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RestClientPutTest extends RestClientAbstractTest {
+
+    private RestClient component = componentWith(baseURL, path, PUT);
 
     @Test
     void shouldPutWithBodyExecuteCorrectlyWhenResponse200() {
@@ -28,18 +29,52 @@ class RestClientPutTest extends RestClientAbstractTest {
                         .withStatus(200)
                         .withBody(expectedResponseBody)));
 
-        RestClient component = componentWith(baseURL, path, PUT);
-        Map<String,String> headers = new HashMap<>();
-        headers.put(CONTENT_TYPE, APPLICATION_JSON.toString());
-        component.setHeaders(headers);
-
         Message payload = MessageBuilder.get().json(requestBody).build();
 
         // When
         Message outMessage = component.apply(payload);
 
         // Then
-        assertThatContentIs(outMessage, "PUT was successful");
-        assertThatMimeTypeIs(outMessage, TEXT);
+        assertContentIs(outMessage, expectedResponseBody, TEXT);
+    }
+
+    @Test
+    void shouldPutWithEmptyBodyExecuteCorrectlyWhenResponse200() {
+        // Given
+        String expectedResponseBody = "It works";
+
+        mockServer.stubFor(put(urlEqualTo(path))
+                .withRequestBody(binaryEqualTo(new byte[0]))
+                .willReturn(aResponse()
+                        .withHeader(CONTENT_TYPE, TEXT.toString())
+                        .withStatus(200)
+                        .withBody(expectedResponseBody)));
+
+        Message emptyPayload = MessageBuilder.get().build();
+
+        // When
+        Message outMessage = component.apply(emptyPayload);
+
+        // Then
+        assertContentIs(outMessage, expectedResponseBody, TEXT);
+    }
+
+    @Test
+    void shouldPostThrowExceptionWhenResponseNot2xx() {
+        // Given
+        mockServer.stubFor(put(urlEqualTo(path))
+                .withRequestBody(binaryEqualTo(new byte[0]))
+                .willReturn(aResponse()
+                        .withStatus(404)
+                        .withHeader(CONTENT_TYPE, TEXT.toString())
+                        .withBody("Error exception caused by XYZ")));
+
+        Message emptyPayload = MessageBuilder.get().build();
+
+        // Expect
+        ESBException thrown = assertThrows(ESBException.class,
+                () -> component.apply(emptyPayload));
+
+        assertThat(thrown).hasMessage("404 Not Found");
     }
 }

@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 abstract class RestClientAbstractTest {
 
-    static final int PORT = 8787;
+    private static final int PORT = 8787;
 
     static WireMockServer mockServer;
 
@@ -38,16 +38,13 @@ abstract class RestClientAbstractTest {
         mockServer.resetAll();
     }
 
-    void assertThatMimeTypeIs(Message message, MimeType expectedMimeType) {
+    void assertContentIs(Message message, String expectedContent, MimeType expectedMimeType) {
         TypedContent<?> typedContent = message.getTypedContent();
+        assertThat(typedContent.asString()).isEqualTo(expectedContent);
+
         Type type = typedContent.type();
         MimeType mimeType = type.getMimeType();
         assertThat(mimeType).isEqualTo(expectedMimeType);
-    }
-
-    void assertThatContentIs(Message message, String expectedContent) {
-        TypedContent<?> typedContent = message.getTypedContent();
-        assertThat(typedContent.asString()).isEqualTo(expectedContent);
     }
 
     RestClient componentWith(String baseURL, String path, RestMethod method) {
