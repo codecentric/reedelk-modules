@@ -1,9 +1,6 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.client.ClientBuilder;
-import com.reedelk.rest.client.ExtractTypeFromHeaders;
-import com.reedelk.rest.client.HttpClientWrapper;
-import com.reedelk.rest.client.UriComponent;
+import com.reedelk.rest.client.*;
 import com.reedelk.rest.commons.IsNotSuccessful;
 import com.reedelk.rest.commons.MessageBodyProvider;
 import com.reedelk.rest.configuration.RestClientConfiguration;
@@ -13,6 +10,7 @@ import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.ByteArrayContent;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
@@ -110,8 +108,12 @@ public class RestClient implements ProcessorSync {
 
         // We set the content
         TypedContent content = new ByteArrayContent(bytes, type);
-        input.setContent(content);
-        return input;
+
+        // TODO: Create attributes from response!
+        HttpResponseAttributes responseAttributes = new HttpResponseAttributes();
+        return MessageBuilder.get().typedContent(content)
+                .attributes(responseAttributes)
+                .build();
     }
 
     private class ResponseData {
