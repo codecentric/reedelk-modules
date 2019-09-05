@@ -21,8 +21,7 @@ public class ProcessorSyncExecutor implements FlowExecutor {
         ProcessorSync processorSync = (ProcessorSync) currentNode.getComponent();
 
         Publisher<MessageAndContext> mono =
-                Flux.from(publisher)
-                        .handle(nullSafeMap(map(processorSync)));
+                Flux.from(publisher).handle(nullSafeMap(map(processorSync)));
 
         ExecutionNode next = nextNode(currentNode, graph);
 
