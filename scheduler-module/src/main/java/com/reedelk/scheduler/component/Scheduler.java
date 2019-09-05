@@ -41,8 +41,7 @@ public class Scheduler extends AbstractInbound {
         this.scheduledFuture = scheduledService.scheduleAtFixedRate(() -> {
             try {
                 Message emptyMessage = new Message();
-                onEvent(emptyMessage, new OnResult() {
-                });
+                onEvent(emptyMessage, new OnResult() {});
             } catch (Exception e) {
                 // we catch any exception, we want to keep the scheduler to run.
                 // (otherwise by default it stops its execution)
