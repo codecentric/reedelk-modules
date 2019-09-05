@@ -28,6 +28,9 @@ public class RestListener extends AbstractInbound {
     @Reference
     private ServerProvider provider;
 
+    @Property("Listener Configuration")
+    private RestListenerConfiguration configuration;
+
     @Property("Path")
     @Default("/")
     @Hint("/resource")
@@ -36,9 +39,6 @@ public class RestListener extends AbstractInbound {
     @Property("Method")
     @Default("GET")
     private RestMethod method;
-
-    @Property("Listener Configuration")
-    private RestListenerConfiguration configuration;
 
     @Property("Response")
     private RestListenerResponse response;
@@ -49,10 +49,9 @@ public class RestListener extends AbstractInbound {
     @Override
     public void onStart() {
         requireNonNull(configuration, "configuration");
-        // TODO: What would happen if we cannot start the server?
+        // TODO: Test what would happen if we cannot start the server...?
         Server server = provider.get(configuration);
-        server.addRoute(method, path,
-                (request, callback) -> RestListener.this.onEvent(request, callback));
+        server.addRoute(method, path, response, errorResponse,RestListener.this);
     }
 
     @Override

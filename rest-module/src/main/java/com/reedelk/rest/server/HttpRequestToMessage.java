@@ -17,7 +17,6 @@ import static com.reedelk.rest.commons.InboundProperty.*;
 class HttpRequestToMessage {
 
     static Message from(HttpRequestWrapper request) {
-
         HttpRequestAttributes requestAttributes = new HttpRequestAttributes();
         requestAttributes.put(path(), request.uri());
         requestAttributes.put(method(), request.method());
@@ -29,11 +28,12 @@ class HttpRequestToMessage {
 
         return MessageBuilder.get()
                 .attributes(requestAttributes)
-                .typedContent(content).build();
+                .typedContent(content)
+                .build();
     }
 
     /**
-     * Given an http request, it find the most suitable TypedContent for the request.
+     * Given an http request, it finds the most suitable TypedContent for the request.
      * For example, it checks the mime type of the request and it converts it a String
      * if it is a text based mime type, otherwise it keeps as bytes.
      */
@@ -43,7 +43,7 @@ class HttpRequestToMessage {
         Flux<byte[]> byteArrayStream = request
                 .receive()
                 .retain()
-                .handle(byteBuffSink());
+                .handle(asByteArrayStream());
 
         MimeType mimeType = request.mimeType();
         Type type = new Type(mimeType);
@@ -52,17 +52,22 @@ class HttpRequestToMessage {
             // If it  is a String, then we check the charset if present
             // in the mime type to be used for the string conversion.
             Optional<Charset> charset = mimeType.getCharset();
+
+            // Map each byte array of the stream to a string
             Flux<String> stringStream = byteArrayStream.map(bytes -> {
                 Charset conversionCharset = charset.orElseGet(Charset::defaultCharset);
                 return new String(bytes, conversionCharset);
             });
+            // The TypedContent is String stream.
             return new StringStreamContent(stringStream, mimeType);
-        }
 
-        return new ByteArrayStreamContent(byteArrayStream, mimeType);
+        } else {
+            // Generic byte array stream.
+            return new ByteArrayStreamContent(byteArrayStream, mimeType);
+        }
     }
 
-    private static BiConsumer<ByteBuf, SynchronousSink<byte[]>> byteBuffSink() {
+    private static BiConsumer<ByteBuf, SynchronousSink<byte[]>> asByteArrayStream() {
         return (byteBuffer, sink) -> {
             try {
                 byte[] bytes = new byte[byteBuffer.readableBytes()];

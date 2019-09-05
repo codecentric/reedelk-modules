@@ -3,6 +3,8 @@ package com.reedelk.rest.server;
 
 import com.reedelk.rest.commons.StringUtils;
 import com.reedelk.rest.configuration.RestListenerConfiguration;
+import com.reedelk.rest.configuration.RestListenerErrorResponse;
+import com.reedelk.rest.configuration.RestListenerResponse;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -45,14 +47,18 @@ public class Server {
         return configuration.getBasePath();
     }
 
-    public void addRoute(RestMethod method, String path, InboundEventListener listener) {
+    public void addRoute(RestMethod method,
+                         String path,
+                         RestListenerResponse restListenerResponse,
+                         RestListenerErrorResponse restListenerErrorResponse,
+                         InboundEventListener listener) {
         requireNonNull(listener, "listener");
         requireNonNull(method, "method");
         requireNonNull(path, "path");
 
         String realPath = getRealPath(path);
 
-        HttpRequestHandler handler = new HttpRequestHandler(listener);
+        HttpRequestHandler handler = new HttpRequestHandler(restListenerResponse, restListenerErrorResponse, listener);
         method.addRoute(routes, realPath, handler);
     }
 

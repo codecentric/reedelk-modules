@@ -1,6 +1,8 @@
 package com.reedelk.rest.server;
 
 import com.reedelk.rest.commons.OutboundProperty;
+import com.reedelk.rest.configuration.RestListenerErrorResponse;
+import com.reedelk.rest.configuration.RestListenerResponse;
 import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -15,10 +17,38 @@ import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 
-// TODO: This class needs to be reworked
 public class MessageToHttpResponse {
 
-    public static void from(Message message, Context context, HttpServerResponse response) {
+
+    public static void from(Throwable exception,
+                            Context context,
+                            HttpServerResponse response,
+                            RestListenerErrorResponse listenerErrorResponse) {
+
+        // Handle status
+
+        // Handle content type
+
+        // Handle additional headers
+
+    }
+
+
+    public static void from(Message message,
+                            Context context,
+                            HttpServerResponse response,
+                            RestListenerResponse listenerResponse) {
+
+        // Handle status
+
+        // Handle content type
+
+        // Handle additional headers
+
+
+        Map<String, String> responseHeaders = listenerResponse.getHeaders();
+        Integer status = listenerResponse.getStatus();
+
         // Determining the Content type of the response:
         // 1. If exists a header specifying content type, than use that one,
         // 2. otherwise use the content type from the Message payload

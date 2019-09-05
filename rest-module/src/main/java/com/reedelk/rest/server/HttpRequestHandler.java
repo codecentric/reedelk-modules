@@ -1,73 +1,102 @@
 package com.reedelk.rest.server;
 
+import com.reedelk.rest.configuration.RestListenerErrorResponse;
+import com.reedelk.rest.configuration.RestListenerResponse;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.type.StringContent;
+import com.reedelk.runtime.api.message.type.TypedContent;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.MonoSink;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.Consumer;
+
+import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
+import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 
 public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpServerResponse, Publisher<Void>> {
 
     private final InboundEventListener listener;
+    private final RestListenerResponse listenerResponse;
+    private final RestListenerErrorResponse listenerErrorResponse;
 
-    HttpRequestHandler(InboundEventListener listener) {
+    HttpRequestHandler(RestListenerResponse listenerResponse,
+                       RestListenerErrorResponse listenerErrorResponse,
+                       InboundEventListener listener) {
         this.listener = listener;
+        this.listenerResponse = listenerResponse;
+        this.listenerErrorResponse = listenerErrorResponse;
     }
 
+    /**
+     * This handler performs the following operations:
+     * 1. Maps the incoming HTTP request to a Message
+     * 2. Passes down through the processors pipeline the Message
+     * 3. Maps back the out Message to the HTTP response
+     * 4. Streams back to the HTTP response channel the response data stream
+     */
     @Override
     public Publisher<Void> apply(HttpServerRequest request, HttpServerResponse response) {
+        // 1. Map the incoming HTTP request to a Message
         Message inMessage = HttpRequestToMessage.from(new HttpRequestWrapper(request));
+
         return Mono.just(inMessage)
-                .flatMap(processPipeline(response)) // this one process the input message through the integration flow
-                .flatMap(sendResponse(response)) // sends the response back to the Http response channel
-                .onErrorResume(Exception.class, exception -> {
-                    if (exception instanceof RejectedExecutionException) {
-                        // Server is too  busy, there are not enough Threads able to handle the request.
-                        response.status(503);
-                        return Mono.from(response.sendString(Mono.just("503 Service Temporarily Unavailable (Server is too busy)")));
-                    } else {
-                        // Map any other exception not handled downstream.
-                        response.status(500);
-                        // TODO: This has to be verified
-                        // It used to be: return Mono.error(exception); (Postman gives parse error)
-                        return Mono.from(response.sendString(Mono.just(exception.getMessage())));
-                    }
-                });
+
+                // 2. Pass down through the processors pipeline the Message
+                // 3. Maps back the out Message to the HTTP response
+                .flatMap(message -> Mono.create((Consumer<MonoSink<TypedContent<?>>>) sink ->
+                        listener.onEvent(message, new OnPipelineResult(sink, response))))
+
+                // 4. Streams back to the HTTP response channel the response data stream
+                .flatMap(typedContent -> Mono.from(response.sendByteArray(typedContent.asByteArrayStream())));
     }
 
-    /**
-     * The listener Invokes the integration flow processor pipeline.
-     */
-    private Function<Message, Mono<Message>> processPipeline(final HttpServerResponse response) {
-        return message -> Mono.create(sink -> listener.onEvent(message, new OnResult() {
-            @Override
-            public void onResult(Message outMessage, Context context) {
-                // copy values to be put in the response
-                MessageToHttpResponse.from(message, context, response);
-                sink.success(outMessage);
-            }
+    private class OnPipelineResult implements OnResult {
 
-            @Override
-            public void onError(Throwable throwable, Context context) {
-                sink.error(throwable);
-            }
-        }));
-    }
+        private final MonoSink<TypedContent<?>> sink;
+        private final HttpServerResponse response;
 
-    /**
-     * Sends the given message to the Http Response channel.
-     */
-    private Function<Message, Mono<Void>> sendResponse(final HttpServerResponse response) {
-        return message -> {
-            Publisher<byte[]> publisher = message.getTypedContent().asByteArrayStream();
-            return Mono.from(response.sendByteArray(publisher));
-        };
+        private OnPipelineResult(MonoSink<TypedContent<?>> sink, HttpServerResponse response) {
+            this.sink = sink;
+            this.response =  response;
+        }
+
+        @Override
+        public void onResult(Message outMessage, Context context) {
+            // Handle status
+            // Handle content type
+            // Handle additional headers
+            MessageToHttpResponse.from(outMessage, context, response, listenerResponse);
+
+            // Handle payload (keep in consideration listener response - in case of custom payload - )
+            sink.success(outMessage.getTypedContent());
+        }
+
+        @Override
+        public void onError(Throwable exception, Context context) {
+            if (exception instanceof RejectedExecutionException) {
+                // Server is too  busy, there are not enough Threads able to handle the request.
+                response.status(SERVICE_UNAVAILABLE);
+                String responseMessage = SERVICE_UNAVAILABLE.code() + " Service Temporarily Unavailable (Server is too busy)";
+                sink.success(new StringContent(responseMessage, null));
+
+            } else {
+                // Handle status
+                // Handle content type
+                // Handle additional headers
+                MessageToHttpResponse.from(exception, context, response, listenerErrorResponse);
+                response.status(INTERNAL_SERVER_ERROR);
+
+                // Handle payload (keep in consideration listener response - in case of custom payload - )
+                sink.success(new StringContent(exception.getMessage(), null));
+            }
+        }
     }
 }

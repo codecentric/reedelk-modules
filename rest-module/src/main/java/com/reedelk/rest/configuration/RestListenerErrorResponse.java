@@ -2,8 +2,8 @@ package com.reedelk.rest.configuration;
 
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.Script;
 import com.reedelk.runtime.api.annotation.TabGroup;
+import com.reedelk.runtime.api.annotation.When;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
@@ -14,20 +14,35 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = RestListenerErrorResponse.class, scope = PROTOTYPE)
 public class RestListenerErrorResponse implements Implementor {
 
-    @Script
-    @Property("Body")
+    @Property("Use custom body")
+    @Default("false")
+    private boolean useBody;
+
+    @Property("Custom Body")
     @Default("payload")
+    @When(propertyName = "useBody", propertyValue = "true")
     private String body;
 
-    @Property("Status")
+    @Property("Use custom status")
+    @Default("false")
+    private boolean useStatus;
+
+    @Property("Custom Status")
+    @When(propertyName = "useStatus", propertyValue = "true")
     private Integer status;
 
-    @Property("Reason phrase")
-    private String reasonPhrase;
-
     @TabGroup("Headers")
-    @Property("Headers")
+    @Property("Additional Headers")
     private Map<String,String> headers;
+
+
+    public boolean isUseBody() {
+        return useBody;
+    }
+
+    public void setUseBody(boolean useBody) {
+        this.useBody = useBody;
+    }
 
     public String getBody() {
         return body;
@@ -37,12 +52,12 @@ public class RestListenerErrorResponse implements Implementor {
         this.body = body;
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
+    public boolean isUseStatus() {
+        return useStatus;
     }
 
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
+    public void setUseStatus(boolean useStatus) {
+        this.useStatus = useStatus;
     }
 
     public Integer getStatus() {
@@ -53,11 +68,11 @@ public class RestListenerErrorResponse implements Implementor {
         this.status = status;
     }
 
-    public String getReasonPhrase() {
-        return reasonPhrase;
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 
-    public void setReasonPhrase(String reasonPhrase) {
-        this.reasonPhrase = reasonPhrase;
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
     }
 }
