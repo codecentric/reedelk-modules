@@ -4,7 +4,6 @@ import com.reedelk.rest.commons.OutboundProperty;
 import com.reedelk.runtime.api.message.Message;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 import reactor.netty.http.server.HttpServerResponse;
 
 import java.util.HashMap;
@@ -17,12 +16,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 
 // TODO: This class needs to be reworked
 public class MessageToHttpResponse {
-
-    private final HttpVersion httpVersion;
-
-    MessageToHttpResponse(HttpVersion httpVersion) {
-        this.httpVersion = httpVersion;
-    }
 
     public static void from(Message message, HttpServerResponse response) {
         String contentType = TEXT_PLAIN.toString();
