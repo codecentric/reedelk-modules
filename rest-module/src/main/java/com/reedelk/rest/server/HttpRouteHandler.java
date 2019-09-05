@@ -6,10 +6,11 @@ import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import static java.util.Objects.requireNonNull;
 
 public class HttpRouteHandler implements BiFunction<HttpServerRequest, HttpServerResponse, Publisher<Void>>, Predicate<HttpServerRequest> {
 
@@ -20,8 +21,8 @@ public class HttpRouteHandler implements BiFunction<HttpServerRequest, HttpServe
     public HttpRouteHandler(HttpPredicate condition,
                             BiFunction<? super HttpServerRequest, ? super HttpServerResponse, ? extends Publisher<Void>> handler,
                             Function<? super String, Map<String, String>> resolver) {
-        this.condition = Objects.requireNonNull(condition, "condition");
-        this.handler = Objects.requireNonNull(handler, "handler");
+        this.condition = requireNonNull(condition, "condition");
+        this.handler = requireNonNull(handler, "handler");
         this.resolver = resolver;
     }
 
@@ -36,8 +37,8 @@ public class HttpRouteHandler implements BiFunction<HttpServerRequest, HttpServe
     }
 
     public boolean matchesExactly(HttpMethod method, String uri) {
-        Objects.requireNonNull(method, "method");
-        Objects.requireNonNull(uri, "uri");
+        requireNonNull(method, "method");
+        requireNonNull(uri, "uri");
         return method.equals(condition.method) && uri.equals(condition.uri);
     }
 }
