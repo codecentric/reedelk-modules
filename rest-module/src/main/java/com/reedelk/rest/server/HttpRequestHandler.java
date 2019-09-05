@@ -6,8 +6,6 @@ import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.StringContent;
-import com.reedelk.runtime.api.message.type.TypedContent;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
@@ -18,7 +16,6 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 
 public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpServerResponse, Publisher<Void>> {
@@ -51,32 +48,30 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
                 // 2. Pass down through the processors pipeline the Message
                 // 3. Maps back the out Message to the HTTP response
-                .flatMap(message -> Mono.create((Consumer<MonoSink<TypedContent<?>>>) sink ->
+                .flatMap(message -> Mono.create((Consumer<MonoSink<Publisher<byte[]>>>) sink ->
                         listener.onEvent(message, new OnPipelineResult(sink, response))))
 
                 // 4. Streams back to the HTTP response channel the response data stream
-                .flatMap(typedContent -> Mono.from(response.sendByteArray(typedContent.asByteArrayStream())));
+                .flatMap(byteStream -> Mono.from(response.sendByteArray(byteStream)));
     }
 
     private class OnPipelineResult implements OnResult {
 
-        private final MonoSink<TypedContent<?>> sink;
+        private final MonoSink<Publisher<byte[]>> sink;
         private final HttpServerResponse response;
 
-        private OnPipelineResult(MonoSink<TypedContent<?>> sink, HttpServerResponse response) {
+        private OnPipelineResult(MonoSink<Publisher<byte[]>> sink, HttpServerResponse response) {
             this.sink = sink;
             this.response =  response;
         }
 
         @Override
         public void onResult(Message outMessage, Context context) {
-            // Handle status
-            // Handle content type
-            // Handle additional headers
-            MessageToHttpResponse.from(outMessage, context, response, listenerResponse);
+            Publisher<byte[]> payload =
+                    MessageToHttpResponse.from(outMessage, context, response, listenerResponse);
 
             // Handle payload (keep in consideration listener response - in case of custom payload - )
-            sink.success(outMessage.getTypedContent());
+            sink.success(payload);
         }
 
         @Override
@@ -85,17 +80,13 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                 // Server is too  busy, there are not enough Threads able to handle the request.
                 response.status(SERVICE_UNAVAILABLE);
                 String responseMessage = SERVICE_UNAVAILABLE.code() + " Service Temporarily Unavailable (Server is too busy)";
-                sink.success(new StringContent(responseMessage, null));
+                sink.success(Mono.just(responseMessage.getBytes()));
 
             } else {
-                // Handle status
-                // Handle content type
-                // Handle additional headers
-                MessageToHttpResponse.from(exception, context, response, listenerErrorResponse);
-                response.status(INTERNAL_SERVER_ERROR);
+                Publisher<byte[]> payload =
+                        MessageToHttpResponse.from(exception, context, response, listenerErrorResponse);
 
-                // Handle payload (keep in consideration listener response - in case of custom payload - )
-                sink.success(new StringContent(exception.getMessage(), null));
+                sink.success(payload);
             }
         }
     }

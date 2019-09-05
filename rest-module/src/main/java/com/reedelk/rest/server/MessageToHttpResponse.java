@@ -1,82 +1,78 @@
 package com.reedelk.rest.server;
 
-import com.reedelk.rest.commons.OutboundProperty;
+import com.reedelk.rest.commons.HttpHeader;
 import com.reedelk.rest.configuration.RestListenerErrorResponse;
 import com.reedelk.rest.configuration.RestListenerResponse;
 import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.message.type.Type;
+import com.reedelk.runtime.api.message.type.TypedContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerResponse;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
-import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 
 public class MessageToHttpResponse {
 
 
-    public static void from(Throwable exception,
-                            Context context,
-                            HttpServerResponse response,
-                            RestListenerErrorResponse listenerErrorResponse) {
+    public static Publisher<byte[]> from(Throwable exception,
+                                    Context context,
+                                    HttpServerResponse response,
+                                    RestListenerErrorResponse listenerErrorResponse) {
 
         // Handle status
 
         // Handle content type
 
         // Handle additional headers
+
+        return Mono.just(exception.getMessage().getBytes());
 
     }
 
 
-    public static void from(Message message,
-                            Context context,
-                            HttpServerResponse response,
-                            RestListenerResponse listenerResponse) {
-
+    public static Publisher<byte[]> from(Message message,
+                                 Context context,
+                                 HttpServerResponse response,
+                                 RestListenerResponse listenerResponse) {
         // Handle status
+        if (listenerResponse.isUseStatus()) {
+            if (listenerResponse.isUseReasonPhrase()) {
+                String customReasonPhrase = listenerResponse.getReasonPhrase();
+            }
+            response.status(HttpResponseStatus.valueOf(listenerResponse.getStatus()));
+        } else {
+            response.status(HttpResponseStatus.OK);
+        }
+
+        Publisher<byte[]> data = Mono.empty();
+
+        if (listenerResponse.isUseBody()) {
+            // Custom body
+            // Evaluate with script... (the body could be a variable in the context)...
+        } else {
+            // The content type comes from the message typed content
+            TypedContent<?> typedContent = message.getTypedContent();
+            Type type = typedContent.type();
+            MimeType contentType = type.getMimeType();
+            response.addHeader(HttpHeader.CONTENT_TYPE, contentType.toString());
+            data = typedContent.asByteArrayStream();
+        }
 
         // Handle content type
+        Map<String, String> additionalHeaders = listenerResponse.getHeaders();
+        // 1. If the content type is present as additional header, then we use that one
+        if (additionalHeaders.containsKey(HttpHeader.CONTENT_TYPE)) {// case insensitive
+            // Content type from additional headers
+        };
 
-        // Handle additional headers
 
-
-        Map<String, String> responseHeaders = listenerResponse.getHeaders();
-        Integer status = listenerResponse.getStatus();
-
-        // Determining the Content type of the response:
-        // 1. If exists a header specifying content type, than use that one,
-        // 2. otherwise use the content type from the Message payload
-        // 3. otherwise unknown
-
-        String contentType = TEXT_PLAIN.toString();
-
-        Map<String, String> outboundHeaders = new HashMap<>();
-
-        if (OutboundProperty.HEADERS.isDefined(message)) {
-            outboundHeaders = OutboundProperty.HEADERS.getMap(message);
-            if (outboundHeaders.containsKey(CONTENT_TYPE.toString())) {
-                contentType = outboundHeaders.get(CONTENT_TYPE.toString());
-            }
-        }
-
-        if (OutboundProperty.STATUS.isDefined(message)) {
-            HttpResponseStatus httpStatus = valueOf(OutboundProperty.STATUS.getInt(message));
-            response.status(httpStatus);
-        }
-
-        HttpHeaders headers = response.responseHeaders();
-        headers.add(CONTENT_TYPE, contentType);
-
-        for (Map.Entry<String, String> header : outboundHeaders.entrySet()) {
-            getMatchingHeader(headers, header.getKey()).ifPresent(headers::remove);
-            headers.set(header.getKey(), header.getValue());
-        }
+        return data;
     }
 
     private static Optional<String> getMatchingHeader(HttpHeaders headers, String targetHeaderName) {

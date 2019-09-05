@@ -31,10 +31,17 @@ public class RestListenerErrorResponse implements Implementor {
     @When(propertyName = "useStatus", propertyValue = "true")
     private Integer status;
 
+    @Property("Use custom reason phrase")
+    @Default("false")
+    private boolean useReasonPhrase;
+
+    @Property("Custom reason phrase")
+    @When(propertyName = "useReasonPhrase", propertyValue = "true")
+    private String reasonPhrase;
+
     @TabGroup("Headers")
     @Property("Additional Headers")
     private Map<String,String> headers;
-
 
     public boolean isUseBody() {
         return useBody;
@@ -66,6 +73,22 @@ public class RestListenerErrorResponse implements Implementor {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public boolean isUseReasonPhrase() {
+        return useReasonPhrase;
+    }
+
+    public void setUseReasonPhrase(boolean useReasonPhrase) {
+        this.useReasonPhrase = useReasonPhrase;
+    }
+
+    public String getReasonPhrase() {
+        return reasonPhrase;
+    }
+
+    public void setReasonPhrase(String reasonPhrase) {
+        this.reasonPhrase = reasonPhrase;
     }
 
     public Map<String, String> getHeaders() {
