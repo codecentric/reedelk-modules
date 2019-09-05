@@ -29,7 +29,7 @@ class ExecutionUtils {
 
     static BiConsumer<MessageAndContext, SynchronousSink<MessageAndContext>> nullSafeMap(Function<MessageAndContext, MessageAndContext> mapper) {
         return (event, sink) -> {
-            // TODO:If it is null this still needs to notify the end otherwise we wouldneverreturn from HTTP request.
+            // TODO:If it is null this still needs to notify the end otherwise we would never return from HTTP request.
             if (event != null) {
                 MessageAndContext result = mapper.apply(event);
                 sink.next(result);
