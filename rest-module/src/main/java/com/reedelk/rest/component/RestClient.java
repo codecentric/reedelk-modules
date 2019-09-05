@@ -62,15 +62,15 @@ public class RestClient implements ProcessorSync {
 
     @TabGroup("Headers and parameters")
     @Property("Headers")
-    private Map<String, String> headers;
+    private Map<String,String> headers;
 
     @TabGroup("Headers and parameters")
     @Property("Path params")
-    private Map<String, String> uriParameters;
+    private Map<String,String> uriParameters;
 
     @TabGroup("Headers and parameters")
     @Property("Query params")
-    private Map<String, String> queryParameters;
+    private Map<String,String> queryParameters;
 
     private volatile HttpClientWrapper client;
 

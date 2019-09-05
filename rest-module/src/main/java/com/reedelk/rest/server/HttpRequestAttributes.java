@@ -6,6 +6,6 @@ public class HttpRequestAttributes extends AbstractMessageAttributes {
 
     @Override
     public String toString() {
-        return "HttpRequestAttributes{" + super.toString() + "}";
+        return "HttpRequestAttributes" + super.toString();
     }
 }
