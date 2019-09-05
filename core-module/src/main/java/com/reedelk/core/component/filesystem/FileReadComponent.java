@@ -3,6 +3,7 @@ package com.reedelk.core.component.filesystem;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
@@ -23,7 +24,7 @@ public class FileReadComponent implements ProcessorSync {
     private String filePath;
 
     @Override
-    public Message apply(Message input) {
+    public Message apply(Message input, Context context) {
         StringBuilder contentBuilder = new StringBuilder();
 
         try (Stream<String> stream = Files.lines(Paths.get(filePath), StandardCharsets.UTF_8)) {

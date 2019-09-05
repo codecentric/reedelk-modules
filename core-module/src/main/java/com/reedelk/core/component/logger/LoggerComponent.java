@@ -6,6 +6,7 @@ import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.annotation.Script;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
@@ -35,7 +36,7 @@ public class LoggerComponent implements ProcessorSync {
     private String message;
 
     @Override
-    public Message apply(Message input) {
+    public Message apply(Message input, Context context) {
         try {
             if (LoggerLevel.DEBUG.equals(level)) {
                 // When level is DEBUG, we only debug if the debug is enabled.

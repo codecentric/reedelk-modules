@@ -3,6 +3,7 @@ package com.reedelk.core.component.payload;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
@@ -17,7 +18,7 @@ public class SetPayload implements ProcessorSync {
     private String payload;
 
     @Override
-    public Message apply(Message message) {
+    public Message apply(Message input, Context context) {
         return MessageBuilder.get()
                 .text(payload)
                 .build();

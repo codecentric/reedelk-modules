@@ -28,18 +28,6 @@ class DefaultContextVariablesTest {
         DefaultContextVariables context = new DefaultContextVariables(message);
 
         // Then
-        assertThat(context.get("inboundProperties")).isEqualTo(message.getInboundProperties());
-    }
-
-    @Test
-    void shouldBindOutboundPropertiesToCorrectProperties() {
-        // Given
-        Message message = new Message();
-
-        // When
-        DefaultContextVariables context = new DefaultContextVariables(message);
-
-        // Then
-        assertThat(context.get("outboundProperties")).isEqualTo(message.getOutboundProperties());
+        assertThat(context.get("attributes")).isEqualTo(message.getAttributes());
     }
 }

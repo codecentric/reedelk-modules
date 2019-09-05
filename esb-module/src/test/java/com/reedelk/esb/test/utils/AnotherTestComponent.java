@@ -1,6 +1,7 @@
 package com.reedelk.esb.test.utils;
 
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 
 public class AnotherTestComponent implements ProcessorSync {
@@ -10,7 +11,7 @@ public class AnotherTestComponent implements ProcessorSync {
     private String property3;
 
     @Override
-    public Message apply(Message input) {
+    public Message apply(Message input, Context context) {
         throw new UnsupportedOperationException("Test Only ProcessorSync");
     }
 
@@ -37,4 +38,5 @@ public class AnotherTestComponent implements ProcessorSync {
     public void setProperty3(String property3) {
         this.property3 = property3;
     }
+
 }

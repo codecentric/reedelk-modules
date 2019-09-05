@@ -22,11 +22,11 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
     void shouldCorrectlyApplyProcessorToMessage() {
         // Given
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
-        EventContext event = newEventWithContent("input");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("input");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, processor, graph);
 
         // Then
@@ -39,12 +39,12 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
     void shouldCorrectlyApplyProcessorToEachMessageInTheStream() {
         // Given
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
-        EventContext event1 = newEventWithContent("input1");
-        EventContext event2 = newEventWithContent("input2");
-        Publisher<EventContext> publisher = Flux.just(event1, event2);
+        MessageAndContext event1 = newEventWithContent("input1");
+        MessageAndContext event2 = newEventWithContent("input2");
+        Publisher<MessageAndContext> publisher = Flux.just(event1, event2);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, processor, graph);
 
         // Then
@@ -61,13 +61,12 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
         Message message = MessageBuilder.get().text("input").build();
 
-        OnResultVerifier onResultVerifier = new OnResultVerifier();
-        EventContext inputEventContext = new EventContext(message, onResultVerifier);
+        MessageAndContext inputMessageAndContext = new MessageAndContext(message, new DefaultContext());
 
-        Publisher<EventContext> publisher = Flux.just(inputEventContext);
+        Publisher<MessageAndContext> publisher = Flux.just(inputMessageAndContext);
 
         // When
-        Publisher<EventContext> endPublisher = executor.execute(publisher, processor, graph);
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, processor, graph);
 
         // Then
         StepVerifier.create(endPublisher)

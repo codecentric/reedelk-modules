@@ -27,7 +27,7 @@ class RestClientGetTest extends RestClientAbstractTest {
         Message payload = MessageBuilder.get().build();
 
         // When
-        Message outMessage = component.apply(payload);
+        Message outMessage = component.apply(payload, context);
 
         // Then
         assertContentIs(outMessage, responseBody, APPLICATION_JSON);

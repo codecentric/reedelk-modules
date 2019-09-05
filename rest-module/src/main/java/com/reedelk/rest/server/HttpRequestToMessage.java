@@ -18,13 +18,14 @@ class HttpRequestToMessage {
 
     static Message from(HttpRequestWrapper request) {
 
-        MessageBuilder messageBuilder =
-                MessageBuilder.get()
-                        .addInboundProperty(path(), request.uri())
-                        .addInboundProperty(method(), request.method())
-                        .addInboundProperty(headers(), request.headers())
-                        .addInboundProperty(pathParams(), request.params())
-                        .addInboundProperty(queryParams(), request.queryParams());
+        HttpRequestAttributes requestAttributes = new HttpRequestAttributes();
+        requestAttributes.put(path(),  request.uri());
+        requestAttributes.put(method(), request.method());
+        requestAttributes.put(headers(), request.headers());
+        requestAttributes.put(pathParams(), request.params());
+        requestAttributes.put(queryParams(), request.queryParams());
+
+        MessageBuilder messageBuilder = MessageBuilder.get().attributes(requestAttributes);
 
         TypedContent content = getTypedContent(request);
 

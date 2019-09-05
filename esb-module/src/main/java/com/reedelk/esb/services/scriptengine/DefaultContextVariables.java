@@ -11,8 +11,7 @@ import javax.script.SimpleBindings;
 class DefaultContextVariables extends SimpleBindings {
     DefaultContextVariables(Message message) {
         put("message", message);
-        put("inboundProperties", message.getInboundProperties());
-        put("outboundProperties", message.getOutboundProperties());
+        put("attributes", message.getAttributes());
         if (message.getTypedContent() != null) {
             put("payload", message.getTypedContent().content());
         } else {

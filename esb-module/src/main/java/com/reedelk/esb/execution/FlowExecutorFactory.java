@@ -36,7 +36,7 @@ public class FlowExecutorFactory {
         return INSTANCE;
     }
 
-    public Publisher<EventContext> execute(Publisher<EventContext> publisher, ExecutionNode next, ExecutionGraph graph) {
+    public Publisher<MessageAndContext> execute(Publisher<MessageAndContext> publisher, ExecutionNode next, ExecutionGraph graph) {
         return executorOf(next.getComponent())
                 .execute(publisher, next, graph);
     }

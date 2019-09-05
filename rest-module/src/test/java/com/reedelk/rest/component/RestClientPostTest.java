@@ -32,7 +32,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         Message payload = MessageBuilder.get().json(requestBody).build();
 
         // When
-        Message outMessage = component.apply(payload);
+        Message outMessage = component.apply(payload, context);
 
         // Then
         assertContentIs(outMessage, expectedResponseBody, TEXT);
@@ -53,7 +53,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         Message emptyPayload = MessageBuilder.get().build();
 
         // When
-        Message outMessage = component.apply(emptyPayload);
+        Message outMessage = component.apply(emptyPayload, context);
 
         // Then
         assertContentIs(outMessage, expectedResponseBody, TEXT);
@@ -73,7 +73,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
         // Expect
         ESBException thrown = assertThrows(ESBException.class,
-                () -> component.apply(emptyPayload));
+                () -> component.apply(emptyPayload, context));
 
         assertThat(thrown).hasMessage("500 Internal Server Error");
     }

@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toList;
 public class ForkExecutor implements FlowExecutor {
 
     @Override
-    public Publisher<EventContext> execute(Publisher<EventContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
+    public Publisher<MessageAndContext> execute(Publisher<MessageAndContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
 
         ForkWrapper fork = (ForkWrapper) currentNode.getComponent();
 
@@ -47,10 +47,10 @@ public class ForkExecutor implements FlowExecutor {
 
         Join join = (Join) joinComponent;
 
-        Flux<EventContext> mono = Flux.from(publisher).flatMap(messageContext -> {
+        Flux<MessageAndContext> mono = Flux.from(publisher).flatMap(messageContext -> {
 
             // Create fork branches (Fork step)
-            List<Mono<EventContext>> forkBranches = nextExecutionNodes.stream()
+            List<Mono<MessageAndContext>> forkBranches = nextExecutionNodes.stream()
                     .map(nextExecutionNode ->
                             createForkBranch(nextExecutionNode, messageContext, graph, forkScheduler))
                     .collect(toList());
@@ -72,41 +72,41 @@ public class ForkExecutor implements FlowExecutor {
         return SchedulerProvider.flow();
     }
 
-    private Mono<EventContext> createForkBranch(ExecutionNode executionNode, EventContext context, ExecutionGraph graph, Scheduler forkScheduler) {
-        EventContext messageCopy = context.copy();
-        Mono<EventContext> parent =
+    private Mono<MessageAndContext> createForkBranch(ExecutionNode executionNode, MessageAndContext context, ExecutionGraph graph, Scheduler forkScheduler) {
+        MessageAndContext messageCopy = context.copy();
+        Mono<MessageAndContext> parent =
                 Mono.just(messageCopy)
                         .publishOn(forkScheduler);
         return Mono.from(FlowExecutorFactory.get().execute(parent, executionNode, graph));
     }
 
-    private static Function<Object[], EventContext[]> messagesCombinator() {
+    private static Function<Object[], MessageAndContext[]> messagesCombinator() {
         return objects -> {
-            EventContext[] eventContexts = new EventContext[objects.length];
+            MessageAndContext[] messageAndContexts = new MessageAndContext[objects.length];
             for (int i = 0; i < objects.length; i++) {
-                eventContexts[i] = (EventContext) objects[i];
+                messageAndContexts[i] = (MessageAndContext) objects[i];
             }
-            return eventContexts;
+            return messageAndContexts;
         };
     }
 
-    class JoinConsumer implements Consumer<MonoSink<EventContext>> {
+    class JoinConsumer implements Consumer<MonoSink<MessageAndContext>> {
 
         private final Join join;
-        private final EventContext context;
-        private final EventContext[] messages;
+        private final MessageAndContext context;
+        private final MessageAndContext[] messages;
 
-        JoinConsumer(EventContext originalMessage, EventContext[] messagesToJoin, Join join) {
+        JoinConsumer(MessageAndContext originalMessage, MessageAndContext[] messagesToJoin, Join join) {
             this.join = join;
             this.context = originalMessage;
             this.messages = messagesToJoin;
         }
 
         @Override
-        public void accept(MonoSink<EventContext> sink) {
+        public void accept(MonoSink<MessageAndContext> sink) {
             try {
                 List<Message> collect = stream(messages)
-                        .map(EventContext::getMessage)
+                        .map(MessageAndContext::getMessage)
                         .collect(toList());
 
                 Message outMessage = join.apply(collect);

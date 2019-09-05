@@ -2,6 +2,7 @@ package com.reedelk.rest.component;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.reedelk.rest.configuration.RestMethod;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.Type;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.assertj.core.api.Assertions.assertThat;
 
 abstract class RestClientAbstractTest {
+
+    protected Context context;
 
     private static final int PORT = 8787;
 

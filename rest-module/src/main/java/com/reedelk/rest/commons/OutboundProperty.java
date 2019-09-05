@@ -1,7 +1,7 @@
 package com.reedelk.rest.commons;
 
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageProperties;
+import com.reedelk.runtime.api.message.MessageAttributes;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -22,8 +22,8 @@ public enum OutboundProperty {
     }
 
     public boolean isDefined(Message message) {
-        MessageProperties outboundProperties = message.getOutboundProperties();
-        return outboundProperties.containsKey(name);
+        MessageAttributes attributes = message.getAttributes();
+        return attributes.containsKey(name);
     }
 
     @SuppressWarnings("unchecked")
@@ -32,13 +32,12 @@ public enum OutboundProperty {
     }
 
     public Object get(Message message) {
-        MessageProperties outboundProperties = message.getOutboundProperties();
-        return outboundProperties.getProperty(name);
+        MessageAttributes attributes = message.getAttributes();
+        return attributes.get(name);
     }
 
     public void set(Message message, Serializable value) {
-        MessageProperties outboundProperties = message.getOutboundProperties();
-        outboundProperties.setProperty(name, value);
+        MessageAttributes attributes = message.getAttributes();
+        attributes.put(name, value);
     }
-
 }

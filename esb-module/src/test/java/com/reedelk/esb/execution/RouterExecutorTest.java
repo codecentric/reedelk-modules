@@ -43,11 +43,11 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
 
-        EventContext event = newEventWithContent("Route2");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("Route2");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, routerNode, graph);
 
         StepVerifier.create(endPublisher)
@@ -68,11 +68,11 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
 
-        EventContext event = newEventWithContent("RouteOtherwise");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("RouteOtherwise");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, routerNode, graph);
 
         StepVerifier.create(endPublisher)
@@ -90,11 +90,11 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 .conditionWithSequence("payload == 'Route2'", route2Node)
                 .build();
 
-        EventContext event = newEventWithContent("Route1");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("Route1");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, routerNode, graph);
 
         StepVerifier.create(endPublisher)
@@ -113,13 +113,13 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
 
-        EventContext route2Event = newEventWithContent("Route2");
-        EventContext route1Event = newEventWithContent("Route1");
+        MessageAndContext route2Event = newEventWithContent("Route2");
+        MessageAndContext route1Event = newEventWithContent("Route1");
 
-        Publisher<EventContext> publisher = Flux.just(route2Event, route1Event);
+        Publisher<MessageAndContext> publisher = Flux.just(route2Event, route1Event);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, routerNode, graph);
 
         StepVerifier.create(endPublisher)
@@ -141,11 +141,11 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
 
-        EventContext event = newEventWithContent("Route1");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("Route1");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, routerNode, graph);
 
         StepVerifier.create(endPublisher)

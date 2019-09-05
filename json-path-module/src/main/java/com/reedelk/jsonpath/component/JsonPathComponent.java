@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.StringContent;
 import com.reedelk.runtime.api.message.type.Type;
@@ -25,7 +26,7 @@ public class JsonPathComponent implements ProcessorSync {
     private JsonPath compiledExpression;
 
     @Override
-    public Message apply(Message input) {
+    public Message apply(Message input, Context context) {
         if (compiledExpression == null) {
             compiledExpression = JsonPath.compile(jsonPathExpression);
         }
@@ -52,7 +53,7 @@ public class JsonPathComponent implements ProcessorSync {
 
         Message outputMessage = new Message();
 
-        outputMessage.setTypedContent(outputContent);
+        outputMessage.setContent(outputContent);
 
         return outputMessage;
     }

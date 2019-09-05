@@ -6,8 +6,8 @@ import org.reactivestreams.Publisher;
 
 public interface FlowExecutor {
 
-    Publisher<EventContext> execute(
-            Publisher<EventContext> publisher, ExecutionNode currentNode, ExecutionGraph graph);
+    Publisher<MessageAndContext> execute(
+            Publisher<MessageAndContext> publisher, ExecutionNode currentNode, ExecutionGraph graph);
 
 }
 

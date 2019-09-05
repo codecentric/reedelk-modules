@@ -5,6 +5,7 @@ import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import org.osgi.service.component.annotations.Component;
 
@@ -19,9 +20,9 @@ public class SetStatus implements ProcessorSync {
     private int status;
 
     @Override
-    public Message apply(Message message) {
-        OutboundProperty.STATUS.set(message, status);
-        return message;
+    public Message apply(Message input, Context context) {
+        OutboundProperty.STATUS.set(input, status);
+        return input;
     }
 
     public void setStatus(int status) {

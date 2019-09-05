@@ -1,6 +1,7 @@
 package com.reedelk.esb.test.utils;
 
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 
 import java.math.BigDecimal;
@@ -24,7 +25,7 @@ public class TestComponent implements ProcessorSync {
     private BigInteger bigIntegerProperty;
 
     @Override
-    public Message apply(Message input) {
+    public Message apply(Message input, Context context) {
         throw new UnsupportedOperationException("Test Only ProcessorSync");
     }
 

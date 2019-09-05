@@ -4,8 +4,8 @@ import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.TestInboundComponent;
 import com.reedelk.runtime.api.component.Component;
-import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.component.Stop;
@@ -23,9 +23,9 @@ class AbstractExecutionTest {
         return new ExecutionNode(new ExecutionNode.ReferencePair<>(component));
     }
 
-    EventContext newEventWithContent(String content) {
+    MessageAndContext newEventWithContent(String content) {
         Message message = MessageBuilder.get().text(content).build();
-        return new NoActionResultEventContext(message);
+        return new NoActionResultMessageAndContext(message);
     }
 
     ExecutionGraph newGraphSequence(ExecutionNode... executionNodes) {
@@ -42,33 +42,32 @@ class AbstractExecutionTest {
         return graph;
     }
 
-    Consumer<EventContext> assertMessageContains(String expected) {
+    Consumer<MessageAndContext> assertMessageContains(String expected) {
         return event -> {
             String out = event.getMessage().getTypedContent().asString();
             assertThat(out).isEqualTo(expected);
         };
     }
 
-    Consumer<EventContext> assertMessageContainsOneOf(String... expected) {
+    Consumer<MessageAndContext> assertMessageContainsOneOf(String... expected) {
         return event -> {
             String out = event.getMessage().getTypedContent().asString();
             assertThat(expected).contains(out);
         };
     }
 
-    class NoActionResultEventContext extends EventContext {
-        NoActionResultEventContext(Message message) {
-            super(message, new EmptyResult());
+    class NoActionResultMessageAndContext extends MessageAndContext {
+        NoActionResultMessageAndContext(Message message) {
+            super(message, new DefaultContext());
         }
     }
 
     class ProcessorThrowingExceptionSync implements ProcessorSync {
         @Override
-        public Message apply(Message input) {
+        public Message apply(Message input, Context context) {
             throw new IllegalStateException("Input not valid");
         }
     }
-
 
     class AddPostfixSyncProcessor implements ProcessorSync {
 
@@ -79,13 +78,10 @@ class AbstractExecutionTest {
         }
 
         @Override
-        public Message apply(Message input) {
+        public Message apply(Message input, Context context) {
             String inputString = input.getTypedContent().asString();
             String outputString = inputString + postfix;
             return MessageBuilder.get().text(outputString).build();
         }
-    }
-
-    private class EmptyResult implements OnResult {
     }
 }

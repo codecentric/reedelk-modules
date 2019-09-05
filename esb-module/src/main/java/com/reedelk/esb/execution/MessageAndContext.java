@@ -1,25 +1,28 @@
 package com.reedelk.esb.execution;
 
-import com.reedelk.runtime.api.component.OnResult;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.commons.SerializationUtils;
 
 import static com.reedelk.esb.commons.Preconditions.checkState;
 
-class EventContext {
+class MessageAndContext {
 
-    private final OnResult callback;
+    private final Context context;
     private Message message;
 
-    EventContext(Message message, OnResult callback) {
+    MessageAndContext(Message message, Context context) {
         checkState(message != null, "message");
-        checkState(callback != null, "callback");
         this.message = message;
-        this.callback = callback;
+        this.context = context;
     }
 
     Message getMessage() {
         return message;
+    }
+
+    public Context getContext() {
+        return context;
     }
 
     void replaceWith(Message message) {
@@ -27,8 +30,8 @@ class EventContext {
         this.message = message;
     }
 
-    EventContext copy() {
+    MessageAndContext copy() {
         Message messageClone = SerializationUtils.clone(message);
-        return new EventContext(messageClone, callback);
+        return new MessageAndContext(messageClone, context);
     }
 }

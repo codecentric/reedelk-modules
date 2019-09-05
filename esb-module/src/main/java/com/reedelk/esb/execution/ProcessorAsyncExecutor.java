@@ -25,14 +25,14 @@ import static java.time.Duration.ofMillis;
 public class ProcessorAsyncExecutor implements FlowExecutor {
 
     @Override
-    public Publisher<EventContext> execute(Publisher<EventContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
+    public Publisher<MessageAndContext> execute(Publisher<MessageAndContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
 
         ProcessorAsync processorAsync = (ProcessorAsync) currentNode.getComponent();
 
-        Publisher<EventContext> parent = Flux.from(publisher).flatMap(event -> {
+        Publisher<MessageAndContext> parent = Flux.from(publisher).flatMap(event -> {
 
             // Build a Mono out of the async processor callback.
-            Mono<EventContext> callbackMono =
+            Mono<MessageAndContext> callbackMono =
                     sinkFromCallback(processorAsync, event)
                             // TODO: should this one use its own scheduler?
                             // TODO: You might have a batch job, which you don't want
@@ -68,7 +68,7 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
         return SchedulerProvider.flow();
     }
 
-    private static Mono<EventContext> sinkFromCallback(ProcessorAsync processor, EventContext event) {
+    private static Mono<MessageAndContext> sinkFromCallback(ProcessorAsync processor, MessageAndContext event) {
         return Mono.create(sink -> {
             OnResult callback = new OnResult() {
                 @Override
@@ -84,7 +84,7 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
             };
 
             try {
-                processor.apply(event.getMessage(), callback);
+                processor.apply(event.getMessage(), event.getContext(), callback);
             } catch (Exception e) {
                 sink.error(e);
             }

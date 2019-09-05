@@ -4,6 +4,7 @@ import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
@@ -30,9 +31,9 @@ public class WriteFile implements ProcessorAsync {
     private String extension;
 
     @Override
-    public void apply(Message message, OnResult onResult) {
+    public void apply(Message input, Context context, OnResult callback) {
         Path path = Paths.get(uploadDirectory, UUID.randomUUID().toString() + "." + extension);
-        Flux.from(message.getTypedContent()
+        Flux.from(input.getTypedContent()
                 .asByteArrayStream())
                 .reduceWith(() -> {
                     try {
@@ -54,7 +55,7 @@ public class WriteFile implements ProcessorAsync {
                         Message done = MessageBuilder.get()
                                 .text("Written on path: " + path.toString())
                                 .build();
-                        onResult.onResult(done);
+                        callback.onResult(done);
                     } catch (IOException e) {
                         throw Exceptions.propagate(e);
                     }

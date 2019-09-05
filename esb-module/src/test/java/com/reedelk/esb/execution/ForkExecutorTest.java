@@ -62,11 +62,11 @@ class ForkExecutorTest extends AbstractExecutionTest {
                 .join(joinNode)
                 .build();
 
-        EventContext event = newEventWithContent("ForkTest");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("ForkTest");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher = executor.execute(publisher, forkNode, graph);
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, forkNode, graph);
 
         // Then
         StepVerifier.create(endPublisher)
@@ -85,12 +85,12 @@ class ForkExecutorTest extends AbstractExecutionTest {
                 .join(joinNode)
                 .build();
 
-        EventContext event1 = newEventWithContent("ForkTest1");
-        EventContext event2 = newEventWithContent("ForkTest2");
-        Publisher<EventContext> publisher = Flux.just(event1, event2);
+        MessageAndContext event1 = newEventWithContent("ForkTest1");
+        MessageAndContext event2 = newEventWithContent("ForkTest2");
+        Publisher<MessageAndContext> publisher = Flux.just(event1, event2);
 
         // When
-        Publisher<EventContext> endPublisher = executor.execute(publisher, forkNode, graph);
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, forkNode, graph);
 
         // Then
         StepVerifier.create(endPublisher)
@@ -111,11 +111,11 @@ class ForkExecutorTest extends AbstractExecutionTest {
                 .afterForkSequence(nodeFollowingJoin)
                 .build();
 
-        EventContext event = newEventWithContent("ForkTest");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("ForkTest");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher = executor.execute(publisher, forkNode, graph);
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, forkNode, graph);
 
         // Then
         StepVerifier.create(endPublisher)
@@ -137,11 +137,11 @@ class ForkExecutorTest extends AbstractExecutionTest {
                 .afterForkSequence(nodeFollowingJoin)
                 .build();
 
-        EventContext event = newEventWithContent("ForkTest");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("ForkTest");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, forkNode, graph);
 
         // Then
@@ -163,11 +163,11 @@ class ForkExecutorTest extends AbstractExecutionTest {
                 .afterForkSequence(nodeFollowingJoin)
                 .build();
 
-        EventContext event = newEventWithContent("ForkTest");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("ForkTest");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, forkNode, graph);
 
         // Then
@@ -188,8 +188,8 @@ class ForkExecutorTest extends AbstractExecutionTest {
                 .join(incorrectJoinType)
                 .build();
 
-        EventContext event = newEventWithContent("ForkTest");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("ForkTest");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
         IllegalStateException thrown = assertThrows(IllegalStateException.class,

@@ -17,8 +17,8 @@ class ESBJavascriptEngineTest {
     void shouldCorrectlyEvaluateMessageInboundProperty() throws ScriptException {
         // Given
         Message message = MessageBuilder.get().text("test").build();
-        message.getInboundProperties().setProperty("property1", "test");
-        String script = "message.inboundProperties.property1";
+        message.getAttributes().put("property1", "test");
+        String script = "message.attributes.property1";
 
         // When
         String property = service.evaluate(message, script, String.class);

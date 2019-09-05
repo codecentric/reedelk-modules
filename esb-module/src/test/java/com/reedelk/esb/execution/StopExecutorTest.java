@@ -18,10 +18,10 @@ class StopExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionGraph graph = ExecutionGraph.build();
         ExecutionNode stop = newExecutionNode(new Stop());
-        Publisher<EventContext> publisher = Mono.empty();
+        Publisher<MessageAndContext> publisher = Mono.empty();
 
         // When
-        Publisher<EventContext> endPublisher = executor.execute(publisher, stop, graph);
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, stop, graph);
 
         // Then
         assertThat(publisher).isEqualTo(endPublisher);

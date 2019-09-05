@@ -11,6 +11,7 @@ import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.ByteArrayContent;
 import com.reedelk.runtime.api.message.type.Type;
@@ -76,7 +77,7 @@ public class RestClient implements ProcessorSync {
     private UriComponent uriComponent;
 
     @Override
-    public Message apply(Message input) {
+    public Message apply(Message input, Context context) {
         HttpClientWrapper client = getClient();
 
         String uri = buildUri();
@@ -98,6 +99,7 @@ public class RestClient implements ProcessorSync {
 
         // If the response is not in the Range 2xx, we throw an exception.
         // TODO: We must propagate the response to the caller.
+        // All the infos should be in the attributes...
         if (IsNotSuccessful.from(dataHolder.status)) {
             throw new ESBException(dataHolder.status.toString());
         }
@@ -108,7 +110,7 @@ public class RestClient implements ProcessorSync {
 
         // We set the content
         TypedContent content = new ByteArrayContent(bytes, type);
-        input.setTypedContent(content);
+        input.setContent(content);
         return input;
     }
 

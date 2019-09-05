@@ -23,9 +23,11 @@ public class FlowExecutorEngine {
      */
     public void onEvent(Message message, OnResult onResult) {
 
-        EventContext event = new EventContext(message, onResult);
+        DefaultContext defaultContext = new DefaultContext();
 
-        Publisher<EventContext> publisher =
+        MessageAndContext event = new MessageAndContext(message, defaultContext);
+
+        Publisher<MessageAndContext> publisher =
                 Mono.just(event)
                         .publishOn(SchedulerProvider.flow());
 
@@ -33,10 +35,8 @@ public class FlowExecutorEngine {
 
         ExecutionNode nodeAfterRoot = nextNode(root, graph);
 
-        Publisher<EventContext> resultingPublisher =
-                FlowExecutorFactory
-                        .get()
-                        .execute(publisher, nodeAfterRoot, graph);
+        Publisher<MessageAndContext> resultingPublisher =
+                FlowExecutorFactory.get().execute(publisher, nodeAfterRoot, graph);
 
         Mono.from(resultingPublisher)
                 .doOnError(onResult::onError)

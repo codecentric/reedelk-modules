@@ -4,6 +4,7 @@ import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
+import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -44,11 +45,11 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
 
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
 
-        EventContext event = newEventWithContent("input");
-        Publisher<EventContext> publisher = Mono.just(event);
+        MessageAndContext event = newEventWithContent("input");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, processor, graph);
 
         // Then
@@ -63,12 +64,12 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
         ExecutionNode processor = newExecutionNode(new AddPostfixAsync("-async"));
 
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
-        EventContext event1 = newEventWithContent("input1");
-        EventContext event2 = newEventWithContent("input2");
-        Publisher<EventContext> publisher = Flux.just(event1, event2);
+        MessageAndContext event1 = newEventWithContent("input1");
+        MessageAndContext event2 = newEventWithContent("input2");
+        Publisher<MessageAndContext> publisher = Flux.just(event1, event2);
 
         // When
-        Publisher<EventContext> endPublisher =
+        Publisher<MessageAndContext> endPublisher =
                 executor.execute(publisher, processor, graph);
 
         // Then
@@ -83,12 +84,12 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionNode processor = newExecutionNode(new ProcessorThrowingExceptionAsync());
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
-        EventContext inputEventContext = newEventWithContent("input");
+        MessageAndContext inputMessageAndContext = newEventWithContent("input");
 
-        Publisher<EventContext> publisher = Flux.just(inputEventContext);
+        Publisher<MessageAndContext> publisher = Flux.just(inputMessageAndContext);
 
         // When
-        Publisher<EventContext> endPublisher = executor.execute(publisher, processor, graph);
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, processor, graph);
 
         // Then
         StepVerifier.create(endPublisher)
@@ -100,12 +101,12 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionNode processor = newExecutionNode(new ProcessorAsyncTakingTooLong());
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
-        EventContext inputEventContext = newEventWithContent("input");
+        MessageAndContext inputMessageAndContext = newEventWithContent("input");
 
-        Publisher<EventContext> publisher = Flux.just(inputEventContext);
+        Publisher<MessageAndContext> publisher = Flux.just(inputMessageAndContext);
 
         // When
-        Publisher<EventContext> endPublisher = executor.execute(publisher, processor, graph);
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, processor, graph);
 
         // Then
         StepVerifier.create(endPublisher)
@@ -129,7 +130,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
 
     class ProcessorAsyncTakingTooLong implements ProcessorAsync {
         @Override
-        public void apply(Message input, OnResult callback) {
+        public void apply(Message input, Context context, OnResult callback) {
             new Thread(() -> {
                 try {
                     Thread.sleep(1000);
@@ -143,7 +144,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
 
     class ProcessorThrowingExceptionAsync implements ProcessorAsync {
         @Override
-        public void apply(Message input, OnResult callback) {
+        public void apply(Message input, Context context, OnResult callback) {
             new Thread(() -> {
                 try {
                     Thread.sleep(50);
@@ -164,7 +165,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
         }
 
         @Override
-        public void apply(Message input, OnResult callback) {
+        public void apply(Message input, Context context, OnResult callback) {
             new Thread(() -> {
                 try {
                     Thread.sleep(5);
