@@ -19,19 +19,17 @@ class HttpRequestToMessage {
     static Message from(HttpRequestWrapper request) {
 
         HttpRequestAttributes requestAttributes = new HttpRequestAttributes();
-        requestAttributes.put(path(),  request.uri());
+        requestAttributes.put(path(), request.uri());
         requestAttributes.put(method(), request.method());
         requestAttributes.put(headers(), request.headers());
         requestAttributes.put(pathParams(), request.params());
         requestAttributes.put(queryParams(), request.queryParams());
 
-        MessageBuilder messageBuilder = MessageBuilder.get().attributes(requestAttributes);
-
         TypedContent content = getTypedContent(request);
 
-        messageBuilder.typedContent(content);
-
-        return messageBuilder.build();
+        return MessageBuilder.get()
+                .attributes(requestAttributes)
+                .typedContent(content).build();
     }
 
     /**
