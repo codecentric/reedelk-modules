@@ -14,12 +14,12 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class RestListenerErrorResponse implements Implementor {
 
     @Script
-    @Property("Body")
+    @Property("Response body")
     @Default("payload")
     private String body;
 
     @Script
-    @Property("Status")
+    @Property("Response status")
     @Default("'200'")
     private String status;
 
