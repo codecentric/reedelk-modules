@@ -31,7 +31,7 @@ public class RestListener extends AbstractInbound {
     @Reference
     private ScriptEngineService scriptEngineService;
 
-    @Property("Listener Configuration")
+    @Property("Configuration")
     private RestListenerConfiguration configuration;
 
     @Property("Path")
@@ -43,10 +43,10 @@ public class RestListener extends AbstractInbound {
     @Default("GET")
     private RestMethod method;
 
-    @Property("Response")
+    @Property("Advanced response")
     private RestListenerResponse response;
 
-    @Property("Error response")
+    @Property("Advanced error response")
     private RestListenerErrorResponse errorResponse;
 
     @Override

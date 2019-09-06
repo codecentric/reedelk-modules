@@ -9,36 +9,23 @@ import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
+@Collapsible
 @Component(service = RestListenerErrorResponse.class, scope = PROTOTYPE)
 public class RestListenerErrorResponse implements Implementor {
 
-    @Property("Use custom body")
-    private Boolean useBody;
-
     @Script
-    @Property("Custom Body")
+    @Property("Body")
     @Default("payload")
-    @When(propertyName = "useBody", propertyValue = "true")
     private String body;
 
-    @Property("Use custom status")
-    private Boolean useStatus;
-
-    @Property("Custom Status")
-    @When(propertyName = "useStatus", propertyValue = "true")
-    private Integer status;
+    @Script
+    @Property("Status")
+    @Default("'200'")
+    private String status;
 
     @TabGroup("Headers")
     @Property("Additional Headers")
     private Map<String,String> headers = Collections.emptyMap();
-
-    public Boolean getUseBody() {
-        return useBody;
-    }
-
-    public void setUseBody(Boolean useBody) {
-        this.useBody = useBody;
-    }
 
     public String getBody() {
         return body;
@@ -48,19 +35,11 @@ public class RestListenerErrorResponse implements Implementor {
         this.body = body;
     }
 
-    public Boolean getUseStatus() {
-        return useStatus;
-    }
-
-    public void setUseStatus(Boolean useStatus) {
-        this.useStatus = useStatus;
-    }
-
-    public Integer getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

@@ -1,6 +1,5 @@
 package com.reedelk.rest.server;
 
-import com.reedelk.rest.commons.IsBoolean;
 import com.reedelk.rest.configuration.RestListenerErrorResponse;
 import com.reedelk.rest.configuration.RestListenerResponse;
 import com.reedelk.runtime.api.message.Context;
@@ -33,7 +32,6 @@ public class MessageToHttpResponse {
                                          ScriptEngineService scriptEngineService,
                                          RestListenerErrorResponse errorResponseConfig) {
         statusFrom(INTERNAL_SERVER_ERROR,
-                errorResponseConfig.getUseStatus(),
                 errorResponseConfig.getStatus())
                 .ifPresent(response::status);
 
@@ -51,7 +49,6 @@ public class MessageToHttpResponse {
                                          ScriptEngineService scriptEngineService,
                                          RestListenerResponse responseConfig) {
         statusFrom(OK,
-                responseConfig.getUseStatus(),
                 responseConfig.getStatus())
                 .ifPresent(response::status);
 
@@ -64,7 +61,7 @@ public class MessageToHttpResponse {
                 response.responseHeaders(),
                 responseConfig.getHeaders());
 
-        if (IsBoolean._true(responseConfig.getUseBody())) {
+        if (responseConfig.getBody() != null) {
             // Custom body - evaluate script - or just return the value (if it is not a script)
             String scriptBody = responseConfig.getBody();
             try {
@@ -109,7 +106,7 @@ public class MessageToHttpResponse {
 
     private static Optional<String> contentTypeFrom(Message message, RestListenerResponse responseConfig) {
         // If the content type is a custom body, the developer MUST define the content type in the response config.
-        if (IsBoolean._false(responseConfig.getUseBody())) {
+        if (responseConfig.getBody()==null) {
             // Then we use the content type from the payload's mime type.
             TypedContent<?> typedContent = message.getTypedContent();
             Type type = typedContent.type();
@@ -119,10 +116,10 @@ public class MessageToHttpResponse {
         return Optional.empty();
     }
 
-    private static Optional<HttpResponseStatus> statusFrom(HttpResponseStatus defaultStatus, Boolean useStatus, Integer statusCode) {
+    private static Optional<HttpResponseStatus> statusFrom(HttpResponseStatus defaultStatus, String statusCode) {
         int code = defaultStatus.code();
-        if (IsBoolean._true(useStatus)) {
-            code = statusCode;
+        if (statusCode != null) {
+            code = Integer.valueOf(statusCode);
         }
         return Optional.of(valueOf(code));
     }
