@@ -37,7 +37,6 @@ public class MessageToHttpResponse {
                 errorResponseConfig.getHeaders());
 
         return Mono.just(exception.getMessage().getBytes());
-
     }
 
 
@@ -93,7 +92,7 @@ public class MessageToHttpResponse {
 
     private static Optional<String> contentTypeFrom(Message message, RestListenerResponse responseConfig) {
         // If the content type is a custom body, the developer MUST define the content type in the response config.
-        if (IsBoolean._true(responseConfig.getUseBody())) {
+        if (IsBoolean._false(responseConfig.getUseBody())) {
             // Then we use the content type from the payload's mime type.
             TypedContent<?> typedContent = message.getTypedContent();
             Type type = typedContent.type();
