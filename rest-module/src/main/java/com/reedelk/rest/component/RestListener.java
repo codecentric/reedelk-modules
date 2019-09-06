@@ -11,6 +11,7 @@ import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Hint;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.AbstractInbound;
+import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ public class RestListener extends AbstractInbound {
 
     @Reference
     private ServerProvider provider;
+    @Reference
+    private ScriptEngineService scriptEngineService;
 
     @Property("Listener Configuration")
     private RestListenerConfiguration configuration;
@@ -51,7 +54,7 @@ public class RestListener extends AbstractInbound {
         requireNonNull(configuration, "configuration");
         // TODO: Test what would happen if we cannot start the server...?
         Server server = provider.get(configuration);
-        server.addRoute(method, path, response, errorResponse,RestListener.this);
+        server.addRoute(method, path, response, errorResponse, scriptEngineService, RestListener.this);
     }
 
     @Override

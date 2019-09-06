@@ -6,6 +6,7 @@ import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.Context;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
@@ -23,12 +24,15 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
     private final InboundEventListener listener;
     private final RestListenerResponse listenerResponse;
     private final RestListenerErrorResponse listenerErrorResponse;
+    private final ScriptEngineService scriptEngineService;
 
     HttpRequestHandler(RestListenerResponse listenerResponse,
                        RestListenerErrorResponse listenerErrorResponse,
+                       ScriptEngineService scriptEngineService,
                        InboundEventListener listener) {
         this.listener = listener;
         this.listenerResponse = listenerResponse;
+        this.scriptEngineService = scriptEngineService;
         this.listenerErrorResponse = listenerErrorResponse;
     }
 
@@ -69,11 +73,11 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         public void onResult(Message outMessage, Context context) {
             try {
                 Publisher<byte[]> payload =
-                        MessageToHttpResponse.from(outMessage, context, response, listenerResponse);
+                        MessageToHttpResponse.from(outMessage, context, response, scriptEngineService, listenerResponse);
                 sink.success(payload);
             } catch (Exception exception) {
                 Publisher<byte[]> payload =
-                        MessageToHttpResponse.from(exception, context, response, listenerErrorResponse);
+                        MessageToHttpResponse.from(exception, context, response, scriptEngineService, listenerErrorResponse);
                 sink.success(payload);
             }
         }
@@ -87,7 +91,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                 sink.success(Mono.just(responseMessage.getBytes()));
             } else {
                 Publisher<byte[]> payload =
-                        MessageToHttpResponse.from(exception, context, response, listenerErrorResponse);
+                        MessageToHttpResponse.from(exception, context, response, scriptEngineService, listenerErrorResponse);
                 sink.success(payload);
             }
         }

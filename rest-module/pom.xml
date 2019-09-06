@@ -81,6 +81,7 @@
                             javax.net,
                             javax.net.ssl,
                             javax.security.cert,
+                            javax.script,
 
                             org.slf4j;version="[1.7,2)",
                             org.slf4j.helpers;version="[1.7,2)",

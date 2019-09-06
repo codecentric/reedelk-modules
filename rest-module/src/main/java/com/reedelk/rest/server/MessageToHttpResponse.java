@@ -8,12 +8,16 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.service.ScriptEngineService;
+import com.reedelk.runtime.api.service.ScriptExecutionResult;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerResponse;
 
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
 import java.util.Map;
 import java.util.Optional;
 
@@ -26,6 +30,7 @@ public class MessageToHttpResponse {
     public static Publisher<byte[]> from(Throwable exception,
                                          Context context,
                                          HttpServerResponse response,
+                                         ScriptEngineService scriptEngineService,
                                          RestListenerErrorResponse errorResponseConfig) {
         statusFrom(INTERNAL_SERVER_ERROR,
                 errorResponseConfig.getUseStatus(),
@@ -43,6 +48,7 @@ public class MessageToHttpResponse {
     public static Publisher<byte[]> from(Message message,
                                          Context context,
                                          HttpServerResponse response,
+                                         ScriptEngineService scriptEngineService,
                                          RestListenerResponse responseConfig) {
         statusFrom(OK,
                 responseConfig.getUseStatus(),
@@ -60,13 +66,24 @@ public class MessageToHttpResponse {
 
         if (IsBoolean._true(responseConfig.getUseBody())) {
             // Custom body - evaluate script - or just return the value (if it is not a script)
-            // TODO: Complete me.
-            return Mono.empty();
+            String scriptBody = responseConfig.getBody();
+            try {
+                ScriptExecutionResult result = scriptEngineService.evaluate(message, scriptBody, new ComponentVariableBindings(context));
+                Object object = result.getObject();
+                return Mono.just(object.toString().getBytes());
+            } catch (ScriptException e) {
+                return Mono.just(e.getMessage().getBytes());
+            }
 
         } else {
             // The content type comes from the message typed content
             TypedContent<?> typedContent = message.getTypedContent();
             return typedContent.asByteArrayStream();
+        }
+    }
+
+    static class ComponentVariableBindings extends SimpleBindings {
+        ComponentVariableBindings(Context context) {
         }
     }
 
