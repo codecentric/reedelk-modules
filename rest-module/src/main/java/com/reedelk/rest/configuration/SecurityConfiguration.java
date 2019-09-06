@@ -15,7 +15,7 @@ public class SecurityConfiguration implements Implementor {
     @Default("CERTIFICATE_AND_PRIVATE_KEY")
     private ServerSecurityType type;
 
-    @Property("X.509 Certificate and PKCS#8 private key (PEM format)")
+    @Property("X.509 Certificate and private key")
     @When(propertyName = "type", propertyValue = "CERTIFICATE_AND_PRIVATE_KEY")
     private CertificateAndPrivateKeyConfiguration certificateAndPrivateKey;
 
