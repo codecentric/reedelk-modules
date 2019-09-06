@@ -1,6 +1,6 @@
 package com.reedelk.rest.server;
 
-import com.reedelk.rest.commons.HttpHeader;
+import com.reedelk.rest.commons.IsBoolean;
 import com.reedelk.rest.configuration.RestListenerErrorResponse;
 import com.reedelk.rest.configuration.RestListenerResponse;
 import com.reedelk.runtime.api.message.Context;
@@ -17,19 +17,24 @@ import reactor.netty.http.server.HttpServerResponse;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
+
 public class MessageToHttpResponse {
 
 
     public static Publisher<byte[]> from(Throwable exception,
-                                    Context context,
-                                    HttpServerResponse response,
-                                    RestListenerErrorResponse listenerErrorResponse) {
+                                         Context context,
+                                         HttpServerResponse response,
+                                         RestListenerErrorResponse errorResponseConfig) {
+        statusFrom(INTERNAL_SERVER_ERROR,
+                errorResponseConfig.getUseStatus(),
+                errorResponseConfig.getStatus())
+                .ifPresent(response::status);
 
-        // Handle status
-
-        // Handle content type
-
-        // Handle additional headers
+        addAdditionalHeaders(
+                response.responseHeaders(),
+                errorResponseConfig.getHeaders());
 
         return Mono.just(exception.getMessage().getBytes());
 
@@ -37,45 +42,77 @@ public class MessageToHttpResponse {
 
 
     public static Publisher<byte[]> from(Message message,
-                                 Context context,
-                                 HttpServerResponse response,
-                                 RestListenerResponse listenerResponse) {
-        // Handle status
-        if (listenerResponse.isUseStatus()) {
-            if (listenerResponse.isUseReasonPhrase()) {
-                String customReasonPhrase = listenerResponse.getReasonPhrase();
-            }
-            response.status(HttpResponseStatus.valueOf(listenerResponse.getStatus()));
-        } else {
-            response.status(HttpResponseStatus.OK);
-        }
+                                         Context context,
+                                         HttpServerResponse response,
+                                         RestListenerResponse responseConfig) {
+        statusFrom(OK,
+                responseConfig.getUseStatus(),
+                responseConfig.getStatus())
+                .ifPresent(response::status);
 
-        Publisher<byte[]> data = Mono.empty();
+        contentTypeFrom(
+                message,
+                responseConfig)
+                .ifPresent(contentType -> response.addHeader(CONTENT_TYPE, contentType));
 
-        if (listenerResponse.isUseBody()) {
-            // Custom body
-            // Evaluate with script... (the body could be a variable in the context)...
+        addAdditionalHeaders(
+                response.responseHeaders(),
+                responseConfig.getHeaders());
+
+        if (IsBoolean._true(responseConfig.getUseBody())) {
+            // Custom body - evaluate script - or just return the value (if it is not a script)
+            // TODO: Complete me.
+            return Mono.empty();
+
         } else {
             // The content type comes from the message typed content
             TypedContent<?> typedContent = message.getTypedContent();
-            Type type = typedContent.type();
-            MimeType contentType = type.getMimeType();
-            response.addHeader(HttpHeader.CONTENT_TYPE, contentType.toString());
-            data = typedContent.asByteArrayStream();
+            return typedContent.asByteArrayStream();
         }
-
-        // Handle content type
-        Map<String, String> additionalHeaders = listenerResponse.getHeaders();
-        // 1. If the content type is present as additional header, then we use that one
-        if (additionalHeaders.containsKey(HttpHeader.CONTENT_TYPE)) {// case insensitive
-            // Content type from additional headers
-        };
-
-
-        return data;
     }
 
-    private static Optional<String> getMatchingHeader(HttpHeaders headers, String targetHeaderName) {
+    /**
+     * For each additional header, if present in the current headers it gets replaced,
+     * otherwise it is  added to the current headers collection.
+     *
+     * @param currentHeaders    the current headers.
+     * @param additionalHeaders additional user defined headers.
+     */
+    private static void addAdditionalHeaders(HttpHeaders currentHeaders, Map<String, String> additionalHeaders) {
+        additionalHeaders.forEach((headerName, headerValue) -> {
+            Optional<String> optionalMatchingHeaderName = matchingHeader(currentHeaders, headerName);
+            if (optionalMatchingHeaderName.isPresent()) {
+                String matchingHeaderName = optionalMatchingHeaderName.get();
+                currentHeaders.remove(matchingHeaderName);
+                currentHeaders.add(headerName.toLowerCase(), headerValue);
+            } else {
+                currentHeaders.add(headerName.toLowerCase(), headerValue);
+            }
+        });
+    }
+
+    private static Optional<String> contentTypeFrom(Message message, RestListenerResponse responseConfig) {
+        // If the content type is a custom body, the developer MUST define the content type in the response config.
+        if (IsBoolean._true(responseConfig.getUseBody())) {
+            // Then we use the content type from the payload's mime type.
+            TypedContent<?> typedContent = message.getTypedContent();
+            Type type = typedContent.type();
+            MimeType contentType = type.getMimeType();
+            return Optional.of(contentType.toString());
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<HttpResponseStatus> statusFrom(HttpResponseStatus defaultStatus, Boolean useStatus, Integer statusCode) {
+        int code = defaultStatus.code();
+        if (IsBoolean._true(useStatus)) {
+            code = statusCode;
+        }
+        return Optional.of(valueOf(code));
+    }
+
+    // Returns the matching header name
+    private static Optional<String> matchingHeader(HttpHeaders headers, String targetHeaderName) {
         for (String headerName : headers.names()) {
             if (headerName.toLowerCase().equals(targetHeaderName.toLowerCase())) {
                 return Optional.of(headerName);

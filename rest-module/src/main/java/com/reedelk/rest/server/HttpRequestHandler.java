@@ -67,11 +67,15 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
         @Override
         public void onResult(Message outMessage, Context context) {
-            Publisher<byte[]> payload =
-                    MessageToHttpResponse.from(outMessage, context, response, listenerResponse);
-
-            // Handle payload (keep in consideration listener response - in case of custom payload - )
-            sink.success(payload);
+            try {
+                Publisher<byte[]> payload =
+                        MessageToHttpResponse.from(outMessage, context, response, listenerResponse);
+                sink.success(payload);
+            } catch (Exception exception) {
+                Publisher<byte[]> payload =
+                        MessageToHttpResponse.from(exception, context, response, listenerErrorResponse);
+                sink.success(payload);
+            }
         }
 
         @Override
@@ -81,11 +85,9 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                 response.status(SERVICE_UNAVAILABLE);
                 String responseMessage = SERVICE_UNAVAILABLE.code() + " Service Temporarily Unavailable (Server is too busy)";
                 sink.success(Mono.just(responseMessage.getBytes()));
-
             } else {
                 Publisher<byte[]> payload =
                         MessageToHttpResponse.from(exception, context, response, listenerErrorResponse);
-
                 sink.success(payload);
             }
         }

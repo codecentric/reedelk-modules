@@ -7,6 +7,7 @@ import com.reedelk.runtime.api.annotation.When;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
+import java.util.Collections;
 import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -15,8 +16,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class RestListenerErrorResponse implements Implementor {
 
     @Property("Use custom body")
-    @Default("false")
-    private boolean useBody;
+    private Boolean useBody;
 
     @Property("Custom Body")
     @Default("payload")
@@ -24,30 +24,21 @@ public class RestListenerErrorResponse implements Implementor {
     private String body;
 
     @Property("Use custom status")
-    @Default("false")
-    private boolean useStatus;
+    private Boolean useStatus;
 
     @Property("Custom Status")
     @When(propertyName = "useStatus", propertyValue = "true")
     private Integer status;
 
-    @Property("Use custom reason phrase")
-    @Default("false")
-    private boolean useReasonPhrase;
-
-    @Property("Custom reason phrase")
-    @When(propertyName = "useReasonPhrase", propertyValue = "true")
-    private String reasonPhrase;
-
     @TabGroup("Headers")
     @Property("Additional Headers")
-    private Map<String,String> headers;
+    private Map<String,String> headers = Collections.emptyMap();
 
-    public boolean isUseBody() {
+    public Boolean getUseBody() {
         return useBody;
     }
 
-    public void setUseBody(boolean useBody) {
+    public void setUseBody(Boolean useBody) {
         this.useBody = useBody;
     }
 
@@ -59,11 +50,11 @@ public class RestListenerErrorResponse implements Implementor {
         this.body = body;
     }
 
-    public boolean isUseStatus() {
+    public Boolean getUseStatus() {
         return useStatus;
     }
 
-    public void setUseStatus(boolean useStatus) {
+    public void setUseStatus(Boolean useStatus) {
         this.useStatus = useStatus;
     }
 
@@ -73,22 +64,6 @@ public class RestListenerErrorResponse implements Implementor {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public boolean isUseReasonPhrase() {
-        return useReasonPhrase;
-    }
-
-    public void setUseReasonPhrase(boolean useReasonPhrase) {
-        this.useReasonPhrase = useReasonPhrase;
-    }
-
-    public String getReasonPhrase() {
-        return reasonPhrase;
-    }
-
-    public void setReasonPhrase(String reasonPhrase) {
-        this.reasonPhrase = reasonPhrase;
     }
 
     public Map<String, String> getHeaders() {
