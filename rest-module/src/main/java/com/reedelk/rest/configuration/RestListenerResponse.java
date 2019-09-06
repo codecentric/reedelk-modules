@@ -1,9 +1,6 @@
 package com.reedelk.rest.configuration;
 
-import com.reedelk.runtime.api.annotation.Default;
-import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.TabGroup;
-import com.reedelk.runtime.api.annotation.When;
+import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
@@ -18,7 +15,7 @@ public class RestListenerResponse implements Implementor {
     @Property("Use custom body")
     private Boolean useBody;
 
-
+    @Script
     @Property("Custom Body")
     @Default("payload")
     @When(propertyName = "useBody", propertyValue = "true")
