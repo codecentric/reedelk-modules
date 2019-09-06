@@ -18,6 +18,7 @@ public class RestListenerResponse implements Implementor {
     @Property("Use custom body")
     private Boolean useBody;
 
+
     @Property("Custom Body")
     @Default("payload")
     @When(propertyName = "useBody", propertyValue = "true")
