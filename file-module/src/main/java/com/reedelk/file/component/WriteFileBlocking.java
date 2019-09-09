@@ -3,7 +3,7 @@ package com.reedelk.file.component;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
@@ -30,7 +30,7 @@ public class WriteFileBlocking implements ProcessorSync {
     private String extension;
 
     @Override
-    public Message apply(Message input, Context context) {
+    public Message apply(Message input, FlowContext flowContext) {
         Path path = Paths.get(uploadDirectory, UUID.randomUUID().toString() + "." + extension);
 
         byte[] bytes = input.getTypedContent().asByteArray();

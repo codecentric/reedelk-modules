@@ -21,7 +21,7 @@ class ESBJavascriptEngineTest {
         String script = "message.attributes.property1";
 
         // When
-        String property = service.evaluate(message, script, String.class);
+        String property = service.evaluate(message, script);
 
         // Then
         assertThat(property).isNotNull();

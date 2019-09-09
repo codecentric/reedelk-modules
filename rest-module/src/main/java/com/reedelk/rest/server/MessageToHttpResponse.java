@@ -2,7 +2,7 @@ package com.reedelk.rest.server;
 
 import com.reedelk.rest.configuration.RestListenerErrorResponse;
 import com.reedelk.rest.configuration.RestListenerResponse;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.Type;
@@ -21,18 +21,25 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpResponseStatus.*;
+import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
 public class MessageToHttpResponse {
 
 
     public static Publisher<byte[]> from(Throwable exception,
-                                         Context context,
+                                         FlowContext flowContext,
                                          HttpServerResponse response,
                                          ScriptEngineService scriptEngineService,
                                          RestListenerErrorResponse errorResponseConfig) {
-        statusFrom(INTERNAL_SERVER_ERROR, errorResponseConfig.getStatus())
-                .ifPresent(response::status);
+
+        HttpResponseStatus responseStatus = EvaluateStatusCode.withDefault(INTERNAL_SERVER_ERROR)
+                .withStatus(errorResponseConfig.getStatus())
+                .withScriptEngine(scriptEngineService)
+                .withThrowable(exception)
+                .withContext(flowContext)
+                .evaluate();
+        response.status(responseStatus);
 
         addAdditionalHeaders(response.responseHeaders(), errorResponseConfig.getHeaders());
 
@@ -41,15 +48,20 @@ public class MessageToHttpResponse {
 
 
     public static Publisher<byte[]> from(Message message,
-                                         Context context,
+                                         FlowContext flowContext,
                                          HttpServerResponse response,
                                          ScriptEngineService scriptEngineService,
                                          RestListenerResponse responseConfig) {
-        statusFrom(OK, responseConfig.getStatus())
-                .ifPresent(response::status);
 
-        contentTypeFrom(message, responseConfig)
-                .ifPresent(contentType -> response.addHeader(CONTENT_TYPE, contentType));
+        HttpResponseStatus responseStatus = EvaluateStatusCode.withDefault(OK)
+                .withStatus(responseConfig.getStatus())
+                .withScriptEngine(scriptEngineService)
+                .withContext(flowContext)
+                .withMessage(message)
+                .evaluate();
+        response.status(responseStatus);
+
+        contentTypeFrom(message, responseConfig).ifPresent(contentType -> response.addHeader(CONTENT_TYPE, contentType));
 
         addAdditionalHeaders(response.responseHeaders(), responseConfig.getHeaders());
 
@@ -57,7 +69,7 @@ public class MessageToHttpResponse {
             // Custom body - evaluate script - or just return the value (if it is not a script)
             String scriptBody = responseConfig.getBody();
             try {
-                ScriptExecutionResult result = scriptEngineService.evaluate(message, scriptBody, new ComponentVariableBindings(context));
+                ScriptExecutionResult result = scriptEngineService.evaluate(message, scriptBody, new ComponentVariableBindings(flowContext));
                 Object object = result.getObject();
                 return Mono.just(object.toString().getBytes());
             } catch (ScriptException e) {
@@ -72,7 +84,7 @@ public class MessageToHttpResponse {
     }
 
     static class ComponentVariableBindings extends SimpleBindings {
-        ComponentVariableBindings(Context context) {
+        ComponentVariableBindings(FlowContext flowContext) {
         }
     }
 
@@ -98,7 +110,7 @@ public class MessageToHttpResponse {
 
     private static Optional<String> contentTypeFrom(Message message, RestListenerResponse responseConfig) {
         // If the content type is a custom body, the developer MUST define the content type in the response config.
-        if (responseConfig.getBody()==null) {
+        if (responseConfig.getBody() == null) {
             // Then we use the content type from the payload's mime type.
             TypedContent<?> typedContent = message.getTypedContent();
             Type type = typedContent.type();
@@ -106,14 +118,6 @@ public class MessageToHttpResponse {
             return Optional.of(contentType.toString());
         }
         return Optional.empty();
-    }
-
-    private static Optional<HttpResponseStatus> statusFrom(HttpResponseStatus defaultStatus, String statusCode) {
-        int code = defaultStatus.code();
-        if (statusCode != null) {
-            code = Integer.valueOf(statusCode);
-        }
-        return Optional.of(valueOf(code));
     }
 
     // Returns the matching header name

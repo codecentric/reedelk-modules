@@ -1,11 +1,11 @@
 package com.reedelk.esb.execution;
 
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.type.TypedContent;
 
 import java.util.HashMap;
 
-public class DefaultContext extends HashMap<String, TypedContent<?>> implements Context {
+public class DefaultFlowContext extends HashMap<String, TypedContent<?>> implements FlowContext {
 
     @Override
     public void setVariable(String variableName, TypedContent<?> variableValue) {

@@ -6,7 +6,7 @@ import com.reedelk.runtime.api.annotation.Script;
 import com.reedelk.runtime.api.annotation.Variable;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.service.ScriptEngineService;
@@ -32,7 +32,7 @@ public class JavascriptComponent implements ProcessorSync {
     private String script;
 
     @Override
-    public Message apply(Message input, Context context) {
+    public Message apply(Message input, FlowContext flowContext) {
         try {
             ScriptExecutionResult result = service.evaluate(input, script, new ComponentVariableBindings(input));
 

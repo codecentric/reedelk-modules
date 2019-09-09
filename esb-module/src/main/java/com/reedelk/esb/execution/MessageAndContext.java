@@ -1,6 +1,6 @@
 package com.reedelk.esb.execution;
 
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.commons.SerializationUtils;
 
@@ -8,21 +8,21 @@ import static com.reedelk.esb.commons.Preconditions.checkState;
 
 class MessageAndContext {
 
-    private final Context context;
+    private final FlowContext flowContext;
     private Message message;
 
-    MessageAndContext(Message message, Context context) {
+    MessageAndContext(Message message, FlowContext flowContext) {
         checkState(message != null, "message");
         this.message = message;
-        this.context = context;
+        this.flowContext = flowContext;
     }
 
     Message getMessage() {
         return message;
     }
 
-    public Context getContext() {
-        return context;
+    public FlowContext getFlowContext() {
+        return flowContext;
     }
 
     void replaceWith(Message message) {
@@ -32,6 +32,6 @@ class MessageAndContext {
 
     MessageAndContext copy() {
         Message messageClone = SerializationUtils.clone(message);
-        return new MessageAndContext(messageClone, context);
+        return new MessageAndContext(messageClone, flowContext);
     }
 }

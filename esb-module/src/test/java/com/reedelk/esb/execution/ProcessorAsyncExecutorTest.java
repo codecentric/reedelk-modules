@@ -4,7 +4,7 @@ import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -130,28 +130,28 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
 
     class ProcessorAsyncTakingTooLong implements ProcessorAsync {
         @Override
-        public void apply(Message input, Context context, OnResult callback) {
+        public void apply(Message input, FlowContext flowContext, OnResult callback) {
             new Thread(() -> {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     // nothing to do
                 }
-                callback.onResult(MessageBuilder.get().text("hello").build(), context);
+                callback.onResult(MessageBuilder.get().text("hello").build(), flowContext);
             });
         }
     }
 
     class ProcessorThrowingExceptionAsync implements ProcessorAsync {
         @Override
-        public void apply(Message input, Context context, OnResult callback) {
+        public void apply(Message input, FlowContext flowContext, OnResult callback) {
             new Thread(() -> {
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
                     // nothing to do
                 }
-                callback.onError(new IllegalStateException("Error"), context);
+                callback.onError(new IllegalStateException("Error"), flowContext);
             }).start();
         }
     }
@@ -165,7 +165,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
         }
 
         @Override
-        public void apply(Message input, Context context, OnResult callback) {
+        public void apply(Message input, FlowContext flowContext, OnResult callback) {
             new Thread(() -> {
                 try {
                     Thread.sleep(5);
@@ -175,7 +175,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
                 String inputString = input.getTypedContent().asString();
                 String outputString = inputString + postfix;
                 Message out = MessageBuilder.get().text(outputString).build();
-                callback.onResult(out, context);
+                callback.onResult(out, flowContext);
             }).start();
         }
     }

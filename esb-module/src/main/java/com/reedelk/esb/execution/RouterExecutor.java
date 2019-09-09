@@ -78,7 +78,7 @@ public class RouterExecutor implements FlowExecutor {
 
     private Mono<Boolean> evaluate(String expression, Message message) {
         try {
-            Boolean evaluate = ENGINE.evaluate(message, expression, boolean.class);
+            Boolean evaluate = ENGINE.evaluate(message, expression);
             return Mono.just(evaluate);
         } catch (ScriptException e) {
             logger.error(String.format("Could not evaluate Router path expression (%s)", expression), e);

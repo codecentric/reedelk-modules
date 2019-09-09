@@ -3,7 +3,7 @@ package com.reedelk.core.component.script;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.service.ScriptEngineService;
@@ -46,7 +46,7 @@ public class JsonMapper implements ProcessorSync {
     private String mappingScript;
 
     @Override
-    public Message apply(Message input, Context context) {
+    public Message apply(Message input, FlowContext flowContext) {
         try {
             String script = String.format(EXECUTION_SCRIPT_TEMPLATE, mappingScript);
 

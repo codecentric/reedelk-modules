@@ -7,7 +7,7 @@ import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Inbound;
 import com.reedelk.runtime.api.component.OnResult;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.component.Stop;
 import org.junit.jupiter.api.Assertions;
@@ -250,7 +250,7 @@ class FlowTest {
         // When
         flow.onEvent(inMessage, new OnResult() {
             @Override
-            public void onResult(Message actualMessage, Context context) {
+            public void onResult(Message actualMessage, FlowContext flowContext) {
                 // Then
                 assertThat(actualMessage).isEqualTo(inMessage);
                 verify(mockExecutionGraph).getRoot();
@@ -259,7 +259,7 @@ class FlowTest {
             }
 
             @Override
-            public void onError(Throwable throwable, Context context) {
+            public void onError(Throwable throwable, FlowContext flowContext) {
                 fail("Unexpected");
             }
         });

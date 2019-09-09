@@ -21,11 +21,6 @@ public enum ESBJavascriptEngine implements ScriptEngineService {
         engine = new ScriptEngineManager().getEngineByName(ENGINE_NAME);
     }
 
-    @Override
-    public <T> T evaluate(Message message, String script, Class<T> returnType) throws ScriptException {
-        DefaultContextVariables defaultContextVariables = new DefaultContextVariables(message);
-        return (T) engine.eval(script, defaultContextVariables);
-    }
 
     @Override
     public DefaultScriptExecutionResult evaluate(List<Message> messages, String script) throws ScriptException {
@@ -36,6 +31,17 @@ public enum ESBJavascriptEngine implements ScriptEngineService {
 
         Object evaluated = engine.eval(script, bindings);
         return new DefaultScriptExecutionResult(evaluated, bindings);
+    }
+
+    @Override
+    public <T> T evaluate(String script, Bindings bindings) throws ScriptException {
+        return (T) engine.eval(script, bindings);
+    }
+
+    @Override
+    public <T> T evaluate(Message message, String script) throws ScriptException {
+        DefaultContextVariables defaultContextVariables = new DefaultContextVariables(message);
+        return (T) engine.eval(script, defaultContextVariables);
     }
 
     @Override

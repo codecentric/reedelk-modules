@@ -6,7 +6,7 @@ import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.component.Stop;
 import org.junit.jupiter.api.Assertions;
@@ -89,14 +89,14 @@ class FlowExecutorFactoryTest {
 
     class TestProcessorAsync implements ProcessorAsync, NotRelatedInterface {
         @Override
-        public void apply(Message input, Context context, OnResult callback) {
+        public void apply(Message input, FlowContext flowContext, OnResult callback) {
 
         }
     }
 
     class TestProcessorSync implements ProcessorSync, NotRelatedInterface {
         @Override
-        public Message apply(Message input, Context context) {
+        public Message apply(Message input, FlowContext flowContext) {
             return null;
         }
     }

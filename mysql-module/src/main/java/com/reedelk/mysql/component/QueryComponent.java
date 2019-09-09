@@ -4,7 +4,7 @@ import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.Type;
@@ -33,7 +33,7 @@ public class QueryComponent implements ProcessorSync {
     private String databaseURL;
 
     @Override
-    public Message apply(Message input, Context context) {
+    public Message apply(Message input, FlowContext flowContext) {
         try (Connection conn = DriverManager.getConnection(databaseURL, username, password);
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(query)) {

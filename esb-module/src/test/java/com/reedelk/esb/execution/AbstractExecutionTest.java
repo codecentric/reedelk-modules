@@ -5,7 +5,7 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.TestInboundComponent;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.component.Stop;
@@ -58,13 +58,13 @@ class AbstractExecutionTest {
 
     class NoActionResultMessageAndContext extends MessageAndContext {
         NoActionResultMessageAndContext(Message message) {
-            super(message, new DefaultContext());
+            super(message, new DefaultFlowContext());
         }
     }
 
     class ProcessorThrowingExceptionSync implements ProcessorSync {
         @Override
-        public Message apply(Message input, Context context) {
+        public Message apply(Message input, FlowContext flowContext) {
             throw new IllegalStateException("Input not valid");
         }
     }
@@ -78,7 +78,7 @@ class AbstractExecutionTest {
         }
 
         @Override
-        public Message apply(Message input, Context context) {
+        public Message apply(Message input, FlowContext flowContext) {
             String inputString = input.getTypedContent().asString();
             String outputString = inputString + postfix;
             return MessageBuilder.get().text(outputString).build();

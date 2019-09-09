@@ -8,7 +8,7 @@ import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.ByteArrayContent;
@@ -75,7 +75,7 @@ public class RestClient implements ProcessorSync {
     private UriComponent uriComponent;
 
     @Override
-    public Message apply(Message input, Context context) {
+    public Message apply(Message input, FlowContext flowContext) {
         HttpClientWrapper client = getClient();
 
         String uri = buildUri();

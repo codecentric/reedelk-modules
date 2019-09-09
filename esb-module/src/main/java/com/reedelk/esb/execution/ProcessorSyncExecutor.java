@@ -3,7 +3,7 @@ package com.reedelk.esb.execution;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -33,12 +33,12 @@ public class ProcessorSyncExecutor implements FlowExecutor {
     private Function<MessageAndContext, MessageAndContext> map(ProcessorSync processor) {
         return event -> {
 
-            Context context = event.getContext();
+            FlowContext flowContext = event.getFlowContext();
             Message input = event.getMessage();
 
             // Apply the input Message to the processor and we
             // let it process it (transform) to its new value.
-            Message outMessage = processor.apply(input, context);
+            Message outMessage = processor.apply(input, flowContext);
 
             // We replace in the context the new output message.
             event.replaceWith(outMessage);

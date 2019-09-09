@@ -1,7 +1,7 @@
 package com.reedelk.esb.test.utils;
 
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
 public class TestComponentWithMapProperty implements ProcessorSync {
 
     @Override
-    public Message apply(Message input, Context context) {
+    public Message apply(Message input, FlowContext flowContext) {
         throw new UnsupportedOperationException("Test Only ProcessorSync");
     }
 

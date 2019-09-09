@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DefaultContextVariablesTest {
+class DefaultFlowContextVariablesTest {
 
     @Test
     void shouldBindMessageToCorrectMessage() {

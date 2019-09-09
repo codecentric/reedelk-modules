@@ -23,7 +23,7 @@ public class FlowExecutorEngine {
      */
     public void onEvent(Message message, OnResult onResult) {
 
-        DefaultContext defaultContext = new DefaultContext();
+        DefaultFlowContext defaultContext = new DefaultFlowContext();
 
         MessageAndContext event = new MessageAndContext(message, defaultContext);
 

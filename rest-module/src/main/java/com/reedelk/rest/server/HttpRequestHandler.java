@@ -4,7 +4,7 @@ import com.reedelk.rest.configuration.RestListenerErrorResponse;
 import com.reedelk.rest.configuration.RestListenerResponse;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
@@ -69,20 +69,20 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         }
 
         @Override
-        public void onResult(Message outMessage, Context context) {
+        public void onResult(Message outMessage, FlowContext flowContext) {
             try {
                 Publisher<byte[]> payload =
-                        MessageToHttpResponse.from(outMessage, context, response, scriptEngineService, listenerResponse);
+                        MessageToHttpResponse.from(outMessage, flowContext, response, scriptEngineService, listenerResponse);
                 sink.success(payload);
             } catch (Exception exception) {
                 Publisher<byte[]> payload =
-                        MessageToHttpResponse.from(exception, context, response, scriptEngineService, listenerErrorResponse);
+                        MessageToHttpResponse.from(exception, flowContext, response, scriptEngineService, listenerErrorResponse);
                 sink.success(payload);
             }
         }
 
         @Override
-        public void onError(Throwable exception, Context context) {
+        public void onError(Throwable exception, FlowContext flowContext) {
             if (exception instanceof RejectedExecutionException) {
                 // Server is too  busy, there are not enough Threads able to handle the request.
                 response.status(SERVICE_UNAVAILABLE);
@@ -90,7 +90,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                 sink.success(Mono.just(responseMessage.getBytes()));
             } else {
                 Publisher<byte[]> payload =
-                        MessageToHttpResponse.from(exception, context, response, scriptEngineService, listenerErrorResponse);
+                        MessageToHttpResponse.from(exception, flowContext, response, scriptEngineService, listenerErrorResponse);
                 sink.success(payload);
             }
         }

@@ -3,7 +3,7 @@ package com.reedelk.esb.execution;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.OnResult;
-import com.reedelk.runtime.api.message.Context;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -62,7 +62,7 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
         Message message = MessageBuilder.get().text("input").build();
 
-        MessageAndContext inputMessageAndContext = new MessageAndContext(message, new DefaultContext());
+        MessageAndContext inputMessageAndContext = new MessageAndContext(message, new DefaultFlowContext());
 
         Publisher<MessageAndContext> publisher = Flux.just(inputMessageAndContext);
 
@@ -92,7 +92,7 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
     class OnResultVerifier implements OnResult {
         Throwable throwable;
         @Override
-        public void onError(Throwable throwable, Context context) {
+        public void onError(Throwable throwable, FlowContext flowContext) {
             this.throwable = throwable;
         }
     }
