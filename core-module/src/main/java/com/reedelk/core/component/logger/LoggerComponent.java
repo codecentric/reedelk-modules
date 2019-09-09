@@ -27,7 +27,7 @@ public class LoggerComponent implements ProcessorSync {
     @Property("Logger Level")
     private LoggerLevel level;
 
-    @ScriptInline(initMode = ScriptInline.Mode.SCRIPT)
+    @ScriptInline
     @Default("#[payload]")
     @Hint("my log message")
     @Property("Log message")
