@@ -13,14 +13,14 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = RestListenerErrorResponse.class, scope = PROTOTYPE)
 public class RestListenerErrorResponse implements Implementor {
 
-    @Script
+    @ScriptInline
+    @Hint("Error body text")
     @Property("Response body")
-    @Default("payload")
     private String body;
 
-    @Script
+    @ScriptInline
+    @Hint("500")
     @Property("Response status")
-    @Default("'200'")
     private String status;
 
     @TabGroup("Headers")

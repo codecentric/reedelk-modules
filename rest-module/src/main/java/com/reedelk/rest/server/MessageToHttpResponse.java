@@ -31,13 +31,10 @@ public class MessageToHttpResponse {
                                          HttpServerResponse response,
                                          ScriptEngineService scriptEngineService,
                                          RestListenerErrorResponse errorResponseConfig) {
-        statusFrom(INTERNAL_SERVER_ERROR,
-                errorResponseConfig.getStatus())
+        statusFrom(INTERNAL_SERVER_ERROR, errorResponseConfig.getStatus())
                 .ifPresent(response::status);
 
-        addAdditionalHeaders(
-                response.responseHeaders(),
-                errorResponseConfig.getHeaders());
+        addAdditionalHeaders(response.responseHeaders(), errorResponseConfig.getHeaders());
 
         return Mono.just(exception.getMessage().getBytes());
     }
@@ -48,18 +45,13 @@ public class MessageToHttpResponse {
                                          HttpServerResponse response,
                                          ScriptEngineService scriptEngineService,
                                          RestListenerResponse responseConfig) {
-        statusFrom(OK,
-                responseConfig.getStatus())
+        statusFrom(OK, responseConfig.getStatus())
                 .ifPresent(response::status);
 
-        contentTypeFrom(
-                message,
-                responseConfig)
+        contentTypeFrom(message, responseConfig)
                 .ifPresent(contentType -> response.addHeader(CONTENT_TYPE, contentType));
 
-        addAdditionalHeaders(
-                response.responseHeaders(),
-                responseConfig.getHeaders());
+        addAdditionalHeaders(response.responseHeaders(), responseConfig.getHeaders());
 
         if (responseConfig.getBody() != null) {
             // Custom body - evaluate script - or just return the value (if it is not a script)

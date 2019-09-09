@@ -26,7 +26,7 @@ public class JavascriptComponent implements ProcessorSync {
     @Reference
     private ScriptEngineService service;
 
-    @Script(inline = false)
+    @Script
     @Property("Script")
     @Variable(variableName = "payload")
     private String script;

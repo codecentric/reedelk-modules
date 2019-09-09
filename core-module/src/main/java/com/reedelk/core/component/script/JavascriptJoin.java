@@ -25,7 +25,7 @@ public class JavascriptJoin implements Join {
     @Reference
     private ScriptEngineService service;
 
-    @Script(inline = false)
+    @Script
     @Property("Script")
     @Variable(variableName = "messages")
     private String script;

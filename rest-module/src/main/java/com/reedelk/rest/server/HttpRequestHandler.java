@@ -49,7 +49,6 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         Message inMessage = HttpRequestToMessage.from(new HttpRequestWrapper(request));
 
         return Mono.just(inMessage)
-
                 // 2. Pass down through the processors pipeline the Message
                 // 3. Maps back the out Message to the HTTP response
                 .flatMap(message -> Mono.create((Consumer<MonoSink<Publisher<byte[]>>>) sink ->

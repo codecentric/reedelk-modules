@@ -39,7 +39,7 @@ public class JsonMapper implements ProcessorSync {
     @AutocompleteContext(name = "outputContext", type = AutocompleteType.JSON_SCHEMA)
     private String outputJsonSchema;
 
-    @Script(inline = false)
+    @Script
     @Property("Mapping Script")
     @Variable(variableName = "input", contextName = "inputContext")
     @Variable(variableName = "output", contextName = "outputContext")
