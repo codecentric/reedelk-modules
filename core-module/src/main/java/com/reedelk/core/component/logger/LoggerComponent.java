@@ -1,6 +1,7 @@
 package com.reedelk.core.component.logger;
 
 import com.reedelk.runtime.api.annotation.*;
+import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Context;
@@ -51,10 +52,15 @@ public class LoggerComponent implements ProcessorSync {
     }
 
     private void debug(Message input) throws ScriptException {
-        // The logger should just Print the Stream object if it is a stream, otherwise if
-        // the stream was resolved (hence loaded into memory) it should print the value.
-        Object result = service.evaluate(input, message, Object.class);
-        level.log(result);
+        if (ScriptUtils.isScript(message)) {
+            // The logger should just print the Stream object if it is a stream, otherwise if
+            // the stream was resolved (hence loaded into memory) it should print the value.
+            Object result = service.evaluate(input, message, Object.class);
+            level.log(result);
+        } else {
+            // If it is not a script we don't evaluate the message.
+            level.log(message);
+        }
     }
 
     public void setLevel(LoggerLevel level) {
