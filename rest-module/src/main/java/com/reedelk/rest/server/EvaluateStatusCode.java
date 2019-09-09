@@ -66,7 +66,7 @@ public class EvaluateStatusCode {
             // Otherwise we use the exception
             if (message != null) {
                 try {
-                    int evaluate = scriptEngine.evaluate(message, statusAsString);
+                    int evaluate = scriptEngine.evaluate(statusAsString, message, flowContext);
                     return valueOf(evaluate);
                 } catch (ScriptException e) {
                     e.printStackTrace();
@@ -75,10 +75,10 @@ public class EvaluateStatusCode {
             }
 
             if (throwable != null) {
-                SimpleBindings bindings = new SimpleBindings();
-                bindings.put("error", throwable);
+                SimpleBindings additionalBindings = new SimpleBindings();
+                additionalBindings.put("error", throwable);
                 try {
-                    int evaluate = scriptEngine.evaluate(statusAsString, bindings);
+                    int evaluate = scriptEngine.evaluate(statusAsString, flowContext, additionalBindings);
                     return valueOf(evaluate);
                 } catch (ScriptException e) {
                     e.printStackTrace();
