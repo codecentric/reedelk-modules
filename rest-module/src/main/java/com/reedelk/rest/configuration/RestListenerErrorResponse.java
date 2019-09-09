@@ -14,7 +14,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class RestListenerErrorResponse implements Implementor {
 
     @ScriptInline
-    @Hint("Error body text")
+    @Hint("error body text")
     @Property("Response body")
     private String body;
 
