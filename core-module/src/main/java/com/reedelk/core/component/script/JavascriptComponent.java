@@ -15,7 +15,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.script.ScriptException;
-import javax.script.SimpleBindings;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -34,8 +33,7 @@ public class JavascriptComponent implements ProcessorSync {
     @Override
     public Message apply(Message input, FlowContext flowContext) {
         try {
-            ScriptExecutionResult result = service.evaluate(input, script, new ComponentVariableBindings(input));
-
+            ScriptExecutionResult result = service.evaluate(script, input, flowContext);
             return MessageBuilder.get().javaObject(result.getObject()).build();
         } catch (ScriptException e) {
             throw new ESBException(e);
@@ -46,13 +44,4 @@ public class JavascriptComponent implements ProcessorSync {
         this.script = script;
     }
 
-    class ComponentVariableBindings extends SimpleBindings {
-        ComponentVariableBindings(Message message) {
-            if (message.getTypedContent() != null) {
-                put("payload", message.getTypedContent().content());
-            } else {
-                put("payload", null);
-            }
-        }
-    }
 }

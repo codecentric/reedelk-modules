@@ -42,7 +42,7 @@ abstract class RestClientAbstractTest {
     }
 
     void assertContentIs(Message message, String expectedContent, MimeType expectedMimeType) {
-        TypedContent<?> typedContent = message.getTypedContent();
+        TypedContent<?> typedContent = message.getContent();
         assertThat(typedContent.asString()).isEqualTo(expectedContent);
 
         Type type = typedContent.type();

@@ -12,8 +12,8 @@ class DefaultContextVariables extends SimpleBindings {
     DefaultContextVariables(Message message) {
         put("message", message);
         put("attributes", message.getAttributes());
-        if (message.getTypedContent() != null) {
-            put("payload", message.getTypedContent().content());
+        if (message.getContent() != null) {
+            put("payload", message.getContent().data());
         } else {
             put("payload", null);
         }

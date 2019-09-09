@@ -69,7 +69,7 @@ public class MessageToHttpResponse {
             // Custom body - evaluate script - or just return the value (if it is not a script)
             String scriptBody = responseConfig.getBody();
             try {
-                ScriptExecutionResult result = scriptEngineService.evaluate(message, scriptBody, new ComponentVariableBindings(flowContext));
+                ScriptExecutionResult result = scriptEngineService.evaluate(scriptBody, message, new ComponentVariableBindings(flowContext));
                 Object object = result.getObject();
                 return Mono.just(object.toString().getBytes());
             } catch (ScriptException e) {
@@ -78,7 +78,7 @@ public class MessageToHttpResponse {
 
         } else {
             // The content type comes from the message typed content
-            TypedContent<?> typedContent = message.getTypedContent();
+            TypedContent<?> typedContent = message.getContent();
             return typedContent.asByteArrayStream();
         }
     }
@@ -112,7 +112,7 @@ public class MessageToHttpResponse {
         // If the content type is a custom body, the developer MUST define the content type in the response config.
         if (responseConfig.getBody() == null) {
             // Then we use the content type from the payload's mime type.
-            TypedContent<?> typedContent = message.getTypedContent();
+            TypedContent<?> typedContent = message.getContent();
             Type type = typedContent.type();
             MimeType contentType = type.getMimeType();
             return Optional.of(contentType.toString());

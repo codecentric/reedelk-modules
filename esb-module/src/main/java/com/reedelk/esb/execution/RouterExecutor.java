@@ -4,6 +4,7 @@ import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.services.scriptengine.ESBJavascriptEngine;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
@@ -71,14 +72,14 @@ public class RouterExecutor implements FlowExecutor {
         // then the branch subflow gets executed, otherwise the message is dropped
         // and the flow is not executed.
         Mono<MessageAndContext> parent = Mono.just(event)
-                .filterWhen(value -> evaluate(expression, event.getMessage()));
+                .filterWhen(value -> evaluate(expression, event.getMessage(), event.getFlowContext()));
 
         return Mono.from(FlowExecutorFactory.get().execute(parent, pathExecutionNode, graph));
     }
 
-    private Mono<Boolean> evaluate(String expression, Message message) {
+    private Mono<Boolean> evaluate(String expression, Message message, FlowContext flowContext) {
         try {
-            Boolean evaluate = ENGINE.evaluate(message, expression);
+            Boolean evaluate = ENGINE.evaluate(expression, message, flowContext);
             return Mono.just(evaluate);
         } catch (ScriptException e) {
             logger.error(String.format("Could not evaluate Router path expression (%s)", expression), e);

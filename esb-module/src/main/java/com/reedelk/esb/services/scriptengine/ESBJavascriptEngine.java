@@ -52,7 +52,8 @@ public enum ESBJavascriptEngine implements ScriptEngineService {
 
     @Override
     public DefaultScriptExecutionResult evaluate(String script, Message message, Bindings additionalBindings) throws ScriptException {
-        // TODO: I think that this one creates side effects, this code should be revised. Bindings should be removed afterwards?
+        // TODO: I think that this one creates side effects,
+        //  this code should be revised. Bindings should be removed afterwards?
         Bindings existingBindings = engine.createBindings();
         existingBindings.putAll(new DefaultContextVariables(message));
         existingBindings.putAll(additionalBindings);
@@ -76,7 +77,7 @@ public enum ESBJavascriptEngine implements ScriptEngineService {
         SimpleBindings bindings = new SimpleBindings();
         Map<String, TypedContent<?>> variablesMap = flowContext.variablesMap();
         for (Map.Entry<String, TypedContent<?>> variable : variablesMap.entrySet()) {
-            bindings.put(variable.getKey(), variable.getValue().content());
+            bindings.put(variable.getKey(), variable.getValue().data());
         }
         return bindings;
     }

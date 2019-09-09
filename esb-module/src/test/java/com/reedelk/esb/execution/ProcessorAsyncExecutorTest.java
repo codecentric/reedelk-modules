@@ -172,7 +172,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
                 } catch (InterruptedException e) {
                     // nothing to do
                 }
-                String inputString = input.getTypedContent().asString();
+                String inputString = input.getContent().asString();
                 String outputString = inputString + postfix;
                 Message out = MessageBuilder.get().text(outputString).build();
                 callback.onResult(out, flowContext);

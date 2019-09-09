@@ -31,7 +31,7 @@ public class JsonPathComponent implements ProcessorSync {
             compiledExpression = JsonPath.compile(jsonPathExpression);
         }
 
-        TypedContent typedContent = input.getTypedContent();
+        TypedContent typedContent = input.getContent();
 
         String inputJson = typedContent.asString();
 

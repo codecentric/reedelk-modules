@@ -14,14 +14,14 @@ class ESBJavascriptEngineTest {
     private ScriptEngineService service = ESBJavascriptEngine.INSTANCE;
 
     @Test
-    void shouldCorrectlyEvaluateMessageInboundProperty() throws ScriptException {
+    void shouldCorrectlyEvaluateAttributeProperty() throws ScriptException {
         // Given
         Message message = MessageBuilder.get().text("test").build();
         message.getAttributes().put("property1", "test");
         String script = "message.attributes.property1";
 
         // When
-        String property = service.evaluate(message, script);
+        String property = service.evaluate(script, message);
 
         // Then
         assertThat(property).isNotNull();

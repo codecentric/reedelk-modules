@@ -19,7 +19,7 @@ public class MessageBodyProvider {
             // Also if the body is null, don't bother to do anything, just
             // send empty byte array buffer.
             // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
-            byte[] bodyAsBytes = message.getTypedContent().asByteArray();
+            byte[] bodyAsBytes = message.getContent().asByteArray();
             return new BodyProviderData() {
                 @Override
                 public Publisher<? extends ByteBuf> provide() {

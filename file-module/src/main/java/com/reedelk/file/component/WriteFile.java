@@ -33,7 +33,7 @@ public class WriteFile implements ProcessorAsync {
     @Override
     public void apply(Message input, FlowContext flowContext, OnResult callback) {
         Path path = Paths.get(uploadDirectory, UUID.randomUUID().toString() + "." + extension);
-        Flux.from(input.getTypedContent()
+        Flux.from(input.getContent()
                 .asByteArrayStream())
                 .reduceWith(() -> {
                     try {

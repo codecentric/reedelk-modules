@@ -44,14 +44,14 @@ class AbstractExecutionTest {
 
     Consumer<MessageAndContext> assertMessageContains(String expected) {
         return event -> {
-            String out = event.getMessage().getTypedContent().asString();
+            String out = event.getMessage().getContent().asString();
             assertThat(out).isEqualTo(expected);
         };
     }
 
     Consumer<MessageAndContext> assertMessageContainsOneOf(String... expected) {
         return event -> {
-            String out = event.getMessage().getTypedContent().asString();
+            String out = event.getMessage().getContent().asString();
             assertThat(expected).contains(out);
         };
     }
@@ -79,7 +79,7 @@ class AbstractExecutionTest {
 
         @Override
         public Message apply(Message input, FlowContext flowContext) {
-            String inputString = input.getTypedContent().asString();
+            String inputString = input.getContent().asString();
             String outputString = inputString + postfix;
             return MessageBuilder.get().text(outputString).build();
         }

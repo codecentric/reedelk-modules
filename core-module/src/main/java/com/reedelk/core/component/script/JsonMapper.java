@@ -50,7 +50,7 @@ public class JsonMapper implements ProcessorSync {
         try {
             String script = String.format(EXECUTION_SCRIPT_TEMPLATE, mappingScript);
 
-            ScriptExecutionResult result = service.evaluate(input, script, new ComponentVariableBindings(input));
+            ScriptExecutionResult result = service.evaluate(script, input, new ComponentVariableBindings(input));
 
             Object mappedOutput = result.getBindings().get("output");
 
@@ -77,8 +77,8 @@ public class JsonMapper implements ProcessorSync {
 
     class ComponentVariableBindings extends SimpleBindings {
         ComponentVariableBindings(Message message) {
-            if (message.getTypedContent() != null) {
-                put("input", message.getTypedContent().content());
+            if (message.getContent() != null) {
+                put("input", message.getContent().data());
             } else {
                 put("input", "{}");
             }

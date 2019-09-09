@@ -40,10 +40,10 @@ public class LoggerComponent implements ProcessorSync {
             if (LoggerLevel.DEBUG.equals(level)) {
                 // When level is DEBUG, we only debug if the debug is enabled.
                 if (logger.isDebugEnabled()) {
-                    debug(input);
+                    debug(input, flowContext);
                 }
             } else {
-                debug(input);
+                debug(input, flowContext);
             }
         } catch (ScriptException e) {
             throw new ESBException(e);
@@ -51,12 +51,12 @@ public class LoggerComponent implements ProcessorSync {
         return input;
     }
 
-    private void debug(Message input) throws ScriptException {
+    private void debug(Message input, FlowContext flowContext) throws ScriptException {
         if (ScriptUtils.isScript(message)) {
             // The logger should just print the Stream object if it is a stream, otherwise if
             // the stream was resolved (hence loaded into memory) it should print the value.
             String script = ScriptUtils.unwrap(message);
-            Object result = service.evaluate(input, script);
+            Object result = service.evaluate(script, input, flowContext);
             level.log(result);
         } else {
             // If it is not a script we don't evaluate the message.
