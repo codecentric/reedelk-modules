@@ -53,18 +53,20 @@ class HttpRequestContentMapper {
         return new StringStreamContent(streamAsString, mimeType);
     }
 
+    // TODO: What would happen if an exception is thrown before all the byte buffers have been read!??
     private static BiConsumer<ByteBuf, SynchronousSink<byte[]>> asByteArrayStream() {
         return (byteBuffer, sink) -> {
             try {
                 byte[] bytes = new byte[byteBuffer.readableBytes()];
                 byteBuffer.readBytes(bytes);
                 sink.next(bytes);
-                // Each stream byte buffer is reference counted,
-                // therefore we must release it after reading its bytes.
-                byteBuffer.release();
             } catch (Exception e) {
                 logger.error("Error while feeding input sink", e);
                 sink.complete();
+            } finally {
+                // Each stream byte buffer is reference counted,
+                // therefore we must release it after reading its bytes.
+                byteBuffer.release();
             }
         };
     }
