@@ -1,7 +1,7 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.commons.StringUtils;
 import com.reedelk.runtime.api.commons.ScriptUtils;
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.Type;

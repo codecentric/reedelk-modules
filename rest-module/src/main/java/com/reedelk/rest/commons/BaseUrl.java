@@ -8,7 +8,7 @@ import java.net.URISyntaxException;
 
 import static com.reedelk.rest.commons.Preconditions.requireNotBlank;
 import static com.reedelk.rest.commons.Preconditions.requireNotNull;
-import static com.reedelk.rest.commons.StringUtils.isNotBlank;
+import static com.reedelk.runtime.api.commons.StringUtils.isNotBlank;
 
 public class BaseUrl {
 

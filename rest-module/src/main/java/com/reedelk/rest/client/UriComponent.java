@@ -2,7 +2,6 @@ package com.reedelk.rest.client;
 
 import com.reedelk.rest.commons.QueryParams;
 import com.reedelk.rest.commons.RemoveQueryParams;
-import com.reedelk.rest.commons.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,7 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.reedelk.rest.commons.StringUtils.isNotBlank;
+import static com.reedelk.runtime.api.commons.StringUtils.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
@@ -23,6 +22,8 @@ import static java.util.stream.Collectors.joining;
 public class UriComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(UriComponent.class);
+
+    private static final String UTF_8 = "UTF-8";
 
     /**
      * Captures URI template variable names.
@@ -97,7 +98,7 @@ public class UriComponent {
     }
 
     private static String getVariableValueAsString(Object variableValue) {
-        return (variableValue != null ? variableValue.toString() : StringUtils.EMPTY);
+        return (variableValue != null ? variableValue.toString() : EMPTY);
     }
 
     private static String getVariableName(String match) {
@@ -106,7 +107,7 @@ public class UriComponent {
     }
 
     private String encodeExistingQueryParams(String queryParams) {
-        if (StringUtils.isBlank(queryParams)) return queryParams;
+        if (isBlank(queryParams)) return queryParams;
 
         String[] queryKeyAndValues = queryParams.split("&");
         Map<String,String> notEncodedQueryParams = new LinkedHashMap<>();
@@ -120,7 +121,7 @@ public class UriComponent {
 
     private static final UnaryOperator<String> QUERY_PARAM_ENCODER = original -> {
         try {
-            return URLEncoder.encode(original, "UTF-8")
+            return URLEncoder.encode(original, UTF_8)
                     .replaceAll("\\+", "%20"); // Apparently spaces encoded  as '+' are not good.
         } catch (UnsupportedEncodingException e) {
             logger.warn("UTF-8 not supported", e);

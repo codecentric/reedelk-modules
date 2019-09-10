@@ -1,6 +1,7 @@
 package com.reedelk.rest.commons;
 
 import com.reedelk.runtime.api.annotation.Default;
+import com.reedelk.runtime.api.commons.StringUtils;
 
 @Default("HTTP")
 public enum HttpProtocol {

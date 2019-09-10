@@ -1,6 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.commons.StringUtils;
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -57,7 +57,7 @@ class MessageHttpResponseMapperTest {
     void shouldOutputStreamFromGivenResponseScript() throws ScriptException {
         // Given
         String expectedContent = "response content";
-        String responseBody = "#[payload]";
+        String responseBody = "#[myVariable]";
 
         MessageHttpResponseMapper mapper = newMapperWithBody(responseBody);
         Message message = MessageBuilder.get().text(expectedContent).build();
@@ -65,7 +65,7 @@ class MessageHttpResponseMapperTest {
         ScriptExecutionResult result = new TestScriptExecutionResult(expectedContent);
         doReturn(result)
                 .when(scriptEngine)
-                .evaluate("#[payload]", message, flowContext);
+                .evaluate("#[myVariable]", message, flowContext);
 
         // When
         Publisher<byte[]> actualStream = mapper.map(message, response, flowContext);
@@ -95,7 +95,7 @@ class MessageHttpResponseMapperTest {
         String nullResponseBody = null;
 
         MessageHttpResponseMapper mapper = newMapperWithBody(nullResponseBody);
-        Message message = MessageBuilder.get().build();
+        Message message = MessageBuilder.get().text("something").build();
 
 
         // When
@@ -153,11 +153,6 @@ class MessageHttpResponseMapperTest {
         // Given
         MessageHttpResponseMapper mapper = newMapperWithBody("#[payload]");
         Message message = MessageBuilder.get().text("my text body").build();
-
-        ScriptExecutionResult result = new TestScriptExecutionResult("my text body");
-        doReturn(result)
-                .when(scriptEngine)
-                .evaluate("#[payload]", message, flowContext);
 
         // When
         mapper.map(message, response, flowContext);

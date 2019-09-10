@@ -1,7 +1,6 @@
 package com.reedelk.rest.server;
 
-
-import com.reedelk.rest.commons.StringUtils;
+import com.reedelk.runtime.api.commons.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;

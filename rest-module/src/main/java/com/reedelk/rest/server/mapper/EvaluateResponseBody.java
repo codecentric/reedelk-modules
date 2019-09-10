@@ -1,9 +1,9 @@
 package com.reedelk.rest.server.mapper;
 
 import com.reedelk.runtime.api.commons.ScriptUtils;
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.TypedContent;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import com.reedelk.runtime.api.service.ScriptExecutionResult;
 import org.reactivestreams.Publisher;
@@ -42,29 +42,37 @@ class EvaluateResponseBody {
     }
 
     Publisher<byte[]> evaluate() {
+        if (responseBody == null) return Mono.empty();
+
         // Response body
-        if (responseBody != null) {
-            if (ScriptUtils.isScript(responseBody)) {
-                // TODO: if it is script and  the trimmed content is  payload,...then we just get the content
-                //  without evaluating nothing
-                //    e.g: message.getContent().asByteArrayStream();
-
-                try {
-                    ScriptExecutionResult result =
-                            scriptEngine.evaluate(responseBody, message, flowContext);
-                    Object object = result.getObject();
-                    return Mono.just(object.toString().getBytes());
-                } catch (ScriptException e) {
-                    return Mono.just(e.getMessage().getBytes());
-                }
-            } else {
-                return Mono.just(responseBody.getBytes());
-            }
-
+        if (ScriptUtils.isScript(responseBody)) {
+            return bodyStreamFromScript();
         } else {
-            // The content type comes from the message typed content
-            TypedContent<?> typedContent = message.getContent();
-            return typedContent.asByteArrayStream();
+            // It is just plain text
+            return Mono.just(responseBody.getBytes());
         }
+
+    }
+
+    private Publisher<byte[]> bodyStreamFromScript() {
+        if (isBodyMessagePayload(responseBody)) {
+            return message.getContent().asByteArrayStream();
+        }else if (ScriptUtils.isEmpty(responseBody)) {
+         return Mono.empty();
+            } else {
+            try {
+                ScriptExecutionResult result =
+                        scriptEngine.evaluate(responseBody, message, flowContext);
+                Object object = result.getObject();
+                return Mono.just(object.toString().getBytes());
+            } catch (ScriptException e) {
+                return Mono.just(e.getMessage().getBytes());
+            }
+        }
+    }
+
+    private boolean isBodyMessagePayload(String responseBody) {
+        String unwrappedScript = ScriptUtils.unwrap(responseBody);
+        return "payload".equals(StringUtils.trim(unwrappedScript));
     }
 }

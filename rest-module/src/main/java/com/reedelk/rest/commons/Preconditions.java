@@ -1,5 +1,6 @@
 package com.reedelk.rest.commons;
 
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 
 import java.util.function.Predicate;

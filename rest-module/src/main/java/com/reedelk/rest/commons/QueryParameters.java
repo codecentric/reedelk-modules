@@ -1,5 +1,6 @@
 package com.reedelk.rest.commons;
 
+import com.reedelk.runtime.api.commons.StringUtils;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
 import java.util.HashMap;

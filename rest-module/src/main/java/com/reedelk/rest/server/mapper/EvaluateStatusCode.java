@@ -1,7 +1,7 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.commons.StringUtils;
 import com.reedelk.runtime.api.commons.ScriptUtils;
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
