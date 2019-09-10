@@ -18,12 +18,12 @@ import reactor.netty.http.server.HttpServerRequest;
 
 import java.io.Serializable;
 import java.net.InetSocketAddress;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import static com.reedelk.rest.server.mapper.HttpRequestAttribute.*;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -63,12 +63,12 @@ class HttpRequestMessageMapperTest {
 
         // Then
         HashMap<String, List<String>> expectedQueryParams = new HashMap<>();
-        expectedQueryParams.put("queryParam1", Collections.singletonList("queryValue1"));
-        expectedQueryParams.put("queryParam2", Collections.singletonList("queryValue2"));
+        expectedQueryParams.put("queryParam1", singletonList("queryValue1"));
+        expectedQueryParams.put("queryParam2", singletonList("queryValue2"));
 
-        HashMap<String, String> expectedHeaders = new HashMap<>();
-        expectedHeaders.put(HttpHeader.CONTENT_TYPE, "application/json");
-        expectedHeaders.put("X-Correlation-ID", "aabbccdd1");
+        HashMap<String, List<String>> expectedHeaders = new HashMap<>();
+        expectedHeaders.put(HttpHeader.CONTENT_TYPE, singletonList("application/json"));
+        expectedHeaders.put("X-Correlation-ID", singletonList("aabbccdd1"));
 
         assertThatContainsAttribute(message, remoteAddress(), "localhost/127.0.0.1:7070");
         assertThatContainsAttribute(message, matchingPath(), matchingPath);
