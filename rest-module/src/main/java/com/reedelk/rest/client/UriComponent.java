@@ -97,7 +97,7 @@ public class UriComponent {
     }
 
     private static String getVariableValueAsString(Object variableValue) {
-        return (variableValue != null ? variableValue.toString() : "");
+        return (variableValue != null ? variableValue.toString() : StringUtils.EMPTY);
     }
 
     private static String getVariableName(String match) {

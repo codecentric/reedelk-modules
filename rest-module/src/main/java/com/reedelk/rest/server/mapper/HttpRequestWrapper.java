@@ -1,9 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.commons.AsSerializableMap;
-import com.reedelk.rest.commons.HttpHeadersAsMap;
-import com.reedelk.rest.commons.MimeTypeExtract;
-import com.reedelk.rest.commons.QueryParameters;
+import com.reedelk.rest.commons.*;
 import com.reedelk.runtime.api.message.type.MimeType;
 import reactor.netty.ByteBufFlux;
 import reactor.netty.http.server.HttpServerRequest;
@@ -45,7 +42,7 @@ class HttpRequestWrapper {
         int queryParamsStart = request.uri().indexOf("?");
         return queryParamsStart > -1 ?
                 request.uri().substring(queryParamsStart + 1) :
-                "";
+                StringUtils.EMPTY;
     }
 
     String requestPath() {

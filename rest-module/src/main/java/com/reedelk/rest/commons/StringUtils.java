@@ -21,4 +21,8 @@ public class StringUtils {
     public static boolean isNotBlank(final CharSequence sequence) {
         return !isBlank(sequence);
     }
+
+    public static String trim(String str) {
+        return str == null ? null : str.trim();
+    }
 }

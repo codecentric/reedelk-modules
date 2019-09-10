@@ -1,13 +1,14 @@
 package com.reedelk.rest.server;
 
 
+import com.reedelk.rest.commons.StringUtils;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 class UriTemplateStructure {
 
-    private static final String EMPTY = "";
     private static final String DEFAULT_REGEXP = "([^/]*)";
 
     private static final char END_VARIABLE = '}';
@@ -83,6 +84,6 @@ class UriTemplateStructure {
     }
 
     private static String quote(StringBuilder builder) {
-        return (builder.length() > 0 ? Pattern.quote(builder.toString()) : EMPTY);
+        return (builder.length() > 0 ? Pattern.quote(builder.toString()) : StringUtils.EMPTY);
     }
 }

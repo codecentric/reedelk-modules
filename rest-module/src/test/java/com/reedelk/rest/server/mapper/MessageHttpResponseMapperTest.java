@@ -1,8 +1,10 @@
 package com.reedelk.rest.server.mapper;
 
+import com.reedelk.rest.commons.HttpHeader;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import com.reedelk.runtime.api.service.ScriptExecutionResult;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -111,6 +113,38 @@ class MessageHttpResponseMapperTest {
         // Then
         verify(response).status(HttpResponseStatus.OK);
     }
+
+    @Test
+    void shouldSetContentTypeHeaderFromMessageContentTypeWhenBodyIsPayload() throws ScriptException {
+        // Given
+        MessageHttpResponseMapper mapper = newMapperWithBody("#[payload]");
+        Message message = MessageBuilder.get().text("my text body").build();
+
+        ScriptExecutionResult result = new TestScriptExecutionResult("my text body");
+        doReturn(result)
+                .when(scriptEngine)
+                .evaluate("#[payload]", message, flowContext);
+
+        // When
+        mapper.map(message, response, flowContext);
+
+        // Then
+        verify(response).addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.toString());
+    }
+
+    @Test
+    void shouldSetContentTypeHeaderWhenBodyIsText() {
+        // Given
+        MessageHttpResponseMapper mapper = newMapperWithBody("my text body");
+        Message message = MessageBuilder.get().build();
+
+        // When
+        mapper.map(message, response, flowContext);
+
+        // Then
+        verify(response).addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.toString());
+    }
+
 
     private void assertThatStreamIs(Publisher<byte[]> actualStream, String expected) {
         List<String> block = Flux.from(actualStream).map(String::new).collectList().block();
