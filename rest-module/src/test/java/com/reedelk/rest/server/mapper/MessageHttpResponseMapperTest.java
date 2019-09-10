@@ -1,6 +1,7 @@
 package com.reedelk.rest.server.mapper;
 
 import com.reedelk.rest.commons.HttpHeader;
+import com.reedelk.rest.commons.StringUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -22,8 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MessageHttpResponseMapperTest {
@@ -133,7 +133,7 @@ class MessageHttpResponseMapperTest {
     }
 
     @Test
-    void shouldSetContentTypeHeaderWhenBodyIsText() {
+    void shouldSetContentTypeHeaderWhenBodyIsNotText() {
         // Given
         MessageHttpResponseMapper mapper = newMapperWithBody("my text body");
         Message message = MessageBuilder.get().build();
@@ -145,10 +145,36 @@ class MessageHttpResponseMapperTest {
         verify(response).addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.toString());
     }
 
+    @Test
+    void shouldNotSetContentTypeHeaderWhenBodyIsEmptyText() {
+        // Given
+        MessageHttpResponseMapper mapper = newMapperWithBody("");
+        Message message = MessageBuilder.get().build();
+
+        // When
+        mapper.map(message, response, flowContext);
+
+        // Then
+        verify(response, never()).addHeader(anyString(), anyString());
+    }
+
+    @Test
+    void shouldNotSetContentTypeHeaderWhenBodyIsNullText() {
+        // Given
+        MessageHttpResponseMapper mapper = newMapperWithBody(null);
+        Message message = MessageBuilder.get().build();
+
+        // When
+        mapper.map(message, response, flowContext);
+
+        // Then
+        verify(response, never()).addHeader(anyString(), anyString());
+    }
+
 
     private void assertThatStreamIs(Publisher<byte[]> actualStream, String expected) {
         List<String> block = Flux.from(actualStream).map(String::new).collectList().block();
-        String streamAsString = String.join("", block);
+        String streamAsString = String.join(StringUtils.EMPTY, block);
         assertThat(streamAsString).isEqualTo(expected);
     }
 
