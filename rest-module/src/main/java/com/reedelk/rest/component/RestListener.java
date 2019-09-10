@@ -3,6 +3,7 @@ package com.reedelk.rest.component;
 import com.reedelk.rest.configuration.RestListenerConfiguration;
 import com.reedelk.rest.configuration.RestListenerErrorResponse;
 import com.reedelk.rest.configuration.RestMethod;
+import com.reedelk.rest.server.HttpRequestHandler;
 import com.reedelk.rest.server.Server;
 import com.reedelk.rest.server.ServerProvider;
 import com.reedelk.runtime.api.annotation.*;
@@ -57,7 +58,7 @@ public class RestListener extends AbstractInbound {
 
     @TabGroup("Response headers")
     @Property("Response headers")
-    private Map<String,String> headers = Collections.emptyMap();
+    private Map<String, String> headers = Collections.emptyMap();
 
     @Property("Use error response")
     private Boolean useErrorResponse;
@@ -66,12 +67,26 @@ public class RestListener extends AbstractInbound {
     @When(propertyName = "useErrorResponse", propertyValue = "true")
     private RestListenerErrorResponse errorResponse;
 
+    // TODO: Test what would happen if we cannot start the server...?
+
     @Override
     public void onStart() {
         requireNonNull(configuration, "configuration");
-        // TODO: Test what would happen if we cannot start the server...?
+        requireNonNull(method, "method");
+        requireNonNull(path, "path");
+
         Server server = provider.get(configuration);
-        server.addRoute(method, path, body, status, headers, errorResponse, scriptEngine, RestListener.this);
+
+        HttpRequestHandler httpRequestHandler =
+                HttpRequestHandler.builder()
+                        .responseBody(body)
+                        .responseHeaders(headers)
+                        .responseStatus(status)
+                        .scriptEngine(scriptEngine)
+                        .errorResponse(errorResponse)
+                        .inboundEventListener(RestListener.this)
+                        .build();
+        server.addRoute(method, path, httpRequestHandler);
     }
 
     @Override
@@ -85,16 +100,16 @@ public class RestListener extends AbstractInbound {
         }
     }
 
+    public void setConfiguration(RestListenerConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     public void setPath(String path) {
         this.path = path;
     }
 
     public void setMethod(RestMethod method) {
         this.method = method;
-    }
-
-    public void setConfiguration(RestListenerConfiguration configuration) {
-        this.configuration = configuration;
     }
 
     public void setBody(String body) {
@@ -107,6 +122,10 @@ public class RestListener extends AbstractInbound {
 
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
+    }
+
+    public void setUseErrorResponse(Boolean useErrorResponse) {
+        this.useErrorResponse = useErrorResponse;
     }
 
     public void setErrorResponse(RestListenerErrorResponse errorResponse) {

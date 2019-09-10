@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.util.IllegalReferenceCountException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.SynchronousSink;
+import reactor.netty.http.server.HttpServerRequest;
 
 import java.nio.charset.Charset;
 import java.util.Optional;
@@ -14,9 +15,10 @@ import java.util.function.BiConsumer;
 
 import static com.reedelk.rest.commons.InboundProperty.*;
 
-class HttpRequestToMessage {
+public class HttpRequestMessageMapper {
 
-    static Message from(HttpRequestWrapper request) {
+    public Message map(HttpServerRequest httpRequest) {
+        HttpRequestWrapper request = new HttpRequestWrapper(httpRequest);
         HttpRequestAttributes requestAttributes = new HttpRequestAttributes();
         requestAttributes.put(path(), request.uri());
         requestAttributes.put(method(), request.method());

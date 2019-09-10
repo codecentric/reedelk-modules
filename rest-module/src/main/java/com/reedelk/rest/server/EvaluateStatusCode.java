@@ -23,7 +23,7 @@ public class EvaluateStatusCode {
     private FlowContext flowContext;
     private ScriptEngineService scriptEngine;
 
-    public EvaluateStatusCode(HttpResponseStatus defaultCode) {
+    private EvaluateStatusCode(HttpResponseStatus defaultCode) {
         this.defaultCode = defaultCode;
     }
 

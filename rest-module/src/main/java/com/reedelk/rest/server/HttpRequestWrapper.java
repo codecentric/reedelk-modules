@@ -16,7 +16,7 @@ import java.util.TreeMap;
 
 public class HttpRequestWrapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpRequestToMessage.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestWrapper.class);
 
     private final HttpServerRequest request;
 
