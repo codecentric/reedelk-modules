@@ -67,7 +67,6 @@ public class RestListener extends AbstractInbound {
     @When(propertyName = "useErrorResponse", propertyValue = "true")
     private RestListenerErrorResponse errorResponse;
 
-    // TODO: Test what would happen if we cannot start the server...?
 
     @Override
     public void onStart() {
