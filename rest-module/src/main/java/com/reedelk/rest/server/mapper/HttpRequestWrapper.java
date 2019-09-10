@@ -8,7 +8,6 @@ import com.reedelk.runtime.api.message.type.MimeType;
 import reactor.netty.ByteBufFlux;
 import reactor.netty.http.server.HttpServerRequest;
 
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -45,7 +44,7 @@ class HttpRequestWrapper {
         // Keep only query parameters from the uri
         int queryParamsStart = request.uri().indexOf("?");
         return queryParamsStart > -1 ?
-                request.uri().substring(queryParamsStart) :
+                request.uri().substring(queryParamsStart + 1) :
                 "";
     }
 
@@ -61,8 +60,8 @@ class HttpRequestWrapper {
         return request.receive();
     }
 
-    InetSocketAddress remoteAddress() {
-        return request.remoteAddress();
+    String remoteAddress() {
+        return request.remoteAddress().toString();
     }
 
     HashMap<String, List<String>> queryParams() {
