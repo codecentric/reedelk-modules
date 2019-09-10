@@ -1,5 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
+import com.reedelk.rest.commons.IsBoolean;
 import com.reedelk.rest.configuration.listener.ListenerErrorResponse;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -14,15 +15,17 @@ import java.util.Map;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static java.util.Objects.requireNonNull;
 
 public class MessageHttpResponseMapper {
 
-    private final ListenerErrorResponse errorResponse;
     private final Map<String, String> responseHeaders;
     private final ScriptEngineService scriptEngine;
     private final Boolean useErrorResponse;
     private final String responseStatus;
     private final String responseBody;
+
+    private ListenerErrorResponse errorResponse;
 
     public MessageHttpResponseMapper(
             ScriptEngineService scriptEngine,
@@ -31,10 +34,14 @@ public class MessageHttpResponseMapper {
             Map<String, String> responseHeaders,
             Boolean useErrorResponse,
             ListenerErrorResponse errorResponse) {
-        this.useErrorResponse = useErrorResponse;
+        this.useErrorResponse = IsBoolean._true(useErrorResponse);
+        if (this.useErrorResponse){
+            this.errorResponse =
+                    requireNonNull(errorResponse,
+                            "error response object must be present when 'useErrorResponse' property is true");
+        }
         this.responseHeaders = responseHeaders;
         this.responseStatus = responseStatus;
-        this.errorResponse = errorResponse;
         this.scriptEngine = scriptEngine;
         this.responseBody = responseBody;
     }
@@ -106,5 +113,4 @@ public class MessageHttpResponseMapper {
         // Map content body
         return Mono.just(exception.getMessage().getBytes());
     }
-
 }
