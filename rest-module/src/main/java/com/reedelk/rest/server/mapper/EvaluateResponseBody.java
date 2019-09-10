@@ -45,7 +45,10 @@ class EvaluateResponseBody {
         // Response body
         if (responseBody != null) {
             if (ScriptUtils.isScript(responseBody)) {
-                // Custom body - evaluate script - or just return the value (if it is not a script)
+                // TODO: if it is script and  the trimmed content is  payload,...then we just get the content
+                //  without evaluating nothing
+                //    e.g: message.getContent().asByteArrayStream();
+
                 try {
                     ScriptExecutionResult result =
                             scriptEngine.evaluate(responseBody, message, flowContext);

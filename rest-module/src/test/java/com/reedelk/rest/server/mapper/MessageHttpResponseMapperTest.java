@@ -1,6 +1,5 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.commons.HttpHeader;
 import com.reedelk.rest.commons.StringUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -8,6 +7,8 @@ import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import com.reedelk.runtime.api.service.ScriptExecutionResult;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +22,9 @@ import javax.script.Bindings;
 import javax.script.ScriptException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -160,7 +163,7 @@ class MessageHttpResponseMapperTest {
         mapper.map(message, response, flowContext);
 
         // Then
-        verify(response).addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.toString());
+        verify(response).addHeader(CONTENT_TYPE, MimeType.TEXT.toString());
     }
 
     @Test
@@ -173,7 +176,7 @@ class MessageHttpResponseMapperTest {
         mapper.map(message, response, flowContext);
 
         // Then
-        verify(response).addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.toString());
+        verify(response).addHeader(CONTENT_TYPE, MimeType.TEXT.toString());
     }
 
     @Test
@@ -202,6 +205,64 @@ class MessageHttpResponseMapperTest {
         verify(response, never()).addHeader(anyString(), anyString());
     }
 
+    @Test
+    void shouldAddAdditionalHeaders() {
+        // Given
+        HttpHeaders initialHeaders = new DefaultHttpHeaders();
+
+        doReturn(initialHeaders).when(response).responseHeaders();
+
+        Map<String,String> headers = new HashMap<>();
+        headers.put("header1", "my header 1");
+        headers.put("header2", "my header 2");
+
+        MessageHttpResponseMapper mapper = newMapperWithAdditionalHeaders(headers);
+        Message message = MessageBuilder.get().build();
+
+        // When
+        mapper.map(message, response, flowContext);
+
+        // Then
+        assertThatContainsHeader(initialHeaders,"header1", "my header 1");
+        assertThatContainsHeader(initialHeaders,"header2", "my header 2");
+    }
+
+    @Test
+    void shouldNotAddAnythingAndNotThrowExceptionWhenAdditionalHeadersIsNull() {
+        // Given
+        HttpHeaders initialHeaders = new DefaultHttpHeaders();
+        initialHeaders.add(CONTENT_TYPE, "text/html");
+
+        doReturn(initialHeaders).when(response).responseHeaders();
+
+        Map<String,String> headers = new HashMap<>();
+        headers.put("coNteNt-TyPe", "new content type");
+
+        MessageHttpResponseMapper mapper = newMapperWithAdditionalHeaders(headers);
+        Message message = MessageBuilder.get().build();
+
+        // When
+        mapper.map(message, response, flowContext);
+
+        // Then
+        assertThat(initialHeaders).hasSize(1);
+        assertThatContainsHeader(initialHeaders,"coNteNt-TyPe", "new content type");
+    }
+
+    @Test
+    void shouldOverrideHeaderIfExistsAlreadyCaseInsensitive() {
+        // Given
+        HttpHeaders initialHeaders = new DefaultHttpHeaders();
+
+        MessageHttpResponseMapper mapper = newMapperWithAdditionalHeaders(null);
+        Message message = MessageBuilder.get().build();
+
+        // When
+        mapper.map(message, response, flowContext);
+
+        // Then
+        assertThat(initialHeaders).isEmpty();
+    }
 
     private void assertThatStreamIs(Publisher<byte[]> actualStream, String expected) {
         List<String> block = Flux.from(actualStream).map(String::new).collectList().block();
@@ -214,16 +275,27 @@ class MessageHttpResponseMapperTest {
         assertThat(data).isEmpty();
     }
 
-    private MessageHttpResponseMapper newMapperWithStatus(String responseStatus) {
-        return new MessageHttpResponseMapper(
-                scriptEngine, "sample body", responseStatus,
-                new HashMap<>(),null,null);
+    private void assertThatContainsHeader(HttpHeaders initialHeaders, String headerName, String headerValue) {
+        assertThat(initialHeaders.contains(headerName)).isTrue();
+        assertThat(initialHeaders.get(headerName)).isEqualTo(headerValue);
     }
 
     private MessageHttpResponseMapper newMapperWithBody(String responseBody) {
         return new MessageHttpResponseMapper(
                 scriptEngine, responseBody, HttpResponseStatus.OK.codeAsText().toString(),
                 new HashMap<>(),null,null);
+    }
+
+    private MessageHttpResponseMapper newMapperWithStatus(String responseStatus) {
+        return new MessageHttpResponseMapper(
+                scriptEngine, "sample body", responseStatus,
+                new HashMap<>(),null,null);
+    }
+
+    private MessageHttpResponseMapper newMapperWithAdditionalHeaders(Map<String,String> responseHeaders) {
+        return new MessageHttpResponseMapper(
+                scriptEngine, "sample body", HttpResponseStatus.OK.codeAsText().toString(),
+                responseHeaders,null,null);
     }
 
     class TestScriptExecutionResult implements ScriptExecutionResult {

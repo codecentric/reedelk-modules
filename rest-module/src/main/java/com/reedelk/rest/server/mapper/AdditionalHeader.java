@@ -15,6 +15,8 @@ class AdditionalHeader {
      * @param additionalHeaders additional user defined headers.
      */
     static void addAll(HttpServerResponse response, Map<String, String> additionalHeaders) {
+        if (additionalHeaders == null) return;
+
         HttpHeaders currentHeaders = response.responseHeaders();
         additionalHeaders.forEach((headerName, headerValue) -> {
             Optional<String> optionalMatchingHeaderName = matchingHeader(currentHeaders, headerName);
