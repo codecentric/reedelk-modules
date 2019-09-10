@@ -15,7 +15,7 @@ class UriTemplate {
     private final UriTemplateStructure uriTemplateStructure;
 
     UriTemplate(String uriTemplate) {
-        requireNonNull(uriTemplate, "Uri Template");
+        requireNonNull(uriTemplate, "uri template");
         String uriTemplateWithoutQueryParams = RemoveQueryParams.from(uriTemplate);
         this.uriTemplateStructure = UriTemplateStructure.from(uriTemplateWithoutQueryParams);
     }
