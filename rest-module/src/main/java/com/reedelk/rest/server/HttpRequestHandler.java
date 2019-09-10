@@ -41,13 +41,11 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
     public Publisher<Void> apply(HttpServerRequest request, HttpServerResponse response) {
         // 1. Map the incoming HTTP request to a Message
         Message inMessage = requestMapper.map(request);
-
+        // 2. Pass down through the processors pipeline the Message
         return Mono.just(inMessage)
-                // 2. Pass down through the processors pipeline the Message
                 // 3. Maps back the out Message to the HTTP response
                 .flatMap(message -> Mono.create((Consumer<MonoSink<Publisher<byte[]>>>) sink ->
                         inboundEventListener.onEvent(message, new OnPipelineResult(sink, response))))
-
                 // 4. Streams back to the HTTP response channel the response data stream
                 .flatMap(byteStream -> Mono.from(response.sendByteArray(byteStream)));
     }
