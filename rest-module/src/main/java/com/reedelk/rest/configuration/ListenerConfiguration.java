@@ -7,8 +7,8 @@ import org.osgi.service.component.annotations.Component;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @Shared
-@Component(service = RestListenerConfiguration.class, scope = PROTOTYPE)
-public class RestListenerConfiguration implements Implementor {
+@Component(service = ListenerConfiguration.class, scope = PROTOTYPE)
+public class ListenerConfiguration implements Implementor {
 
     @Property("Host")
     @Default("localhost")

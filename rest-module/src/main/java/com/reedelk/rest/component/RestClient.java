@@ -3,7 +3,7 @@ package com.reedelk.rest.component;
 import com.reedelk.rest.client.*;
 import com.reedelk.rest.commons.IsNotSuccessful;
 import com.reedelk.rest.commons.MessageBodyProvider;
-import com.reedelk.rest.configuration.RestClientConfiguration;
+import com.reedelk.rest.configuration.ClientConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
@@ -47,7 +47,7 @@ public class RestClient implements ProcessorSync {
 
     @Property("Client config")
     @When(propertyName = "useConfiguration", propertyValue = "true")
-    private RestClientConfiguration configuration;
+    private ClientConfiguration configuration;
 
     @Property("Path")
     @Hint("/resource/{id}")
@@ -141,7 +141,7 @@ public class RestClient implements ProcessorSync {
         this.useConfiguration = useConfiguration;
     }
 
-    public void setConfiguration(RestClientConfiguration configuration) {
+    public void setConfiguration(ClientConfiguration configuration) {
         this.configuration = configuration;
     }
 

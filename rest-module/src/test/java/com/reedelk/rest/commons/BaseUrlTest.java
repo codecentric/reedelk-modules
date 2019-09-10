@@ -1,7 +1,7 @@
 package com.reedelk.rest.commons;
 
+import com.reedelk.rest.configuration.ClientConfiguration;
 import com.reedelk.rest.configuration.HttpProtocol;
-import com.reedelk.rest.configuration.RestClientConfiguration;
 import com.reedelk.runtime.api.exception.ESBException;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ class BaseUrlTest {
     @Test
     void shouldBuildBaseUrlCorrectly() {
         // Given
-        RestClientConfiguration configuration = new RestClientConfiguration();
+        ClientConfiguration configuration = new ClientConfiguration();
         configuration.setProtocol(HttpProtocol.HTTPS);
         configuration.setHost("www.reedelk.com");
         configuration.setBasePath("/v3");
@@ -28,7 +28,7 @@ class BaseUrlTest {
     @Test
     void shouldIgnoreProvidedSchemeAndReplaceItWithTheChosenHttpProtocol() {
         // Given
-        RestClientConfiguration configuration = new RestClientConfiguration();
+        ClientConfiguration configuration = new ClientConfiguration();
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setHost("https://www.reedelk.com");
         configuration.setBasePath("/v2");
@@ -43,7 +43,7 @@ class BaseUrlTest {
     @Test
     void shouldThrowExceptionWhenHostIsEmpty() {
         // Given
-        RestClientConfiguration configuration = new RestClientConfiguration();
+        ClientConfiguration configuration = new ClientConfiguration();
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setHost("");
         configuration.setBasePath("/v1");

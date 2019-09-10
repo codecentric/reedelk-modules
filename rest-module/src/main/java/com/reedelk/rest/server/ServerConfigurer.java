@@ -25,13 +25,13 @@ import static java.util.Objects.requireNonNull;
 
 class ServerConfigurer {
 
-    static void configure(ServerBootstrap bootstrap, RestListenerConfiguration configuration) {
+    static void configure(ServerBootstrap bootstrap, ListenerConfiguration configuration) {
         setChannelOption(bootstrap, SO_BACKLOG, configuration.getSocketBacklog());
         setChannelOption(bootstrap, CONNECT_TIMEOUT_MILLIS, configuration.getConnectionTimeoutMillis());
         setChannelChildOption(bootstrap, SO_KEEPALIVE, configuration.getKeepAlive());
     }
 
-    static Consumer<Connection> onConnection(RestListenerConfiguration configuration) {
+    static Consumer<Connection> onConnection(ListenerConfiguration configuration) {
         return connection -> {
             if (configuration.getReadTimeoutMillis() != null) {
                 connection.addHandlerLast("readTimeout", new ReadTimeoutHandler(configuration.getReadTimeoutMillis()));
@@ -39,28 +39,28 @@ class ServerConfigurer {
         };
     }
 
-    static HttpServer configure(HttpServer server, RestListenerConfiguration configuration) {
+    static HttpServer configure(HttpServer server, ListenerConfiguration configuration) {
         server = configureHost(server, configuration);
         server = configurePort(server, configuration);
         server = configureCompress(server, configuration);
         return server.httpRequestDecoder(ServerConfigurer.configure(configuration));
     }
 
-    private static HttpServer configureCompress(HttpServer server, RestListenerConfiguration configuration) {
+    private static HttpServer configureCompress(HttpServer server, ListenerConfiguration configuration) {
         if (configuration.getCompress() != null) {
             return server.compress(configuration.getCompress());
         }
         return server;
     }
 
-    private static HttpServer configureHost(HttpServer server, RestListenerConfiguration configuration) {
+    private static HttpServer configureHost(HttpServer server, ListenerConfiguration configuration) {
         if (configuration.getHost() != null) {
             return server.host(configuration.getHost());
         }
         return server;
     }
 
-    private static HttpServer configurePort(HttpServer server, RestListenerConfiguration configuration) {
+    private static HttpServer configurePort(HttpServer server, ListenerConfiguration configuration) {
         return server.port(configuration.getPort());
     }
 
@@ -76,7 +76,7 @@ class ServerConfigurer {
         }
     }
 
-    private static Function<HttpRequestDecoderSpec, HttpRequestDecoderSpec> configure(RestListenerConfiguration configuration) {
+    private static Function<HttpRequestDecoderSpec, HttpRequestDecoderSpec> configure(ListenerConfiguration configuration) {
         return decoder -> {
             if (configuration.getMaxChunkSize() != null) {
                 decoder.maxChunkSize(configuration.getMaxChunkSize());
@@ -91,7 +91,7 @@ class ServerConfigurer {
         };
     }
 
-    static TcpServer configureSecurity(TcpServer bootstrap, RestListenerConfiguration configuration) {
+    static TcpServer configureSecurity(TcpServer bootstrap, ListenerConfiguration configuration) {
         // Security is configured if and only if the protocol is HTTPS
         if (!HttpProtocol.HTTPS.equals(configuration.getProtocol())) return bootstrap;
         if (configuration.getSecurityConfiguration() == null) return bootstrap;

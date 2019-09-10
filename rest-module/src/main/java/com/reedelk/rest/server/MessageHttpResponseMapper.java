@@ -1,6 +1,6 @@
 package com.reedelk.rest.server;
 
-import com.reedelk.rest.configuration.RestListenerErrorResponse;
+import com.reedelk.rest.configuration.ListenerErrorResponse;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.service.ScriptEngineService;
@@ -17,7 +17,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
 public class MessageHttpResponseMapper {
 
-    private final RestListenerErrorResponse errorResponse;
+    private final ListenerErrorResponse errorResponse;
     private final Map<String, String> responseHeaders;
     private final ScriptEngineService scriptEngine;
     private final String responseStatus;
@@ -28,7 +28,7 @@ public class MessageHttpResponseMapper {
             String responseBody,
             String responseStatus,
             Map<String, String> responseHeaders,
-            RestListenerErrorResponse errorResponse) {
+            ListenerErrorResponse errorResponse) {
         this.responseHeaders = responseHeaders;
         this.responseStatus = responseStatus;
         this.errorResponse = errorResponse;

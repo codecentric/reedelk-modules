@@ -1,7 +1,7 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.configuration.RestListenerConfiguration;
-import com.reedelk.rest.configuration.RestListenerErrorResponse;
+import com.reedelk.rest.configuration.ListenerConfiguration;
+import com.reedelk.rest.configuration.ListenerErrorResponse;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.rest.server.HttpRequestHandler;
 import com.reedelk.rest.server.Server;
@@ -33,7 +33,7 @@ public class RestListener extends AbstractInbound {
     private ScriptEngineService scriptEngine;
 
     @Property("Configuration")
-    private RestListenerConfiguration configuration;
+    private ListenerConfiguration configuration;
 
     @Property("Path")
     @Default("/")
@@ -65,7 +65,7 @@ public class RestListener extends AbstractInbound {
 
     @Property("Error response")
     @When(propertyName = "useErrorResponse", propertyValue = "true")
-    private RestListenerErrorResponse errorResponse;
+    private ListenerErrorResponse errorResponse;
 
 
     @Override
@@ -99,7 +99,7 @@ public class RestListener extends AbstractInbound {
         }
     }
 
-    public void setConfiguration(RestListenerConfiguration configuration) {
+    public void setConfiguration(ListenerConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -127,7 +127,7 @@ public class RestListener extends AbstractInbound {
         this.useErrorResponse = useErrorResponse;
     }
 
-    public void setErrorResponse(RestListenerErrorResponse errorResponse) {
+    public void setErrorResponse(ListenerErrorResponse errorResponse) {
         this.errorResponse = errorResponse;
     }
 }

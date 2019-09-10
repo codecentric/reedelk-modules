@@ -1,8 +1,8 @@
 package com.reedelk.rest.client;
 
 import com.reedelk.rest.commons.BaseUrl;
+import com.reedelk.rest.configuration.ClientConfiguration;
 import com.reedelk.rest.configuration.HttpProtocol;
-import com.reedelk.rest.configuration.RestClientConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
 import reactor.netty.Connection;
 import reactor.netty.http.client.HttpClientRequest;
@@ -19,7 +19,7 @@ public class ClientBuilder {
     private boolean useConfiguration;
 
     private RestMethod method;
-    private RestClientConfiguration configuration; // only used if useConfiguration == true;
+    private ClientConfiguration configuration; // only used if useConfiguration == true;
     private BiConsumer<HttpClientRequest, Connection> onRequestHandler;
 
     private ClientBuilder() {
@@ -44,7 +44,7 @@ public class ClientBuilder {
         return this;
     }
 
-    public ClientBuilder configuration(RestClientConfiguration configuration) {
+    public ClientBuilder configuration(ClientConfiguration configuration) {
         this.configuration = configuration;
         return this;
     }

@@ -9,8 +9,8 @@ import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@Component(service = RestListenerErrorResponse.class, scope = PROTOTYPE)
-public class RestListenerErrorResponse implements Implementor {
+@Component(service = ListenerErrorResponse.class, scope = PROTOTYPE)
+public class ListenerErrorResponse implements Implementor {
 
     @ScriptInline
     @Hint("error body text")

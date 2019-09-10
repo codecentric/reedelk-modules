@@ -9,8 +9,8 @@ import org.osgi.service.component.annotations.Component;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @Shared
-@Component(service = RestClientConfiguration.class, scope = PROTOTYPE)
-public class RestClientConfiguration implements Implementor {
+@Component(service = ClientConfiguration.class, scope = PROTOTYPE)
+public class ClientConfiguration implements Implementor {
 
     @Property("Host")
     @Default("localhost")

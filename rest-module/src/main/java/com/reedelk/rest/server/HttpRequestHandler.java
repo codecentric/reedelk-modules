@@ -1,6 +1,6 @@
 package com.reedelk.rest.server;
 
-import com.reedelk.rest.configuration.RestListenerErrorResponse;
+import com.reedelk.rest.configuration.ListenerErrorResponse;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -101,7 +101,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         private Map<String, String> responseHeaders;
 
         private ScriptEngineService scriptEngine;
-        private RestListenerErrorResponse errorResponse;
+        private ListenerErrorResponse errorResponse;
         private InboundEventListener inboundEventListener;
 
         public Builder responseStatus(String responseStatus) {
@@ -124,7 +124,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
             return this;
         }
 
-        public Builder errorResponse(RestListenerErrorResponse errorResponse) {
+        public Builder errorResponse(ListenerErrorResponse errorResponse) {
             this.errorResponse = errorResponse;
             return this;
         }

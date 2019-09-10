@@ -1,7 +1,7 @@
 package com.reedelk.rest.commons;
 
+import com.reedelk.rest.configuration.ClientConfiguration;
 import com.reedelk.rest.configuration.HttpProtocol;
-import com.reedelk.rest.configuration.RestClientConfiguration;
 import com.reedelk.runtime.api.exception.ESBException;
 
 import java.net.URI;
@@ -13,7 +13,7 @@ import static com.reedelk.rest.commons.StringUtils.isNotBlank;
 
 public class BaseUrl {
 
-    public static String from(RestClientConfiguration configuration) {
+    public static String from(ClientConfiguration configuration) {
         String basePath = configuration.getBasePath();
         String host = requireNotBlank(configuration.getHost(), "'Host' must not be empty");
         HttpProtocol protocol = requireNotNull(configuration.getProtocol(), "'Protocol' must not be null");

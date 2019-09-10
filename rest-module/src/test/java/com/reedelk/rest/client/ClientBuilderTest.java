@@ -1,7 +1,7 @@
 package com.reedelk.rest.client;
 
+import com.reedelk.rest.configuration.ClientConfiguration;
 import com.reedelk.rest.configuration.HttpProtocol;
-import com.reedelk.rest.configuration.RestClientConfiguration;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.exception.ESBException;
 import org.junit.jupiter.api.BeforeEach;
@@ -125,7 +125,7 @@ class ClientBuilderTest {
     @Test
     void shouldBuildClientWrapperCorrectlyWhenUseConfigurationIsTrue() {
         // Given
-        RestClientConfiguration configuration = new RestClientConfiguration();
+        ClientConfiguration configuration = new ClientConfiguration();
         configuration.setBasePath("/v1");
         configuration.setHost("www.reedelk.com");
         configuration.setProtocol(HttpProtocol.HTTP);
@@ -152,7 +152,7 @@ class ClientBuilderTest {
     @Test
     void shouldBuildClientWrapperCorrectlyNotAssignPortWhenPortIsNullWhenUseConfigurationIsTrue() {
         // Given
-        RestClientConfiguration configuration = new RestClientConfiguration();
+        ClientConfiguration configuration = new ClientConfiguration();
         configuration.setBasePath("/v1");
         configuration.setHost("www.reedelk.com");
         configuration.setProtocol(HttpProtocol.HTTP);
@@ -173,7 +173,7 @@ class ClientBuilderTest {
     @Test
     void shouldBuildClientWrapperCorrectlyAndSetFollowRedirectsWhenUseConfigurationIsTrue() {
         // Given
-        RestClientConfiguration configuration = new RestClientConfiguration();
+        ClientConfiguration configuration = new ClientConfiguration();
         configuration.setBasePath("/v1");
         configuration.setHost("www.reedelk.com");
         configuration.setFollowRedirects(false);
@@ -195,7 +195,7 @@ class ClientBuilderTest {
     @Test
     void shouldBuildClientWrapperCorrectlyAndSetKeepAliveWhenUseConfigurationIsTrue() {
         // Given
-        RestClientConfiguration configuration = new RestClientConfiguration();
+        ClientConfiguration configuration = new ClientConfiguration();
         configuration.setBasePath("/v1");
         configuration.setHost("www.reedelk.com");
         configuration.setKeepAlive(true);
@@ -231,7 +231,7 @@ class ClientBuilderTest {
     @Test
     void shouldBuildClientWrapperThrowExceptionWhenMethodIsNullAndUseConfigurationIsTrue() {
         // Given
-        RestClientConfiguration configuration = new RestClientConfiguration();
+        ClientConfiguration configuration = new ClientConfiguration();
         builder.useConfiguration(true)
                 .onRequestConsumer(requestConsumer)
                 .configuration(configuration);
