@@ -1,7 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
 import com.reedelk.runtime.api.commons.ScriptUtils;
-import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.service.ScriptEngineService;
@@ -55,24 +54,27 @@ class EvaluateResponseBody {
     }
 
     private Publisher<byte[]> bodyStreamFromScript() {
-        if (isBodyMessagePayload(responseBody)) {
+        if (ScriptUtils.isMessagePayload(responseBody)) {
+            // We avoid evaluating a script if we just want to return
+            // the message payload.
             return message.getContent().asByteArrayStream();
-        }else if (ScriptUtils.isEmpty(responseBody)) {
-         return Mono.empty();
-            } else {
-            try {
-                ScriptExecutionResult result =
-                        scriptEngine.evaluate(responseBody, message, flowContext);
-                Object object = result.getObject();
-                return Mono.just(object.toString().getBytes());
-            } catch (ScriptException e) {
-                return Mono.just(e.getMessage().getBytes());
-            }
+
+        } else if (ScriptUtils.isEmpty(responseBody)) {
+            return Mono.empty();
+        } else {
+            return evaluateBodyScript();
         }
     }
 
-    private boolean isBodyMessagePayload(String responseBody) {
-        String unwrappedScript = ScriptUtils.unwrap(responseBody);
-        return "payload".equals(StringUtils.trim(unwrappedScript));
+    // TODO: Test the script what it might return and stuff...
+    private Publisher<byte[]> evaluateBodyScript() {
+        try {
+            ScriptExecutionResult result =
+                    scriptEngine.evaluate(responseBody, message, flowContext);
+            Object object = result.getObject();
+            return Mono.just(object.toString().getBytes());
+        } catch (ScriptException e) {
+            return Mono.just(e.getMessage().getBytes());
+        }
     }
 }
