@@ -13,6 +13,7 @@ import reactor.core.publisher.MonoSink;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
+import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -34,6 +35,14 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         this.listenerResponse = listenerResponse;
         this.scriptEngineService = scriptEngineService;
         this.listenerErrorResponse = listenerErrorResponse;
+    }
+
+    public HttpRequestHandler(String status, String body, Map<String, String> headers, RestListenerErrorResponse restListenerErrorResponse, ScriptEngineService scriptEngineService, InboundEventListener listener) {
+        this.listener = listener;
+        this.listenerResponse = null;
+        this.scriptEngineService = scriptEngineService;
+        this.listenerErrorResponse = null;
+
     }
 
     /**

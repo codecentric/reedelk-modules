@@ -2,20 +2,19 @@ package com.reedelk.rest.component;
 
 import com.reedelk.rest.configuration.RestListenerConfiguration;
 import com.reedelk.rest.configuration.RestListenerErrorResponse;
-import com.reedelk.rest.configuration.RestListenerResponse;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.rest.server.Server;
 import com.reedelk.rest.server.ServerProvider;
-import com.reedelk.runtime.api.annotation.Default;
-import com.reedelk.runtime.api.annotation.ESBComponent;
-import com.reedelk.runtime.api.annotation.Hint;
-import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -28,8 +27,9 @@ public class RestListener extends AbstractInbound {
 
     @Reference
     private ServerProvider provider;
+
     @Reference
-    private ScriptEngineService scriptEngineService;
+    private ScriptEngineService scriptEngine;
 
     @Property("Configuration")
     private RestListenerConfiguration configuration;
@@ -43,10 +43,27 @@ public class RestListener extends AbstractInbound {
     @Default("GET")
     private RestMethod method;
 
-    @Property("Advanced response")
-    private RestListenerResponse response;
+    @ScriptInline
+    @Default("#[payload]")
+    @Hint("content body text")
+    @Property("Response body")
+    private String body;
 
-    @Property("Advanced error response")
+    @ScriptInline
+    @Default("200")
+    @Hint("201")
+    @Property("Response status")
+    private String status;
+
+    @TabGroup("Response headers")
+    @Property("Response headers")
+    private Map<String,String> headers = Collections.emptyMap();
+
+    @Property("Use error response")
+    private Boolean useErrorResponse;
+
+    @Property("Error response")
+    @When(propertyName = "useErrorResponse", propertyValue = "true")
     private RestListenerErrorResponse errorResponse;
 
     @Override
@@ -54,7 +71,7 @@ public class RestListener extends AbstractInbound {
         requireNonNull(configuration, "configuration");
         // TODO: Test what would happen if we cannot start the server...?
         Server server = provider.get(configuration);
-        server.addRoute(method, path, response, errorResponse, scriptEngineService, RestListener.this);
+        server.addRoute(method, path, body, status, headers, errorResponse, scriptEngine, RestListener.this);
     }
 
     @Override
@@ -80,8 +97,16 @@ public class RestListener extends AbstractInbound {
         this.configuration = configuration;
     }
 
-    public void setResponse(RestListenerResponse response) {
-        this.response = response;
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
     }
 
     public void setErrorResponse(RestListenerErrorResponse errorResponse) {

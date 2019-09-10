@@ -9,17 +9,18 @@ import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@Collapsible
 @Component(service = RestListenerErrorResponse.class, scope = PROTOTYPE)
 public class RestListenerErrorResponse implements Implementor {
 
     @ScriptInline
     @Hint("error body text")
+    @Default("#[error]")
     @Property("Response body")
     private String body;
 
     @ScriptInline
     @Hint("500")
+    @Default("500")
     @Property("Response status")
     private String status;
 

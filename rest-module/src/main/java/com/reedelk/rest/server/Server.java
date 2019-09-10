@@ -4,7 +4,6 @@ package com.reedelk.rest.server;
 import com.reedelk.rest.commons.StringUtils;
 import com.reedelk.rest.configuration.RestListenerConfiguration;
 import com.reedelk.rest.configuration.RestListenerErrorResponse;
-import com.reedelk.rest.configuration.RestListenerResponse;
 import com.reedelk.rest.configuration.RestMethod;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.service.ScriptEngineService;
@@ -17,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.server.HttpServer;
 import reactor.netty.tcp.TcpServer;
+
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -50,7 +51,9 @@ public class Server {
 
     public void addRoute(RestMethod method,
                          String path,
-                         RestListenerResponse restListenerResponse,
+                         String status,
+                         String body,
+                         Map<String, String> headers,
                          RestListenerErrorResponse restListenerErrorResponse,
                          ScriptEngineService scriptEngineService,
                          InboundEventListener listener) {
@@ -61,7 +64,7 @@ public class Server {
         String realPath = getRealPath(path);
 
         HttpRequestHandler handler = new HttpRequestHandler(
-                restListenerResponse,
+                status, body, headers,
                 restListenerErrorResponse,
                 scriptEngineService,
                 listener);
