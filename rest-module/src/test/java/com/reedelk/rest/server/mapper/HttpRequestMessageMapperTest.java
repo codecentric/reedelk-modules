@@ -81,17 +81,15 @@ class HttpRequestMessageMapperTest {
         assertThatContainsAttribute(message, headers(), expectedHeaders);
         assertThatContainsAttribute(message, scheme(), HttpScheme.HTTP.toString());
         assertThatContainsAttribute(message, method(), PUT.name());
-        assertThatContentMimeTypeIs(message, MimeType.APPLICATION_JSON);
+
+        // Check that the content's mime type is correct
+        Type contentType = message.getContent().type();
+        MimeType mimeType = contentType.getMimeType();
+        assertThat(mimeType).isEqualTo(MimeType.APPLICATION_JSON);
     }
 
     private void assertThatContainsAttribute(Message message, String attributeName, Serializable attributeValue) {
         MessageAttributes attributes = message.getAttributes();
         assertThat(attributes).containsEntry(attributeName, attributeValue);
-    }
-
-    private void assertThatContentMimeTypeIs(Message message, MimeType expectedMimeType) {
-        Type contentType = message.getContent().type();
-        MimeType mimeType = contentType.getMimeType();
-        assertThat(mimeType).isEqualTo(expectedMimeType);
     }
 }
