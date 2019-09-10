@@ -20,6 +20,7 @@ public class MessageHttpResponseMapper {
     private final ListenerErrorResponse errorResponse;
     private final Map<String, String> responseHeaders;
     private final ScriptEngineService scriptEngine;
+    private final Boolean useErrorResponse;
     private final String responseStatus;
     private final String responseBody;
 
@@ -28,7 +29,9 @@ public class MessageHttpResponseMapper {
             String responseBody,
             String responseStatus,
             Map<String, String> responseHeaders,
+            Boolean useErrorResponse,
             ListenerErrorResponse errorResponse) {
+        this.useErrorResponse = useErrorResponse;
         this.responseHeaders = responseHeaders;
         this.responseStatus = responseStatus;
         this.errorResponse = errorResponse;

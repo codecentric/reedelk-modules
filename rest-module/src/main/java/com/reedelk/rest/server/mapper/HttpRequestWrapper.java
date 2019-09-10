@@ -56,7 +56,7 @@ class HttpRequestWrapper {
                 request.uri();
     }
 
-    ByteBufFlux receive() {
+    ByteBufFlux data() {
         return request.receive();
     }
 

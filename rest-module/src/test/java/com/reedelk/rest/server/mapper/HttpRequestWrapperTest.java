@@ -197,7 +197,7 @@ class HttpRequestWrapperTest {
         doReturn(expectedStream).when(mockRequest).receive();
 
         // When
-        ByteBufFlux actualStream = wrapper.receive();
+        ByteBufFlux actualStream = wrapper.data();
 
         // Then
         assertThat(actualStream).isEqualTo(expectedStream);

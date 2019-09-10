@@ -77,6 +77,7 @@ public class RestListener extends AbstractInbound {
         HttpRequestHandler httpRequestHandler =
                 HttpRequestHandler.builder()
                         .inboundEventListener(RestListener.this)
+                        .useErrorResponse(useErrorResponse)
                         .errorResponse(errorResponse)
                         .scriptEngine(scriptEngine)
                         .responseHeaders(headers)

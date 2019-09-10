@@ -1,5 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
+import com.reedelk.runtime.api.commons.JavaType;
 import com.reedelk.runtime.api.message.type.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.IllegalReferenceCountException;
@@ -21,29 +22,31 @@ class HttpRequestContentMapper {
         // Map the request content and forward it to
         // a sink which maps it to a byte buffer.
         Flux<byte[]> byteArrayStream = request
-                .receive()
+                .data()
                 .retain()
                 .handle(asByteArrayStream());
 
         MimeType mimeType = request.mimeType();
-        Type type = new Type(mimeType);
 
-        if (type.getTypeClass() == String.class) {
+        Class<?> javaType = JavaType.from(mimeType);
+        if (javaType == String.class) {
             // If it  is a String, then we check the charset if present
             // in the mime type to be used for the string conversion.
             Optional<Charset> charset = mimeType.getCharset();
 
             // Map each byte array of the stream to a string
-            Flux<String> stringStream = byteArrayStream.map(bytes -> {
+            Flux<String> streamAsString = byteArrayStream.map(bytes -> {
                 Charset conversionCharset = charset.orElseGet(Charset::defaultCharset);
                 return new String(bytes, conversionCharset);
             });
+
             // The TypedContent is String stream.
-            return new StringStreamContent(stringStream, mimeType);
+            return new StringStreamContent(streamAsString, mimeType);
 
         } else {
             // Generic byte array stream.
-            return new ByteArrayStreamContent(byteArrayStream, mimeType);
+            Type type = new Type(mimeType, byte[].class);
+            return new ByteArrayStreamContent(byteArrayStream, type);
         }
     }
 

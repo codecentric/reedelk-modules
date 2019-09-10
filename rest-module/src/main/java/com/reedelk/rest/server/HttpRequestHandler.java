@@ -101,6 +101,8 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         private String matchingPath;
         private String responseBody;
         private String responseStatus;
+        private Boolean useErrorResponse;
+
         private Map<String, String> responseHeaders;
 
         private ScriptEngineService scriptEngine;
@@ -119,6 +121,11 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
         public Builder responseStatus(String responseStatus) {
             this.responseStatus = responseStatus;
+            return this;
+        }
+
+        public Builder useErrorResponse(Boolean useErrorResponse) {
+            this.useErrorResponse = useErrorResponse;
             return this;
         }
 
@@ -151,6 +158,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                     responseBody,
                     responseStatus,
                     responseHeaders,
+                    useErrorResponse,
                     errorResponse);
             return handler;
         }
