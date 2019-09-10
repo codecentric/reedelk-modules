@@ -30,9 +30,12 @@ class UriTemplate {
     Map<String,String> bind(String uri) {
         requireNonNull(uri, "uri");
 
+        // We must remove the query parameters from the original URI.
+        String uriWithoutQueryParams = RemoveQueryParams.from(uri);
+
         List<String> variableNames = uriTemplateStructure.getVariableNames();
         Map<String, String> result = new HashMap<>();
-        Matcher matcher = uriTemplateStructure.getPattern().matcher(uri);
+        Matcher matcher = uriTemplateStructure.getPattern().matcher(uriWithoutQueryParams);
         if (matcher.find()) {
             // We start from the first group count (the first one is the whole string)
             for (int i = 1; i <= matcher.groupCount(); i++) {
