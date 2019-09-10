@@ -98,6 +98,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
     public static class Builder {
 
+        private String matchingPath;
         private String responseBody;
         private String responseStatus;
         private Map<String, String> responseHeaders;
@@ -106,13 +107,18 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         private ListenerErrorResponse errorResponse;
         private InboundEventListener inboundEventListener;
 
-        public Builder responseStatus(String responseStatus) {
-            this.responseStatus = responseStatus;
+        public Builder matchingPath(String matchingPath) {
+            this.matchingPath = matchingPath;
             return this;
         }
 
         public Builder responseBody(String responseBody) {
             this.responseBody = responseBody;
+            return this;
+        }
+
+        public Builder responseStatus(String responseStatus) {
+            this.responseStatus = responseStatus;
             return this;
         }
 
@@ -139,14 +145,13 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         public HttpRequestHandler build() {
             HttpRequestHandler handler = new HttpRequestHandler();
             handler.inboundEventListener = inboundEventListener;
-            handler.requestMapper = new HttpRequestMessageMapper();
-            handler.responseMapper =
-                    new MessageHttpResponseMapper(
-                            scriptEngine,
-                            responseBody,
-                            responseStatus,
-                            responseHeaders,
-                            errorResponse);
+            handler.requestMapper = new HttpRequestMessageMapper(matchingPath);
+            handler.responseMapper = new MessageHttpResponseMapper(
+                    scriptEngine,
+                    responseBody,
+                    responseStatus,
+                    responseHeaders,
+                    errorResponse);
             return handler;
         }
     }

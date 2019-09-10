@@ -74,17 +74,18 @@ public class RestListener extends AbstractInbound {
         requireNonNull(method, "method");
         requireNonNull(path, "path");
 
-        Server server = provider.get(configuration);
-
         HttpRequestHandler httpRequestHandler =
                 HttpRequestHandler.builder()
-                        .responseBody(body)
+                        .inboundEventListener(RestListener.this)
+                        .errorResponse(errorResponse)
+                        .scriptEngine(scriptEngine)
                         .responseHeaders(headers)
                         .responseStatus(status)
-                        .scriptEngine(scriptEngine)
-                        .errorResponse(errorResponse)
-                        .inboundEventListener(RestListener.this)
+                        .matchingPath(path)
+                        .responseBody(body)
                         .build();
+
+        Server server = provider.get(configuration);
         server.addRoute(method, path, httpRequestHandler);
     }
 

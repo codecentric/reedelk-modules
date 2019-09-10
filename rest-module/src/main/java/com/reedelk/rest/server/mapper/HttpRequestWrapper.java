@@ -2,65 +2,78 @@ package com.reedelk.rest.server.mapper;
 
 import com.reedelk.rest.commons.AsSerializableMap;
 import com.reedelk.rest.commons.HttpHeadersAsMap;
+import com.reedelk.rest.commons.MimeTypeExtract;
 import com.reedelk.rest.commons.QueryParameters;
 import com.reedelk.runtime.api.message.type.MimeType;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import reactor.netty.ByteBufFlux;
 import reactor.netty.http.server.HttpServerRequest;
 
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
-public class HttpRequestWrapper {
-
-    private static final Logger logger = LoggerFactory.getLogger(HttpRequestWrapper.class);
+class HttpRequestWrapper {
 
     private final HttpServerRequest request;
 
-    public HttpRequestWrapper(HttpServerRequest request) {
+    HttpRequestWrapper(HttpServerRequest request) {
         this.request = request;
     }
 
-    public String uri() {
-        return request.uri();
+    String version() {
+        return request.version().text();
     }
 
-    public String method() {
+    String scheme() {
+        return request.scheme();
+    }
+
+    String method() {
         return request.method().name();
     }
 
-    public ByteBufFlux receive() {
+    String requestUri() {
+        return request.uri();
+    }
+
+    MimeType mimeType() {
+        return MimeTypeExtract.from(request);
+    }
+
+    String queryString() {
+        // Keep only query parameters from the uri
+        int queryParamsStart = request.uri().indexOf("?");
+        return queryParamsStart > -1 ?
+                request.uri().substring(queryParamsStart) :
+                "";
+    }
+
+    String requestPath() {
+        // Remove query parameters from the uri
+        int queryParamsStart = request.uri().indexOf("?");
+        return queryParamsStart > -1 ?
+                request.uri().substring(0, queryParamsStart) :
+                request.uri();
+    }
+
+    ByteBufFlux receive() {
         return request.receive();
     }
 
-    public MimeType mimeType() {
-        return mimeTypeOf(request);
+    InetSocketAddress remoteAddress() {
+        return request.remoteAddress();
     }
 
-    public TreeMap<String, String> headers() {
-        return HttpHeadersAsMap.of(request.requestHeaders());
+    HashMap<String, List<String>> queryParams() {
+        return QueryParameters.from(request.uri());
     }
 
-    public HashMap<String,List<String>> queryParams() {
-       return QueryParameters.from(request.uri());
-    }
-
-    public HashMap<String, String> params() {
+    HashMap<String, String> params() {
         return AsSerializableMap.of(request.params());
     }
 
-    private static MimeType mimeTypeOf(HttpServerRequest request) {
-        if (request.requestHeaders().contains(HttpHeaderNames.CONTENT_TYPE)) {
-            String contentType = request.requestHeaders().get(HttpHeaderNames.CONTENT_TYPE);
-            try {
-                return MimeType.parse(contentType);
-            } catch (Exception e) {
-                logger.warn(String.format("Could not parse content type '%s'", contentType), e);
-            }
-        }
-        return MimeType.UNKNOWN;
+    TreeMap<String, String> headers() {
+        return HttpHeadersAsMap.of(request.requestHeaders());
     }
 }

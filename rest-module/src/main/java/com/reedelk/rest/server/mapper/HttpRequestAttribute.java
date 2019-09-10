@@ -2,23 +2,47 @@ package com.reedelk.rest.server.mapper;
 
 public interface HttpRequestAttribute {
 
-    static String path() {
-        return "path";
+    static String remoteAddress() {
+        return "remoteAddress";
     }
 
-    static String method() {
-        return "method";
+    static String matchingPath() {
+        return "matchingPath";
     }
 
-    static String headers() {
-        return "headers";
+    static String queryParams() {
+        return "queryParams";
+    }
+
+    static String requestPath() {
+        return "requestPath";
+    }
+
+    static String requestUri() {
+        return "requestUri";
+    }
+
+    static String queryString() {
+        return "queryString";
     }
 
     static String pathParams() {
         return "pathParams";
     }
 
-    static String queryParams() {
-        return "queryParams";
+    static String version() {
+        return "version";
+    }
+
+    static String headers() {
+        return "headers";
+    }
+
+    static String scheme() {
+        return "scheme";
+    }
+
+    static String method() {
+        return "method";
     }
 }

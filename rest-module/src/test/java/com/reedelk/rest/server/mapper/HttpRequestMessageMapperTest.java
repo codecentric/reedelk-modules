@@ -15,8 +15,6 @@ import reactor.netty.http.server.HttpServerRequest;
 
 import java.util.HashMap;
 
-import static com.reedelk.rest.server.mapper.HttpRequestAttribute.method;
-import static com.reedelk.rest.server.mapper.HttpRequestAttribute.path;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -25,7 +23,8 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 class HttpRequestMessageMapperTest {
 
-    private HttpRequestMessageMapper mapper = new HttpRequestMessageMapper();
+    private final String matchingPath = "/resource/{id}/group/{group}";
+    private HttpRequestMessageMapper mapper = new HttpRequestMessageMapper(matchingPath);
 
     @Test
     void shouldCorrectlyMapMessageAttributes() {
@@ -51,29 +50,24 @@ class HttpRequestMessageMapperTest {
 
         // Then
         assertThatContentMimeTypeIs(message, MimeType.APPLICATION_JSON);
-        assertThatContainsAttribute(message, method(), "PUT");
-        assertThatContainsAttribute(message, path(), requestPath);
-        assertThatContainsAttribute();
+        assertThatContainsAttribute(message, HttpRequestAttribute.method(), "PUT");
+        assertThatContainsAttribute(message, HttpRequestAttribute.requestPath(), requestPath);
 
 
 
         /**
-         *     static String path() {
-         *         return "path";
-         *     }
-
-         *
-         *     static String headers() {
-         *         return "headers";
-         *     }
-         *
-         *     static String pathParams() {
-         *         return "pathParams";
-         *     }
-         *
-         *     static String queryParams() {
-         *         return "queryParams";
-         *     }
+        listenerPath=/resource/{id}/group/{group},
+                relativePath=/resource/34/group/user,
+                version=HTTP/1.1,
+                scheme=http,
+                method=GET,
+                requestUri=/resource/34/group/user?queryParam1=queryValue1&queryParam2=queryValue2,
+                queryString=queryParam1=queryValue1&queryParam2=queryValue2,
+                remoteAddress=/127.0.0.1:51856,
+                clientCertificate=<null>,
+                queryParams=MultiMap{[queryParam1=[queryValue1], queryParam2=[queryValue2]]},
+        uriParams={id=34, group=user},
+                requestPath=/resource/34/group/user,
          */
     }
 

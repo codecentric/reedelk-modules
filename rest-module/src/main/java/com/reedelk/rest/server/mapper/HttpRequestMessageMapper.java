@@ -17,17 +17,29 @@ import static com.reedelk.rest.server.mapper.HttpRequestAttribute.*;
 
 public class HttpRequestMessageMapper {
 
+    private final String matchingPath;
+
+    public HttpRequestMessageMapper(String matchingPath) {
+        this.matchingPath = matchingPath;
+    }
+
     public Message map(HttpServerRequest httpRequest) {
         HttpRequestWrapper request = new HttpRequestWrapper(httpRequest);
 
         HttpRequestAttributes requestAttributes = new HttpRequestAttributes();
-        requestAttributes.put(path(), request.uri());
+        requestAttributes.put(matchingPath(), matchingPath);
         requestAttributes.put(method(), request.method());
+        requestAttributes.put(scheme(), request.scheme());
         requestAttributes.put(headers(), request.headers());
+        requestAttributes.put(version(), request.version());
         requestAttributes.put(pathParams(), request.params());
+        requestAttributes.put(requestUri(), request.requestUri());
+        requestAttributes.put(requestPath(), request.requestPath());
         requestAttributes.put(queryParams(), request.queryParams());
+        requestAttributes.put(queryString(), request.queryString());
+        requestAttributes.put(remoteAddress(), request.remoteAddress());
 
-        TypedContent content = getTypedContent(request);
+        TypedContent content = mapRequestContent(request);
 
         return MessageBuilder.get()
                 .attributes(requestAttributes)
@@ -40,7 +52,7 @@ public class HttpRequestMessageMapper {
      * For example, it checks the mime type of the request and it converts it a String
      * if it is a text based mime type, otherwise it keeps as bytes.
      */
-    private static TypedContent getTypedContent(HttpRequestWrapper request) {
+    private static TypedContent mapRequestContent(HttpRequestWrapper request) {
         // Map the request content and forward it to
         // a sink which maps it to a byte buffer.
         Flux<byte[]> byteArrayStream = request
