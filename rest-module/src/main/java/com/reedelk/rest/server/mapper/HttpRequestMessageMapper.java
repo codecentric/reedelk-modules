@@ -19,6 +19,7 @@ public class HttpRequestMessageMapper {
 
     public Message map(HttpServerRequest httpRequest) {
         HttpRequestWrapper request = new HttpRequestWrapper(httpRequest);
+
         HttpRequestAttributes requestAttributes = new HttpRequestAttributes();
         requestAttributes.put(path(), request.uri());
         requestAttributes.put(method(), request.method());

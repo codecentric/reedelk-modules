@@ -121,13 +121,13 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
             return this;
         }
 
-        public Builder responseHeaders(Map<String, String> responseHeaders) {
-            this.responseHeaders = responseHeaders;
+        public Builder errorResponse(ListenerErrorResponse errorResponse) {
+            this.errorResponse = errorResponse;
             return this;
         }
 
-        public Builder errorResponse(ListenerErrorResponse errorResponse) {
-            this.errorResponse = errorResponse;
+        public Builder responseHeaders(Map<String, String> responseHeaders) {
+            this.responseHeaders = responseHeaders;
             return this;
         }
 
