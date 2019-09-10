@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
-import static com.reedelk.rest.commons.InboundProperty.*;
+import static com.reedelk.rest.server.mapper.HttpRequestAttribute.*;
 
 public class HttpRequestMessageMapper {
 

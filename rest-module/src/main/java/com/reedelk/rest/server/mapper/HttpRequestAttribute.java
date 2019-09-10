@@ -1,6 +1,6 @@
-package com.reedelk.rest.commons;
+package com.reedelk.rest.server.mapper;
 
-public interface InboundProperty {
+public interface HttpRequestAttribute {
 
     static String path() {
         return "path";
