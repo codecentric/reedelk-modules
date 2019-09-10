@@ -16,9 +16,14 @@ import reactor.netty.ByteBufFlux;
 import reactor.netty.http.server.HttpServerRequest;
 
 import java.net.InetSocketAddress;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static io.netty.handler.codec.http.HttpMethod.PUT;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
@@ -227,8 +232,8 @@ class HttpRequestWrapperTest {
         HashMap<String, List<String>> queryParams = wrapper.queryParams();
 
         // Then
-        assertThat(queryParams).containsEntry("queryParam1", Collections.singletonList("queryValue1"));
-        assertThat(queryParams).containsEntry("queryParam2", Collections.singletonList("queryValue2"));
+        assertThat(queryParams).containsEntry("queryParam1", singletonList("queryValue1"));
+        assertThat(queryParams).containsEntry("queryParam2", singletonList("queryValue2"));
     }
 
     @Test
@@ -253,14 +258,16 @@ class HttpRequestWrapperTest {
         HttpHeaders httpHeaders = new DefaultHttpHeaders();
         httpHeaders.add(HttpHeader.CONTENT_TYPE, "text/plain");
         httpHeaders.add("X-Correlation-ID", "aabbcc11ff");
+        httpHeaders.add("accept-encoding", "gzip,deflate");
 
         doReturn(httpHeaders).when(mockRequest).requestHeaders();
 
         // When
-        TreeMap<String, String> headers = wrapper.headers();
+        TreeMap<String, List<String>> headers = wrapper.headers();
 
         // Then
-        assertThat(headers).containsEntry(HttpHeader.CONTENT_TYPE, "text/plain");
-        assertThat(headers).containsEntry("X-Correlation-ID", "aabbcc11ff");
+        assertThat(headers).containsEntry(HttpHeader.CONTENT_TYPE, singletonList("text/plain"));
+        assertThat(headers).containsEntry("X-Correlation-ID", singletonList("aabbcc11ff"));
+        assertThat(headers).containsEntry("accept-encoding", asList("gzip", "deflate"));
     }
 }

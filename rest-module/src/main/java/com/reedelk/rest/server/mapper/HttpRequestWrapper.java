@@ -75,7 +75,7 @@ class HttpRequestWrapper {
         return AsSerializableMap.of(request.params());
     }
 
-    TreeMap<String, String> headers() {
+    TreeMap<String, List<String>> headers() {
         return HttpHeadersAsMap.of(request.requestHeaders());
     }
 }
