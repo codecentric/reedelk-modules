@@ -1,9 +1,9 @@
 package com.reedelk.rest.client;
 
 import com.reedelk.rest.commons.BaseUrl;
-import com.reedelk.rest.configuration.ClientConfiguration;
-import com.reedelk.rest.configuration.HttpProtocol;
-import com.reedelk.rest.configuration.RestMethod;
+import com.reedelk.rest.commons.HttpProtocol;
+import com.reedelk.rest.commons.RestMethod;
+import com.reedelk.rest.configuration.client.ClientConfiguration;
 import reactor.netty.Connection;
 import reactor.netty.http.client.HttpClientRequest;
 

@@ -1,7 +1,6 @@
 package com.reedelk.rest.commons;
 
-import com.reedelk.rest.configuration.ClientConfiguration;
-import com.reedelk.rest.configuration.HttpProtocol;
+import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.exception.ESBException;
 import org.junit.jupiter.api.Test;
 

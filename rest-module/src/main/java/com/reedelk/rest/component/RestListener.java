@@ -1,8 +1,8 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.configuration.ListenerConfiguration;
-import com.reedelk.rest.configuration.ListenerErrorResponse;
-import com.reedelk.rest.configuration.RestMethod;
+import com.reedelk.rest.commons.RestMethod;
+import com.reedelk.rest.configuration.listener.ListenerConfiguration;
+import com.reedelk.rest.configuration.listener.ListenerErrorResponse;
 import com.reedelk.rest.server.HttpRequestHandler;
 import com.reedelk.rest.server.Server;
 import com.reedelk.rest.server.ServerProvider;

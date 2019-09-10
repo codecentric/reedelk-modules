@@ -1,7 +1,7 @@
 package com.reedelk.rest.server;
 
 import com.reedelk.rest.commons.HostNamePortKey;
-import com.reedelk.rest.configuration.ListenerConfiguration;
+import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;

@@ -1,9 +1,9 @@
 package com.reedelk.rest.server;
 
 
+import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.commons.StringUtils;
-import com.reedelk.rest.configuration.ListenerConfiguration;
-import com.reedelk.rest.configuration.RestMethod;
+import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpMethod;

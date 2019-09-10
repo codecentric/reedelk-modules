@@ -1,7 +1,7 @@
 package com.reedelk.rest.component;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.reedelk.rest.configuration.RestMethod;
+import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;

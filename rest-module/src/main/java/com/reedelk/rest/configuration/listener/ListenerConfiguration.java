@@ -1,5 +1,6 @@
-package com.reedelk.rest.configuration;
+package com.reedelk.rest.configuration.listener;
 
+import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;

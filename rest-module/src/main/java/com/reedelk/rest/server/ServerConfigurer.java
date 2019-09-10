@@ -1,6 +1,7 @@
 package com.reedelk.rest.server;
 
-import com.reedelk.rest.configuration.*;
+import com.reedelk.rest.commons.HttpProtocol;
+import com.reedelk.rest.configuration.listener.*;
 import com.reedelk.runtime.api.exception.ESBException;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;

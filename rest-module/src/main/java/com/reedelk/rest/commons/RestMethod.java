@@ -1,4 +1,4 @@
-package com.reedelk.rest.configuration;
+package com.reedelk.rest.commons;
 
 import com.reedelk.rest.server.HttpRequestHandler;
 import com.reedelk.rest.server.HttpServerRoutes;

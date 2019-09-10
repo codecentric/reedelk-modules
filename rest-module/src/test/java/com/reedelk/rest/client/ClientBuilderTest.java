@@ -1,8 +1,8 @@
 package com.reedelk.rest.client;
 
-import com.reedelk.rest.configuration.ClientConfiguration;
-import com.reedelk.rest.configuration.HttpProtocol;
-import com.reedelk.rest.configuration.RestMethod;
+import com.reedelk.rest.commons.HttpProtocol;
+import com.reedelk.rest.commons.RestMethod;
+import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.exception.ESBException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

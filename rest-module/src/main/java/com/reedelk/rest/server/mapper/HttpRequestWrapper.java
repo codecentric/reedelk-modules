@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.mapper;
 
 import com.reedelk.rest.commons.AsSerializableMap;
 import com.reedelk.rest.commons.HttpHeadersAsMap;

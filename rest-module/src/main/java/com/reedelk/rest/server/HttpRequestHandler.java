@@ -1,6 +1,8 @@
 package com.reedelk.rest.server;
 
-import com.reedelk.rest.configuration.ListenerErrorResponse;
+import com.reedelk.rest.configuration.listener.ListenerErrorResponse;
+import com.reedelk.rest.server.mapper.HttpRequestMessageMapper;
+import com.reedelk.rest.server.mapper.MessageHttpResponseMapper;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;

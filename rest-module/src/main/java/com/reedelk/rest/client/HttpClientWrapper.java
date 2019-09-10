@@ -3,7 +3,7 @@ package com.reedelk.rest.client;
 import com.reedelk.rest.client.strategy.ExecutionStrategy;
 import com.reedelk.rest.client.strategy.ResponseHandler;
 import com.reedelk.rest.client.strategy.StrategyBuilder;
-import com.reedelk.rest.configuration.RestMethod;
+import com.reedelk.rest.commons.RestMethod;
 import reactor.core.publisher.Mono;
 import reactor.netty.Connection;
 import reactor.netty.http.client.HttpClient;

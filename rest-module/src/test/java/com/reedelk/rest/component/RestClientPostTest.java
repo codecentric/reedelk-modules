@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
-import static com.reedelk.rest.configuration.RestMethod.POST;
+import static com.reedelk.rest.commons.RestMethod.POST;
 import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

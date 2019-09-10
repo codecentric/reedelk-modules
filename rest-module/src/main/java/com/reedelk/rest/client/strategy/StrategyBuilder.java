@@ -1,6 +1,6 @@
 package com.reedelk.rest.client.strategy;
 
-import com.reedelk.rest.configuration.RestMethod;
+import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.runtime.api.exception.ESBException;
 import reactor.netty.http.client.HttpClient;
 

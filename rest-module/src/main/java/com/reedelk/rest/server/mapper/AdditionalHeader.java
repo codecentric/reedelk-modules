@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.mapper;
 
 import io.netty.handler.codec.http.HttpHeaders;
 import reactor.netty.http.server.HttpServerResponse;
@@ -6,7 +6,7 @@ import reactor.netty.http.server.HttpServerResponse;
 import java.util.Map;
 import java.util.Optional;
 
-public class AdditionalHeader {
+class AdditionalHeader {
 
     /**
      * For each additional header, if present in the current headers it gets replaced,
@@ -14,7 +14,7 @@ public class AdditionalHeader {
      * @param response the current http response object.
      * @param additionalHeaders additional user defined headers.
      */
-    public static void addAll(HttpServerResponse response, Map<String,String> additionalHeaders) {
+    static void addAll(HttpServerResponse response, Map<String, String> additionalHeaders) {
         HttpHeaders currentHeaders = response.responseHeaders();
         additionalHeaders.forEach((headerName, headerValue) -> {
             Optional<String> optionalMatchingHeaderName = matchingHeader(currentHeaders, headerName);

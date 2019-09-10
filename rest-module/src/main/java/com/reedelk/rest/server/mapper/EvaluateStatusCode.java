@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.mapper;
 
 import com.reedelk.rest.commons.StringUtils;
 import com.reedelk.runtime.api.commons.ScriptUtils;
@@ -13,7 +13,7 @@ import javax.script.SimpleBindings;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 
-public class EvaluateStatusCode {
+class EvaluateStatusCode {
 
     private final HttpResponseStatus defaultCode;
 
@@ -27,36 +27,36 @@ public class EvaluateStatusCode {
         this.defaultCode = defaultCode;
     }
 
-    public static EvaluateStatusCode withDefault(HttpResponseStatus defaultCode) {
+    static EvaluateStatusCode withDefault(HttpResponseStatus defaultCode) {
         return new EvaluateStatusCode(defaultCode);
     }
 
-    public EvaluateStatusCode withMessage(Message message) {
+    EvaluateStatusCode withMessage(Message message) {
         this.message = message;
         return this;
     }
 
-    public EvaluateStatusCode withStatus(String statusAsString) {
+    EvaluateStatusCode withStatus(String statusAsString) {
         this.statusAsString = statusAsString;
         return this;
     }
 
-    public EvaluateStatusCode withThrowable(Throwable throwable) {
+    EvaluateStatusCode withThrowable(Throwable throwable) {
         this.throwable = throwable;
         return this;
     }
 
-    public EvaluateStatusCode withContext(FlowContext flowContext) {
+    EvaluateStatusCode withContext(FlowContext flowContext) {
         this.flowContext = flowContext;
         return this;
     }
 
-    public EvaluateStatusCode withScriptEngine(ScriptEngineService scriptEngine) {
+    EvaluateStatusCode withScriptEngine(ScriptEngineService scriptEngine) {
         this.scriptEngine = scriptEngine;
         return this;
     }
 
-    public HttpResponseStatus evaluate() {
+    HttpResponseStatus evaluate() {
         if (StringUtils.isBlank(statusAsString)) {
             return defaultCode;
         }

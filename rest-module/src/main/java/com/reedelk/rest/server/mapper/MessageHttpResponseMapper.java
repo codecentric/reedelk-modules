@@ -1,6 +1,6 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.configuration.ListenerErrorResponse;
+import com.reedelk.rest.configuration.listener.ListenerErrorResponse;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.service.ScriptEngineService;
@@ -23,7 +23,7 @@ public class MessageHttpResponseMapper {
     private final String responseStatus;
     private final String responseBody;
 
-    MessageHttpResponseMapper(
+    public MessageHttpResponseMapper(
             ScriptEngineService scriptEngine,
             String responseBody,
             String responseStatus,

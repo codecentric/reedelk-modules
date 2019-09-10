@@ -1,6 +1,5 @@
-package com.reedelk.rest.configuration;
+package com.reedelk.rest.commons;
 
-import com.reedelk.rest.commons.StringUtils;
 import com.reedelk.runtime.api.annotation.Default;
 
 @Default("HTTP")

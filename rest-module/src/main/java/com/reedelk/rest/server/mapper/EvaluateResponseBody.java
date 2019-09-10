@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.mapper;
 
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 import javax.script.ScriptException;
 
-public class EvaluateResponseBody {
+class EvaluateResponseBody {
 
     private final String responseBody;
     private ScriptEngineService scriptEngine;
@@ -21,26 +21,26 @@ public class EvaluateResponseBody {
         this.responseBody = responseBody;
     }
 
-    public static EvaluateResponseBody withResponseBody(String responseBody) {
+    static EvaluateResponseBody withResponseBody(String responseBody) {
         return new EvaluateResponseBody(responseBody);
     }
 
-    public EvaluateResponseBody withMessage(Message message) {
+    EvaluateResponseBody withMessage(Message message) {
         this.message = message;
         return this;
     }
 
-    public EvaluateResponseBody withContext(FlowContext flowContext) {
+    EvaluateResponseBody withContext(FlowContext flowContext) {
         this.flowContext = flowContext;
         return this;
     }
 
-    public EvaluateResponseBody withScriptEngine(ScriptEngineService scriptEngine) {
+    EvaluateResponseBody withScriptEngine(ScriptEngineService scriptEngine) {
         this.scriptEngine = scriptEngine;
         return this;
     }
 
-    public Publisher<byte[]> evaluate() {
+    Publisher<byte[]> evaluate() {
         // Response body
         if (responseBody != null) {
             // Custom body - evaluate script - or just return the value (if it is not a script)
