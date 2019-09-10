@@ -15,8 +15,7 @@ public class ContentType {
         if (ScriptUtils.isScript(responseBody)) {
             // If it is a script and the script is payload, then we set the content type
             // from the message type
-            String unwrappedScript = ScriptUtils.unwrap(responseBody);
-            if ("payload".equals(StringUtils.trim(unwrappedScript))) {
+            if (ScriptUtils.isMessagePayload(responseBody)) {
                 // Then we use the content type from the payload's mime type.
                 TypedContent<?> typedContent = message.getContent();
                 Type type = typedContent.type();
