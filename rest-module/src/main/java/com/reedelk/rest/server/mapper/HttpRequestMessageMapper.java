@@ -1,6 +1,5 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.server.HttpRequestAttributes;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.*;
