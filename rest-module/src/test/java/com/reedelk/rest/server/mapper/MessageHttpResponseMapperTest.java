@@ -72,6 +72,37 @@ class MessageHttpResponseMapperTest {
     }
 
     @Test
+    void shouldOutputStreamEmptyForEmptyResponseScript() {
+        // Given
+        String emptyResponseBody = "";
+
+        MessageHttpResponseMapper mapper = newMapperWithBody(emptyResponseBody);
+        Message message = MessageBuilder.get().build();
+
+        // When
+        Publisher<byte[]> actualStream = mapper.map(message, response, flowContext);
+
+        // Then
+        assertThatStreamIs(actualStream, StringUtils.EMPTY);
+    }
+
+    @Test
+    void shouldOutputStreamEmptyForNullResponseScript() {
+        // Given
+        String nullResponseBody = null;
+
+        MessageHttpResponseMapper mapper = newMapperWithBody(nullResponseBody);
+        Message message = MessageBuilder.get().build();
+
+
+        // When
+        Publisher<byte[]> actualStream = mapper.map(message, response, flowContext);
+
+        // Then
+        assertThatStreamIsEmpty(actualStream);
+    }
+
+    @Test
     void shouldSetHttpResponseStatusFromString() {
         // Given
         MessageHttpResponseMapper mapper = newMapperWithStatus("201");
@@ -178,6 +209,11 @@ class MessageHttpResponseMapperTest {
         assertThat(streamAsString).isEqualTo(expected);
     }
 
+    private void assertThatStreamIsEmpty(Publisher<byte[]> actualStream) {
+        List<byte[]> data = Flux.from(actualStream).collectList().block();
+        assertThat(data).isEmpty();
+    }
+
     private MessageHttpResponseMapper newMapperWithStatus(String responseStatus) {
         return new MessageHttpResponseMapper(
                 scriptEngine, "sample body", responseStatus,
@@ -194,7 +230,7 @@ class MessageHttpResponseMapperTest {
 
         private final Object content;
 
-        public TestScriptExecutionResult(Object content) {
+        TestScriptExecutionResult(Object content) {
             this.content = content;
         }
 
