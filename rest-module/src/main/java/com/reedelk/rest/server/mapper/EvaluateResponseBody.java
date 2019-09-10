@@ -1,5 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
+import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.TypedContent;
@@ -43,14 +44,18 @@ class EvaluateResponseBody {
     Publisher<byte[]> evaluate() {
         // Response body
         if (responseBody != null) {
-            // Custom body - evaluate script - or just return the value (if it is not a script)
-            try {
-                ScriptExecutionResult result =
-                        scriptEngine.evaluate(responseBody, message, flowContext);
-                Object object = result.getObject();
-                return Mono.just(object.toString().getBytes());
-            } catch (ScriptException e) {
-                return Mono.just(e.getMessage().getBytes());
+            if (ScriptUtils.isScript(responseBody)) {
+                // Custom body - evaluate script - or just return the value (if it is not a script)
+                try {
+                    ScriptExecutionResult result =
+                            scriptEngine.evaluate(responseBody, message, flowContext);
+                    Object object = result.getObject();
+                    return Mono.just(object.toString().getBytes());
+                } catch (ScriptException e) {
+                    return Mono.just(e.getMessage().getBytes());
+                }
+            } else {
+                return Mono.just(responseBody.getBytes());
             }
 
         } else {
