@@ -9,7 +9,6 @@ import com.reedelk.runtime.api.service.ScriptExecutionResult;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
-import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 class EvaluateErrorResponseBody {
@@ -67,17 +66,20 @@ class EvaluateErrorResponseBody {
         }
     }
 
-    // TODO: Test the script what it might return something different from string?? and stuff...
     private Publisher<byte[]> evaluateBodyScript() {
         try {
             SimpleBindings additionalBindings = new SimpleBindings();
             additionalBindings.put("error", exception);
             ScriptExecutionResult result =
                     scriptEngine.evaluate(responseBody, flowContext, additionalBindings);
+
+            // TODO: Test the script what it might return something different from string?? and stuff...
             Object object = result.getObject();
             return Mono.just(object.toString().getBytes());
-        } catch (ScriptException e) {
-            return Mono.just(e.getMessage().getBytes());
+        } catch (Exception exception) {
+            // Evaluating an error response, cannot throw again an exception,
+            // Hence we catch any exception and we return the exception message.
+            return StackTraceUtils.asByteStream(exception);
         }
     }
 }

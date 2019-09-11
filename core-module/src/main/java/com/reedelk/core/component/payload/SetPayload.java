@@ -3,19 +3,13 @@ package com.reedelk.core.component.payload;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
-import com.reedelk.runtime.api.message.type.TypedContent;
-import com.reedelk.runtime.api.message.type.TypedContentFactory;
+import com.reedelk.runtime.api.message.type.*;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import javax.script.ScriptException;
 
 import static com.reedelk.runtime.api.message.type.MimeType.Literal.*;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -44,25 +38,21 @@ public class SetPayload implements ProcessorSync {
     @Override
     public Message apply(Message input, FlowContext flowContext) {
 
+        MimeType mimeType = MimeType.parse(this.mimeType);
+
         if (ScriptUtils.isScript(payload)) {
+            Object result = scriptEngine.evaluate(payload, input, flowContext);
 
-            try {
-                String realScript = ScriptUtils.unwrap(payload);
-                Object result = scriptEngine.evaluate(realScript, input, flowContext);
-                Type contentType = new Type(MimeType.ANY);
-                TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
-                return MessageBuilder.get()
-                        .typedContent(content)
-                        .build();
-
-            } catch (ScriptException e) {
-                throw new ESBException(e);
-            }
+            Type contentType = new Type(mimeType);
+            TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
+            return MessageBuilder.get().typedContent(content).build();
 
         } else {
-            return MessageBuilder.get()
-                    .text(payload)
-                    .build();
+            // Since it is only a text value, we set the
+            // class of the content as String.class.
+            Type contentType = new Type(mimeType, String.class);
+            TypedContent<?> content = new StringContent(payload, contentType);
+            return MessageBuilder.get().typedContent(content).build();
         }
     }
 

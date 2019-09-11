@@ -8,8 +8,6 @@ import com.reedelk.runtime.api.service.ScriptExecutionResult;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
-import javax.script.ScriptException;
-
 class EvaluateResponseBody {
 
     private final String responseBody;
@@ -66,15 +64,12 @@ class EvaluateResponseBody {
         }
     }
 
-    // TODO: Test the script what it might return something different from string?? and stuff...
     private Publisher<byte[]> evaluateBodyScript() {
-        try {
-            ScriptExecutionResult result =
-                    scriptEngine.evaluate(responseBody, message, flowContext);
-            Object object = result.getObject();
-            return Mono.just(object.toString().getBytes());
-        } catch (ScriptException e) {
-            return Mono.just(e.getMessage().getBytes());
-        }
+        ScriptExecutionResult result =
+                scriptEngine.evaluate(responseBody, message, flowContext);
+
+        // TODO: Test the script what it might return something different from string?? and stuff...
+        Object object = result.getObject();
+        return Mono.just(object.toString().getBytes());
     }
 }

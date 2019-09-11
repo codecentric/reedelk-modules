@@ -2,7 +2,6 @@ package com.reedelk.core.component.script;
 
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -11,7 +10,6 @@ import com.reedelk.runtime.api.service.ScriptExecutionResult;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -47,20 +45,13 @@ public class JsonMapper implements ProcessorSync {
 
     @Override
     public Message apply(Message input, FlowContext flowContext) {
-        try {
-            String script = String.format(EXECUTION_SCRIPT_TEMPLATE, mappingScript);
+        String script = String.format(EXECUTION_SCRIPT_TEMPLATE, mappingScript);
 
-            ScriptExecutionResult result = service.evaluate(script, input, new ComponentVariableBindings(input));
+        ScriptExecutionResult result = service.evaluate(script, input, new ComponentVariableBindings(input));
 
-            Object mappedOutput = result.getBindings().get("output");
+        Object mappedOutput = result.getBindings().get("output");
 
-            MessageBuilder.get().javaObject(mappedOutput).build();
-
-            return input;
-
-        } catch (ScriptException e) {
-            throw new ESBException(e);
-        }
+        return MessageBuilder.get().javaObject(mappedOutput).build();
     }
 
     public void setInputJsonSchema(String inputJsonSchema) {

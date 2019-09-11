@@ -12,11 +12,8 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.script.ScriptException;
-
 import static com.reedelk.runtime.api.message.type.MimeType.Literal;
 import static com.reedelk.runtime.api.message.type.MimeType.Literal.*;
-import static com.reedelk.runtime.api.message.type.MimeType.UNKNOWN;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Set Variable")
@@ -51,24 +48,24 @@ public class SetVariable implements ProcessorSync {
             throw new ESBException("Variable name must not be empty");
         }
 
-        MimeType variableMimeType = getMimeType();
-        if (ScriptUtils.isScript(value)) {
+        MimeType mimeType = MimeType.parse(this.mimeType);
 
-            try {
-                String realScript = ScriptUtils.unwrap(value);
-                Object result = scriptEngine.evaluate(realScript, input, flowContext);
-                Type contentType = new Type(variableMimeType);
-                TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
-                flowContext.setVariable(name, content);
-            } catch (ScriptException e) {
-                throw new ESBException(e);
-            }
+        if (ScriptUtils.isScript(value)) {
+            // It is a script, hence we need to evaluate it.
+            Object result = scriptEngine.evaluate(value, input, flowContext);
+
+            Type contentType = new Type(mimeType);
+            TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
+            flowContext.setVariable(name, content);
 
         } else {
-            Type contentType = new Type(variableMimeType, String.class);
+            // Since it is only a text value, we set the
+            // class of the content as String.class.
+            Type contentType = new Type(mimeType, String.class);
             TypedContent<?> content = new StringContent(value, contentType);
             flowContext.setVariable(name, content);
         }
+
         return input;
     }
 
@@ -82,17 +79,5 @@ public class SetVariable implements ProcessorSync {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
-    }
-
-    private MimeType getMimeType() {
-        if (mimeType == null) {
-            return UNKNOWN;
-        }
-        try {
-            // Custom mime type
-            return MimeType.parse(mimeType);
-        } catch (Exception e) {
-            return UNKNOWN;
-        }
     }
 }

@@ -56,8 +56,7 @@ public class LoggerComponent implements ProcessorSync {
         if (ScriptUtils.isScript(message)) {
             // The logger should just print the Stream object if it is a stream, otherwise if
             // the stream was resolved (hence loaded into memory) it should print the value.
-            String script = ScriptUtils.unwrap(message);
-            Object result = service.evaluate(script, input, flowContext);
+            Object result = service.evaluate(message, input, flowContext);
             level.log(result);
         } else {
             // If it is not a script we don't evaluate the message.

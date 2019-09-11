@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.script.ScriptException;
 import java.util.List;
 
 import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
@@ -81,7 +80,7 @@ public class RouterExecutor implements FlowExecutor {
         try {
             Boolean evaluate = ENGINE.evaluate(expression, message, flowContext);
             return Mono.just(evaluate);
-        } catch (ScriptException e) {
+        } catch (Exception e) {
             logger.error(String.format("Could not evaluate Router path expression (%s)", expression), e);
             return FALSE;
         }

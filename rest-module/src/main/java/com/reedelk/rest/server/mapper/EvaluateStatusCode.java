@@ -8,7 +8,6 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import io.netty.handler.codec.http.HttpResponseStatus;
 
-import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
@@ -65,28 +64,18 @@ class EvaluateStatusCode {
             // If Message is defined, then use message,
             // Otherwise we use the exception
             if (message != null) {
-                try {
-                    int evaluate = scriptEngine.evaluate(statusAsString, message, flowContext);
-                    return valueOf(evaluate);
-                } catch (ScriptException e) {
-                    e.printStackTrace();
-                    throw new ESBException("Error", e);
-                }
+                int evaluate = scriptEngine.evaluate(statusAsString, message, flowContext);
+                return valueOf(evaluate);
             }
 
             if (throwable != null) {
                 SimpleBindings additionalBindings = new SimpleBindings();
                 additionalBindings.put("error", throwable);
-                try {
-                    int evaluate = scriptEngine.evaluate(statusAsString, flowContext, additionalBindings);
-                    return valueOf(evaluate);
-                } catch (ScriptException e) {
-                    e.printStackTrace();
-                    throw new ESBException("Error", e);
-                }
+                int evaluate = scriptEngine.evaluate(statusAsString, flowContext, additionalBindings);
+                return valueOf(evaluate);
             }
 
-            throw new ESBException("Error, Message or throwable must be defined");
+            throw new ESBException("error: Message or Throwable must be defined");
 
         } else {
             int code = Integer.valueOf(statusAsString);
