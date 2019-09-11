@@ -31,9 +31,4 @@ public class ContentType {
         // Otherwise we get the content type from the custom headers.
         return Optional.empty();
     }
-
-    public static Optional<String> from(String responseBody, Throwable exception) {
-        // TODO: Implement me
-        return Optional.empty();
-    }
 }
