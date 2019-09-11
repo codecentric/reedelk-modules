@@ -10,7 +10,6 @@ import com.reedelk.runtime.commons.PrimitiveTypeConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
@@ -34,37 +33,31 @@ public class GenericComponentDeserializer {
 
     public void deserialize(JSONObject componentDefinition, Implementor implementor) {
         Iterator<String> iterator = componentDefinition.keys();
-
         while (iterator.hasNext()) {
             String propertyName = iterator.next();
-            Optional<Method> maybeSetter = getSetter(implementor, propertyName);
-            if (maybeSetter.isPresent()) {
+            getSetter(implementor, propertyName).ifPresent(setter -> {
                 Optional<String> maybeReference = isReference(componentDefinition, propertyName);
-                Object deserializedObject = maybeReference.isPresent() ?
+                Object deSerializedObject = maybeReference.isPresent() ?
                         deserialize(maybeReference.get()) :
                         deserialize(componentDefinition, implementor, propertyName);
-
-                Method setter = maybeSetter.get();
-                setProperty(implementor, setter, deserializedObject);
-            }
+                setProperty(implementor, setter, deSerializedObject);
+            });
         }
     }
 
     private Object deserialize(JSONObject componentDefinition, Implementor bean, String propertyName) {
         Object propertyValue = componentDefinition.get(propertyName);
-
-        // Object
         if (propertyValue instanceof JSONObject) {
-            return deserialize((JSONObject) propertyValue);
-
-            // Collection
+            // Object
+            SetterArgument setterArgument = argumentOf(bean, propertyName);
+            return deserialize((JSONObject) propertyValue, setterArgument);
         } else if (propertyValue instanceof JSONArray) {
+            // Collection
             SetterArgument setterArgument = argumentOf(bean, propertyName);
             checkArgument(CollectionFactory.isSupported(setterArgument.getClazz()), format("Could not map property %s: not a supported collection type", propertyName));
             return deserialize((JSONArray) propertyValue, setterArgument);
-
-            // Primitive
         } else {
+            // Primitive
             SetterArgument setterArgument = argumentOf(bean, propertyName);
             return deserialize(componentDefinition, propertyName, setterArgument);
         }
@@ -75,26 +68,33 @@ public class GenericComponentDeserializer {
      * Deserialize a JSON object. If exists an Implementor class defined in OSGi, then it is used.
      * Otherwise the JSON object is mapped as a Java Map.
      *
-     * @param object the JSON object to be deserialized
-     * @return a deserialized Java Instance of the JSON object or a Java Map representing the JSON object
+     * @param object         the JSON object to be de-serialized
+     * @param setterArgument the setter argument of the field this object represents.
+     * @return a de-serialized Java Instance of the JSON object or a Java Map representing the JSON object
      */
-    private Object deserialize(JSONObject object) {
-        if (object.has(JsonParser.Implementor.name())) {
-            Implementor deserialized = instantiateImplementor(object);
-            deserialize(object, deserialized);
-            return deserialized;
-        } else {
+    private Object deserialize(JSONObject object, SetterArgument setterArgument) {
+        if (setterArgument.isMap()) {
+            // The setter argument for this property is a map, so we just return
+            // a de-serialized java map object.
             return object.toMap();
+        } else {
+            // It is a complex type implementing implementor interface.
+            // We expect that this JSONObject satisfies the properties
+            // of the property setter argument's object type.
+            String fullyQualifiedName = setterArgument.getFullyQualifiedName();
+            Implementor deSerialized = instantiateImplementor(fullyQualifiedName);
+            deserialize(object, deSerialized);
+            return deSerialized;
         }
     }
 
     /**
-     * Deserialize a JSON array. The deserialized collection contains element converted
+     * Deserialize a JSON array. The de-serialized collection contains element converted
      * to the type of the corresponding given setter argument.
      *
-     * @param array    the JSON array to be deserialized
+     * @param array    the JSON array to be de-serialized
      * @param argument the bean setter argument
-     * @return a deserialized Java collection (Collection,List,Set) representing the JSON array
+     * @return a de-serialized Java collection (Collection,List,Set) representing the JSON array
      */
     private Collection deserialize(JSONArray array, SetterArgument argument) {
         Class<Collection> clazz = (Class<Collection>) argument.getClazz();
@@ -108,11 +108,11 @@ public class GenericComponentDeserializer {
     }
 
     /**
-     * Deserialize a JSON primitive type. The deserialized primitive type converted
+     * Deserialize a JSON primitive type. The de-serialized primitive type converted
      * to the given setter argument type.
      *
      * @param componentDefinition the JSON object holding the primitive type
-     * @param propertyName        the name of the JSON object's property for which we want the primitive type deserialized
+     * @param propertyName        the name of the JSON object's property for which we want the primitive type de-serialized
      * @param setterArgument      the bean setter argument
      * @return a de-serialized primitive type or an enum if the setter argument resolves to an enum type
      */
@@ -146,6 +146,10 @@ public class GenericComponentDeserializer {
 
     private Implementor instantiateImplementor(JSONObject jsonObject) {
         String implementorFullyQualifiedName = JsonParser.Implementor.name(jsonObject);
+        return instantiateImplementor(implementorFullyQualifiedName);
+    }
+
+    private Implementor instantiateImplementor(String implementorFullyQualifiedName) {
         return context.instantiateImplementor(executionNode, implementorFullyQualifiedName);
     }
 
