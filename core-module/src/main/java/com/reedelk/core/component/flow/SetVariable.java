@@ -15,6 +15,7 @@ import org.osgi.service.component.annotations.Reference;
 import javax.script.ScriptException;
 
 import static com.reedelk.runtime.api.message.type.MimeType.Literal;
+import static com.reedelk.runtime.api.message.type.MimeType.Literal.*;
 import static com.reedelk.runtime.api.message.type.MimeType.UNKNOWN;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -26,7 +27,7 @@ public class SetVariable implements ProcessorSync {
     private ScriptEngineService scriptEngine;
 
     @Property("Name")
-    @Hint("variable name")
+    @Hint("myVariableName")
     private String name;
 
     @ScriptInline
@@ -36,12 +37,11 @@ public class SetVariable implements ProcessorSync {
     private String value;
 
     @Property("Mime type")
-    @Default("ANY")
+    @Default(ANY)
     @Combo(editable = true, comboValues = {
-            Literal.ANY,
-            Literal.JAVASCRIPT,
-            Literal.APPLICATION_JSON
-    })
+            ANY, XML, CSS, JSON, HTML, TEXT, RSS, ATOM, BINARY, Literal.UNKNOWN,
+            JAVASCRIPT, APPLICATION_XML, MULTIPART_MIXED, APPLICATION_JSON,
+            APPLICATION_JAVA, MULTIPART_RELATED, MULTIPART_FORM_DATA, MULTIPART_X_MIXED_REPLACE})
     private String mimeType;
 
 
