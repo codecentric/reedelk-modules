@@ -27,12 +27,6 @@ public class SetVariable implements ProcessorSync {
     @Hint("myVariableName")
     private String name;
 
-    @ScriptInline
-    @Property("Value")
-    @Default("#[]")
-    @Hint("variable text value")
-    private String value;
-
     @Property("Mime type")
     @Default(ANY)
     @Combo(editable = true, comboValues = {
@@ -40,6 +34,12 @@ public class SetVariable implements ProcessorSync {
             JAVASCRIPT, APPLICATION_XML, MULTIPART_MIXED, APPLICATION_JSON,
             APPLICATION_JAVA, MULTIPART_RELATED, MULTIPART_FORM_DATA, MULTIPART_X_MIXED_REPLACE})
     private String mimeType;
+
+    @ScriptInline
+    @Property("Value")
+    @Default("#[]")
+    @Hint("variable text value")
+    private String value;
 
 
     @Override

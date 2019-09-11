@@ -21,12 +21,6 @@ public class SetPayload implements ProcessorSync {
     @Reference
     private ScriptEngineService scriptEngine;
 
-    @ScriptInline
-    @Property("Message Payload")
-    @Default("#[]")
-    @Hint("payload text value")
-    private String payload;
-
     @Property("Mime type")
     @Default(ANY)
     @Combo(editable = true, comboValues = {
@@ -34,6 +28,12 @@ public class SetPayload implements ProcessorSync {
             JAVASCRIPT, APPLICATION_XML, MULTIPART_MIXED, APPLICATION_JSON,
             APPLICATION_JAVA, MULTIPART_RELATED, MULTIPART_FORM_DATA, MULTIPART_X_MIXED_REPLACE})
     private String mimeType;
+
+    @ScriptInline
+    @Property("Message Payload")
+    @Default("#[]")
+    @Hint("payload text value")
+    private String payload;
 
     @Override
     public Message apply(Message input, FlowContext flowContext) {
