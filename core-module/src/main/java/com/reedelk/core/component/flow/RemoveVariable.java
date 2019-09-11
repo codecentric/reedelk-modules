@@ -1,6 +1,7 @@
 package com.reedelk.core.component.flow;
 
 import com.reedelk.runtime.api.annotation.ESBComponent;
+import com.reedelk.runtime.api.annotation.Hint;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
@@ -15,6 +16,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class RemoveVariable implements ProcessorSync {
 
     @Property("Name")
+    @Hint("variable name")
     private String name;
 
     @Override

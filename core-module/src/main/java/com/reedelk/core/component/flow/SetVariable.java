@@ -14,6 +14,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.script.ScriptException;
 
+import static com.reedelk.runtime.api.message.type.MimeType.Literal;
+import static com.reedelk.runtime.api.message.type.MimeType.UNKNOWN;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Set Variable")
@@ -24,6 +26,7 @@ public class SetVariable implements ProcessorSync {
     private ScriptEngineService scriptEngine;
 
     @Property("Name")
+    @Hint("variable name")
     private String name;
 
     @ScriptInline
@@ -34,11 +37,12 @@ public class SetVariable implements ProcessorSync {
 
     @Property("Mime type")
     @Default("ANY")
-    private VariableMimeType mimeType;
-
-    @Property("Custom mime type")
-    @When(propertyName = "mimeType", propertyValue = "NONE")
-    private String mimeTypeValue;
+    @Combo(editable = true, comboValues = {
+            Literal.ANY,
+            Literal.JAVASCRIPT,
+            Literal.APPLICATION_JSON
+    })
+    private String mimeType;
 
 
     @Override
@@ -51,7 +55,8 @@ public class SetVariable implements ProcessorSync {
         if (ScriptUtils.isScript(value)) {
 
             try {
-                Object result = scriptEngine.evaluate(value, input, flowContext);
+                String realScript = ScriptUtils.unwrap(value);
+                Object result = scriptEngine.evaluate(realScript, input, flowContext);
                 Type contentType = new Type(variableMimeType);
                 TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
                 flowContext.setVariable(name, content);
@@ -75,27 +80,19 @@ public class SetVariable implements ProcessorSync {
         this.value = value;
     }
 
-    public void setMimeType(VariableMimeType mimeType) {
+    public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
-    }
-
-    public void setMimeTypeValue(String mimeTypeValue) {
-        this.mimeTypeValue = mimeTypeValue;
     }
 
     private MimeType getMimeType() {
         if (mimeType == null) {
-            return MimeType.UNKNOWN;
-
-        } else if (VariableMimeType.NONE.equals(mimeType)) {
-            try {
-                // Custom mime type
-                return MimeType.parse(mimeTypeValue);
-            } catch (Exception e) {
-                return MimeType.UNKNOWN;
-            }
-        } else {
-            return mimeType.mapped();
+            return UNKNOWN;
+        }
+        try {
+            // Custom mime type
+            return MimeType.parse(mimeType);
+        } catch (Exception e) {
+            return UNKNOWN;
         }
     }
 }
