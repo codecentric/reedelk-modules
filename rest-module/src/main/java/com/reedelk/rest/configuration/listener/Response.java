@@ -1,6 +1,7 @@
 package com.reedelk.rest.configuration.listener;
 
 import com.reedelk.runtime.api.annotation.*;
+import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Collections;
@@ -10,7 +11,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @Collapsible
 @Component(service = Response.class, scope = PROTOTYPE)
-public class Response {
+public class Response implements Implementor {
 
     @ScriptInline
     @Default("#[payload]")

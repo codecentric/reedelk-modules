@@ -28,11 +28,12 @@ public class SetVariable implements ProcessorSync {
 
     @ScriptInline
     @Property("Value")
-    @Hint("variable value")
+    @Default("#[]")
+    @Hint("variable text value")
     private String value;
 
     @Property("Mime type")
-    @Default("NONE")
+    @Default("ANY")
     private VariableMimeType mimeType;
 
     @Property("Custom mime type")
@@ -83,9 +84,16 @@ public class SetVariable implements ProcessorSync {
     }
 
     private MimeType getMimeType() {
-        if (mimeType == null || VariableMimeType.NONE.equals(mimeType)) {
-            // Custom mime type
-            return MimeType.parse(mimeTypeValue);
+        if (mimeType == null) {
+            return MimeType.UNKNOWN;
+
+        } else if (VariableMimeType.NONE.equals(mimeType)) {
+            try {
+                // Custom mime type
+                return MimeType.parse(mimeTypeValue);
+            } catch (Exception e) {
+                return MimeType.UNKNOWN;
+            }
         } else {
             return mimeType.mapped();
         }

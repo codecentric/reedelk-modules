@@ -7,7 +7,7 @@ import com.reedelk.runtime.api.message.type.MimeType.Literal;
 
 public enum VariableMimeType {
 
-    @DisplayName("Custom mime type")
+    @DisplayName("-- Custom --")
     NONE {
         @Override
         MimeType mapped() {
