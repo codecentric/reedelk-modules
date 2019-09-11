@@ -23,8 +23,8 @@ public class ContentType {
                 return Optional.of(contentType.toString());
             }
         } else {
-            // The body is text: if it is not empty, then we set it.
-            if (StringUtils.isNotBlank(responseBody)) {
+            // The body is text: if it is not null, then we set it.
+            if (StringUtils.isNotNull(responseBody)) {
                 return Optional.of(MimeType.TEXT.toString());
             }
         }

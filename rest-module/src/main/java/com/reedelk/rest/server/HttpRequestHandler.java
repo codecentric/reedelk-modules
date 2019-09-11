@@ -1,6 +1,7 @@
 package com.reedelk.rest.server;
 
-import com.reedelk.rest.configuration.listener.ListenerErrorResponse;
+import com.reedelk.rest.configuration.listener.ErrorResponse;
+import com.reedelk.rest.configuration.listener.Response;
 import com.reedelk.rest.server.mapper.HttpRequestMessageMapper;
 import com.reedelk.rest.server.mapper.MessageHttpResponseMapper;
 import com.reedelk.runtime.api.component.InboundEventListener;
@@ -14,7 +15,6 @@ import reactor.core.publisher.MonoSink;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
-import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -97,14 +97,10 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
     public static class Builder {
 
         private String matchingPath;
-        private String responseBody;
-        private String responseStatus;
-        private Boolean useErrorResponse;
 
-        private Map<String, String> responseHeaders;
-
+        private Response response;
+        private ErrorResponse errorResponse;
         private ScriptEngineService scriptEngine;
-        private ListenerErrorResponse errorResponse;
         private InboundEventListener inboundEventListener;
 
         public Builder matchingPath(String matchingPath) {
@@ -112,33 +108,18 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
             return this;
         }
 
-        public Builder responseBody(String responseBody) {
-            this.responseBody = responseBody;
+        public Builder response(Response response) {
+            this.response = response;
             return this;
         }
 
-        public Builder responseStatus(String responseStatus) {
-            this.responseStatus = responseStatus;
-            return this;
-        }
-
-        public Builder useErrorResponse(Boolean useErrorResponse) {
-            this.useErrorResponse = useErrorResponse;
+        public Builder errorResponse(ErrorResponse errorResponse) {
+            this.errorResponse = errorResponse;
             return this;
         }
 
         public Builder scriptEngine(ScriptEngineService scriptEngine) {
             this.scriptEngine = scriptEngine;
-            return this;
-        }
-
-        public Builder errorResponse(ListenerErrorResponse errorResponse) {
-            this.errorResponse = errorResponse;
-            return this;
-        }
-
-        public Builder responseHeaders(Map<String, String> responseHeaders) {
-            this.responseHeaders = responseHeaders;
             return this;
         }
 
@@ -153,10 +134,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
             handler.requestMapper = new HttpRequestMessageMapper(matchingPath);
             handler.responseMapper = new MessageHttpResponseMapper(
                     scriptEngine,
-                    responseBody,
-                    responseStatus,
-                    responseHeaders,
-                    useErrorResponse,
+                    response,
                     errorResponse);
             return handler;
         }

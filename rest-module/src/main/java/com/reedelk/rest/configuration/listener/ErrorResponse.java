@@ -9,8 +9,9 @@ import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@Component(service = ListenerErrorResponse.class, scope = PROTOTYPE)
-public class ListenerErrorResponse implements Implementor {
+@Collapsible
+@Component(service = ErrorResponse.class, scope = PROTOTYPE)
+public class ErrorResponse implements Implementor {
 
     @ScriptInline
     @Hint("error body text")

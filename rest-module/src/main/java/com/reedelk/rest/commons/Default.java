@@ -2,6 +2,7 @@ package com.reedelk.rest.commons;
 
 public class Default {
 
+    // TODO: ???  Not used
     public static final int DEFAULT_MAX_INITIAL_LINE_LENGTH = 4096; // in bytes
     public static final int DEFAULT_MAX_LENGTH_OF_ALL_HEADERS = 8192; // in bytes
     public static final int DEFAULT_MAX_CHUNK_SIZE = 8192; // in bytes

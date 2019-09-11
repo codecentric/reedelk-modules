@@ -1,21 +1,22 @@
 package com.reedelk.rest.component;
 
 import com.reedelk.rest.commons.RestMethod;
+import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
-import com.reedelk.rest.configuration.listener.ListenerErrorResponse;
+import com.reedelk.rest.configuration.listener.Response;
 import com.reedelk.rest.server.HttpRequestHandler;
 import com.reedelk.rest.server.Server;
 import com.reedelk.rest.server.ServerProvider;
-import com.reedelk.runtime.api.annotation.*;
+import com.reedelk.runtime.api.annotation.Default;
+import com.reedelk.runtime.api.annotation.ESBComponent;
+import com.reedelk.runtime.api.annotation.Hint;
+import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -44,28 +45,11 @@ public class RestListener extends AbstractInbound {
     @Default("GET")
     private RestMethod method;
 
-    @ScriptInline
-    @Default("#[payload]")
-    @Hint("content body text")
-    @Property("Response body")
-    private String body;
-
-    @ScriptInline
-    @Default("200")
-    @Hint("201")
-    @Property("Response status")
-    private String status;
-
-    @TabGroup("Response headers")
-    @Property("Response headers")
-    private Map<String, String> headers = Collections.emptyMap();
-
-    @Property("Use error response")
-    private Boolean useErrorResponse;
+    @Property("Response")
+    private Response response;
 
     @Property("Error response")
-    @When(propertyName = "useErrorResponse", propertyValue = "true")
-    private ListenerErrorResponse errorResponse;
+    private ErrorResponse errorResponse;
 
 
     @Override
@@ -77,13 +61,10 @@ public class RestListener extends AbstractInbound {
         HttpRequestHandler httpRequestHandler =
                 HttpRequestHandler.builder()
                         .inboundEventListener(RestListener.this)
-                        .useErrorResponse(useErrorResponse)
                         .errorResponse(errorResponse)
                         .scriptEngine(scriptEngine)
-                        .responseHeaders(headers)
-                        .responseStatus(status)
+                        .response(response)
                         .matchingPath(path)
-                        .responseBody(body)
                         .build();
 
         Server server = provider.get(configuration);
@@ -113,23 +94,11 @@ public class RestListener extends AbstractInbound {
         this.method = method;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setResponse(Response response) {
+        this.response = response;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
-    }
-
-    public void setUseErrorResponse(Boolean useErrorResponse) {
-        this.useErrorResponse = useErrorResponse;
-    }
-
-    public void setErrorResponse(ListenerErrorResponse errorResponse) {
+    public void setErrorResponse(ErrorResponse errorResponse) {
         this.errorResponse = errorResponse;
     }
 }
