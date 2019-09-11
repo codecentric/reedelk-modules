@@ -17,6 +17,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.script.ScriptException;
 
+import static com.reedelk.runtime.api.message.type.MimeType.Literal.*;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Set Payload")
@@ -31,6 +32,14 @@ public class SetPayload implements ProcessorSync {
     @Default("#[]")
     @Hint("payload text value")
     private String payload;
+
+    @Property("Mime type")
+    @Default(ANY)
+    @Combo(editable = true, comboValues = {
+            ANY, XML, CSS, JSON, HTML, TEXT, RSS, ATOM, BINARY, MimeType.Literal.UNKNOWN,
+            JAVASCRIPT, APPLICATION_XML, MULTIPART_MIXED, APPLICATION_JSON,
+            APPLICATION_JAVA, MULTIPART_RELATED, MULTIPART_FORM_DATA, MULTIPART_X_MIXED_REPLACE})
+    private String mimeType;
 
     @Override
     public Message apply(Message input, FlowContext flowContext) {
@@ -61,5 +70,8 @@ public class SetPayload implements ProcessorSync {
         this.payload = payload;
     }
 
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
 }
 
