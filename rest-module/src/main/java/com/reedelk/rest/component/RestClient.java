@@ -34,6 +34,7 @@ public class RestClient implements ProcessorSync {
     private ScriptEngineService service;
 
     @Property("Method")
+    @Default("GET")
     private RestMethod method;
 
     @Property("Use client config")

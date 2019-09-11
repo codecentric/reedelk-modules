@@ -15,6 +15,11 @@ public class DefaultFlowContext extends HashMap<String, TypedContent<?>> impleme
     }
 
     @Override
+    public void removeVariable(String variableName) {
+        remove(variableName);
+    }
+
+    @Override
     public TypedContent<?> getVariable(String variableName) {
         return get(variableName);
     }

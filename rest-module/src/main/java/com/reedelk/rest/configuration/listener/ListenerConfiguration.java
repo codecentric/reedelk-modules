@@ -36,10 +36,10 @@ public class ListenerConfiguration implements Implementor {
     @Property("Read timeout millis")
     private Integer readTimeoutMillis;
 
-    @Property("Connection Timeout Millis")
+    @Property("Connection timeout millis")
     private Integer connectionTimeoutMillis;
 
-    @Property("Socket Backlog")
+    @Property("Socket backlog")
     private Integer socketBacklog;
 
     @Property("Validate headers")
@@ -48,10 +48,10 @@ public class ListenerConfiguration implements Implementor {
     @Property("Compress response")
     private Boolean compress;
 
-    @Property("Max Chunk Size")
+    @Property("Max chunk size")
     private Integer maxChunkSize;
 
-    @Property("Max length of all headers")
+    @Property("Max headers length")
     private Integer maxLengthOfAllHeaders;
 
     // The security configuration is visible and serializable if and
