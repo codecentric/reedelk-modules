@@ -39,7 +39,7 @@ public class RestClient implements ProcessorSync {
 
     @Property("Base URL")
     @Hint("https://api.example.com")
-    @When(propertyName = "configuration", propertyValue = "<Not Selected>")
+    @When(propertyName = "configuration", propertyValue = When.IS_NULL)
     private String baseUrl;
 
     @Property("Client config")
