@@ -37,13 +37,14 @@ public class RestClient implements ProcessorSync {
     @Default("GET")
     private RestMethod method;
 
+    @Property("Client config")
+    private ClientConfiguration configuration;
+
     @Property("Base URL")
     @Hint("https://api.example.com")
     @When(propertyName = "configuration", propertyValue = When.IS_NULL)
+    @When(propertyName = "configuration", propertyValue = "{'configRef': '" + When.IS_EMPTY + "'}")
     private String baseUrl;
-
-    @Property("Client config")
-    private ClientConfiguration configuration;
 
     @Property("Path")
     @Hint("/resource/{id}")
