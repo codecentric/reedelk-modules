@@ -37,17 +37,12 @@ public class RestClient implements ProcessorSync {
     @Default("GET")
     private RestMethod method;
 
-    @Property("Use client config")
-    @Default("false")
-    private boolean useConfiguration;
-
     @Property("Base URL")
     @Hint("https://api.example.com")
-    @When(propertyName = "useConfiguration", propertyValue = "false")
+    @When(propertyName = "configuration", propertyValue = "<Not Selected>")
     private String baseUrl;
 
     @Property("Client config")
-    @When(propertyName = "useConfiguration", propertyValue = "true")
     private ClientConfiguration configuration;
 
     @Property("Path")
@@ -138,10 +133,6 @@ public class RestClient implements ProcessorSync {
         this.baseUrl = baseUrl;
     }
 
-    public void setUseConfiguration(boolean useConfiguration) {
-        this.useConfiguration = useConfiguration;
-    }
-
     public void setConfiguration(ClientConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -183,7 +174,6 @@ public class RestClient implements ProcessorSync {
                 .method(method)
                 .baseUrl(baseUrl)
                 .configuration(configuration)
-                .useConfiguration(useConfiguration)
                 .onRequestConsumer(((request, connection) -> interpretAndAddHeaders(request)))
                 .build();
     }
