@@ -44,7 +44,7 @@ public class TestComponentWithCollectionProperties implements ProcessorSync {
     private Set<BigDecimal> myBigDecimalSet;
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         throw new UnsupportedOperationException("Test Only ProcessorSync");
     }
 

@@ -28,8 +28,8 @@ public class JavascriptComponent implements ProcessorSync {
     private String script;
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
-        ScriptExecutionResult result = service.evaluate(script, input, flowContext);
+    public Message apply(Message message, FlowContext flowContext) {
+        ScriptExecutionResult result = service.evaluate(script, message, flowContext);
         return MessageBuilder.get().javaObject(result.getObject()).build();
     }
 

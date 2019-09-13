@@ -30,10 +30,10 @@ public class WriteFileBlocking implements ProcessorSync {
     private String extension;
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         Path path = Paths.get(uploadDirectory, UUID.randomUUID().toString() + "." + extension);
 
-        byte[] bytes = input.getContent().asByteArray();
+        byte[] bytes = message.getContent().asByteArray();
         try {
             Files.write(path, bytes,WRITE, CREATE_NEW);
         } catch (IOException e) {

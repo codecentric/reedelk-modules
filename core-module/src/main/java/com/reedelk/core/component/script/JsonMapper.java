@@ -44,10 +44,10 @@ public class JsonMapper implements ProcessorSync {
     private String mappingScript;
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         String script = String.format(EXECUTION_SCRIPT_TEMPLATE, mappingScript);
 
-        ScriptExecutionResult result = service.evaluate(script, input, new ComponentVariableBindings(input));
+        ScriptExecutionResult result = service.evaluate(script, message, new ComponentVariableBindings(message));
 
         Object mappedOutput = result.getBindings().get("output");
 

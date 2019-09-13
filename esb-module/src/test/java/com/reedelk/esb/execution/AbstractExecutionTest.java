@@ -64,7 +64,7 @@ class AbstractExecutionTest {
 
     class ProcessorThrowingExceptionSync implements ProcessorSync {
         @Override
-        public Message apply(Message input, FlowContext flowContext) {
+        public Message apply(Message message, FlowContext flowContext) {
             throw new IllegalStateException("Input not valid");
         }
     }
@@ -78,8 +78,8 @@ class AbstractExecutionTest {
         }
 
         @Override
-        public Message apply(Message input, FlowContext flowContext) {
-            String inputString = input.getContent().asString();
+        public Message apply(Message message, FlowContext flowContext) {
+            String inputString = message.getContent().asString();
             String outputString = inputString + postfix;
             return MessageBuilder.get().text(outputString).build();
         }

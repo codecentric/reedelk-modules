@@ -9,7 +9,7 @@ public class TestComponentWithObjectProperty implements ProcessorSync {
     private TestImplementor config;
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         throw new UnsupportedOperationException("Test Only ProcessorSync");
     }
 

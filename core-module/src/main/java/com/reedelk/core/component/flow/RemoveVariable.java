@@ -20,11 +20,11 @@ public class RemoveVariable implements ProcessorSync {
     private String name;
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         if (StringUtils.isNotBlank(name)) {
             flowContext.removeVariable(name);
         }
-        return input;
+        return message;
     }
 
     public void setName(String name) {

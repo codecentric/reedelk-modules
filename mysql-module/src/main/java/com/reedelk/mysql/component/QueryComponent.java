@@ -33,7 +33,7 @@ public class QueryComponent implements ProcessorSync {
     private String databaseURL;
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         try (Connection conn = DriverManager.getConnection(databaseURL, username, password);
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(query)) {

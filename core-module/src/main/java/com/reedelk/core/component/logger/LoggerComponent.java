@@ -36,20 +36,20 @@ public class LoggerComponent implements ProcessorSync {
     private String message;
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         try {
             if (LoggerLevel.DEBUG.equals(level)) {
                 // When level is DEBUG, we only debug if the debug is enabled.
                 if (logger.isDebugEnabled()) {
-                    debug(input, flowContext);
+                    debug(message, flowContext);
                 }
             } else {
-                debug(input, flowContext);
+                debug(message, flowContext);
             }
         } catch (ScriptException e) {
             throw new ESBException(e);
         }
-        return input;
+        return message;
     }
 
     private void debug(Message input, FlowContext flowContext) throws ScriptException {

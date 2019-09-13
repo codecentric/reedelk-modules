@@ -68,7 +68,7 @@ public class RestClient implements ProcessorSync {
     private UriComponent uriComponent;
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         HttpClientWrapper client = getClient();
 
         // Builds the request URI by replacing the URI parameters (if any)
@@ -76,8 +76,10 @@ public class RestClient implements ProcessorSync {
         String requestUri = uriComponent.expand(uriParameters, queryParameters);
 
         final HttpResponseWrapper responseData = new HttpResponseWrapper();
-        Mono<byte[]> responseBytes =
-                client.execute(requestUri, MessageBodyProvider.from(input), ResponseHandlerProvider.from(responseData));
+        Mono<byte[]> responseBytes = client.execute(
+                requestUri,
+                MessageBodyProvider.from(message),
+                ResponseHandlerProvider.from(responseData));
 
         // We block and wait until the complete response has been received.
         // Note that because of this line this component does not support

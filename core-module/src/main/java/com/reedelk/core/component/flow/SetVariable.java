@@ -43,7 +43,7 @@ public class SetVariable implements ProcessorSync {
 
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         if (StringUtils.isBlank(name)) {
             throw new ESBException("Variable name must not be empty");
         }
@@ -52,7 +52,7 @@ public class SetVariable implements ProcessorSync {
 
         if (ScriptUtils.isScript(value)) {
             // It is a script, hence we need to evaluate it.
-            Object result = scriptEngine.evaluate(value, input, flowContext);
+            Object result = scriptEngine.evaluate(value, message, flowContext);
 
             Type contentType = new Type(mimeType);
             TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
@@ -66,7 +66,7 @@ public class SetVariable implements ProcessorSync {
             flowContext.setVariable(name, content);
         }
 
-        return input;
+        return message;
     }
 
     public void setName(String name) {

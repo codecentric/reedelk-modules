@@ -9,7 +9,7 @@ import java.util.Map;
 public class TestComponentWithMapProperty implements ProcessorSync {
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         throw new UnsupportedOperationException("Test Only ProcessorSync");
     }
 

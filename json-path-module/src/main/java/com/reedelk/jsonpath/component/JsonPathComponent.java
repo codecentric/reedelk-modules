@@ -26,12 +26,12 @@ public class JsonPathComponent implements ProcessorSync {
     private JsonPath compiledExpression;
 
     @Override
-    public Message apply(Message input, FlowContext flowContext) {
+    public Message apply(Message message, FlowContext flowContext) {
         if (compiledExpression == null) {
             compiledExpression = JsonPath.compile(jsonPathExpression);
         }
 
-        TypedContent typedContent = input.getContent();
+        TypedContent typedContent = message.getContent();
 
         String inputJson = typedContent.asString();
 

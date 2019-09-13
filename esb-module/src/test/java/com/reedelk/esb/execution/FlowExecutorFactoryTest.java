@@ -96,7 +96,7 @@ class FlowExecutorFactoryTest {
 
     class TestProcessorSync implements ProcessorSync, NotRelatedInterface {
         @Override
-        public Message apply(Message input, FlowContext flowContext) {
+        public Message apply(Message message, FlowContext flowContext) {
             return null;
         }
     }
