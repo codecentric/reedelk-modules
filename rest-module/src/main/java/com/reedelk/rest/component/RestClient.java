@@ -73,7 +73,7 @@ public class RestClient implements ProcessorSync {
 
         String uri = buildUri();
 
-        final ClientResponseData responseData = new ClientResponseData();
+        final HttpResponseWrapper responseData = new HttpResponseWrapper();
         Mono<byte[]> responseBytes =
                 client.execute(uri, MessageBodyProvider.from(input), ResponseHandlerProvider.from(responseData));
 
@@ -81,7 +81,7 @@ public class RestClient implements ProcessorSync {
         // Note that because of this line this component does not support
         // inbound streaming. It it only capable of streaming the body outbound.
         byte[] bytes = responseBytes.block();
-        responseData.setData(bytes);
+        responseData.data(bytes);
 
         // Map the response
         return mapper.map(responseData);

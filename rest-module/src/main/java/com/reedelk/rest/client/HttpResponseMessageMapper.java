@@ -1,37 +1,33 @@
 package com.reedelk.rest.client;
 
 import com.reedelk.rest.commons.IsNotSuccessful;
-import com.reedelk.rest.commons.MimeTypeExtract;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.ByteArrayContent;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
+
+import static com.reedelk.rest.client.HttpResponseAttribute.*;
 
 public class HttpResponseMessageMapper {
 
-    public Message map(ClientResponseData responseData) {
+    public Message map(HttpResponseWrapper response) {
+        HttpResponseAttributes responseAttributes = new HttpResponseAttributes();
+        responseAttributes.put(headers(), response.headers());
+        responseAttributes.put(statusCode(), response.status().code());
+        responseAttributes.put(reasonPhrase(), response.status().reasonPhrase());
+
+        TypedContent content = HttpResponseContentMapper.map(response);
+
+        Message message = MessageBuilder.get()
+                .attributes(responseAttributes)
+                .typedContent(content)
+                .build();
+
         // If the response is not in the Range 2xx, we throw an exception.
-        if (IsNotSuccessful.status(responseData.getStatus())) {
-            // Map error
-            throw new ESBException(responseData.getStatus().toString());
+        if (IsNotSuccessful.status(response.status())) {
+            throw new ESBException(message);
         } else {
-            // Map success
-            // We set the type of the content according to the
-            // Content type header.
-            MimeType mimeType = MimeTypeExtract.from(responseData.getHeaders());
-            Type type = new Type(mimeType);
-
-                    // We set the content
-            TypedContent content = new ByteArrayContent(responseData.getData(), type);
-
-            // TODO: Create attributes from response!
-            HttpResponseAttributes responseAttributes = new HttpResponseAttributes();
-            return MessageBuilder.get().typedContent(content)
-                    .attributes(responseAttributes)
-                    .build();
+            return message;
         }
     }
 }

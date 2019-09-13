@@ -39,7 +39,7 @@ class HttpRequestContentMapper {
     }
 
     private static TypedContent mapStringJavaType(Flux<byte[]> byteArrayStream, MimeType mimeType) {
-        // If it  is a String, then we check the charset if present
+        // If it  is a String, then we check if the charset is present
         // in the mime type to be used for the string conversion.
         Optional<Charset> charset = mimeType.getCharset();
 
