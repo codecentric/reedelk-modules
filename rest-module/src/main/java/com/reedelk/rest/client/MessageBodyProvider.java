@@ -1,7 +1,5 @@
-package com.reedelk.rest.commons;
+package com.reedelk.rest.client;
 
-import com.reedelk.rest.client.BodyProvider;
-import com.reedelk.rest.client.BodyProviderData;
 import com.reedelk.runtime.api.message.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

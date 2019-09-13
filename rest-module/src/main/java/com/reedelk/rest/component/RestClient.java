@@ -1,22 +1,13 @@
 package com.reedelk.rest.component;
 
 import com.reedelk.rest.client.*;
-import com.reedelk.rest.commons.IsNotSuccessful;
-import com.reedelk.rest.commons.MessageBodyProvider;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.ByteArrayContent;
-import com.reedelk.runtime.api.message.type.Type;
-import com.reedelk.runtime.api.message.type.TypedContent;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import reactor.core.publisher.Mono;
@@ -29,6 +20,8 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @ESBComponent("REST Client")
 @Component(service = RestClient.class, scope = PROTOTYPE)
 public class RestClient implements ProcessorSync {
+
+    private final HttpResponseMessageMapper mapper = new HttpResponseMessageMapper();
 
     @Reference
     private ScriptEngineService service;
@@ -80,43 +73,18 @@ public class RestClient implements ProcessorSync {
 
         String uri = buildUri();
 
-        final ResponseData dataHolder = new ResponseData();
-        Mono<byte[]> responseBytes = client.execute(uri, MessageBodyProvider.from(input),
-                (response, byteBufMono) -> {
-                    dataHolder.status = response.status();
-                    dataHolder.headers = response.responseHeaders();
-                    return byteBufMono.asByteArray();
-                });
+        final ClientResponseData responseData = new ClientResponseData();
+        Mono<byte[]> responseBytes =
+                client.execute(uri, MessageBodyProvider.from(input), ResponseHandlerProvider.from(responseData));
 
-        // We block and wait until the whole response has been received
-        // note that because of this line, this component is not supporting
-        // a stream (inbound), but it does support streaming outbound...
+        // We block and wait until the complete response has been received.
+        // Note that because of this line this component does not support
+        // inbound streaming. It it only capable of streaming the body outbound.
         byte[] bytes = responseBytes.block();
+        responseData.setData(bytes);
 
-        // If the response is not in the Range 2xx, we throw an exception.
-        // TODO: We must propagate the response to the caller.
-        // All the infos should be in the attributes...
-        if (IsNotSuccessful.from(dataHolder.status)) {
-            throw new ESBException(dataHolder.status.toString());
-        }
-
-        // We set the type of the content according to the
-        // Content type header.
-        Type type = ExtractTypeFromHeaders.from(dataHolder.headers);
-
-        // We set the content
-        TypedContent content = new ByteArrayContent(bytes, type);
-
-        // TODO: Create attributes from response!
-        HttpResponseAttributes responseAttributes = new HttpResponseAttributes();
-        return MessageBuilder.get().typedContent(content)
-                .attributes(responseAttributes)
-                .build();
-    }
-
-    private class ResponseData {
-        private HttpHeaders headers;
-        private HttpResponseStatus status;
+        // Map the response
+        return mapper.map(responseData);
     }
 
     public void setPath(String path) {
@@ -181,7 +149,7 @@ public class RestClient implements ProcessorSync {
     }
 
     private void interpretAndAddHeaders(HttpClientRequest request) {
-        // Interpret headers
+        // Interpret and add headers
         if (headers != null) {
             headers.forEach(request::addHeader);
         }
