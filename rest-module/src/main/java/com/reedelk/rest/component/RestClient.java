@@ -24,7 +24,7 @@ public class RestClient implements ProcessorSync {
     private final HttpResponseMessageMapper mapper = new HttpResponseMessageMapper();
 
     @Reference
-    private ScriptEngineService service;
+    private ScriptEngineService scriptEngine;
 
     @Property("Method")
     @Default("GET")
@@ -78,7 +78,7 @@ public class RestClient implements ProcessorSync {
         final HttpResponseWrapper responseData = new HttpResponseWrapper();
         Mono<byte[]> responseBytes = client.execute(
                 requestUri,
-                MessageBodyProvider.from(message),
+                MessageBodyProvider.from(message, body, scriptEngine),
                 ResponseHandlerProvider.from(responseData));
 
         // We block and wait until the complete response has been received.
