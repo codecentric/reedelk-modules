@@ -67,6 +67,7 @@ public class RestClient implements ProcessorSync {
 
     private UriComponent uriComponent;
 
+    // TODO: Important!! Needto handle cookies!!!
     @Override
     public Message apply(Message message, FlowContext flowContext) {
         HttpClientWrapper client = getClient();
@@ -145,7 +146,11 @@ public class RestClient implements ProcessorSync {
     }
 
     private void interpretAndAddHeaders(HttpClientRequest request) {
-        // Interpret and add headers
+        // Add default headers (e.g user agent) before the user defined ones,
+        // so that the user defined ones can override the defaults.
+        DefaultHeaders.add(request);
+
+        // User-defined headers: interpret and add them
         if (headers != null) {
             headers.forEach(request::addHeader);
         }

@@ -19,7 +19,7 @@
         <junit.version>RELEASE</junit.version>
         <assertj.version>3.11.1</assertj.version>
         <reactor.addons.version>3.2.3.RELEASE</reactor.addons.version>
-        <reactor.netty.version>0.8.10.RELEASE</reactor.netty.version>
+        <reactor.netty.version>0.8.11.RELEASE</reactor.netty.version>
     </properties>
 
     <dependencies>

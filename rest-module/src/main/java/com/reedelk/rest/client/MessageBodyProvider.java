@@ -9,6 +9,13 @@ import io.netty.buffer.Unpooled;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
+// TODO: This class needs work.
+// TODO: The content length thingy, this is how it works:
+// If the content-length is set by the user, then the POST/PUT/DELETE are NOT
+// Transfer 'chunked', otherwise  they are by default chunked. Therefore,
+// the behaviour is going to be: if the body is a stream, then it will be  chunked,
+//otherwise (since we have the number of bytes) we will set the content length
+// in the header.
 public class MessageBodyProvider {
 
     public static BodyProvider from(Message message, String body, ScriptEngineService scriptEngine) {
