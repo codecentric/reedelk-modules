@@ -51,9 +51,12 @@ public class RestClient implements ProcessorSync {
     @Hint("/resource/{id}")
     private String path;
 
-    @Property("Request body")
+    @Property("Body")
     @Hint("payload")
     @Default("payload")
+    @When(propertyName = "method", propertyValue = "DELETE")
+    @When(propertyName = "method", propertyValue = "POST")
+    @When(propertyName = "method", propertyValue = "PUT")
     private String body;
 
     @TabGroup("Headers and parameters")
@@ -79,9 +82,7 @@ public class RestClient implements ProcessorSync {
         String uri = buildUri();
 
         final ResponseData dataHolder = new ResponseData();
-        Mono<byte[]> responseBytes = client.execute(
-                uri,
-                MessageBodyProvider.from(input),
+        Mono<byte[]> responseBytes = client.execute(uri, MessageBodyProvider.from(input),
                 (response, byteBufMono) -> {
                     dataHolder.status = response.status();
                     dataHolder.headers = response.responseHeaders();
