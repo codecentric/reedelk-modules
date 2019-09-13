@@ -37,8 +37,8 @@ public class RestListener extends AbstractInbound {
     private ListenerConfiguration configuration;
 
     @Property("Path")
-    @Default("/")
-    @Hint("/resource")
+    @Default("/resource")
+    @Hint("/resource/{id}")
     private String path;
 
     @Property("Method")
