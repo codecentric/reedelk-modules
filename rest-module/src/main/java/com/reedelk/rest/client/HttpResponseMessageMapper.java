@@ -14,7 +14,7 @@ public class HttpResponseMessageMapper {
 
     public Message map(ClientResponseData responseData) {
         // If the response is not in the Range 2xx, we throw an exception.
-        if (IsNotSuccessful.from(responseData.getStatus())) {
+        if (IsNotSuccessful.status(responseData.getStatus())) {
             // Map error
             throw new ESBException(responseData.getStatus().toString());
         } else {

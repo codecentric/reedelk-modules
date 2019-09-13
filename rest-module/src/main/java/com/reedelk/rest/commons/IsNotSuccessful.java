@@ -4,7 +4,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 
 public class IsNotSuccessful {
 
-    public static boolean from(HttpResponseStatus status) {
+    public static boolean status(HttpResponseStatus status) {
         return !(status == HttpResponseStatus.OK ||
                 status == HttpResponseStatus.CREATED ||
                 status == HttpResponseStatus.ACCEPTED ||
