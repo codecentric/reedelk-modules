@@ -42,8 +42,9 @@ public class RestClient implements ProcessorSync {
 
     @Property("Base URL")
     @Hint("https://api.example.com")
-    @When(propertyName = "configuration", propertyValue = When.IS_NULL)
-    @When(propertyName = "configuration", propertyValue = "{'configRef': '" + When.IS_EMPTY + "'}")
+    @When(propertyName = "configuration", propertyValue = When.NULL)
+    @When(propertyName = "configuration", propertyValue = "{'configRef': '" + When.BLANK + "'}")
+    @When(propertyName = "configuration", propertyValue = "{'configRef': '" + When.PROPERTY_NOT_PRESENT + "'}")
     private String baseUrl;
 
     @Property("Path")
