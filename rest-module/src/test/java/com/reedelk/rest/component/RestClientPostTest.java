@@ -75,6 +75,6 @@ class RestClientPostTest extends RestClientAbstractTest {
         ESBException thrown = assertThrows(ESBException.class,
                 () -> component.apply(emptyPayload, flowContext));
 
-        assertThat(thrown).hasMessage("500 Internal Server Error");
+        assertThat(thrown).hasMessage("Error exception caused by XYZ");
     }
 }

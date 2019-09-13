@@ -24,6 +24,7 @@ public class HttpResponseMessageMapper {
                 .build();
 
         // If the response is not in the Range 2xx, we throw an exception.
+        // TODO: The not successful should be parameterized from the client config.
         if (IsNotSuccessful.status(response.status())) {
             throw new ESBException(message);
         } else {

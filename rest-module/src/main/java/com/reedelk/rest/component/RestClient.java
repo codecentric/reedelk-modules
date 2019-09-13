@@ -71,11 +71,13 @@ public class RestClient implements ProcessorSync {
     public Message apply(Message input, FlowContext flowContext) {
         HttpClientWrapper client = getClient();
 
-        String uri = buildUri();
+        // Builds the request URI by replacing the URI parameters (if any)
+        // and by adding the query parameters (if any).
+        String requestUri = uriComponent.expand(uriParameters, queryParameters);
 
         final HttpResponseWrapper responseData = new HttpResponseWrapper();
         Mono<byte[]> responseBytes =
-                client.execute(uri, MessageBodyProvider.from(input), ResponseHandlerProvider.from(responseData));
+                client.execute(requestUri, MessageBodyProvider.from(input), ResponseHandlerProvider.from(responseData));
 
         // We block and wait until the complete response has been received.
         // Note that because of this line this component does not support
@@ -117,14 +119,6 @@ public class RestClient implements ProcessorSync {
 
     public void setQueryParameters(Map<String, String> queryParameters) {
         this.queryParameters = queryParameters;
-    }
-
-    /**
-     * It replaces from the original path all the path parameters,
-     * and it appends query parameters at the end.
-     */
-    private String buildUri() {
-        return uriComponent.expand(uriParameters, queryParameters);
     }
 
     private HttpClientWrapper getClient() {

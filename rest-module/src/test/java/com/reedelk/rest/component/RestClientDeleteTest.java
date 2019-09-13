@@ -76,6 +76,6 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         ESBException thrown = Assertions.assertThrows(ESBException.class,
                 () -> component.apply(emptyPayload, flowContext));
 
-        assertThat(thrown).hasMessage("507 Insufficient Storage");
+        assertThat(thrown).hasMessage("Error exception caused by XYZ");
     }
 }

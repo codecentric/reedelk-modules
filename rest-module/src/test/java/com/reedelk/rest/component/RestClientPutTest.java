@@ -75,6 +75,6 @@ class RestClientPutTest extends RestClientAbstractTest {
         ESBException thrown = assertThrows(ESBException.class,
                 () -> component.apply(emptyPayload, flowContext));
 
-        assertThat(thrown).hasMessage("404 Not Found");
+        assertThat(thrown).hasMessage("Error exception caused by XYZ");
     }
 }
