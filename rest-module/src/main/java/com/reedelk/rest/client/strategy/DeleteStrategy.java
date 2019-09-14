@@ -20,7 +20,7 @@ public class DeleteStrategy extends AbstractExecutionStrategy {
     public <T> Mono<T> execute(String uri, BodyProvider bodyProvider, ResponseHandler<T> handler) {
         HttpClient.ResponseReceiver<?> receiver = sender.send((request, nettyOutbound) -> {
             BodyDataProvider data = bodyProvider.data();
-            request.addHeader(CONTENT_LENGTH, String.valueOf(data.length()));
+            data.length().ifPresent(contentLength -> request.addHeader(CONTENT_LENGTH, String.valueOf(contentLength)));
             return nettyOutbound.send(data.get());
         });
         return _request(receiver, handler, uri);

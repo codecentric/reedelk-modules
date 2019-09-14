@@ -1,5 +1,6 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -33,6 +34,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         Message payload = MessageBuilder.get().json(requestBody).build();
 
         // When
+        component.setBody(ScriptUtils.EVALUATE_PAYLOAD);
         Message outMessage = component.apply(payload, flowContext);
 
         // Then

@@ -17,7 +17,7 @@ abstract class RestClientAbstractTest {
 
     protected FlowContext flowContext;
 
-    private static final int PORT = 8787;
+    private static final int PORT = 8181;
 
     static WireMockServer mockServer;
 
