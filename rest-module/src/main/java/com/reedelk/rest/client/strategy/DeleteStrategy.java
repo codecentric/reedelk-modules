@@ -1,7 +1,7 @@
 package com.reedelk.rest.client.strategy;
 
+import com.reedelk.rest.client.BodyDataProvider;
 import com.reedelk.rest.client.BodyProvider;
-import com.reedelk.rest.client.BodyProviderData;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
@@ -19,9 +19,9 @@ public class DeleteStrategy extends AbstractExecutionStrategy {
     @Override
     public <T> Mono<T> execute(String uri, BodyProvider bodyProvider, ResponseHandler<T> handler) {
         HttpClient.ResponseReceiver<?> receiver = sender.send((request, nettyOutbound) -> {
-            BodyProviderData data = bodyProvider.data();
+            BodyDataProvider data = bodyProvider.data();
             request.addHeader(CONTENT_LENGTH, String.valueOf(data.length()));
-            return nettyOutbound.send(data.provide());
+            return nettyOutbound.send(data.get());
         });
         return _request(receiver, handler, uri);
     }

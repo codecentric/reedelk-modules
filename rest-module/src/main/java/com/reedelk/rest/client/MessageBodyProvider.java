@@ -8,66 +8,108 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-// TODO: This class needs work.
-// TODO: The content length thingy, this is how it works:
-// If the content-length is set by the user, then the POST/PUT/DELETE are NOT
-// Transfer 'chunked', otherwise  they are by default chunked. Therefore,
-// the behaviour is going to be: if the body is a stream, then it will be  chunked,
-//otherwise (since we have the number of bytes) we will set the content length
-// in the header.
+import java.util.Optional;
+
 public class MessageBodyProvider {
 
     public static BodyProvider from(Message message, String body, ScriptEngineService scriptEngine) {
         // This code is only executed if and only if the request is
         // either POST,PUT or DELETE. For all other HTTP methods this is not executed.
         return () -> {
-
             if (StringUtils.isBlank(body)) {
                 return new EmptyBodyProvider();
+            } else if (ScriptUtils.isScript(body)) {
+                return fromScript(message, body, scriptEngine);
+            } else {
+                return fromText(body);
             }
-
-            // TODO: What if we need to send the content length and it is a stream?
-            if (ScriptUtils.isScript(body)) {
-                Object result = scriptEngine.evaluate(body, message);
-                // This one should be converted as byte stream.
-            }
-            // TODO: Take the body and interpret it..(might be javascript)
-            // Request body has to be provided if and only if it is a POST,PUT,DELETE.
-            // Also if the body is null, don't bother to do anything, just
-            // send empty byte array buffer.
-            // If the body is already a stream, then we just stream it upstream. (we support stream outbound)
-            // if the body is stream, we actually don't know the length of the body to be up-streamed.
-            byte[] bodyAsBytes = message.getContent().asByteArray();
-            Flux<ByteBuf> dataStream = Flux.just(Unpooled.wrappedBuffer(bodyAsBytes));
-            return new DefaultBodyProvider(dataStream, bodyAsBytes.length);
         };
     }
 
-
-    static class DefaultBodyProvider implements BodyProviderData {
-
-        private final Publisher<? extends ByteBuf> data;
-        private final int length;
-
-        DefaultBodyProvider(Publisher<? extends ByteBuf> data, int length) {
-            this.data = data;
-            this.length = length;
-        }
-        @Override
-        public Publisher<? extends ByteBuf> provide() {
-            return data;
-        }
-
-        @Override
-        public int length() {
-            return length;
+    private static BodyDataProvider fromScript(Message message, String body, ScriptEngineService scriptEngine) {
+        if (ScriptUtils.isMessagePayload(body)) {
+            if (message.getContent().isStream()) {
+                // The payload is a stream based payload.
+                // We don't know the content length, since it is not loaded into memory.
+                // In this case the transfer encoding will be chunked (the length is not set).
+                Publisher<byte[]> byteArrayStream = message.getContent().asByteArrayStream();
+                return new ByteArrayStreamBodyProvider(byteArrayStream);
+            } else {
+                // The payload is not a stream based payload.
+                // We know the content length, since it is completely loaded into memory.
+                byte[] bodyAsBytes = message.getContent().asByteArray();
+                Mono<byte[]> dataStream = Mono.just(bodyAsBytes);
+                return new ByteArrayBodyProvider(dataStream, bodyAsBytes.length);
+            }
+        } else {
+            // The is a script: we evaluate it and set it the result.
+            Object result = scriptEngine.evaluate(body, message);
+            byte[] bodyAsBytes = result.toString().getBytes();
+            Mono<byte[]> dataStream = Mono.just(bodyAsBytes);
+            return new ByteArrayBodyProvider(dataStream, bodyAsBytes.length);
         }
     }
 
-    static class EmptyBodyProvider extends DefaultBodyProvider {
-        EmptyBodyProvider() {
-            super(Flux.empty(), 0);
+    private static BodyDataProvider fromText(String body) {
+        // The body is not a script, it is just plain text.
+        // We know the number of bytes to be sent.
+        // Transfer encoding will NOT be chunked.
+        byte[] bodyAsBytes = body.getBytes();
+        Mono<byte[]> dataStream = Mono.just(bodyAsBytes);
+        return new ByteArrayBodyProvider(dataStream, bodyAsBytes.length);
+    }
+
+    static class ByteArrayStreamBodyProvider implements BodyDataProvider {
+
+        private final Publisher<byte[]> data;
+
+        ByteArrayStreamBodyProvider(Publisher<byte[]> data) {
+            this.data = data;
+        }
+
+        @Override
+        public Publisher<? extends ByteBuf> get() {
+            return Flux.from(data).map(Unpooled::wrappedBuffer);
+        }
+
+        @Override
+        public Optional<Integer> length() {
+            return Optional.empty();
+        }
+    }
+
+    static class ByteArrayBodyProvider implements BodyDataProvider {
+
+        private final Publisher<byte[]> data;
+        private final int length;
+
+        ByteArrayBodyProvider(Publisher<byte[]> data, int length) {
+            this.data = data;
+            this.length = length;
+        }
+
+        @Override
+        public Publisher<? extends ByteBuf> get() {
+            return Flux.from(data).map(Unpooled::wrappedBuffer);
+        }
+
+        @Override
+        public Optional<Integer> length() {
+            return Optional.of(length);
+        }
+    }
+
+    static class EmptyBodyProvider implements BodyDataProvider {
+        @Override
+        public Publisher<? extends ByteBuf> get() {
+            return Mono.empty();
+        }
+
+        @Override
+        public Optional<Integer> length() {
+            return Optional.empty();
         }
     }
 }
