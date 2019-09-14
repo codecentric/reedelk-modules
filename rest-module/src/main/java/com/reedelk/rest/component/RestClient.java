@@ -45,7 +45,7 @@ public class RestClient implements ProcessorSync {
 
     @Property("Body")
     @Hint("payload")
-    @Default("payload")
+    @Default("#[payload]")
     @When(propertyName = "method", propertyValue = "DELETE")
     @When(propertyName = "method", propertyValue = "POST")
     @When(propertyName = "method", propertyValue = "PUT")
