@@ -6,7 +6,9 @@ import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.component.OnResult;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +27,7 @@ public class Scheduler extends AbstractInbound {
 
     private static final Logger logger = LoggerFactory.getLogger(Scheduler.class);
 
-    private ScheduledExecutorService scheduledService = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
 
     @Property("Delay")
     @Default("0")
@@ -38,25 +40,15 @@ public class Scheduler extends AbstractInbound {
     private ScheduledFuture<?> scheduledFuture;
 
     public void onStart() {
-        this.scheduledFuture = scheduledService.scheduleAtFixedRate(() -> {
-            try {
-                // TODO: In the start message the attribute "firedAt" specifyng the time in milliseconds should be provided.
-                Message emptyMessage = new Message();
-                onEvent(emptyMessage, new OnResult() {});
-            } catch (Exception e) {
-                // we catch any exception, we want to keep the scheduler to run.
-                // (otherwise by default it stops its execution)
-                logger.error("scheduler", e);
-            }
-
-        }, delay, period, MILLISECONDS);
+        this.scheduledFuture =
+                service.scheduleAtFixedRate(command(), delay, period, MILLISECONDS);
     }
 
     public void onShutdown() {
         scheduledFuture.cancel(false);
-        scheduledService.shutdown();
+        service.shutdown();
         try {
-            scheduledService.awaitTermination(1, SECONDS);
+            service.awaitTermination(1, SECONDS);
         } catch (InterruptedException e) {
             // nothing to do
         }
@@ -70,4 +62,23 @@ public class Scheduler extends AbstractInbound {
         this.period = period;
     }
 
+    private Runnable command() {
+        return () -> {
+            SchedulerAttributes attributes = new SchedulerAttributes();
+            attributes.put(SchedulerAttribute.firedAt(), System.currentTimeMillis());
+            Message emptyMessage = MessageBuilder.get()
+                    .attributes(attributes)
+                    .empty()
+                    .build();
+
+            onEvent(emptyMessage, new OnResult() {
+                @Override
+                public void onError(Throwable throwable, FlowContext flowContext) {
+                    // we catch any exception, we want to keep the scheduler to run.
+                    // (otherwise by default it stops its execution)
+                    logger.error("scheduler", throwable);
+                }
+            });
+        };
+    }
 }

@@ -67,7 +67,7 @@ public class RestClient implements ProcessorSync {
 
     private UriComponent uriComponent;
 
-    // TODO: Important!! Needto handle cookies!!!
+    // TODO: Important!! Need to handle cookies!!!
     @Override
     public Message apply(Message message, FlowContext flowContext) {
         HttpClientWrapper client = getClient();
