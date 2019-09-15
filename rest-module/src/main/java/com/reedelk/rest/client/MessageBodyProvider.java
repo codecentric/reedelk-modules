@@ -1,5 +1,7 @@
 package com.reedelk.rest.client;
 
+import com.reedelk.rest.commons.ContentType;
+import com.reedelk.rest.commons.HttpHeader;
 import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.Message;
@@ -9,6 +11,7 @@ import io.netty.buffer.Unpooled;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClientRequest;
 
 import java.util.Optional;
 
@@ -17,19 +20,23 @@ public class MessageBodyProvider {
     public static BodyProvider from(Message message, String body, ScriptEngineService scriptEngine) {
         // This code is only executed if and only if the request is
         // either POST,PUT or DELETE. For all other HTTP methods this is not executed.
-        return () -> {
+        return (request) -> {
             if (StringUtils.isBlank(body)) {
+                // No content type header
                 return new EmptyBodyProvider();
             } else if (ScriptUtils.isScript(body)) {
-                return fromScript(message, body, scriptEngine);
+                return fromScript(message, body, scriptEngine, request);
             } else {
                 return fromText(body);
             }
         };
     }
 
-    private static BodyDataProvider fromScript(Message message, String body, ScriptEngineService scriptEngine) {
+    private static BodyDataProvider fromScript(Message message, String body, ScriptEngineService scriptEngine, HttpClientRequest request) {
         if (ScriptUtils.isMessagePayload(body)) {
+
+            ContentType.from(message).ifPresent(contentType -> request.addHeader(HttpHeader.CONTENT_TYPE, contentType));
+
             if (message.getContent().isStream()) {
                 // The payload is a stream based payload.
                 // We don't know the content length, since it is not loaded into memory.

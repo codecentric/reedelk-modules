@@ -4,8 +4,6 @@ import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
-import com.reedelk.runtime.api.message.type.TypedContent;
 
 import java.util.Optional;
 
@@ -17,10 +15,7 @@ public class ContentType {
             // from the message type
             if (ScriptUtils.isMessagePayload(responseBody)) {
                 // Then we use the content type from the payload's mime type.
-                TypedContent<?> typedContent = message.getContent();
-                Type type = typedContent.type();
-                MimeType contentType = type.getMimeType();
-                return Optional.of(contentType.toString());
+                return com.reedelk.rest.commons.ContentType.from(message);
             }
         } else {
             // The body is text: if it is not null, then we set it.

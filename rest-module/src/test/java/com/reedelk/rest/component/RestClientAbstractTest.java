@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 abstract class RestClientAbstractTest {
@@ -18,17 +19,19 @@ abstract class RestClientAbstractTest {
     protected FlowContext flowContext;
 
     private static final int PORT = 8181;
+    private static final String HOST = "localhost";
 
     static WireMockServer mockServer;
 
     static String path = "/v1/resource";
-    static String baseURL = "http://localhost:" + PORT;
+    static String baseURL = "http://" + HOST + ":" + PORT;
 
 
     @BeforeAll
     static void setUpBeforeAll(){
         mockServer = new WireMockServer(PORT);
         mockServer.start();
+        configureFor(HOST, PORT);
     }
 
     @AfterAll
