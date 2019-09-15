@@ -1,11 +1,15 @@
 package com.reedelk.rest.client.strategy;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
+import com.reedelk.rest.commons.HttpHeader;
+import com.reedelk.rest.commons.IsRedirection;
+import com.reedelk.runtime.api.commons.StringUtils;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient.ResponseReceiver;
 import reactor.netty.http.client.HttpClientResponse;
 
 abstract class AbstractExecutionStrategy implements ExecutionStrategy {
+
+    private static final String PROTOCOL_HTTP = "http";
 
     private String baseUrl;
     private boolean followRedirects;
@@ -18,16 +22,15 @@ abstract class AbstractExecutionStrategy implements ExecutionStrategy {
     <T> Mono<T> _request(ResponseReceiver<?> receiver, ResponseHandler<T> handler, String uri) {
 
         return receiver.uri(baseUrl + uri).responseSingle((response, byteBufMono) ->
-                isRedirect(response) ?
+                shouldRedirect(response) ?
                         redirect(receiver, handler, response) : // redirect
                         handler.apply(response, byteBufMono)); // normal flow
     }
 
     private <T> Mono<T> redirect(ResponseReceiver<?> receiver, ResponseHandler<T> handler, HttpClientResponse response) {
-
         String redirectUrl = getLocationHeader(response);
-        if (redirectUrl.startsWith("http")) {
-            // Location is Absolute (e.g http://mydomain/redirect/url
+        // Location is Absolute (e.g http://mydomain/redirect/url
+        if (redirectUrl.toLowerCase().startsWith(PROTOCOL_HTTP)) {
             return _request(receiver, handler, redirectUrl);
         } else {
             // Location is relative (.e.g /redirect/path
@@ -35,14 +38,15 @@ abstract class AbstractExecutionStrategy implements ExecutionStrategy {
         }
     }
 
-    private boolean isRedirect(HttpClientResponse response) {
-        return followRedirects &&
-                (response.status() == HttpResponseStatus.MOVED_PERMANENTLY ||
-                        response.status() == HttpResponseStatus.FOUND ||
-                        response.status() == HttpResponseStatus.SEE_OTHER);
+    private boolean shouldRedirect(HttpClientResponse response) {
+        return followRedirects && IsRedirection.status(response.status());
     }
 
     private String getLocationHeader(HttpClientResponse response) {
-        return response.responseHeaders().get("Location");
+        if (response.responseHeaders().contains(HttpHeader.LOCATION)) {
+            return response.responseHeaders().get(HttpHeader.LOCATION);
+        } else {
+            return StringUtils.EMPTY;
+        }
     }
 }

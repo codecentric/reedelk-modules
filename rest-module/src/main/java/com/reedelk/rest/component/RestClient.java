@@ -44,6 +44,7 @@ public class RestClient implements ProcessorSync {
     private String path;
 
     @Property("Body")
+    @ScriptInline
     @Hint("payload")
     @Default("#[payload]")
     @When(propertyName = "method", propertyValue = "DELETE")
@@ -67,7 +68,6 @@ public class RestClient implements ProcessorSync {
 
     private UriComponent uriComponent;
 
-    // TODO: Important!! Need to handle cookies!!!
     @Override
     public Message apply(Message message, FlowContext flowContext) {
         HttpClientWrapper client = getClient();
