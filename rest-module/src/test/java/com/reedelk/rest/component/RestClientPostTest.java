@@ -101,7 +101,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
     @Nested
     @DisplayName("not successful response")
-    class UnsuccessfulResponse {
+    class NotSuccessfulResponse {
 
         @Test
         void shouldPostThrowExceptionWhenResponseNot2xx() {
