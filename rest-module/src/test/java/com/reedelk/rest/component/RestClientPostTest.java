@@ -77,8 +77,46 @@ class RestClientPostTest extends RestClientAbstractTest {
         @Test
         void shouldNotSetContentTypeHeaderWhenPayloadIsEmpty() {
             // Given
-            String expectedResponseBody = "It works";
+            String body = EVALUATE_PAYLOAD;
+            Message emptyPayload = MessageBuilder.get().build();
 
+            // Expect
+            assertEmptyContentTypeAndPayload(body, emptyPayload);
+        }
+
+        @Test
+        void shouldNotSetContentTypeHeaderAndSendEmptyPayloadWhenBodyIsNull() {
+            // Given
+            String body = null;
+            Message emptyPayload = MessageBuilder.get().build();
+
+            // Expect
+            assertEmptyContentTypeAndPayload(body, emptyPayload);
+        }
+
+        @Test
+        void shouldNotSetContentTypeHeaderAndSendEmptyPayloadWhenBodyIsEmptyString() {
+            // Given
+            String body = " ";
+            Message emptyPayload = MessageBuilder.get().build();
+
+            // Expect
+            assertEmptyContentTypeAndPayload(body, emptyPayload);
+        }
+
+        @Test
+        void shouldNotSetContentTypeHeaderAndSendEmptyPayloadWhenBodyIsEmptyScript() {
+            // Given
+            String body = "#[]";
+            Message emptyPayload = MessageBuilder.get().build();
+
+            // Expect
+            assertEmptyContentTypeAndPayload(body, emptyPayload);
+        }
+
+        void assertEmptyContentTypeAndPayload(String body, Message message) {
+            // Given
+            String expectedResponseBody = "It works";
             givenThat(post(urlEqualTo(path))
                     .withRequestBody(binaryEqualTo(new byte[0]))
                     .willReturn(aResponse()
@@ -86,16 +124,13 @@ class RestClientPostTest extends RestClientAbstractTest {
                             .withBody(expectedResponseBody)
                             .withHeader(CONTENT_TYPE, TEXT.toString())));
 
-            Message emptyPayload = MessageBuilder.get().build();
-
             // When
-            component.setBody(EVALUATE_PAYLOAD);
-            Message outMessage = component.apply(emptyPayload, flowContext);
+            component.setBody(body);
+            Message outMessage = component.apply(message, flowContext);
 
             // Then
             assertContentIs(outMessage, expectedResponseBody, TEXT);
-
-            verify(RequestPatternBuilder.newRequestPattern().withoutHeader("Content-Type"));
+            verify(RequestPatternBuilder.newRequestPattern().withoutHeader(CONTENT_TYPE));
         }
     }
 

@@ -50,6 +50,10 @@ public class MessageBodyProvider {
                 Mono<byte[]> dataStream = Mono.just(bodyAsBytes);
                 return new ByteArrayBodyProvider(dataStream, bodyAsBytes.length);
             }
+        } else if (ScriptUtils.isEmpty(body)) {
+            // If the script is empty, there is nothing to evaluate.
+            return new EmptyBodyProvider();
+
         } else {
             // The is a script: we evaluate it and set it the result.
             Object result = scriptEngine.evaluate(body, message);
