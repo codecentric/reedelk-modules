@@ -7,12 +7,16 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.lang.reflect.Field;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 abstract class RestClientAbstractTest {
 
@@ -44,10 +48,15 @@ abstract class RestClientAbstractTest {
         mockServer.resetAll();
     }
 
-    void assertContentIs(Message message, String expectedContent, MimeType expectedMimeType) {
+    void assertContent(Message message, String expectedContent) {
         TypedContent<?> typedContent = message.getContent();
         assertThat(typedContent.asString()).isEqualTo(expectedContent);
+    }
 
+    void assertContent(Message message, String expectedContent, MimeType expectedMimeType) {
+        assertContent(message, expectedContent);
+
+        TypedContent<?> typedContent = message.getContent();
         Type type = typedContent.type();
         MimeType mimeType = type.getMimeType();
         assertThat(mimeType).isEqualTo(expectedMimeType);
@@ -59,5 +68,17 @@ abstract class RestClientAbstractTest {
         restClient.setPath(path);
         restClient.setMethod(method);
         return restClient;
+    }
+
+    protected void setScriptEngine(RestClient restClient, ScriptEngineService service) {
+        try {
+            Field field = restClient.getClass().getDeclaredField("scriptEngine");
+            field.setAccessible(true);
+            field.set(restClient, service);
+        } catch (NoSuchFieldException e) {
+            fail("Field 'scriptEngine' could not be found");
+        } catch (IllegalAccessException e) {
+            fail("Could not access field 'scriptEngine'");
+        }
     }
 }

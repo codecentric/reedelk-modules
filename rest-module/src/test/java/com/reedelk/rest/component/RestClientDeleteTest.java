@@ -38,7 +38,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         Message outMessage = component.apply(payload, flowContext);
 
         // Then
-        assertContentIs(outMessage, expectedResponseBody, TEXT);
+        assertContent(outMessage, expectedResponseBody, TEXT);
     }
 
     @Test
@@ -59,7 +59,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         Message outMessage = component.apply(emptyPayload, flowContext);
 
         // Then
-        assertContentIs(outMessage, expectedResponseBody, TEXT);
+        assertContent(outMessage, expectedResponseBody, TEXT);
     }
 
     @Test

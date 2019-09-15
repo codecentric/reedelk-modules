@@ -30,6 +30,6 @@ class RestClientGetTest extends RestClientAbstractTest {
         Message outMessage = component.apply(payload, flowContext);
 
         // Then
-        assertContentIs(outMessage, responseBody, APPLICATION_JSON);
+        assertContent(outMessage, responseBody, APPLICATION_JSON);
     }
 }

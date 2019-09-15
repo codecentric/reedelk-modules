@@ -37,7 +37,7 @@ class RestClientPutTest extends RestClientAbstractTest {
         Message outMessage = component.apply(payload, flowContext);
 
         // Then
-        assertContentIs(outMessage, expectedResponseBody, TEXT);
+        assertContent(outMessage, expectedResponseBody, TEXT);
     }
 
     @Test
@@ -58,7 +58,7 @@ class RestClientPutTest extends RestClientAbstractTest {
         Message outMessage = component.apply(emptyPayload, flowContext);
 
         // Then
-        assertContentIs(outMessage, expectedResponseBody, TEXT);
+        assertContent(outMessage, expectedResponseBody, TEXT);
     }
 
     @Test

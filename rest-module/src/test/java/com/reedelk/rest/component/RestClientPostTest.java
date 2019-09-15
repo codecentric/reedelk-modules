@@ -1,14 +1,19 @@
 package com.reedelk.rest.component;
 
-import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.service.ScriptEngineService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.matching.RequestPatternBuilder.newRequestPattern;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.commons.RestMethod.POST;
 import static com.reedelk.runtime.api.commons.ScriptUtils.EVALUATE_PAYLOAD;
@@ -16,10 +21,22 @@ import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.eq;
 
+@ExtendWith(MockitoExtension.class)
 class RestClientPostTest extends RestClientAbstractTest {
 
+    @Mock
+    private ScriptEngineService scriptEngine;
+
     private RestClient component = componentWith(baseURL, path, POST);
+
+    @BeforeEach
+    void setUp() {
+        super.setUp();
+        setScriptEngine(component, scriptEngine);
+    }
 
     @Nested
     @DisplayName("payload mime type assigned correctly")
@@ -47,7 +64,7 @@ class RestClientPostTest extends RestClientAbstractTest {
             Message outMessage = component.apply(payload, flowContext);
 
             // Then
-            assertContentIs(outMessage, expectedResponseBody, TEXT);
+            assertContent(outMessage, expectedResponseBody, TEXT);
         }
 
         @Test
@@ -71,7 +88,7 @@ class RestClientPostTest extends RestClientAbstractTest {
             Message outMessage = component.apply(payload, flowContext);
 
             // Then
-            assertContentIs(outMessage, expectedResponseBody, TEXT);
+            assertContent(outMessage, expectedResponseBody, TEXT);
         }
 
         @Test
@@ -114,6 +131,32 @@ class RestClientPostTest extends RestClientAbstractTest {
             assertEmptyContentTypeAndPayload(body, emptyPayload);
         }
 
+        @Test
+        void shouldNotSetContentTypeHeaderWhenPayloadIsScript() {
+            // Given
+            String body = "#['hello this is a script']";
+            String expectedResponseBody = "POST was successful";
+
+            Message message = MessageBuilder.get().build();
+
+            givenThat(post(urlEqualTo(path))
+                    .withRequestBody(equalTo("hello this is a script"))
+                    .willReturn(aResponse()
+                            .withStatus(200)
+                            .withBody(expectedResponseBody)
+                            .withHeader(CONTENT_TYPE, TEXT.toString())));
+
+            mockScriptEvaluation(body, message,"hello this is a script");
+
+            // When
+            component.setBody(body);
+            Message outMessage = component.apply(message, flowContext);
+
+            // Then
+            assertContent(outMessage, expectedResponseBody);
+            verify(newRequestPattern().withoutHeader(CONTENT_TYPE));
+        }
+
         void assertEmptyContentTypeAndPayload(String body, Message message) {
             // Given
             String expectedResponseBody = "It works";
@@ -129,8 +172,8 @@ class RestClientPostTest extends RestClientAbstractTest {
             Message outMessage = component.apply(message, flowContext);
 
             // Then
-            assertContentIs(outMessage, expectedResponseBody, TEXT);
-            verify(RequestPatternBuilder.newRequestPattern().withoutHeader(CONTENT_TYPE));
+            assertContent(outMessage, expectedResponseBody, TEXT);
+            verify(newRequestPattern().withoutHeader(CONTENT_TYPE));
         }
     }
 
@@ -156,5 +199,11 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             assertThat(thrown).hasMessage("Error exception caused by XYZ");
         }
+    }
+
+    private void mockScriptEvaluation(String inputScript, Message message, Object returnValue) {
+        doReturn(returnValue)
+                .when(scriptEngine)
+                .evaluate(eq(inputScript), eq(message));
     }
 }

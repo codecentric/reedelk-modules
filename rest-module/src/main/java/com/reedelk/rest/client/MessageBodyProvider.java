@@ -1,7 +1,6 @@
 package com.reedelk.rest.client;
 
 import com.reedelk.rest.commons.ContentType;
-import com.reedelk.rest.commons.HttpHeader;
 import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.Message;
@@ -14,6 +13,8 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientRequest;
 
 import java.util.Optional;
+
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 
 public class MessageBodyProvider {
 
@@ -35,7 +36,7 @@ public class MessageBodyProvider {
     private static BodyDataProvider fromScript(Message message, String body, ScriptEngineService scriptEngine, HttpClientRequest request) {
         if (ScriptUtils.isMessagePayload(body)) {
 
-            ContentType.from(message).ifPresent(contentType -> request.addHeader(HttpHeader.CONTENT_TYPE, contentType));
+            ContentType.from(message).ifPresent(contentType -> request.addHeader(CONTENT_TYPE, contentType));
 
             if (message.getContent().isStream()) {
                 // The payload is a stream based payload.
