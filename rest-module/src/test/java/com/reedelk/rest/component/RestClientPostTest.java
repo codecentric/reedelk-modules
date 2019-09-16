@@ -1,6 +1,6 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.commons.ImmutableMap;
+import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
