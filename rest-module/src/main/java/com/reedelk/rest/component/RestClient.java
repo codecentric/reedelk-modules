@@ -7,12 +7,14 @@ import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.NMapEvaluation;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientRequest;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -54,19 +56,21 @@ public class RestClient implements ProcessorSync {
 
     @TabGroup("Headers and parameters")
     @Property("Headers")
-    private Map<String,String> headers;
+    private Map<String,String> headers = new HashMap<>();
 
     @TabGroup("Headers and parameters")
     @Property("Path params")
-    private Map<String,String> pathParameters;
+    private Map<String,String> pathParameters = new HashMap<>();
 
     @TabGroup("Headers and parameters")
     @Property("Query params")
-    private Map<String,String> queryParameters;
+    private Map<String,String> queryParameters = new HashMap<>();
 
     private volatile HttpClientWrapper client;
 
     private UriComponent uriComponent;
+
+
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -74,7 +78,7 @@ public class RestClient implements ProcessorSync {
 
         // Builds the request URI by replacing the URI parameters (if any)
         // and by adding the query parameters (if any).
-        String requestUri = uriComponent.expand(pathParameters, queryParameters);
+        String requestUri = evaluateRequestUri(message, flowContext);
 
         final HttpResponseWrapper responseData = new HttpResponseWrapper();
         Mono<byte[]> responseBytes = client.execute(
@@ -149,10 +153,13 @@ public class RestClient implements ProcessorSync {
         // Add default headers (e.g user agent) before the user defined ones,
         // so that the user defined ones can override the defaults.
         DefaultHeaders.add(request);
+    }
 
-        // User-defined headers: interpret and add them
-        if (headers != null) {
-            headers.forEach(request::addHeader);
-        }
+    private String evaluateRequestUri(Message message, FlowContext flowContext) {
+        NMapEvaluation<String> evaluation =
+                scriptEngine.evaluate(message, flowContext, pathParameters, queryParameters);
+        Map<String, String> evaluatedPathParameters = evaluation.map(0);
+        Map<String, String> evaluatedQueryParameters = evaluation.map(1);
+        return uriComponent.expand(evaluatedPathParameters, evaluatedQueryParameters);
     }
 }

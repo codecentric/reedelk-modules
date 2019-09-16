@@ -5,15 +5,20 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.script.NMapEvaluation;
 import com.reedelk.runtime.api.service.ScriptEngineService;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.script.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 @SuppressWarnings("unchecked")
 public enum ESBJavascriptEngine implements ScriptEngineService {
@@ -55,6 +60,40 @@ public enum ESBJavascriptEngine implements ScriptEngineService {
         DefaultContextVariables defaultContextVariables = new DefaultContextVariables(message);
         defaultContextVariables.putAll(bindings);
         return _eval(script, defaultContextVariables);
+    }
+
+    @Override
+    public <T> NMapEvaluation<T> evaluate(Message message, FlowContext context, Map<String, T> mapIndex0) {
+        return evaluate(message, context, singletonList(mapIndex0));
+    }
+
+    @Override
+    public <T> NMapEvaluation<T> evaluate(Message message, FlowContext context, Map<String, T> mapIndex0, Map<String, T> mapIndex1) {
+        return evaluate(message, context, asList(mapIndex0, mapIndex1));
+    }
+
+    @Override
+    public <T> NMapEvaluation<T> evaluate(Message message, FlowContext context, Map<String, T> mapIndex0, Map<String, T> mapIndex1, Map<String, T> mapIndex2) {
+        return evaluate(message, context, asList(mapIndex0, mapIndex1, mapIndex2));
+    }
+
+    @Override
+    public <T> NMapEvaluation<T> evaluate(Message message, FlowContext context, List<Map<String, T>> maps) {
+        VariableAssignment[] variables = new VariableAssignment[maps.size()];
+
+        for (int index = 0; index < maps.size(); index++) {
+            variables[index] = MapAssignment.from("index" + index, maps.get(index));
+        }
+
+        EvaluateVariables evaluate = EvaluateVariables.all(variables);
+        ScriptObjectMirror property = evaluate(evaluate.script(), message, context);
+
+        List<Map<String,T>> converted = new ArrayList<>(maps.size());
+        for (int index = 0; index < maps.size(); index++) {
+            converted.add(index, (Map<String, T>) property.get("index" + index));
+        }
+
+        return NMapEvaluation.from(converted);
     }
 
     @Override

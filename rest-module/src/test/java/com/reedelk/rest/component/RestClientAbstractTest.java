@@ -70,7 +70,7 @@ abstract class RestClientAbstractTest {
         return restClient;
     }
 
-    protected void setScriptEngine(RestClient restClient, ScriptEngineService service) {
+    void setScriptEngine(RestClient restClient, ScriptEngineService service) {
         try {
             Field field = restClient.getClass().getDeclaredField("scriptEngine");
             field.setAccessible(true);

@@ -20,7 +20,6 @@ abstract class AbstractExecutionStrategy implements ExecutionStrategy {
     }
 
     <T> Mono<T> _request(ResponseReceiver<?> receiver, ResponseHandler<T> handler, String uri) {
-
         return receiver.uri(baseUrl + uri).responseSingle((response, byteBufMono) ->
                 shouldRedirect(response) ?
                         redirect(receiver, handler, response) : // redirect
