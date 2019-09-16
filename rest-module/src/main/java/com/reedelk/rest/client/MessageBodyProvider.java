@@ -53,10 +53,12 @@ public class MessageBodyProvider {
             }
         } else if (ScriptUtils.isEmpty(body)) {
             // If the script is empty, there is nothing to evaluate.
+            // No content type header
             return new EmptyBodyProvider();
 
         } else {
             // The is a script: we evaluate it and set it the result.
+            // No content type header, it is set by the user
             Object result = scriptEngine.evaluate(body, message);
             byte[] bodyAsBytes = result.toString().getBytes();
             Mono<byte[]> dataStream = Mono.just(bodyAsBytes);

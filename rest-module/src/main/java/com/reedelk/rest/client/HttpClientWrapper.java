@@ -63,7 +63,7 @@ public class HttpClientWrapper implements ExecutionStrategy {
     }
 
     @Override
-    public <T> Mono<T> execute(String uri, BodyProvider bodyProvider, ResponseHandler<T> handler) {
+    public <ResponseType> Mono<ResponseType> execute(String uri, BodyProvider bodyProvider, ResponseHandler<ResponseType> handler) {
         return delegate.execute(uri, bodyProvider, handler);
     }
 

@@ -7,13 +7,13 @@ import java.util.function.Predicate;
 
 public class Preconditions {
 
-    public static <T> void requireTrue(Predicate<T> predicate, T input, String errorMessage) {
-        if (!predicate.test(input)) {
+    public static <Type> void requireTrue(Predicate<Type> predicate, Type type, String errorMessage) {
+        if (!predicate.test(type)) {
             throw new ESBException(errorMessage);
         }
     }
 
-    public static <T> T requireNotNull(T object, String errorMessage) {
+    public static <Type> Type requireNotNull(Type object, String errorMessage) {
         if (object == null) {
             throw new ESBException(errorMessage);
         }

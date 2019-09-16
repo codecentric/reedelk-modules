@@ -6,5 +6,5 @@ import reactor.netty.http.client.HttpClientResponse;
 
 import java.util.function.BiFunction;
 
-public interface ResponseHandler<T> extends BiFunction<HttpClientResponse, ByteBufMono, Mono<T>> {
+public interface ResponseHandler<ResponseType> extends BiFunction<HttpClientResponse, ByteBufMono, Mono<ResponseType>> {
 }

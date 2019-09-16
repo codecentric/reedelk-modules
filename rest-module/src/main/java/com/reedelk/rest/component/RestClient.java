@@ -58,7 +58,7 @@ public class RestClient implements ProcessorSync {
 
     @TabGroup("Headers and parameters")
     @Property("Path params")
-    private Map<String,String> uriParameters;
+    private Map<String,String> pathParameters;
 
     @TabGroup("Headers and parameters")
     @Property("Query params")
@@ -74,7 +74,7 @@ public class RestClient implements ProcessorSync {
 
         // Builds the request URI by replacing the URI parameters (if any)
         // and by adding the query parameters (if any).
-        String requestUri = uriComponent.expand(uriParameters, queryParameters);
+        String requestUri = uriComponent.expand(pathParameters, queryParameters);
 
         final HttpResponseWrapper responseData = new HttpResponseWrapper();
         Mono<byte[]> responseBytes = client.execute(
@@ -116,8 +116,8 @@ public class RestClient implements ProcessorSync {
         this.headers = headers;
     }
 
-    public void setUriParameters(Map<String, String> uriParameters) {
-        this.uriParameters = uriParameters;
+    public void setPathParameters(Map<String, String> pathParameters) {
+        this.pathParameters = pathParameters;
     }
 
     public void setQueryParameters(Map<String, String> queryParameters) {

@@ -1,5 +1,6 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.rest.commons.ImmutableMap;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -12,13 +13,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.matching.RequestPatternBuilder.newRequestPattern;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.commons.RestMethod.POST;
 import static com.reedelk.runtime.api.commons.ScriptUtils.EVALUATE_PAYLOAD;
-import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
-import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
+import static com.reedelk.runtime.api.message.type.MimeType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
@@ -39,8 +41,8 @@ class RestClientPostTest extends RestClientAbstractTest {
     }
 
     @Nested
-    @DisplayName("payload mime type assigned correctly")
-    class PayloadMimeTypeAssignedCorrectly {
+    @DisplayName("payload and mime type are correct")
+    class PayloadAndContentTypeAreCorrect{
 
         @Test
         void shouldSetCorrectContentTypeHeaderWhenPayloadIsJson() {
@@ -82,6 +84,30 @@ class RestClientPostTest extends RestClientAbstractTest {
                             .withHeader(CONTENT_TYPE, TEXT.toString())));
 
             Message payload = MessageBuilder.get().text(requestBody).build();
+
+            // When
+            component.setBody(EVALUATE_PAYLOAD);
+            Message outMessage = component.apply(payload, flowContext);
+
+            // Then
+            assertContent(outMessage, expectedResponseBody, TEXT);
+        }
+
+        @Test
+        void shouldSetCorrectContentTypeHeaderWhenPayloadIsBinary() {
+            // Given
+            byte[] requestBody = "My binary request body".getBytes();
+            String expectedResponseBody = "POST was successful";
+
+            givenThat(post(urlEqualTo(path))
+                    .withRequestBody(binaryEqualTo(requestBody))
+                    .withHeader(CONTENT_TYPE, equalTo(BINARY.toString()))
+                    .willReturn(aResponse()
+                            .withStatus(200)
+                            .withBody(expectedResponseBody)
+                            .withHeader(CONTENT_TYPE, TEXT.toString())));
+
+            Message payload = MessageBuilder.get().binary(requestBody).build();
 
             // When
             component.setBody(EVALUATE_PAYLOAD);
@@ -146,7 +172,7 @@ class RestClientPostTest extends RestClientAbstractTest {
                             .withBody(expectedResponseBody)
                             .withHeader(CONTENT_TYPE, TEXT.toString())));
 
-            mockScriptEvaluation(body, message,"hello this is a script");
+            mockScriptEvaluation(body, message, "hello this is a script");
 
             // When
             component.setBody(body);
@@ -201,9 +227,75 @@ class RestClientPostTest extends RestClientAbstractTest {
         }
     }
 
+    @Nested
+    @DisplayName("request uri is correct")
+    class RequestUri {
+
+        @Test
+        void shouldCorrectlyBuildRequestUriWithPathParams() {
+            // Given
+            String path = "/resource/{id}/group/{group}";
+            String expectedPath = "/resource/aabbccddeeff/group/user";
+
+            Map<String, String> pathParameters = ImmutableMap.of("id", "aabbccddeeff", "group", "user");
+
+            // Expect
+            assertExpectedPath(path, expectedPath, pathParameters);
+        }
+
+        @Test
+        void shouldCorrectlyBuildRequestUriWithQueryParams() {
+            // Given
+            String path = "/resource";
+            String expectedPath = "/resource?query1=value1&query2=value2";
+
+            Map<String,String> queryParameters = ImmutableMap.of("query1", "value1", "query2", "value2");
+
+            // Expect
+            assertExpectedPath(path, expectedPath, ImmutableMap.of(), queryParameters);
+        }
+
+        @Test
+        void shouldCorrectlyBuildRequestUriWithPathAndQueryParams() {
+            // Given
+            String path = "/resource/{id}/title/{title}";
+            String expectedPath = "/resource/aabb1122/title/manager?query1=value1&query2=value2";
+
+            Map<String,String> queryParameters = ImmutableMap.of("query1", "value1", "query2", "value2");
+            Map<String,String> pathParameters = ImmutableMap.of("id", "aabb1122", "title", "manager");
+
+            // Expect
+            assertExpectedPath(path, expectedPath, pathParameters, queryParameters);
+        }
+    }
+
     private void mockScriptEvaluation(String inputScript, Message message, Object returnValue) {
         doReturn(returnValue)
                 .when(scriptEngine)
                 .evaluate(eq(inputScript), eq(message));
+    }
+
+    void assertExpectedPath(String path, String expectedPath, Map<String,String> pathParameters) {
+        assertExpectedPath(path, expectedPath, pathParameters,null);
+    }
+
+    void assertExpectedPath(String path, String expectedPath, Map<String,String> pathParameters, Map<String,String> queryParameters) {
+        String expectedResponseBody = "It works";
+        givenThat(post(urlEqualTo(expectedPath))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody(expectedResponseBody)
+                        .withHeader(CONTENT_TYPE, TEXT.toString())));
+
+        Message message = MessageBuilder.get().empty().build();
+
+        // When
+        RestClient component = componentWith(baseURL, path, POST);
+        component.setPathParameters(pathParameters);
+        component.setQueryParameters(queryParameters);
+        Message outMessage = component.apply(message, flowContext);
+
+        // Then
+        assertContent(outMessage, expectedResponseBody, TEXT);
     }
 }
