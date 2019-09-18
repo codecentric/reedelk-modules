@@ -1,7 +1,7 @@
 package com.reedelk.rest;
 
-import com.reedelk.rest.apacheclient.ApacheClientHttpService;
-import com.reedelk.rest.apacheclient.HttpClientService;
+import com.reedelk.rest.client.ApacheClientHttpService;
+import com.reedelk.rest.client.HttpClientService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceRegistration;

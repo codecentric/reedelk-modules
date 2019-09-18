@@ -1,4 +1,4 @@
-package com.reedelk.rest.apacheclient;
+package com.reedelk.rest.client;
 
 
 import com.reedelk.rest.commons.IsSuccessfulStatus;
@@ -13,7 +13,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import reactor.core.publisher.Flux;
 
-import static com.reedelk.rest.apacheclient.HttpResponseAttribute.*;
+import static com.reedelk.rest.client.HttpResponseAttribute.*;
 
 public class HttpResponseMessageMapper {
 

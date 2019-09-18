@@ -1,4 +1,4 @@
-package com.reedelk.rest.apacheclient;
+package com.reedelk.rest.client;
 
 import org.reactivestreams.Publisher;
 

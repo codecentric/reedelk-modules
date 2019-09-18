@@ -1,9 +1,9 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.apacheclient.HttpClientService;
-import com.reedelk.rest.apacheclient.MessageBodyProvider;
-import com.reedelk.rest.apacheclient.UriComponent;
-import com.reedelk.rest.apacheclient.strategy.ExecutionStrategy;
+import com.reedelk.rest.client.HttpClientService;
+import com.reedelk.rest.client.MessageBodyProvider;
+import com.reedelk.rest.client.UriComponent;
+import com.reedelk.rest.client.strategy.ExecutionStrategy;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.annotation.*;

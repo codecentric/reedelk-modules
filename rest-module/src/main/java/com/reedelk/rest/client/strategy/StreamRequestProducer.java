@@ -1,4 +1,4 @@
-package com.reedelk.rest.apacheclient.strategy;
+package com.reedelk.rest.client.strategy;
 
 import com.reedelk.rest.commons.EndOfData;
 import org.apache.http.HttpEntityEnclosingRequest;

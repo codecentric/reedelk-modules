@@ -1,4 +1,4 @@
-package com.reedelk.rest.apacheclient;
+package com.reedelk.rest.client;
 
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import org.apache.http.client.config.RequestConfig;

@@ -1,6 +1,6 @@
-package com.reedelk.rest.apacheclient.strategy;
+package com.reedelk.rest.client.strategy;
 
-import com.reedelk.rest.apacheclient.HttpResponseMessageMapper;
+import com.reedelk.rest.client.HttpResponseMessageMapper;
 import com.reedelk.rest.commons.EndOfData;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
