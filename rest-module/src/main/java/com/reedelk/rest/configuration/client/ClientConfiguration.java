@@ -2,6 +2,7 @@ package com.reedelk.rest.configuration.client;
 
 import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.runtime.api.annotation.Default;
+import com.reedelk.runtime.api.annotation.Hidden;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.annotation.Shared;
 import com.reedelk.runtime.api.component.Implementor;
@@ -13,6 +14,10 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = ClientConfiguration.class, scope = PROTOTYPE)
 public class ClientConfiguration implements Implementor {
 
+    @Property("id")
+    @Hidden
+    private String id;
+
     @Property("Host")
     @Default("localhost")
     private String host;
@@ -21,29 +26,32 @@ public class ClientConfiguration implements Implementor {
     @Default("80")
     private Integer port;
 
-    @Property("Protocol")
-    @Default("HTTP")
-    private HttpProtocol protocol;
-
     @Property("Base path")
     private String basePath;
+
+    @Property("Protocol")
+    private HttpProtocol protocol;
 
     @Property("Keep alive")
     @Default("true")
     private Boolean keepAlive;
 
+    // Default request config
+
     @Property("Follow redirects")
     @Default("true")
     private Boolean followRedirects;
 
-    @Property("Compress")
-    private Boolean compress;
+    @Property("Content compression")
+    private Boolean contentCompression;
 
-    @Property("Connection idle timeout")
-    private Integer connectionIdleTimeout;
+    @Property("Expect continue")
+    private Boolean expectContinue;
 
-    @Property("Response buffer size")
-    private Integer responseBufferSize;
+    @Property("Connection request timeout")
+    private Integer connectionRequestTimeout;
+    @Property("Connect timeout")
+    private Integer connectTimeout;
 
     @Property("Authentication")
     @Default("NONE")
@@ -52,6 +60,15 @@ public class ClientConfiguration implements Implementor {
     @Property("Proxy")
     @Default("NONE")
     private Proxy proxy;
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getHost() {
         return host;
@@ -67,14 +84,6 @@ public class ClientConfiguration implements Implementor {
 
     public void setPort(Integer port) {
         this.port = port;
-    }
-
-    public HttpProtocol getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(HttpProtocol protocol) {
-        this.protocol = protocol;
     }
 
     public String getBasePath() {
@@ -101,28 +110,36 @@ public class ClientConfiguration implements Implementor {
         this.followRedirects = followRedirects;
     }
 
-    public Boolean getCompress() {
-        return compress;
+    public Boolean getContentCompression() {
+        return contentCompression;
     }
 
-    public void setCompress(Boolean compress) {
-        this.compress = compress;
+    public void setContentCompression(Boolean contentCompression) {
+        this.contentCompression = contentCompression;
     }
 
-    public Integer getConnectionIdleTimeout() {
-        return connectionIdleTimeout;
+    public Boolean getExpectContinue() {
+        return expectContinue;
     }
 
-    public void setConnectionIdleTimeout(Integer connectionIdleTimeout) {
-        this.connectionIdleTimeout = connectionIdleTimeout;
+    public void setExpectContinue(Boolean expectContinue) {
+        this.expectContinue = expectContinue;
     }
 
-    public Integer getResponseBufferSize() {
-        return responseBufferSize;
+    public Integer getConnectionRequestTimeout() {
+        return connectionRequestTimeout;
     }
 
-    public void setResponseBufferSize(Integer responseBufferSize) {
-        this.responseBufferSize = responseBufferSize;
+    public void setConnectionRequestTimeout(Integer connectionRequestTimeout) {
+        this.connectionRequestTimeout = connectionRequestTimeout;
+    }
+
+    public Integer getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(Integer connectTimeout) {
+        this.connectTimeout = connectTimeout;
     }
 
     public Authentication getAuthentication() {
@@ -139,5 +156,13 @@ public class ClientConfiguration implements Implementor {
 
     public void setProxy(Proxy proxy) {
         this.proxy = proxy;
+    }
+
+    public HttpProtocol getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(HttpProtocol protocol) {
+        this.protocol = protocol;
     }
 }

@@ -81,9 +81,9 @@ public class ClientBuilder {
             client.followRedirects(followRedirects);
         }
 
-        Boolean compress = configuration.getCompress();
-        if (compress != null) {
-            client.compress(compress);
+        Boolean contentCompression = configuration.getContentCompression();
+        if (contentCompression != null) {
+            client.compress(contentCompression);
         }
 
         if (onRequestHandler != null) {

@@ -33,6 +33,13 @@
             <artifactId>reactor-extra</artifactId>
             <version>${reactor.addons.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient</artifactId>
+            <version>4.1.4</version>
+        </dependency>
+
+
 
         <!-- Test dependencies -->
         <dependency>
@@ -74,6 +81,7 @@
                         <Import-Package>
                             com.reedelk.runtime.api.*,
 
+                            org.osgi.framework,
                             sun.misc,
                             jdk.internal.misc,
                             jdk.internal.miscjavax.net,
@@ -82,6 +90,7 @@
                             javax.net.ssl,
                             javax.security.cert,
                             javax.script,
+                            javax.naming,
 
                             org.slf4j;version="[1.7,2)",
                             org.slf4j.helpers;version="[1.7,2)",

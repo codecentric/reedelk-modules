@@ -111,7 +111,9 @@
 
                             reactor.core;version="[3.2,4)",
                             reactor.core.publisher;version="[3.2,4)",
-                            reactor.core.scheduler;version="[3.2,4)"
+                            reactor.core.scheduler;version="[3.2,4)",
+
+                            jdk.nashorn.api.scripting
                         </Import-Package>
                     </instructions>
                 </configuration>
