@@ -64,7 +64,7 @@ abstract class RestClientAbstractTest {
 
     RestClient componentWith(String baseURL, String path, RestMethod method) {
         RestClient restClient = new RestClient();
-        restClient.setBaseUrl(baseURL);
+        restClient.setBaseURL(baseURL);
         restClient.setPath(path);
         restClient.setMethod(method);
         return restClient;

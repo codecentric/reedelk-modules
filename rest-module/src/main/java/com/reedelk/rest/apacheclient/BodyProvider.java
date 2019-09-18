@@ -1,7 +1,7 @@
 package com.reedelk.rest.apacheclient;
 
-import reactor.core.publisher.Flux;
+import org.reactivestreams.Publisher;
 
 public interface BodyProvider {
-    Flux<byte[]> body();
+    Publisher<byte[]> body();
 }

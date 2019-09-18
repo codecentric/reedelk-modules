@@ -1,19 +1,18 @@
 package com.reedelk.rest.commons;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class IsSuccessfulTest {
+class IsSuccessfulStatusTest {
 
     @Test
     void shouldReturnTrue() {
         // Given
-        HttpResponseStatus status = HttpResponseStatus.valueOf(280);
+        int status = 280;
 
         // When
-        boolean actual = IsSuccessful.status(status);
+        boolean actual = IsSuccessfulStatus.status(status);
 
         // Then
         assertThat(actual).isTrue();
@@ -22,10 +21,10 @@ class IsSuccessfulTest {
     @Test
     void shouldReturnFalse() {
         // Given
-        HttpResponseStatus status = HttpResponseStatus.valueOf(579);
+        int status = 579;
 
         // When
-        boolean actual = IsSuccessful.status(status);
+        boolean actual = IsSuccessfulStatus.status(status);
 
         // Then
         assertThat(actual).isFalse();

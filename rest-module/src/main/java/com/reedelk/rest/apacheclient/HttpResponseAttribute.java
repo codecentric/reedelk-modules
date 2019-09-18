@@ -1,4 +1,4 @@
-package com.reedelk.rest.client;
+package com.reedelk.rest.apacheclient;
 
 public interface HttpResponseAttribute {
 

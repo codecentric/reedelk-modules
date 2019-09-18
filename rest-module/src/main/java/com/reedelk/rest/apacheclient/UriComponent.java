@@ -1,4 +1,4 @@
-package com.reedelk.rest.client;
+package com.reedelk.rest.apacheclient;
 
 import com.reedelk.rest.commons.QueryParams;
 import com.reedelk.rest.commons.RemoveQueryParams;

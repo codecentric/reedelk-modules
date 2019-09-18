@@ -1,5 +1,6 @@
 package com.reedelk.rest.client;
 
+import com.reedelk.rest.apacheclient.UriComponent;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

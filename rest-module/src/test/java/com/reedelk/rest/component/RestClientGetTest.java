@@ -1,18 +1,11 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
-import org.junit.jupiter.api.Test;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.commons.RestMethod.GET;
-import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 
 class RestClientGetTest extends RestClientAbstractTest {
 
     private RestClient component = componentWith(baseURL, path, GET);
-
+/**
     @Test
     void shouldGetExecuteCorrectlyWhenResponse200() {
         // Given
@@ -31,5 +24,5 @@ class RestClientGetTest extends RestClientAbstractTest {
 
         // Then
         assertContent(outMessage, responseBody, APPLICATION_JSON);
-    }
+    }*/
 }

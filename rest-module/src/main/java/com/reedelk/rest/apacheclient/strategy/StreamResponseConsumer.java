@@ -1,13 +1,10 @@
 package com.reedelk.rest.apacheclient.strategy;
 
+import com.reedelk.rest.apacheclient.HttpResponseMessageMapper;
 import com.reedelk.rest.commons.EndOfData;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.ByteArrayStreamContent;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
@@ -28,10 +25,10 @@ public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> 
 
     private OnResult callback;
     private FlowContext context;
-    private BlockingQueue<byte[]> queue = new LinkedTransferQueue<>();
     private ByteBuffer byteBuffer = ByteBuffer.allocate(16 * 1024);
+    private BlockingQueue<byte[]> queue = new LinkedTransferQueue<>();
 
-    public StreamResponseConsumer(OnResult callback, FlowContext context) {
+    StreamResponseConsumer(OnResult callback, FlowContext context) {
         this.callback = callback;
         this.context = context;
     }
@@ -67,13 +64,9 @@ public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> 
             // otherwise we would block the HTTP server NIO Thread.
         }).subscribeOn(Schedulers.elastic()).cast(byte[].class);
 
-        Message build = MessageBuilder.get().build();
+        Message message = HttpResponseMessageMapper.map(response, bytesStream);
 
-        ByteArrayStreamContent content = new ByteArrayStreamContent(bytesStream, new Type(MimeType.APPLICATION_JSON));
-
-        build.setContent(content);
-
-        callback.onResult(build, context);
+        callback.onResult(message, context);
     }
 
     @Override

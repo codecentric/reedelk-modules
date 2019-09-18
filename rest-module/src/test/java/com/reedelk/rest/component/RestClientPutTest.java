@@ -1,22 +1,12 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.runtime.api.commons.ScriptUtils;
-import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
-import org.junit.jupiter.api.Test;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.commons.RestMethod.PUT;
-import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RestClientPutTest extends RestClientAbstractTest {
 
     private RestClient component = componentWith(baseURL, path, PUT);
 
+    /**
     @Test
     void shouldPutWithBodyExecuteCorrectlyWhenResponse200() {
         // Given
@@ -78,5 +68,5 @@ class RestClientPutTest extends RestClientAbstractTest {
                 () -> component.apply(emptyPayload, flowContext));
 
         assertThat(thrown).hasMessage("Error exception caused by XYZ");
-    }
+    }*/
 }

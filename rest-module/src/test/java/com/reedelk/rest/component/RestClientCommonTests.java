@@ -1,26 +1,12 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.runtime.api.commons.ImmutableMap;
-import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.commons.RestMethod.POST;
-import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RestClientCommonTests extends RestClientAbstractTest {
 
     private RestClient component = componentWith(baseURL, path, POST);
 
+    /**
     @Nested
     @DisplayName("not successful response")
     class NotSuccessfulResponse {
@@ -110,5 +96,5 @@ class RestClientCommonTests extends RestClientAbstractTest {
 
         // Then
         assertContent(outMessage, expectedResponseBody, TEXT);
-    }
+    }*/
 }

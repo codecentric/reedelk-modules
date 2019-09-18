@@ -7,6 +7,7 @@ import org.apache.http.nio.ContentEncoder;
 import org.apache.http.nio.IOControl;
 import org.apache.http.nio.entity.HttpAsyncContentProducer;
 import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ import static reactor.core.scheduler.Schedulers.elastic;
 
 class StreamRequestProducer extends BasicAsyncRequestProducer {
 
-    StreamRequestProducer(HttpHost target, HttpEntityEnclosingRequest request, Flux<byte[]> stream) {
+    StreamRequestProducer(HttpHost target, HttpEntityEnclosingRequest request, Publisher<byte[]> stream) {
         super(target, request, new StreamProducer(stream));
     }
 
@@ -28,8 +29,8 @@ class StreamRequestProducer extends BasicAsyncRequestProducer {
 
         private ByteBuffer byteBuffer = ByteBuffer.allocate(16 * 1024);
 
-        StreamProducer(Flux<byte[]> stream) {
-            stream.subscribeOn(elastic())
+        StreamProducer(Publisher<byte[]> stream) {
+            Flux.from(stream).subscribeOn(elastic())
                     .doOnComplete(() -> queue.offer(EndOfData.MARKER))
                     .subscribe(bytes -> queue.offer(bytes));
         }

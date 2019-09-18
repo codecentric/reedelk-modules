@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class IsRedirectionTest {
+class IsRedirectionStatusTest {
 
     @Test
     void shouldReturnTrue() {
@@ -13,7 +13,7 @@ class IsRedirectionTest {
         HttpResponseStatus status = HttpResponseStatus.valueOf(343);
 
         // When
-        boolean actual = IsRedirection.status(status);
+        boolean actual = IsRedirectionStatus.status(status);
 
         // Then
         assertThat(actual).isTrue();
@@ -25,7 +25,7 @@ class IsRedirectionTest {
         HttpResponseStatus status = HttpResponseStatus.valueOf(200);
 
         // When
-        boolean actual = IsRedirection.status(status);
+        boolean actual = IsRedirectionStatus.status(status);
 
         // Then
         assertThat(actual).isFalse();

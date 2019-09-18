@@ -3,6 +3,7 @@ package com.reedelk.rest.commons;
 import com.reedelk.runtime.api.message.type.MimeType;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
+import org.apache.http.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.netty.http.server.HttpServerRequest;
@@ -23,6 +24,21 @@ public class MimeTypeExtract {
                 return MimeType.parse(contentType);
             } catch (Exception e) {
                 logger.warn(String.format("Could not parse content type '%s'", contentType), e);
+            }
+        }
+        return MimeType.UNKNOWN;
+    }
+
+    public static MimeType from(Header[] headers) {
+        for (Header header : headers) {
+            if(HttpHeader.CONTENT_TYPE.equals(header.getName())) {
+                String contentType = header.getValue();
+                try {
+                    return MimeType.parse(contentType);
+                } catch (Exception e) {
+                    logger.warn(String.format("Could not parse content type '%s'", contentType), e);
+                    return MimeType.UNKNOWN;
+                }
             }
         }
         return MimeType.UNKNOWN;

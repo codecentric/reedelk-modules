@@ -8,6 +8,9 @@ import com.reedelk.runtime.api.message.FlowContext;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.nio.client.HttpAsyncClient;
+import org.reactivestreams.Publisher;
+
+import java.net.URI;
 
 import static org.apache.http.client.utils.URIUtils.extractHost;
 
@@ -25,12 +28,17 @@ abstract class BaseStrategyWithBody implements Strategy {
                         FlowContext flowContext) {
 
         HttpEntityEnclosingRequestBase request = request(bodyProvider);
-        request.setURI(uriProvider.uri());
+
+        URI uri = uriProvider.uri();
+
+        request.setURI(uri);
         request.setEntity(new BasicHttpEntity());
         headerProvider.headers().forEach(request::addHeader);
 
+        Publisher<byte[]> body = bodyProvider.body();
+
         client.execute(
-                new StreamRequestProducer(extractHost(uriProvider.uri()), request, bodyProvider.body()),
+                new StreamRequestProducer(extractHost(uri), request, body),
                 new StreamResponseConsumer(callback, flowContext),
                 NoOpCallback.INSTANCE);
     }

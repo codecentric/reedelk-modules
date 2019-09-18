@@ -1,28 +1,12 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.service.ScriptEngineService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.matching.RequestPatternBuilder.newRequestPattern;
-import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
-import static com.reedelk.rest.commons.RestMethod.POST;
-import static com.reedelk.runtime.api.commons.ScriptUtils.EVALUATE_PAYLOAD;
-import static com.reedelk.runtime.api.message.type.MimeType.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.eq;
 
 @ExtendWith(MockitoExtension.class)
 class RestClientPostTest extends RestClientAbstractTest {
 
+    /**
     @Mock
     private ScriptEngineService scriptEngine;
 
@@ -202,5 +186,5 @@ class RestClientPostTest extends RestClientAbstractTest {
         doReturn(returnValue)
                 .when(scriptEngine)
                 .evaluate(eq(inputScript), eq(message));
-    }
+    }*/
 }
