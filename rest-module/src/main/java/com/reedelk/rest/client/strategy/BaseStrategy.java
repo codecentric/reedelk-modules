@@ -17,11 +17,9 @@ abstract class BaseStrategy implements Strategy {
 
     @Override
     public void execute(HttpAsyncClient client,
-                        UriProvider uriProvider,
-                        BodyProvider bodyProvider,
-                        HeaderProvider headerProvider,
-                        OnResult callback,
-                        FlowContext flowContext) {
+                        OnResult callback, FlowContext flowContext, UriProvider uriProvider,
+                        HeaderProvider headerProvider, BodyProvider bodyProvider) {
+
         HttpRequestBase baseRequest = request();
         baseRequest.setURI(uriProvider.uri());
         headerProvider.headers().forEach(baseRequest::addHeader);

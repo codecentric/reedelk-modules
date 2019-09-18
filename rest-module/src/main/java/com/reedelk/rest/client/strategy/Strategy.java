@@ -9,9 +9,7 @@ import org.apache.http.nio.client.HttpAsyncClient;
 
 public interface Strategy {
 
-    void execute(HttpAsyncClient client,
-                 UriProvider uriProvider,
-                 BodyProvider bodyProvider,
-                 HeaderProvider headerProvider,
-                 OnResult callback, FlowContext flowContext);
+    void execute(
+            HttpAsyncClient client, OnResult callback, FlowContext flowContext,
+            UriProvider uriProvider, HeaderProvider headerProvider, BodyProvider bodyProvider);
 }

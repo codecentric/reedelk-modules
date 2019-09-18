@@ -21,11 +21,8 @@ abstract class BaseStrategyWithBody implements Strategy {
 
     @Override
     public void execute(HttpAsyncClient client,
-                        UriProvider uriProvider,
-                        BodyProvider bodyProvider,
-                        HeaderProvider headerProvider,
-                        OnResult callback,
-                        FlowContext flowContext) {
+                        OnResult callback, FlowContext flowContext, UriProvider uriProvider,
+                        HeaderProvider headerProvider, BodyProvider bodyProvider) {
 
         HttpEntityEnclosingRequestBase request = request(bodyProvider);
 

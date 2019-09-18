@@ -1,8 +1,6 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.client.HttpClientService;
-import com.reedelk.rest.client.MessageBodyProvider;
-import com.reedelk.rest.client.UriComponent;
+import com.reedelk.rest.client.*;
 import com.reedelk.rest.client.strategy.ExecutionStrategy;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
@@ -17,7 +15,6 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import reactor.core.publisher.Flux;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -81,57 +78,11 @@ public class RestClient implements ProcessorAsync {
     public void apply(Message input, FlowContext flowContext, OnResult callback) {
         HttpAsyncClient client = client();
 
-        ExecutionStrategy.get(method).execute(client,
-                () -> {
-                    try {
-                        String finalUri = baseURL + evaluateRequestUri(input, flowContext);
-                        return new URI(finalUri);
-                    } catch (URISyntaxException e) {
-                        callback.onError(e, flowContext);
-                        throw new ESBException("error");
-                    }
-                },
-                () -> {
-                    MessageBodyProvider.from(input, body, scriptEngine);
-                    // Here you must evaluate body
-                    return Flux.from(input.getContent().asByteArrayStream());
-                },
-                () -> {
-                    if (!headers.isEmpty()) {
-                        // User-defined headers: interpret and add them
-                        NMapEvaluation<String> evaluation =
-                                scriptEngine.evaluate(input, flowContext, headers);
-                        return evaluation.map(0);
-                    } else {
-                        return new HashMap<>();
-                    }
-                },
-                callback,
-                flowContext);
-    }
-
-    private HttpAsyncClient client() {
-        HttpAsyncClient client;
-        if (configuration != null) {
-            requireNonNull(configuration.getId(), "configuration id is mandatory");
-            client = httpClientService.clientByConfig(configuration);
-        } else {
-            requireNonNull(baseURL, "base URL is mandatory");
-            client = httpClientService.clientByBaseURL(baseURL);
-        }
-        return client;
-    }
-
-
-    public UriComponent uriComponent() {
-        if (uriComponent == null) {
-            synchronized (this) {
-                if (uriComponent == null) {
-                    uriComponent = new UriComponent(path);
-                }
-            }
-        }
-        return uriComponent;
+        ExecutionStrategy.get(method).execute(
+                client, callback, flowContext,
+                uriProvider(input, flowContext, callback),
+                headerProvider(input, flowContext),
+                bodyProvider(input));
     }
 
     public void setMethod(RestMethod method) {
@@ -166,9 +117,61 @@ public class RestClient implements ProcessorAsync {
         this.queryParameters = queryParameters;
     }
 
+    private HeaderProvider headerProvider(Message message, FlowContext flowContext) {
+        return () -> {
+            if (!headers.isEmpty()) {
+                // User-defined headers: interpret and add them
+                NMapEvaluation<String> evaluation =
+                        scriptEngine.evaluate(message, flowContext, headers);
+                return evaluation.map(0);
+            } else {
+                return new HashMap<>();
+            }
+        };
+    }
+
+    private BodyProvider bodyProvider(Message message) {
+        return MessageBodyProvider.from(message, body, scriptEngine);
+    }
+
+    private UriProvider uriProvider(Message message, FlowContext flowContext, OnResult callback) {
+        return () -> {
+            try {
+                String finalUri = baseURL + evaluateRequestUri(message, flowContext);
+                return new URI(finalUri);
+            } catch (URISyntaxException e) {
+                callback.onError(e, flowContext);
+                throw new ESBException("error");
+            }
+        };
+    }
+
+    private HttpAsyncClient client() {
+        HttpAsyncClient client;
+        if (configuration != null) {
+            requireNonNull(configuration.getId(), "configuration id is mandatory");
+            client = httpClientService.clientByConfig(configuration);
+        } else {
+            requireNonNull(baseURL, "base URL is mandatory");
+            client = httpClientService.clientByBaseURL(baseURL);
+        }
+        return client;
+    }
+
+    private UriComponent uriComponent() {
+        if (uriComponent == null) {
+            synchronized (this) {
+                if (uriComponent == null) {
+                    uriComponent = new UriComponent(path);
+                }
+            }
+        }
+        return uriComponent;
+    }
+
     private String evaluateRequestUri(Message message, FlowContext flowContext) {
         // Just evaluate if path params or query params are actually there, to save time!
-        if  (pathParameters.isEmpty() && queryParameters.isEmpty()) {
+        if (pathParameters.isEmpty() && queryParameters.isEmpty()) {
             return uriComponent().expand(pathParameters, queryParameters);
         } else if (pathParameters.isEmpty()) {
             // only query params
