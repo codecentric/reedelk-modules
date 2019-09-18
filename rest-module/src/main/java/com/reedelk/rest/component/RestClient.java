@@ -168,10 +168,26 @@ public class RestClient implements ProcessorAsync {
 
     private String evaluateRequestUri(Message message, FlowContext flowContext) {
         // Just evaluate if path params or query params are actually there, to save time!
-        NMapEvaluation<String> evaluation =
-                scriptEngine.evaluate(message, flowContext, pathParameters, queryParameters);
-        Map<String, String> evaluatedPathParameters = evaluation.map(0);
-        Map<String, String> evaluatedQueryParameters = evaluation.map(1);
-        return uriComponent().expand(evaluatedPathParameters, evaluatedQueryParameters);
+        if  (pathParameters.isEmpty() && queryParameters.isEmpty()) {
+            return uriComponent().expand(pathParameters, queryParameters);
+        } else if (pathParameters.isEmpty()) {
+            // only query params
+            NMapEvaluation<String> evaluation =
+                    scriptEngine.evaluate(message, flowContext, queryParameters);
+            Map<String, String> evaluatedQueryParameters = evaluation.map(0);
+            return uriComponent().expand(pathParameters, evaluatedQueryParameters);
+        } else if (queryParameters.isEmpty()) {
+            // only path params
+            NMapEvaluation<String> evaluation =
+                    scriptEngine.evaluate(message, flowContext, pathParameters);
+            Map<String, String> evaluatedPathParameters = evaluation.map(0);
+            return uriComponent().expand(evaluatedPathParameters, queryParameters);
+        } else {
+            NMapEvaluation<String> evaluation =
+                    scriptEngine.evaluate(message, flowContext, pathParameters, queryParameters);
+            Map<String, String> evaluatedPathParameters = evaluation.map(0);
+            Map<String, String> evaluatedQueryParameters = evaluation.map(1);
+            return uriComponent().expand(evaluatedPathParameters, evaluatedQueryParameters);
+        }
     }
 }
