@@ -6,7 +6,7 @@ import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
 
 class EmptyStreamRequestProducer extends BasicAsyncRequestProducer {
 
-    public EmptyStreamRequestProducer(HttpHost target, HttpRequest request) {
+    EmptyStreamRequestProducer(HttpHost target, HttpRequest request) {
         super(target, request);
     }
 }

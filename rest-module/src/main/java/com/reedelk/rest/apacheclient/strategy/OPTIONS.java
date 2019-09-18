@@ -1,13 +1,12 @@
 package com.reedelk.rest.apacheclient.strategy;
 
-import com.reedelk.rest.apacheclient.BodyProvider;
 import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpRequestBase;
 
-public class OPTIONStrategy extends AbstractStrategy {
+public class OPTIONS extends BaseStrategy {
 
     @Override
-    protected HttpRequestBase baseRequest(BodyProvider bodyProvider) {
+    protected HttpRequestBase request() {
         return new HttpOptions();
     }
 }
