@@ -2,7 +2,6 @@ package com.reedelk.rest.client.uri;
 
 import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
-import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.NMapEvaluation;
@@ -12,12 +11,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
+import static com.reedelk.runtime.api.commons.StringUtils.isNotNull;
 import static java.util.Objects.requireNonNull;
 
 public class URIEvaluator {
 
     private String baseURL;
-    private URIComponent URIComponent;
+    private URIPathComponent pathComponent;
     private ScriptEngineService scriptEngine;
     private Map<String, String> pathParameters;
     private Map<String, String> queryParameters;
@@ -36,21 +37,21 @@ public class URIEvaluator {
 
         if (pathParameters.isEmpty() && queryParameters.isEmpty()) {
             // If path and query parameters are not to be evaluated, when we don't do it.
-            return URIComponent.expand(pathParameters, queryParameters);
+            return pathComponent.expand(pathParameters, queryParameters);
 
         } else if (pathParameters.isEmpty()) {
             // Only query parameters are present.
             NMapEvaluation<String> evaluation =
                     scriptEngine.evaluate(message, flowContext, queryParameters);
             Map<String, String> evaluatedQueryParameters = evaluation.map(0);
-            return URIComponent.expand(pathParameters, evaluatedQueryParameters);
+            return pathComponent.expand(pathParameters, evaluatedQueryParameters);
 
         } else if (queryParameters.isEmpty()) {
             // Only path parameters are present.
             NMapEvaluation<String> evaluation =
                     scriptEngine.evaluate(message, flowContext, pathParameters);
             Map<String, String> evaluatedPathParameters = evaluation.map(0);
-            return URIComponent.expand(evaluatedPathParameters, queryParameters);
+            return pathComponent.expand(evaluatedPathParameters, queryParameters);
 
         } else {
             // Both path and query parameters are present.
@@ -58,7 +59,7 @@ public class URIEvaluator {
                     scriptEngine.evaluate(message, flowContext, pathParameters, queryParameters);
             Map<String, String> evaluatedPathParameters = evaluation.map(0);
             Map<String, String> evaluatedQueryParameters = evaluation.map(1);
-            return URIComponent.expand(evaluatedPathParameters, evaluatedQueryParameters);
+            return pathComponent.expand(evaluatedPathParameters, evaluatedQueryParameters);
         }
     }
 
@@ -107,12 +108,14 @@ public class URIEvaluator {
 
         public URIEvaluator build() {
             URIEvaluator evaluator = new URIEvaluator();
-            evaluator.URIComponent = new URIComponent(path);
             evaluator.scriptEngine = scriptEngine;
             evaluator.pathParameters = pathParameters;
             evaluator.queryParameters = queryParameters;
+            evaluator.pathComponent = isBlank(path) ?
+                    new EmptyURIPathComponent() :
+                    new NotEmptyURIPathComponent(path);
 
-            if (StringUtils.isNotNull(baseURL)) {
+            if (isNotNull(baseURL)) {
                 // Use base URL
                 evaluator.baseURL = baseURL;
 

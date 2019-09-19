@@ -15,13 +15,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.reedelk.runtime.api.commons.StringUtils.*;
-import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
 
-public class URIComponent {
+public class NotEmptyURIPathComponent implements URIPathComponent {
 
-    private static final Logger logger = LoggerFactory.getLogger(URIComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(NotEmptyURIPathComponent.class);
 
     private static final String UTF_8 = "UTF-8";
 
@@ -36,12 +35,12 @@ public class URIComponent {
     private final String uri;
     private final String existingQueryParams;
 
-    public URIComponent(String uri) {
-        this.uri = RemoveQueryParams.from(requireNonNull(uri, "uri"));
-        this.existingQueryParams = encodeExistingQueryParams(QueryParams.of(uri));
-
+    public NotEmptyURIPathComponent(String path) {
+        this.uri = RemoveQueryParams.from(path);
+        this.existingQueryParams = encodeExistingQueryParams(QueryParams.of(path));
     }
 
+    @Override
     public String expand(Map<String, String> pathParams, Map<String, String> queryParams) {
         String uriWithExpandedPathParams = PATH_ENCODER.apply(expandPathParams(pathParams));
         return expandQueryParams(uriWithExpandedPathParams, queryParams);
@@ -110,7 +109,7 @@ public class URIComponent {
         if (isBlank(queryParams)) return queryParams;
 
         String[] queryKeyAndValues = queryParams.split("&");
-        Map<String,String> notEncodedQueryParams = new LinkedHashMap<>();
+        Map<String, String> notEncodedQueryParams = new LinkedHashMap<>();
 
         Arrays.stream(queryKeyAndValues).forEach(keyAndValue -> {
             String[] keyAndValueSegments = keyAndValue.split("=");
