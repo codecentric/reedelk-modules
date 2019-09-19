@@ -1,7 +1,11 @@
 package com.reedelk.rest.component;
 
-import static com.reedelk.rest.commons.RestMethod.POST;
+import org.junit.jupiter.api.Tag;
 
+import static com.reedelk.rest.commons.RestMethod.POST;
+import static com.reedelk.rest.utils.TestTag.INTEGRATION;
+
+@Tag(INTEGRATION)
 class RestClientCommonTests extends RestClientAbstractTest {
 
     private RestClient component = componentWith(POST, baseURL, path);

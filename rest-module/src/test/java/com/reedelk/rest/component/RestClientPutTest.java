@@ -2,6 +2,7 @@ package com.reedelk.rest.component;
 
 import static com.reedelk.rest.commons.RestMethod.PUT;
 
+
 class RestClientPutTest extends RestClientAbstractTest {
 
     private RestClient component = componentWith(PUT, baseURL, path);

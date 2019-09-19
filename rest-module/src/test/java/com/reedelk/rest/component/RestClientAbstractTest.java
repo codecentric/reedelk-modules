@@ -9,6 +9,7 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,9 +17,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.reflect.Field;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
+import static com.reedelk.rest.utils.TestTag.INTEGRATION;
 import static org.junit.Assert.fail;
 
 @ExtendWith(MockitoExtension.class)
+@Tag(INTEGRATION)
 abstract class RestClientAbstractTest {
 
     @Mock

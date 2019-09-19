@@ -30,5 +30,4 @@ class RestClientGetTest extends RestClientAbstractTest {
         AssertThatHttpResponseContent
                 .is(component, payload, flowContext, responseBody, APPLICATION_JSON);
     }
-
 }
