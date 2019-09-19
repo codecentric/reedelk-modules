@@ -3,6 +3,7 @@ package com.reedelk.rest.commons;
 import com.reedelk.runtime.api.commons.StringUtils;
 
 public enum HttpProtocol {
+
     HTTP,
     HTTPS;
 

@@ -1,4 +1,4 @@
-package com.reedelk.rest.client;
+package com.reedelk.rest.client.uri;
 
 import com.reedelk.rest.commons.QueryParams;
 import com.reedelk.rest.commons.RemoveQueryParams;
@@ -19,9 +19,9 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
 
-public class UriComponent {
+public class UriComponent1 {
 
-    private static final Logger logger = LoggerFactory.getLogger(UriComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(UriComponent1.class);
 
     private static final String UTF_8 = "UTF-8";
 
@@ -36,7 +36,7 @@ public class UriComponent {
     private final String uri;
     private final String existingQueryParams;
 
-    public UriComponent(String uri) {
+    public UriComponent1(String uri) {
         this.uri = RemoveQueryParams.from(requireNonNull(uri, "uri"));
         this.existingQueryParams = encodeExistingQueryParams(QueryParams.of(uri));
 
@@ -64,7 +64,7 @@ public class UriComponent {
         return builder.toString();
     }
 
-    public String toQueryParamsString(Map<String, String> queryParams) {
+    private String toQueryParamsString(Map<String, String> queryParams) {
         return queryParams.keySet().stream()
                 .map(key -> QUERY_PARAM_ENCODER.apply(key)
                         + "=" +

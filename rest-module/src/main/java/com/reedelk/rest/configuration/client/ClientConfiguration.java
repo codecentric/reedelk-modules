@@ -18,6 +18,7 @@ public class ClientConfiguration implements Implementor {
     @Hidden
     private String id;
 
+    // Base URL config
     @Property("Host")
     @Default("localhost")
     private String host;
@@ -32,11 +33,11 @@ public class ClientConfiguration implements Implementor {
     @Property("Protocol")
     private HttpProtocol protocol;
 
+    // Default request config
     @Property("Keep alive")
     @Default("true")
     private Boolean keepAlive;
 
-    // Default request config
 
     @Property("Follow redirects")
     @Default("true")

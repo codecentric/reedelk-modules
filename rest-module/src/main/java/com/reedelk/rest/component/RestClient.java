@@ -1,13 +1,16 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.client.*;
+import com.reedelk.rest.client.BodyProvider;
+import com.reedelk.rest.client.HeaderProvider;
+import com.reedelk.rest.client.HttpClientService;
+import com.reedelk.rest.client.MessageBodyProvider;
 import com.reedelk.rest.client.strategy.ExecutionStrategy;
+import com.reedelk.rest.client.uri.URIEvaluator;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.NMapEvaluation;
@@ -16,8 +19,6 @@ import org.apache.http.nio.client.HttpAsyncClient;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,7 +72,7 @@ public class RestClient implements ProcessorAsync {
     @Property("Query params")
     private Map<String, String> queryParameters = new HashMap<>();
 
-    private volatile UriComponent uriComponent;
+    private volatile URIEvaluator uriEvaluator;
 
 
     @Override
@@ -80,7 +81,7 @@ public class RestClient implements ProcessorAsync {
 
         ExecutionStrategy.get(method).execute(
                 client, callback, flowContext,
-                uriProvider(input, flowContext, callback),
+                uriEvaluator().provider(input, flowContext),
                 headerProvider(input, flowContext),
                 bodyProvider(input));
     }
@@ -134,17 +135,6 @@ public class RestClient implements ProcessorAsync {
         return MessageBodyProvider.from(message, body, scriptEngine);
     }
 
-    private UriProvider uriProvider(Message message, FlowContext flowContext, OnResult callback) {
-        return () -> {
-            try {
-                String finalUri = baseURL + evaluateRequestUri(message, flowContext);
-                return new URI(finalUri);
-            } catch (URISyntaxException e) {
-                callback.onError(e, flowContext);
-                throw new ESBException("error");
-            }
-        };
-    }
 
     private HttpAsyncClient client() {
         HttpAsyncClient client;
@@ -158,39 +148,21 @@ public class RestClient implements ProcessorAsync {
         return client;
     }
 
-    private UriComponent uriComponent() {
-        if (uriComponent == null) {
+    private URIEvaluator uriEvaluator() {
+        if (uriEvaluator == null) {
             synchronized (this) {
-                if (uriComponent == null) {
-                    uriComponent = new UriComponent(path);
+                if (uriEvaluator == null) {
+                    uriEvaluator = URIEvaluator.builder()
+                            .path(path)
+                            .baseURL(baseURL)
+                            .scriptEngine(scriptEngine)
+                            .configuration(configuration)
+                            .pathParameters(pathParameters)
+                            .queryParameters(queryParameters)
+                            .build();
                 }
             }
         }
-        return uriComponent;
-    }
-
-    private String evaluateRequestUri(Message message, FlowContext flowContext) {
-        // Just evaluate if path params or query params are actually there, to save time!
-        if (pathParameters.isEmpty() && queryParameters.isEmpty()) {
-            return uriComponent().expand(pathParameters, queryParameters);
-        } else if (pathParameters.isEmpty()) {
-            // only query params
-            NMapEvaluation<String> evaluation =
-                    scriptEngine.evaluate(message, flowContext, queryParameters);
-            Map<String, String> evaluatedQueryParameters = evaluation.map(0);
-            return uriComponent().expand(pathParameters, evaluatedQueryParameters);
-        } else if (queryParameters.isEmpty()) {
-            // only path params
-            NMapEvaluation<String> evaluation =
-                    scriptEngine.evaluate(message, flowContext, pathParameters);
-            Map<String, String> evaluatedPathParameters = evaluation.map(0);
-            return uriComponent().expand(evaluatedPathParameters, queryParameters);
-        } else {
-            NMapEvaluation<String> evaluation =
-                    scriptEngine.evaluate(message, flowContext, pathParameters, queryParameters);
-            Map<String, String> evaluatedPathParameters = evaluation.map(0);
-            Map<String, String> evaluatedQueryParameters = evaluation.map(1);
-            return uriComponent().expand(evaluatedPathParameters, evaluatedQueryParameters);
-        }
+        return uriEvaluator;
     }
 }

@@ -1,5 +1,6 @@
 package com.reedelk.rest.client;
 
+import com.reedelk.rest.client.uri.UriComponent1;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -7,18 +8,18 @@ import java.util.Map;
 import static com.reedelk.rest.commons.MapUtils.newMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UriComponentTest {
+class UriComponent1Test {
 
     @Test
     void shouldCorrectlyReplaceOnlyUriParams() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api/{uriParam1}/test");
+        UriComponent1 uriComponent1 = new UriComponent1("/api/{uriParam1}/test");
 
         Map<String,String> uriParams = newMap("uriParam1", "value1");
         Map<String,String> queryParams = newMap();
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api/value1/test";
@@ -28,7 +29,7 @@ class UriComponentTest {
     @Test
     void shouldCorrectlyAddOnlyQueryParams() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api/test");
+        UriComponent1 uriComponent1 = new UriComponent1("/api/test");
 
         Map<String,String> uriParams = newMap();
         Map<String,String> queryParams = newMap(
@@ -36,7 +37,7 @@ class UriComponentTest {
                 "query2", "value2");
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api/test?query1=value1&query2=value2";
@@ -49,7 +50,7 @@ class UriComponentTest {
     @Test
     void shouldCorrectlyAppendQueryParams() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api/test?query1=value1&query2=value2");
+        UriComponent1 uriComponent1 = new UriComponent1("/api/test?query1=value1&query2=value2");
 
         Map<String,String> uriParams = newMap();
         Map<String,String> queryParams = newMap(
@@ -57,7 +58,7 @@ class UriComponentTest {
                 "query4", "value4");
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api/test?query1=value1&query2=value2&query3=value3&query4=value4";
@@ -67,7 +68,7 @@ class UriComponentTest {
     @Test
     void shouldCorrectlyReplaceUriParamsAndAppendQueryParams() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api/test/{uriParam1}/{uriParam2}/{uriParam3}");
+        UriComponent1 uriComponent1 = new UriComponent1("/api/test/{uriParam1}/{uriParam2}/{uriParam3}");
 
         Map<String,String> uriParams = newMap(
                 "uriParam1", "value1",
@@ -79,7 +80,7 @@ class UriComponentTest {
                 "queryParam2", "queryParamValue2");
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api/test/value1/value2/value3?queryParam1=queryParamValue1&queryParam2=queryParamValue2";
@@ -89,7 +90,7 @@ class UriComponentTest {
     @Test
     void shouldReplaceWithEmptyStringWhenParametersInMapDoNotMapTemplateReplacements() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api/test/{uriParam1}/{notMapped}");
+        UriComponent1 uriComponent1 = new UriComponent1("/api/test/{uriParam1}/{notMapped}");
 
         Map<String,String> uriParams =  newMap(
                 "uriParam1","value1",
@@ -97,7 +98,7 @@ class UriComponentTest {
         Map<String,String> queryParams = newMap();
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected =  "/api/test/value1/";
@@ -107,13 +108,13 @@ class UriComponentTest {
     @Test
     void shouldReplaceWithEmptyStringWhenUriParamsMapIsNull() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api/{uriParam1}/");
+        UriComponent1 uriComponent1 = new UriComponent1("/api/{uriParam1}/");
 
         Map<String,String> uriParams = null;
         Map<String,String> queryParams = newMap("query1","value1");
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api//?query1=value1";
@@ -123,13 +124,13 @@ class UriComponentTest {
     @Test
     void shouldNotThrowExceptionWhenQueryParamsMapIsNull() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api");
+        UriComponent1 uriComponent1 = new UriComponent1("/api");
 
         Map<String,String> uriParams = newMap();
         Map<String,String> queryParams = null;
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api";
@@ -139,13 +140,13 @@ class UriComponentTest {
     @Test
     void shouldReturnUriAsIsWhenUriParamsAndQueryParamsAreEmpty() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api/test");
+        UriComponent1 uriComponent1 = new UriComponent1("/api/test");
 
         Map<String,String> uriParams = newMap();
         Map<String,String> queryParams = newMap();
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api/test";
@@ -155,13 +156,13 @@ class UriComponentTest {
     @Test
     void shouldEncodeQueryParamValueCorrectly() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api/test");
+        UriComponent1 uriComponent1 = new UriComponent1("/api/test");
 
         Map<String,String> uriParams = newMap();
         Map<String,String> queryParams = newMap("query1", "+super fancy (@#$7 query param");
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api/test?query1=%2Bsuper%20fancy%20%28%40%23%247%20query%20param";
@@ -171,13 +172,13 @@ class UriComponentTest {
     @Test
     void shouldEncodeQueryParamKeyCorrectly() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api");
+        UriComponent1 uriComponent1 = new UriComponent1("/api");
 
         Map<String,String> uriParams = newMap();
         Map<String,String> queryParams = newMap("+super+fancy+$key", "value");
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api?%2Bsuper%2Bfancy%2B%24key=value";
@@ -187,13 +188,13 @@ class UriComponentTest {
     @Test
     void shouldEncodeGivenQueryParamCorrectly() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api?+super_fancy key=super fancy value");
+        UriComponent1 uriComponent1 = new UriComponent1("/api?+super_fancy key=super fancy value");
 
         Map<String,String> uriParams = newMap();
         Map<String,String> queryParams = newMap("query1", "value1");
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api?%2Bsuper_fancy%20key=super%20fancy%20value&query1=value1";
@@ -203,13 +204,13 @@ class UriComponentTest {
     @Test
     void shouldEncodeGivenPathParamCorrectly() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api/+(another+ test/super");
+        UriComponent1 uriComponent1 = new UriComponent1("/api/+(another+ test/super");
 
         Map<String,String> uriParams = newMap();
         Map<String,String> queryParams = newMap();
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api/+(another+%20test/super";
@@ -219,7 +220,7 @@ class UriComponentTest {
     @Test
     void shouldEncodePathParamCorrectly() {
         // Given
-        UriComponent uriComponent = new UriComponent("/api$/{path1}/{path2}");
+        UriComponent1 uriComponent1 = new UriComponent1("/api$/{path1}/{path2}");
 
         Map<String,String> uriParams = newMap(
                 "path1", "@(value1+31 one",
@@ -228,7 +229,7 @@ class UriComponentTest {
         Map<String,String> queryParams = newMap();
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/api$/@(value1+31%20one/%5E&81%7D%7B%5D";
@@ -239,14 +240,14 @@ class UriComponentTest {
     @Test
     void shouldOdata1() {
         // Given
-        UriComponent uriComponent = new UriComponent("/TripPinRESTierService/Airports('{name}')/Name");
+        UriComponent1 uriComponent1 = new UriComponent1("/TripPinRESTierService/Airports('{name}')/Name");
 
         Map<String,String> uriParams = newMap(
                 "name", "KSFO");
         Map<String,String> queryParams = newMap();
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/TripPinRESTierService/Airports('KSFO')/Name";
@@ -256,13 +257,13 @@ class UriComponentTest {
     @Test
     void shouldOdata2() {
         // Given
-        UriComponent uriComponent = new UriComponent("/TripPinRESTierService/People");
+        UriComponent1 uriComponent1 = new UriComponent1("/TripPinRESTierService/People");
 
         Map<String,String> uriParams = newMap();
         Map<String,String> queryParams = newMap("$top", "2");
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/TripPinRESTierService/People?%24top=2";
@@ -272,13 +273,13 @@ class UriComponentTest {
     @Test
     void shouldOdata3() {
         // Given
-        UriComponent uriComponent = new UriComponent("/TripPinRESTierService/People?$t+ op=asdf as+df");
+        UriComponent1 uriComponent1 = new UriComponent1("/TripPinRESTierService/People?$t+ op=asdf as+df");
 
         Map<String,String> uriParams = newMap();
         Map<String,String> queryParams = newMap();
 
         // When
-        String actual = uriComponent.expand(uriParams, queryParams);
+        String actual = uriComponent1.expand(uriParams, queryParams);
 
         // Then
         String expected = "/TripPinRESTierService/People?%24t%2B%20op=asdf%20as%2Bdf";

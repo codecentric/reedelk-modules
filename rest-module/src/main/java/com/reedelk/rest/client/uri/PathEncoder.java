@@ -1,4 +1,4 @@
-package com.reedelk.rest.client;
+package com.reedelk.rest.client.uri;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
