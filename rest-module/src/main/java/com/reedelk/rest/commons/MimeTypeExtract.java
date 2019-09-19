@@ -31,7 +31,7 @@ public class MimeTypeExtract {
 
     public static MimeType from(Header[] headers) {
         for (Header header : headers) {
-            if(HttpHeader.CONTENT_TYPE.equals(header.getName())) {
+            if(HttpHeader.CONTENT_TYPE.equalsIgnoreCase(header.getName())) {
                 String contentType = header.getValue();
                 try {
                     return MimeType.parse(contentType);
