@@ -1,6 +1,8 @@
 package com.reedelk.rest.component;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.reedelk.rest.client.DefaultHttpClientService;
+import com.reedelk.rest.client.HttpClientService;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -24,6 +26,8 @@ abstract class RestClientAbstractTest {
 
     private static final int PORT = 8181;
     private static final String HOST = "localhost";
+
+    private HttpClientService httpClientService = new DefaultHttpClientService();
 
     static WireMockServer mockServer;
 
@@ -50,7 +54,8 @@ abstract class RestClientAbstractTest {
 
     void assertContent(Message message, String expectedContent) {
         TypedContent<?> typedContent = message.getContent();
-        assertThat(typedContent.asString()).isEqualTo(expectedContent);
+        String stringContent = typedContent.asString();
+        assertThat(stringContent).isEqualTo(expectedContent);
     }
 
     void assertContent(Message message, String expectedContent, MimeType expectedMimeType) {
@@ -65,8 +70,9 @@ abstract class RestClientAbstractTest {
     RestClient componentWith(String baseURL, String path, RestMethod method) {
         RestClient restClient = new RestClient();
         restClient.setBaseURL(baseURL);
-        restClient.setPath(path);
         restClient.setMethod(method);
+        restClient.setPath(path);
+        setHttpClientService(restClient, httpClientService);
         return restClient;
     }
 
@@ -79,6 +85,18 @@ abstract class RestClientAbstractTest {
             fail("Field 'scriptEngine' could not be found");
         } catch (IllegalAccessException e) {
             fail("Could not access field 'scriptEngine'");
+        }
+    }
+
+    void setHttpClientService(RestClient restClient, HttpClientService httpClientService) {
+        try {
+            Field field = restClient.getClass().getDeclaredField("httpClientService");
+            field.setAccessible(true);
+            field.set(restClient, httpClientService);
+        } catch (NoSuchFieldException e) {
+            fail("Field 'httpClientService' could not be found");
+        } catch (IllegalAccessException e) {
+            fail("Could not access field 'httpClientService'");
         }
     }
 }
