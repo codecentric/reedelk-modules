@@ -1,28 +1,35 @@
 package com.reedelk.rest.client.header;
 
+import com.reedelk.rest.commons.ContentType;
+import com.reedelk.rest.commons.HttpHeader;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.NMapEvaluation;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class HeadersEvaluator {
 
     private ScriptEngineService scriptEngine;
-    private Map<String, String> headers;
+    private Map<String, String> userHeaders;
 
     private HeadersEvaluator() {
     }
 
     public HeaderProvider provider(Message message, FlowContext flowContext) {
-        return headers.isEmpty() ?
-                () -> headers :
-                () -> {
-                    // User-defined headers: interpret and add them
-                    NMapEvaluation<String> evaluation = scriptEngine.evaluate(message, flowContext, headers);
-                    return evaluation.map(0);
-                };
+        Map<String,String> headers = new HashMap<>();
+        ContentType.from(message)
+                .ifPresent(contentType -> headers.put(HttpHeader.CONTENT_TYPE, contentType));
+
+        if (!userHeaders.isEmpty()) {
+            // User-defined headers: interpret and add them
+            NMapEvaluation<String> evaluation = scriptEngine.evaluate(message, flowContext, userHeaders);
+            Map<String, String> evaluatedHeaders = evaluation.map(0);
+            headers.putAll(evaluatedHeaders);
+        }
+        return () -> headers;
     }
 
     public static Builder builder() {
@@ -47,7 +54,7 @@ public class HeadersEvaluator {
         public HeadersEvaluator build() {
             HeadersEvaluator evaluator = new HeadersEvaluator();
             evaluator.scriptEngine = scriptEngine;
-            evaluator.headers = headers;
+            evaluator.userHeaders = headers;
             return evaluator;
         }
     }
