@@ -20,7 +20,7 @@ public class RestModuleActivator {
     private static final Dictionary<String, ?> NO_PROPERTIES = new Hashtable<>();
 
     private ServiceRegistration<HttpClientService> registration;
-    private ApacheClientHttpService service;
+    private HttpClientService service;
 
     @Activate
     public void activate(BundleContext context) throws BundleException {

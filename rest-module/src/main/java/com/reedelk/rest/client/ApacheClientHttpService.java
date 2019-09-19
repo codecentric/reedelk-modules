@@ -1,13 +1,12 @@
 package com.reedelk.rest.client;
 
-import com.reedelk.rest.configuration.client.ClientConfiguration;
-import com.reedelk.rest.configuration.client.Proxy;
+import com.reedelk.rest.configuration.client.*;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
@@ -54,6 +53,12 @@ public class ApacheClientHttpService implements HttpClientService {
         return BASE_URL_CLIENT.get(baseURL);
     }
 
+    @Override
+    public void dispose() {
+        CONFIG_ID_CLIENT.forEach(this::closeClient);
+        BASE_URL_CLIENT.forEach(this::closeClient);
+    }
+
     private CloseableHttpAsyncClient createClientByBaseURL() {
         return HttpAsyncClients.createDefault();
     }
@@ -62,34 +67,67 @@ public class ApacheClientHttpService implements HttpClientService {
 
         HttpAsyncClientBuilder builder = HttpAsyncClients.custom();
 
+        CredentialsProvider credentialsProvider = new SystemDefaultCredentialsProvider();
 
-        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-
-        if (Proxy.PROXY.equals(configuration.getProxy())) {
-
-        }
-        configureProxy(configuration, builder, credentialsProvider);
-
+        // Request config
         RequestConfig requestConfig = createConfig(configuration);
+
+        // Authentication config
+        Authentication authentication = configuration.getAuthentication();
+        if (Authentication.BASIC.equals(authentication)) {
+            configureBasicAuth(configuration.getBasicAuthentication(), credentialsProvider);
+        }
+        if (Authentication.DIGEST.equals(authentication)) {
+            configureDigestAuth(configuration.getDigestAuthentication(), credentialsProvider);
+        }
+
+        // Proxy config
+        Proxy proxy = configuration.getProxy();
+        if (Proxy.PROXY.equals(proxy)) {
+            configureProxy(configuration.getProxyConfiguration(), builder, credentialsProvider);
+        }
+
         return builder
                 .setDefaultRequestConfig(requestConfig)
                 .setDefaultCredentialsProvider(credentialsProvider)
                 .build();
     }
 
-    private void configureProxy(ClientConfiguration configuration, HttpAsyncClientBuilder builder, CredentialsProvider credentialsProvider) {
-        String theProxyHost = "";
-        int theProxyPort = 8889;
-        HttpHost proxyHost = new HttpHost(theProxyHost, theProxyPort);
-        builder.setProxy(proxyHost);
-
-        String proxyUserName = "";
-        String proxyPassword = "";
-
-        // This is done only if password
+    private void configureDigestAuth(DigestAuthenticationConfiguration digestAuthConfig, CredentialsProvider credentialsProvider) {
         credentialsProvider.setCredentials(
-                new AuthScope(theProxyHost, theProxyPort),
-                new UsernamePasswordCredentials(proxyUserName, proxyPassword));
+                new AuthScope(
+                        AuthScope.ANY_HOST,
+                        AuthScope.ANY_PORT),
+                new UsernamePasswordCredentials(
+                        digestAuthConfig.getUsername(),
+                        digestAuthConfig.getPassword()));
+    }
+
+    private void configureBasicAuth(BasicAuthenticationConfiguration basicAuthConfig, CredentialsProvider credentialsProvider) {
+        credentialsProvider.setCredentials(
+                new AuthScope(
+                        AuthScope.ANY_HOST,
+                        AuthScope.ANY_PORT),
+                new UsernamePasswordCredentials(
+                        basicAuthConfig.getUsername(),
+                        basicAuthConfig.getPassword()));
+    }
+
+    private void configureProxy(ProxyConfiguration proxyConfiguration, HttpAsyncClientBuilder builder, CredentialsProvider credentialsProvider) {
+        HttpHost proxyHost = new HttpHost(
+                proxyConfiguration.getHost(),
+                proxyConfiguration.getPort());
+        builder.setProxy(proxyHost);
+        if (ProxyAuthentication.USER_AND_PASSWORD.equals(proxyConfiguration.getAuthentication())) {
+            ProxyAuthenticationConfiguration authenticationConfig = proxyConfiguration.getAuthenticationConfiguration();
+            credentialsProvider.setCredentials(
+                    new AuthScope(
+                            proxyConfiguration.getHost(),
+                            proxyConfiguration.getPort()),
+                    new UsernamePasswordCredentials(
+                            authenticationConfig.getUsername(),
+                            authenticationConfig.getPassword()));
+        }
     }
 
     private RequestConfig createConfig(ClientConfiguration configuration) {
@@ -123,11 +161,6 @@ public class ApacheClientHttpService implements HttpClientService {
         }
 
         return builder.build();
-    }
-
-    public void dispose() {
-        CONFIG_ID_CLIENT.forEach(this::closeClient);
-        BASE_URL_CLIENT.forEach(this::closeClient);
     }
 
     private void closeClient(String key, CloseableHttpAsyncClient client) {

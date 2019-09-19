@@ -8,4 +8,6 @@ public interface HttpClientService {
     HttpAsyncClient clientByConfig(ClientConfiguration id);
 
     HttpAsyncClient clientByBaseURL(String id);
+
+    void dispose();
 }
