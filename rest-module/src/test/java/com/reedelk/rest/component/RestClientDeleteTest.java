@@ -1,19 +1,25 @@
 package com.reedelk.rest.component;
 
-import static com.reedelk.rest.commons.RestMethod.DELETE;
+import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageBuilder;
+import org.junit.jupiter.api.Test;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
+import static com.reedelk.rest.commons.RestMethod.DELETE;
+import static com.reedelk.runtime.api.commons.ScriptUtils.EVALUATE_PAYLOAD;
+import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
 
 class RestClientDeleteTest extends RestClientAbstractTest {
 
-    private RestClient component = componentWith(DELETE, baseURL, path);
-/**
     @Test
     void shouldDeleteWithBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String requestBody = "{\"Name\":\"John\"}";
         String expectedResponseBody = "DELETE was successful";
+        RestClient component = componentWith(DELETE, baseURL, path, EVALUATE_PAYLOAD);
 
-        mockServer.stubFor(delete(urlEqualTo(path))
+        givenThat(delete(urlEqualTo(path))
                 .withRequestBody(equalToJson(requestBody))
                 .willReturn(aResponse()
                         .withHeader(CONTENT_TYPE, TEXT.toString())
@@ -22,20 +28,18 @@ class RestClientDeleteTest extends RestClientAbstractTest {
 
         Message payload = MessageBuilder.get().json(requestBody).build();
 
-        // When
-        component.setBody(ScriptUtils.EVALUATE_PAYLOAD);
-        Message outMessage = component.apply(payload, flowContext);
-
-        // Then
-        assertContent(outMessage, expectedResponseBody, TEXT);
+        // Expect
+        AssertThatHttpResponseContent
+                .isSuccessful(component, payload, flowContext, expectedResponseBody, TEXT);
     }
 
     @Test
     void shouldDeleteWithEmptyBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String expectedResponseBody = "It works";
+        RestClient component = componentWith(DELETE, baseURL, path);
 
-        mockServer.stubFor(delete(urlEqualTo(path))
+        givenThat(delete(urlEqualTo(path))
                 .withRequestBody(binaryEqualTo(new byte[0]))
                 .willReturn(aResponse()
                         .withHeader(CONTENT_TYPE, TEXT.toString())
@@ -44,29 +48,28 @@ class RestClientDeleteTest extends RestClientAbstractTest {
 
         Message emptyPayload = MessageBuilder.get().build();
 
-        // When
-        Message outMessage = component.apply(emptyPayload, flowContext);
-
-        // Then
-        assertContent(outMessage, expectedResponseBody, TEXT);
+        // Expect
+        AssertThatHttpResponseContent
+                .isSuccessful(component, emptyPayload, flowContext, expectedResponseBody, TEXT);
     }
 
     @Test
     void shouldDeleteThrowExceptionWhenResponseNot2xx() {
         // Given
-        mockServer.stubFor(delete(urlEqualTo(path))
+        String expectedErrorMessage = "Error exception caused by XYZ";
+        RestClient component = componentWith(DELETE, baseURL, path);
+
+        givenThat(delete(urlEqualTo(path))
                 .withRequestBody(binaryEqualTo(new byte[0]))
                 .willReturn(aResponse()
                         .withStatus(507)
                         .withHeader(CONTENT_TYPE, TEXT.toString())
-                        .withBody("Error exception caused by XYZ")));
+                        .withBody(expectedErrorMessage)));
 
         Message emptyPayload = MessageBuilder.get().build();
 
         // Expect
-        ESBException thrown = Assertions.assertThrows(ESBException.class,
-                () -> component.apply(emptyPayload, flowContext));
-
-        assertThat(thrown).hasMessage("Error exception caused by XYZ");
-    }*/
+        AssertThatHttpResponseContent
+                .isNotSuccessful(component, emptyPayload, flowContext, expectedErrorMessage);
+    }
 }
