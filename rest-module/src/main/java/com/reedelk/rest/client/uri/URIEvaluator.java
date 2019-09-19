@@ -17,12 +17,12 @@ import static java.util.Objects.requireNonNull;
 public class URIEvaluator {
 
     private String baseURL;
-    private UriComponent1 uriComponent1;
+    private URIComponent URIComponent;
     private ScriptEngineService scriptEngine;
     private Map<String, String> pathParameters;
     private Map<String, String> queryParameters;
 
-    public UriProvider1 provider(Message message, FlowContext flowContext) {
+    public URIProvider provider(Message message, FlowContext flowContext) {
         String requestURI = baseURL + evaluateRequestURI(message, flowContext);
         return () -> URI.create(requestURI);
     }
@@ -36,21 +36,21 @@ public class URIEvaluator {
 
         if (pathParameters.isEmpty() && queryParameters.isEmpty()) {
             // If path and query parameters are not to be evaluated, when we don't do it.
-            return uriComponent1.expand(pathParameters, queryParameters);
+            return URIComponent.expand(pathParameters, queryParameters);
 
         } else if (pathParameters.isEmpty()) {
             // Only query parameters are present.
             NMapEvaluation<String> evaluation =
                     scriptEngine.evaluate(message, flowContext, queryParameters);
             Map<String, String> evaluatedQueryParameters = evaluation.map(0);
-            return uriComponent1.expand(pathParameters, evaluatedQueryParameters);
+            return URIComponent.expand(pathParameters, evaluatedQueryParameters);
 
         } else if (queryParameters.isEmpty()) {
             // Only path parameters are present.
             NMapEvaluation<String> evaluation =
                     scriptEngine.evaluate(message, flowContext, pathParameters);
             Map<String, String> evaluatedPathParameters = evaluation.map(0);
-            return uriComponent1.expand(evaluatedPathParameters, queryParameters);
+            return URIComponent.expand(evaluatedPathParameters, queryParameters);
 
         } else {
             // Both path and query parameters are present.
@@ -58,7 +58,7 @@ public class URIEvaluator {
                     scriptEngine.evaluate(message, flowContext, pathParameters, queryParameters);
             Map<String, String> evaluatedPathParameters = evaluation.map(0);
             Map<String, String> evaluatedQueryParameters = evaluation.map(1);
-            return uriComponent1.expand(evaluatedPathParameters, evaluatedQueryParameters);
+            return URIComponent.expand(evaluatedPathParameters, evaluatedQueryParameters);
         }
     }
 
@@ -107,7 +107,7 @@ public class URIEvaluator {
 
         public URIEvaluator build() {
             URIEvaluator evaluator = new URIEvaluator();
-            evaluator.uriComponent1 = new UriComponent1(path);
+            evaluator.URIComponent = new URIComponent(path);
             evaluator.scriptEngine = scriptEngine;
             evaluator.pathParameters = pathParameters;
             evaluator.queryParameters = queryParameters;

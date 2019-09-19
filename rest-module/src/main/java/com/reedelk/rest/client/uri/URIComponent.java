@@ -19,9 +19,9 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
 
-public class UriComponent1 {
+public class URIComponent {
 
-    private static final Logger logger = LoggerFactory.getLogger(UriComponent1.class);
+    private static final Logger logger = LoggerFactory.getLogger(URIComponent.class);
 
     private static final String UTF_8 = "UTF-8";
 
@@ -36,7 +36,7 @@ public class UriComponent1 {
     private final String uri;
     private final String existingQueryParams;
 
-    public UriComponent1(String uri) {
+    public URIComponent(String uri) {
         this.uri = RemoveQueryParams.from(requireNonNull(uri, "uri"));
         this.existingQueryParams = encodeExistingQueryParams(QueryParams.of(uri));
 

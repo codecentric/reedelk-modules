@@ -2,7 +2,7 @@ package com.reedelk.rest.client.strategy;
 
 import com.reedelk.rest.client.BodyProvider;
 import com.reedelk.rest.client.HeaderProvider;
-import com.reedelk.rest.client.uri.UriProvider1;
+import com.reedelk.rest.client.uri.URIProvider;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -21,12 +21,12 @@ abstract class BaseStrategyWithBody implements Strategy {
 
     @Override
     public void execute(HttpAsyncClient client,
-                        OnResult callback, FlowContext flowContext, UriProvider1 uriProvider1,
+                        OnResult callback, FlowContext flowContext, URIProvider URIProvider,
                         HeaderProvider headerProvider, BodyProvider bodyProvider) {
 
         HttpEntityEnclosingRequestBase request = request(bodyProvider);
 
-        URI uri = uriProvider1.uri();
+        URI uri = URIProvider.uri();
 
         request.setURI(uri);
         request.setEntity(new BasicHttpEntity());
