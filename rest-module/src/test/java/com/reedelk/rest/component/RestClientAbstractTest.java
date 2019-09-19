@@ -5,23 +5,25 @@ import com.reedelk.rest.client.DefaultHttpClientService;
 import com.reedelk.rest.client.HttpClientService;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
-import com.reedelk.runtime.api.message.type.TypedContent;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
+@ExtendWith(MockitoExtension.class)
 abstract class RestClientAbstractTest {
 
+    @Mock
+    protected ScriptEngineService scriptEngine;
+    @Mock
     protected FlowContext flowContext;
 
     private static final int PORT = 8181;
@@ -33,7 +35,6 @@ abstract class RestClientAbstractTest {
 
     static String path = "/v1/resource";
     static String baseURL = "http://" + HOST + ":" + PORT;
-
 
     @BeforeAll
     static void setUpBeforeAll(){
@@ -52,51 +53,33 @@ abstract class RestClientAbstractTest {
         mockServer.resetAll();
     }
 
-    void assertContent(Message message, String expectedContent) {
-        TypedContent<?> typedContent = message.getContent();
-        String stringContent = typedContent.asString();
-        assertThat(stringContent).isEqualTo(expectedContent);
-    }
-
-    void assertContent(Message message, String expectedContent, MimeType expectedMimeType) {
-        assertContent(message, expectedContent);
-
-        TypedContent<?> typedContent = message.getContent();
-        Type type = typedContent.type();
-        MimeType mimeType = type.getMimeType();
-        assertThat(mimeType).isEqualTo(expectedMimeType);
-    }
-
     RestClient componentWith(String baseURL, String path, RestMethod method) {
         RestClient restClient = new RestClient();
         restClient.setBaseURL(baseURL);
         restClient.setMethod(method);
         restClient.setPath(path);
-        setHttpClientService(restClient, httpClientService);
+        setScriptEngine(restClient);
+        setHttpClientService(restClient);
         return restClient;
     }
 
-    void setScriptEngine(RestClient restClient, ScriptEngineService service) {
-        try {
-            Field field = restClient.getClass().getDeclaredField("scriptEngine");
-            field.setAccessible(true);
-            field.set(restClient, service);
-        } catch (NoSuchFieldException e) {
-            fail("Field 'scriptEngine' could not be found");
-        } catch (IllegalAccessException e) {
-            fail("Could not access field 'scriptEngine'");
-        }
+    private void setScriptEngine(RestClient restClient) {
+        setField(restClient, "scriptEngine", scriptEngine);
     }
 
-    void setHttpClientService(RestClient restClient, HttpClientService httpClientService) {
+    private void setHttpClientService(RestClient restClient) {
+        setField(restClient, "httpClientService", httpClientService);
+    }
+
+    private void setField(RestClient client, String fieldName, Object object) {
         try {
-            Field field = restClient.getClass().getDeclaredField("httpClientService");
+            Field field = client.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
-            field.set(restClient, httpClientService);
+            field.set(client, object);
         } catch (NoSuchFieldException e) {
-            fail("Field 'httpClientService' could not be found");
+            fail(String.format("Field '%s' could not be found", fieldName));
         } catch (IllegalAccessException e) {
-            fail("Could not access field 'httpClientService'");
+            fail(String.format("Could not access field '%s'", fieldName));
         }
     }
 }
