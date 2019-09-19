@@ -1,13 +1,13 @@
 package com.reedelk.rest.client;
 
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 
 import java.io.IOException;
 
-import static com.reedelk.rest.client.strategy.NoOpCallback.INSTANCE;
 import static java.util.Objects.requireNonNull;
 
 public class HttpClient {
@@ -25,19 +25,33 @@ public class HttpClient {
         this.context = context;
     }
 
-    public void close() throws IOException {
+    public void execute(HttpAsyncRequestProducer requestProducer, HttpAsyncResponseConsumer<Void> responseConsumer) {
+        if (context != null) {
+            delegate.execute(requestProducer, responseConsumer, context, NO_OP_CALLBACK);
+        } else {
+            delegate.execute(requestProducer, responseConsumer, NO_OP_CALLBACK);
+        }
+    }
+
+    void close() throws IOException {
         delegate.close();
     }
 
-    public void start() {
+    void start() {
         this.delegate.start();
     }
 
-    public void execute(HttpAsyncRequestProducer requestProducer, HttpAsyncResponseConsumer<Void> responseConsumer) {
-        if (context != null) {
-            delegate.execute(requestProducer, responseConsumer, context, INSTANCE);
-        } else {
-            delegate.execute(requestProducer, responseConsumer, INSTANCE);
+    private static final FutureCallback<Void> NO_OP_CALLBACK = new FutureCallback<Void>() {
+        @Override
+        public void completed(Void result) {
         }
-    }
+
+        @Override
+        public void failed(Exception ex) {
+        }
+
+        @Override
+        public void cancelled() {
+        }
+    };
 }
