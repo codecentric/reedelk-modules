@@ -85,6 +85,15 @@ public class RestClient implements ProcessorAsync {
                 bodyEvaluator().provider(input, flowContext));
     }
 
+    @Override
+    public void dispose() {
+        this.scriptEngine = null;
+        this.httpClientService = null;
+        this.uriEvaluator = null;
+        this.bodyEvaluator = null;
+        this.headersEvaluator = null;
+    }
+
     public void setMethod(RestMethod method) {
         this.method = method;
     }
