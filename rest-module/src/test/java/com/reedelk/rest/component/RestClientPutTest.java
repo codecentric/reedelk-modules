@@ -1,20 +1,25 @@
 package com.reedelk.rest.component;
 
-import static com.reedelk.rest.commons.RestMethod.PUT;
+import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageBuilder;
+import org.junit.jupiter.api.Test;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
+import static com.reedelk.rest.commons.RestMethod.PUT;
+import static com.reedelk.runtime.api.commons.ScriptUtils.EVALUATE_PAYLOAD;
+import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
 
 class RestClientPutTest extends RestClientAbstractTest {
 
-    private RestClient component = componentWith(PUT, baseURL, path);
-
-    /**
     @Test
     void shouldPutWithBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String requestBody = "{\"Name\":\"John\"}";
         String expectedResponseBody = "PUT was successful";
+        RestClient component = componentWith(PUT, baseURL, path, EVALUATE_PAYLOAD);
 
-        mockServer.stubFor(put(urlEqualTo(path))
+        givenThat(put(urlEqualTo(path))
                 .withRequestBody(equalToJson(requestBody))
                 .willReturn(aResponse()
                         .withHeader(CONTENT_TYPE, TEXT.toString())
@@ -23,20 +28,18 @@ class RestClientPutTest extends RestClientAbstractTest {
 
         Message payload = MessageBuilder.get().json(requestBody).build();
 
-        // When
-        component.setBody(ScriptUtils.EVALUATE_PAYLOAD);
-        Message outMessage = component.apply(payload, flowContext);
-
-        // Then
-        assertContent(outMessage, expectedResponseBody, TEXT);
+        // Expect
+        AssertThatHttpResponseContent
+                .isSuccessful(component, payload, flowContext, expectedResponseBody, TEXT);
     }
 
     @Test
     void shouldPutWithEmptyBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String expectedResponseBody = "It works";
+        RestClient component = componentWith(PUT, baseURL, path);
 
-        mockServer.stubFor(put(urlEqualTo(path))
+        givenThat(put(urlEqualTo(path))
                 .withRequestBody(binaryEqualTo(new byte[0]))
                 .willReturn(aResponse()
                         .withHeader(CONTENT_TYPE, TEXT.toString())
@@ -45,29 +48,28 @@ class RestClientPutTest extends RestClientAbstractTest {
 
         Message emptyPayload = MessageBuilder.get().build();
 
-        // When
-        Message outMessage = component.apply(emptyPayload, flowContext);
-
-        // Then
-        assertContent(outMessage, expectedResponseBody, TEXT);
+        // Expect
+        AssertThatHttpResponseContent
+                .isSuccessful(component, emptyPayload, flowContext, expectedResponseBody, TEXT);
     }
 
     @Test
     void shouldPostThrowExceptionWhenResponseNot2xx() {
         // Given
-        mockServer.stubFor(put(urlEqualTo(path))
+        String expectedErrorMessage = "Error exception caused by XYZ";
+        RestClient component = componentWith(PUT, baseURL, path);
+
+        givenThat(put(urlEqualTo(path))
                 .withRequestBody(binaryEqualTo(new byte[0]))
                 .willReturn(aResponse()
                         .withStatus(404)
                         .withHeader(CONTENT_TYPE, TEXT.toString())
-                        .withBody("Error exception caused by XYZ")));
+                        .withBody(expectedErrorMessage)));
 
         Message emptyPayload = MessageBuilder.get().build();
 
         // Expect
-        ESBException thrown = assertThrows(ESBException.class,
-                () -> component.apply(emptyPayload, flowContext));
-
-        assertThat(thrown).hasMessage("Error exception caused by XYZ");
-    }*/
+        AssertThatHttpResponseContent
+                .isNotSuccessful(component, emptyPayload, flowContext, expectedErrorMessage);
+    }
 }

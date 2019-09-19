@@ -41,7 +41,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             // Expect
             AssertThatHttpResponseContent
-                    .is(component, payload, flowContext, expectedResponseBody, TEXT);
+                    .isSuccessful(component, payload, flowContext, expectedResponseBody, TEXT);
         }
 
         @Test
@@ -63,7 +63,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             // Expect
             AssertThatHttpResponseContent
-                    .is(component, payload, flowContext, expectedResponseBody, TEXT);
+                    .isSuccessful(component, payload, flowContext, expectedResponseBody, TEXT);
         }
 
         @Test
@@ -85,7 +85,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             // Expect
             AssertThatHttpResponseContent
-                    .is(component, payload, flowContext, expectedResponseBody, TEXT);
+                    .isSuccessful(component, payload, flowContext, expectedResponseBody, TEXT);
         }
 
         @Test
@@ -148,7 +148,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             // Expect
             AssertThatHttpResponseContent
-                    .is(component, message, flowContext, expectedResponseBody, TEXT);
+                    .isSuccessful(component, message, flowContext, expectedResponseBody, TEXT);
 
             verify(newRequestPattern().withoutHeader(CONTENT_TYPE));
         }
@@ -167,7 +167,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             // Expect
             AssertThatHttpResponseContent
-                    .is(component, message, flowContext, expectedResponseBody, TEXT);
+                    .isSuccessful(component, message, flowContext, expectedResponseBody, TEXT);
             verify(newRequestPattern().withoutHeader(CONTENT_TYPE));
         }
     }

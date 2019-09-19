@@ -1,10 +1,10 @@
 package com.reedelk.rest.client.strategy;
 
+import com.reedelk.rest.client.ErrorResponse;
 import com.reedelk.rest.client.response.HttpResponseMessageMapper;
 import com.reedelk.rest.commons.DataMarker;
 import com.reedelk.rest.commons.IsSuccessfulStatus;
 import com.reedelk.runtime.api.component.OnResult;
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import org.apache.http.HttpEntity;
@@ -89,7 +89,9 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
             callback.onResult(message, flowContext);
 
         } else {
-            callback.onError(new ESBException("Error"), flowContext);
+
+            callback.onError(new ErrorResponse(bytesStream), flowContext);
+
         }
     }
 
