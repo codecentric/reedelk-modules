@@ -112,10 +112,10 @@ public class URIEvaluator {
             evaluator.pathParameters = pathParameters;
             evaluator.queryParameters = queryParameters;
 
-
             if (StringUtils.isNotNull(baseURL)) {
                 // Use base URL
                 evaluator.baseURL = baseURL;
+
             } else {
                 // Use config
                 requireNonNull(configuration, "Expected configuration or BaseURL");

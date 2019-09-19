@@ -1,9 +1,8 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.client.BodyProvider;
-import com.reedelk.rest.client.HeaderProvider;
 import com.reedelk.rest.client.HttpClientService;
-import com.reedelk.rest.client.MessageBodyProvider;
+import com.reedelk.rest.client.body.BodyEvaluator;
+import com.reedelk.rest.client.header.HeadersEvaluator;
 import com.reedelk.rest.client.strategy.ExecutionStrategy;
 import com.reedelk.rest.client.uri.URIEvaluator;
 import com.reedelk.rest.commons.RestMethod;
@@ -13,7 +12,6 @@ import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.NMapEvaluation;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.osgi.service.component.annotations.Component;
@@ -73,17 +71,18 @@ public class RestClient implements ProcessorAsync {
     private Map<String, String> queryParameters = new HashMap<>();
 
     private volatile URIEvaluator uriEvaluator;
+    private volatile BodyEvaluator bodyEvaluator;
+    private volatile HeadersEvaluator headersEvaluator;
 
 
     @Override
     public void apply(Message input, FlowContext flowContext, OnResult callback) {
         HttpAsyncClient client = client();
 
-        ExecutionStrategy.get(method).execute(
-                client, callback, flowContext,
+        ExecutionStrategy.get(method).execute(client, callback, flowContext,
                 uriEvaluator().provider(input, flowContext),
-                headerProvider(input, flowContext),
-                bodyProvider(input));
+                headersEvaluator().provider(input, flowContext),
+                bodyEvaluator().provider(input, flowContext));
     }
 
     public void setMethod(RestMethod method) {
@@ -118,22 +117,6 @@ public class RestClient implements ProcessorAsync {
         this.queryParameters = queryParameters;
     }
 
-    private HeaderProvider headerProvider(Message message, FlowContext flowContext) {
-        return () -> {
-            if (!headers.isEmpty()) {
-                // User-defined headers: interpret and add them
-                NMapEvaluation<String> evaluation =
-                        scriptEngine.evaluate(message, flowContext, headers);
-                return evaluation.map(0);
-            } else {
-                return new HashMap<>();
-            }
-        };
-    }
-
-    private BodyProvider bodyProvider(Message message) {
-        return MessageBodyProvider.from(message, body, scriptEngine);
-    }
 
 
     private HttpAsyncClient client() {
@@ -153,16 +136,46 @@ public class RestClient implements ProcessorAsync {
             synchronized (this) {
                 if (uriEvaluator == null) {
                     uriEvaluator = URIEvaluator.builder()
-                            .path(path)
-                            .baseURL(baseURL)
-                            .scriptEngine(scriptEngine)
-                            .configuration(configuration)
-                            .pathParameters(pathParameters)
                             .queryParameters(queryParameters)
+                            .pathParameters(pathParameters)
+                            .configuration(configuration)
+                            .scriptEngine(scriptEngine)
+                            .baseURL(baseURL)
+                            .path(path)
                             .build();
                 }
             }
         }
         return uriEvaluator;
     }
+
+    private BodyEvaluator bodyEvaluator() {
+        if (bodyEvaluator == null) {
+            synchronized (this) {
+                if (bodyEvaluator == null) {
+                    bodyEvaluator = BodyEvaluator.builder()
+                            .scriptEngine(scriptEngine)
+                            .method(method)
+                            .body(body)
+                            .build();
+                }
+            }
+        }
+        return bodyEvaluator;
+    }
+
+    private HeadersEvaluator headersEvaluator() {
+        if (headersEvaluator == null) {
+            synchronized (this) {
+                if (headersEvaluator == null) {
+                    headersEvaluator = HeadersEvaluator.builder()
+                            .scriptEngine(scriptEngine)
+                            .headers(headers)
+                            .build();
+                }
+            }
+        }
+        return headersEvaluator;
+    }
+
 }

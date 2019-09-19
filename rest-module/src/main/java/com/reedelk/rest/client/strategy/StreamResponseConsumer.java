@@ -2,7 +2,9 @@ package com.reedelk.rest.client.strategy;
 
 import com.reedelk.rest.client.HttpResponseMessageMapper;
 import com.reedelk.rest.commons.EndOfData;
+import com.reedelk.rest.commons.IsSuccessfulStatus;
 import com.reedelk.runtime.api.component.OnResult;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import org.apache.http.HttpEntity;
@@ -24,13 +26,13 @@ import java.util.concurrent.LinkedTransferQueue;
 public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
     private OnResult callback;
-    private FlowContext context;
+    private FlowContext flowContext;
     private ByteBuffer byteBuffer = ByteBuffer.allocate(16 * 1024);
     private BlockingQueue<byte[]> queue = new LinkedTransferQueue<>();
 
-    StreamResponseConsumer(OnResult callback, FlowContext context) {
+    StreamResponseConsumer(OnResult callback, FlowContext flowContext) {
         this.callback = callback;
-        this.context = context;
+        this.flowContext = flowContext;
     }
 
     @Override
@@ -63,10 +65,13 @@ public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> 
             // We must subscribe on a different scheduler because
             // otherwise we would block the HTTP server NIO Thread.
         }).subscribeOn(Schedulers.elastic()).cast(byte[].class);
-
-        Message message = HttpResponseMessageMapper.map(response, bytesStream);
-
-        callback.onResult(message, context);
+        // TODO: Fix error handling
+        if (IsSuccessfulStatus.status(response.getStatusLine().getStatusCode())) {
+            Message message = HttpResponseMessageMapper.map(response, bytesStream);
+            callback.onResult(message, flowContext);
+        } else {
+            callback.onError(new ESBException("Error"), flowContext);
+        }
     }
 
     @Override
@@ -99,7 +104,6 @@ public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> 
         }
     }
 
-
     @Override
     protected void onEntityEnclosed(HttpEntity entity, ContentType contentType) throws IOException {
 
@@ -113,7 +117,7 @@ public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> 
 
     @Override
     protected void releaseResources() {
-        context = null;
+        flowContext = null;
         callback = null;
         byteBuffer = null;
     }
