@@ -1,7 +1,7 @@
 package com.reedelk.rest.client.header;
 
 import com.reedelk.rest.commons.ContentType;
-import com.reedelk.rest.commons.HttpHeader;
+import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.NMapEvaluation;
@@ -10,18 +10,26 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
+
 public class HeadersEvaluator {
 
     private ScriptEngineService scriptEngine;
     private Map<String, String> userHeaders;
+    private String body;
 
     private HeadersEvaluator() {
     }
 
     public HeaderProvider provider(Message message, FlowContext flowContext) {
         Map<String,String> headers = new HashMap<>();
-        ContentType.from(message)
-                .ifPresent(contentType -> headers.put(HttpHeader.CONTENT_TYPE, contentType));
+
+        if (ScriptUtils.isScript(body)) {
+            if (ScriptUtils.isMessagePayload(body)) {
+                ContentType.from(message)
+                        .ifPresent(contentType -> headers.put(CONTENT_TYPE, contentType));
+            }
+        }
 
         if (!userHeaders.isEmpty()) {
             // User-defined headers: interpret and add them
@@ -29,6 +37,7 @@ public class HeadersEvaluator {
             Map<String, String> evaluatedHeaders = evaluation.map(0);
             headers.putAll(evaluatedHeaders);
         }
+
         return () -> headers;
     }
 
@@ -40,6 +49,7 @@ public class HeadersEvaluator {
 
         private ScriptEngineService scriptEngine;
         private Map<String,String> headers;
+        private String body;
 
         public Builder scriptEngine(ScriptEngineService scriptEngine) {
             this.scriptEngine = scriptEngine;
@@ -51,10 +61,16 @@ public class HeadersEvaluator {
             return this;
         }
 
+        public Builder body(String body) {
+            this.body = body;
+            return this;
+        }
+
         public HeadersEvaluator build() {
             HeadersEvaluator evaluator = new HeadersEvaluator();
             evaluator.scriptEngine = scriptEngine;
             evaluator.userHeaders = headers;
+            evaluator.body = body;
             return evaluator;
         }
     }
