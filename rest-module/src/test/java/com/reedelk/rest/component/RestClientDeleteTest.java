@@ -60,7 +60,6 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         RestClient component = componentWith(DELETE, baseURL, path);
 
         givenThat(delete(urlEqualTo(path))
-                .withRequestBody(binaryEqualTo(new byte[0]))
                 .willReturn(aResponse()
                         .withStatus(507)
                         .withHeader(CONTENT_TYPE, TEXT.toString())

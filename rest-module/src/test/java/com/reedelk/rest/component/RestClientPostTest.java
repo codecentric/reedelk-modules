@@ -172,6 +172,25 @@ class RestClientPostTest extends RestClientAbstractTest {
         }
     }
 
+    @Test
+    void shouldPostThrowExceptionWhenResponseNot2xx() {
+        // Given
+        String expectedErrorMessage = "Error exception caused by XYZ";
+        RestClient component = componentWith(POST, baseURL, path);
+
+        givenThat(post(urlEqualTo(path))
+                .willReturn(aResponse()
+                        .withStatus(507)
+                        .withHeader(CONTENT_TYPE, TEXT.toString())
+                        .withBody(expectedErrorMessage)));
+
+        Message emptyPayload = MessageBuilder.get().build();
+
+        // Expect
+        AssertThatHttpResponseContent
+                .isNotSuccessful(component, emptyPayload, flowContext, expectedErrorMessage);
+    }
+
     private void mockScriptEvaluation(String inputScript, Message message, Object returnValue) {
         doReturn(returnValue)
                 .when(scriptEngine)

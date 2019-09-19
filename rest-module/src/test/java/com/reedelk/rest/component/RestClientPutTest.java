@@ -60,7 +60,6 @@ class RestClientPutTest extends RestClientAbstractTest {
         RestClient component = componentWith(PUT, baseURL, path);
 
         givenThat(put(urlEqualTo(path))
-                .withRequestBody(binaryEqualTo(new byte[0]))
                 .willReturn(aResponse()
                         .withStatus(404)
                         .withHeader(CONTENT_TYPE, TEXT.toString())
