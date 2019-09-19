@@ -1,4 +1,4 @@
-package com.reedelk.rest.client;
+package com.reedelk.rest.client.response;
 
 
 import com.reedelk.rest.commons.MimeTypeExtract;
@@ -11,7 +11,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import reactor.core.publisher.Flux;
 
-import static com.reedelk.rest.client.HttpResponseAttribute.*;
+import static com.reedelk.rest.client.response.HttpResponseAttribute.*;
 
 public class HttpResponseMessageMapper {
 

@@ -1,6 +1,6 @@
 package com.reedelk.rest.client.strategy;
 
-import com.reedelk.rest.client.BodyProvider;
+import com.reedelk.rest.client.body.BodyProvider;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpPost;
 

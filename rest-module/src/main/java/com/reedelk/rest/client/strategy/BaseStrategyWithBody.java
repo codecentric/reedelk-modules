@@ -1,13 +1,13 @@
 package com.reedelk.rest.client.strategy;
 
-import com.reedelk.rest.client.BodyProvider;
-import com.reedelk.rest.client.HeaderProvider;
+import com.reedelk.rest.client.HttpClient;
+import com.reedelk.rest.client.body.BodyProvider;
+import com.reedelk.rest.client.header.HeaderProvider;
 import com.reedelk.rest.client.uri.URIProvider;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.nio.client.HttpAsyncClient;
 import org.reactivestreams.Publisher;
 
 import java.net.URI;
@@ -20,7 +20,7 @@ import static org.apache.http.client.utils.URIUtils.extractHost;
 abstract class BaseStrategyWithBody implements Strategy {
 
     @Override
-    public void execute(HttpAsyncClient client,
+    public void execute(HttpClient client,
                         OnResult callback, FlowContext flowContext, URIProvider URIProvider,
                         HeaderProvider headerProvider, BodyProvider bodyProvider) {
 
@@ -36,8 +36,7 @@ abstract class BaseStrategyWithBody implements Strategy {
 
         client.execute(
                 new StreamRequestProducer(extractHost(uri), request, body),
-                new StreamResponseConsumer(callback, flowContext),
-                NoOpCallback.INSTANCE);
+                new StreamResponseConsumer(callback, flowContext));
     }
 
     protected abstract HttpEntityEnclosingRequestBase request(BodyProvider bodyProvider);

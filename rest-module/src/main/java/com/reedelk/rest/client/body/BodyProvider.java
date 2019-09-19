@@ -1,4 +1,4 @@
-package com.reedelk.rest.client;
+package com.reedelk.rest.client.body;
 
 import org.reactivestreams.Publisher;
 

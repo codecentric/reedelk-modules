@@ -31,6 +31,12 @@ public class ClientConfiguration implements Implementor {
     private HttpProtocol protocol;
 
     // Default request config
+    @Property("Request timeout")
+    private Integer requestTimeout;
+
+    @Property("Connect timeout")
+    private Integer connectTimeout;
+
     @Property("Keep alive")
     @Default("true")
     private Boolean keepAlive;
@@ -44,12 +50,6 @@ public class ClientConfiguration implements Implementor {
 
     @Property("Expect continue")
     private Boolean expectContinue;
-
-    @Property("Request timeout")
-    private Integer requestTimeout;
-
-    @Property("Connect timeout")
-    private Integer connectTimeout;
 
     @Property("Authentication")
     @Default("NONE")

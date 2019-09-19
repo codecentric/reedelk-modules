@@ -1,6 +1,5 @@
 package com.reedelk.rest.client.header;
 
-import com.reedelk.rest.client.HeaderProvider;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.NMapEvaluation;

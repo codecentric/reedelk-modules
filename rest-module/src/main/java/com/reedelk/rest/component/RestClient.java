@@ -1,5 +1,6 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.rest.client.HttpClient;
 import com.reedelk.rest.client.HttpClientService;
 import com.reedelk.rest.client.body.BodyEvaluator;
 import com.reedelk.rest.client.header.HeadersEvaluator;
@@ -13,7 +14,6 @@ import com.reedelk.runtime.api.component.ProcessorAsync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import org.apache.http.nio.client.HttpAsyncClient;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -77,7 +77,7 @@ public class RestClient implements ProcessorAsync {
 
     @Override
     public void apply(Message input, FlowContext flowContext, OnResult callback) {
-        HttpAsyncClient client = client();
+        HttpClient client = client();
 
         ExecutionStrategy.get(method).execute(client, callback, flowContext,
                 uriEvaluator().provider(input, flowContext),
@@ -126,18 +126,14 @@ public class RestClient implements ProcessorAsync {
         this.queryParameters = queryParameters;
     }
 
-
-
-    private HttpAsyncClient client() {
-        HttpAsyncClient client;
+    private HttpClient client() {
         if (configuration != null) {
             requireNonNull(configuration.getId(), "configuration id is mandatory");
-            client = httpClientService.clientByConfig(configuration);
+            return httpClientService.clientByConfig(configuration);
         } else {
             requireNonNull(baseURL, "base URL is mandatory");
-            client = httpClientService.clientByBaseURL(baseURL);
+            return httpClientService.clientByBaseURL(baseURL);
         }
-        return client;
     }
 
     private URIEvaluator uriEvaluator() {
@@ -186,5 +182,4 @@ public class RestClient implements ProcessorAsync {
         }
         return headersEvaluator;
     }
-
 }

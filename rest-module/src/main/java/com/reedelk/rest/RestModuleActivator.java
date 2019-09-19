@@ -1,6 +1,6 @@
 package com.reedelk.rest;
 
-import com.reedelk.rest.client.ApacheClientHttpService;
+import com.reedelk.rest.client.DefaultHttpClientService;
 import com.reedelk.rest.client.HttpClientService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -24,7 +24,7 @@ public class RestModuleActivator {
 
     @Activate
     public void activate(BundleContext context) throws BundleException {
-        this.service = new ApacheClientHttpService();
+        this.service = new DefaultHttpClientService();
         this.registration = context.registerService(HttpClientService.class, service, NO_PROPERTIES);
     }
 

@@ -1,7 +1,7 @@
 package com.reedelk.rest.client.strategy;
 
-import com.reedelk.rest.client.HttpResponseMessageMapper;
-import com.reedelk.rest.commons.EndOfData;
+import com.reedelk.rest.client.response.HttpResponseMessageMapper;
+import com.reedelk.rest.commons.DataMarker;
 import com.reedelk.rest.commons.IsSuccessfulStatus;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -23,11 +23,13 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
 
-public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
+class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
+
+    private Throwable throwable;
 
     private OnResult callback;
     private FlowContext flowContext;
-    private ByteBuffer byteBuffer = ByteBuffer.allocate(16 * 1024);
+    private ByteBuffer byteBuffer = ByteBuffer.allocate(16 * 1024); // buffer size should be parameterized
     private BlockingQueue<byte[]> queue = new LinkedTransferQueue<>();
 
     StreamResponseConsumer(OnResult callback, FlowContext flowContext) {
@@ -44,9 +46,19 @@ public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> 
 
                 byte[] take = queue.take();
 
-                while (take != EndOfData.MARKER) {
+                while (take != DataMarker.END) {
 
-                    sink.next(take);
+                    if (take == DataMarker.ERROR) {
+
+                        sink.error(throwable);
+
+                        break;
+
+                    } else {
+
+                        sink.next(take);
+
+                    }
 
                     take = queue.take();
 
@@ -60,15 +72,22 @@ public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> 
 
             } finally {
                 queue = null;
+
+                throwable = null;
             }
 
             // We must subscribe on a different scheduler because
             // otherwise we would block the HTTP server NIO Thread.
-        }).subscribeOn(Schedulers.elastic()).cast(byte[].class);
-        // TODO: Fix error handling
+        }).subscribeOn(Schedulers.elastic())
+                .cast(byte[].class);
+
+
         if (IsSuccessfulStatus.status(response.getStatusLine().getStatusCode())) {
+
             Message message = HttpResponseMessageMapper.map(response, bytesStream);
+
             callback.onResult(message, flowContext);
+
         } else {
             callback.onError(new ESBException("Error"), flowContext);
         }
@@ -76,7 +95,6 @@ public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> 
 
     @Override
     protected void onContentReceived(ContentDecoder decoder, IOControl ioctrl) throws IOException {
-        // TODO: check error handling
         try {
 
             decoder.read(byteBuffer);
@@ -93,13 +111,15 @@ public class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> 
 
             if (decoder.isCompleted()) {
 
-                queue.offer(EndOfData.MARKER);
+                queue.offer(DataMarker.END);
 
             }
 
         } catch (Exception e) {
 
-            queue.offer(EndOfData.MARKER);
+            this.throwable = e;
+
+            queue.offer(DataMarker.ERROR);
 
         }
     }

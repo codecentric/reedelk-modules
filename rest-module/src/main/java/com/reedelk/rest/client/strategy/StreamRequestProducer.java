@@ -1,6 +1,6 @@
 package com.reedelk.rest.client.strategy;
 
-import com.reedelk.rest.commons.EndOfData;
+import com.reedelk.rest.commons.DataMarker;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
 import org.apache.http.nio.ContentEncoder;
@@ -25,13 +25,25 @@ class StreamRequestProducer extends BasicAsyncRequestProducer {
 
     static class StreamProducer implements HttpAsyncContentProducer {
 
+        private Throwable throwable;
+
         private BlockingQueue<byte[]> queue = new LinkedTransferQueue<>();
 
         private ByteBuffer byteBuffer = ByteBuffer.allocate(16 * 1024);
 
         StreamProducer(Publisher<byte[]> stream) {
+
             Flux.from(stream).subscribeOn(elastic())
-                    .doOnComplete(() -> queue.offer(EndOfData.MARKER))
+
+                    .doOnComplete(() -> queue.offer(DataMarker.END))
+
+                    .doOnError((throwable) -> {
+
+                        this.throwable = throwable;
+
+                        queue.offer(DataMarker.ERROR);
+
+                    })
                     .subscribe(bytes -> queue.offer(bytes));
         }
 
@@ -41,7 +53,19 @@ class StreamRequestProducer extends BasicAsyncRequestProducer {
 
                 byte[] take = queue.take();
 
-                if (take != EndOfData.MARKER) {
+                if (take == DataMarker.ERROR) {
+
+                    queue = null;
+
+                    throw new IOException(throwable);
+
+                } else if (take == DataMarker.END) {
+
+                    encoder.complete();
+
+                    queue = null;
+
+                } else {
 
                     byteBuffer.put(take);
 
@@ -51,11 +75,6 @@ class StreamRequestProducer extends BasicAsyncRequestProducer {
 
                     byteBuffer.clear();
 
-                } else {
-
-                    encoder.complete();
-
-                    queue = null;
                 }
 
             } catch (InterruptedException e) {

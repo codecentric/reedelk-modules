@@ -1,4 +1,4 @@
-package com.reedelk.rest.client;
+package com.reedelk.rest.client.header;
 
 import java.util.Map;
 

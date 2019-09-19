@@ -1,6 +1,5 @@
 package com.reedelk.rest.client.body;
 
-import com.reedelk.rest.client.BodyProvider;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
