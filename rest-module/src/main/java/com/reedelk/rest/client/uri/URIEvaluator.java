@@ -112,8 +112,12 @@ public class URIEvaluator {
             evaluator.pathParameters = pathParameters;
             evaluator.queryParameters = queryParameters;
 
-            // Use config
-            if (StringUtils.isNull(baseURL)) {
+
+            if (StringUtils.isNotNull(baseURL)) {
+                // Use base URL
+                evaluator.baseURL = baseURL;
+            } else {
+                // Use config
                 requireNonNull(configuration, "Expected configuration or BaseURL");
 
                 String host = configuration.getHost();
@@ -126,16 +130,12 @@ public class URIEvaluator {
                 } catch (URISyntaxException e) {
                     throw new IllegalArgumentException("Could not build URI", e);
                 }
-            } else {
-                // Use base URL
-                evaluator.baseURL = baseURL;
             }
             return evaluator;
         }
 
         private int port(Integer port) {
-            if (port == null) return -1;
-            else return port;
+            return port == null ? -1 : port;
         }
 
         private String scheme(HttpProtocol protocol) {

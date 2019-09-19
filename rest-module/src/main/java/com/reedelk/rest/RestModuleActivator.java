@@ -24,15 +24,13 @@ public class RestModuleActivator {
 
     @Activate
     public void activate(BundleContext context) throws BundleException {
-        ApacheClientHttpService service = new ApacheClientHttpService();
-        registration = context.registerService(HttpClientService.class, service, NO_PROPERTIES);
+        this.service = new ApacheClientHttpService();
+        this.registration = context.registerService(HttpClientService.class, service, NO_PROPERTIES);
     }
 
     @Deactivate
     public void deactivate() {
-        service.dispose();
-        if (registration != null) {
-            registration.unregister();
-        }
+        if (service != null) service.dispose();
+        if (registration != null) registration.unregister();
     }
 }
