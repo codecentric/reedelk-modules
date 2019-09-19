@@ -53,13 +53,19 @@ abstract class RestClientAbstractTest {
         mockServer.resetAll();
     }
 
-    RestClient componentWith(String baseURL, String path, RestMethod method) {
+    protected RestClient componentWith(RestMethod method, String baseURL, String path) {
         RestClient restClient = new RestClient();
         restClient.setBaseURL(baseURL);
         restClient.setMethod(method);
         restClient.setPath(path);
         setScriptEngine(restClient);
         setHttpClientService(restClient);
+        return restClient;
+    }
+
+    protected RestClient componentWith(RestMethod method, String baseURL, String path, String body) {
+        RestClient restClient = componentWith(method, baseURL, path);
+        restClient.setBody(body);
         return restClient;
     }
 

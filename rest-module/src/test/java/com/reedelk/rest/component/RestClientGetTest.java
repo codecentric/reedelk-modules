@@ -12,12 +12,11 @@ import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 
 class RestClientGetTest extends RestClientAbstractTest {
 
-    private RestClient component = componentWith(baseURL, path, GET);
-
     @Test
     void shouldGetExecuteCorrectlyWhenResponse200() {
         // Given
         String responseBody = "{\"Name\":\"John\"}";
+        RestClient component = componentWith(GET, baseURL, path);
 
         WireMock.givenThat(get(urlEqualTo(path))
                 .willReturn(aResponse()

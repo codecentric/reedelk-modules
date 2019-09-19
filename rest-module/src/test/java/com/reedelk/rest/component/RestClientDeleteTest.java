@@ -5,7 +5,7 @@ import static com.reedelk.rest.commons.RestMethod.DELETE;
 
 class RestClientDeleteTest extends RestClientAbstractTest {
 
-    private RestClient component = componentWith(baseURL, path, DELETE);
+    private RestClient component = componentWith(DELETE, baseURL, path);
 /**
     @Test
     void shouldDeleteWithBodyExecuteCorrectlyWhenResponse200() {

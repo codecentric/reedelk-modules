@@ -4,7 +4,7 @@ import static com.reedelk.rest.commons.RestMethod.POST;
 
 class RestClientCommonTests extends RestClientAbstractTest {
 
-    private RestClient component = componentWith(baseURL, path, POST);
+    private RestClient component = componentWith(POST, baseURL, path);
 
     /**
     @Nested

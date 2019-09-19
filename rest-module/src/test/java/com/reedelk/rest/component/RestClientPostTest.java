@@ -17,8 +17,6 @@ import static org.mockito.Mockito.eq;
 
 class RestClientPostTest extends RestClientAbstractTest {
 
-    private RestClient component = componentWith(baseURL, path, POST);
-
     @Nested
     @DisplayName("payload and mime type are correct")
     class PayloadAndContentTypeAreCorrect{
@@ -28,7 +26,7 @@ class RestClientPostTest extends RestClientAbstractTest {
             // Given
             String requestBody = "{\"Name\":\"John\"}";
             String expectedResponseBody = "POST was successful";
-            component.setBody(EVALUATE_PAYLOAD);
+            RestClient component = componentWith(POST, baseURL, path, EVALUATE_PAYLOAD);
 
             givenThat(post(urlEqualTo(path))
                     .withRequestBody(equalToJson(requestBody))
@@ -51,7 +49,7 @@ class RestClientPostTest extends RestClientAbstractTest {
             // Given
             String requestBody = "text payload";
             String expectedResponseBody = "POST was successful";
-            component.setBody(EVALUATE_PAYLOAD);
+            RestClient component = componentWith(POST, baseURL, path, EVALUATE_PAYLOAD);
 
             givenThat(post(urlEqualTo(path))
                     .withRequestBody(equalTo(requestBody))
@@ -73,7 +71,7 @@ class RestClientPostTest extends RestClientAbstractTest {
             // Given
             byte[] requestBody = "My binary request body".getBytes();
             String expectedResponseBody = "POST was successful";
-            component.setBody(EVALUATE_PAYLOAD);
+            RestClient component = componentWith(POST, baseURL, path, EVALUATE_PAYLOAD);
 
             givenThat(post(urlEqualTo(path))
                     .withRequestBody(binaryEqualTo(requestBody))
@@ -135,9 +133,9 @@ class RestClientPostTest extends RestClientAbstractTest {
             // Given
             String body = "#['hello this is a script']";
             String expectedResponseBody = "POST was successful";
-            component.setBody(body);
+            RestClient component = componentWith(POST, baseURL, path, body);
 
-            Message message = MessageBuilder.get().build();
+            Message message = MessageBuilder.get().text("my payload").build();
 
             givenThat(post(urlEqualTo(path))
                     .withRequestBody(equalTo("hello this is a script"))
@@ -158,7 +156,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         void assertEmptyContentTypeAndPayload(String body, Message message) {
             // Given
             String expectedResponseBody = "It works";
-            component.setBody(body);
+            RestClient component = componentWith(POST, baseURL, path, body);
 
             givenThat(post(urlEqualTo(path))
                     .withRequestBody(binaryEqualTo(new byte[0]))
@@ -174,10 +172,9 @@ class RestClientPostTest extends RestClientAbstractTest {
         }
     }
 
-
     private void mockScriptEvaluation(String inputScript, Message message, Object returnValue) {
         doReturn(returnValue)
                 .when(scriptEngine)
-                .evaluate(eq(inputScript), eq(message));
+                .evaluate(eq(inputScript), eq(message), eq(flowContext));
     }
 }
