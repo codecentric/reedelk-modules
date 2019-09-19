@@ -2,6 +2,7 @@ package com.reedelk.rest.commons;
 
 import com.reedelk.runtime.api.commons.StringUtils;
 import io.netty.handler.codec.http.HttpHeaders;
+import org.apache.http.Header;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,5 +27,16 @@ public class HttpHeadersAsMap {
                     .map(StringUtils::trim)
                     .collect(Collectors.toList());
         }
+    }
+
+    public static TreeMap<String, List<String>> of(Header[] headers) {
+        TreeMap<String, List<String>> headersMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        if (headers == null) return headersMap;
+        for (Header header : headers) {
+            String headerName = header.getName();
+            String headerValue = header.getValue();
+            headersMap.put(headerName, Collections.singletonList(headerValue)); // TODO: Split the header value!
+        }
+        return headersMap;
     }
 }
