@@ -1,7 +1,13 @@
 package com.reedelk.rest.client;
 
 import com.reedelk.rest.configuration.client.ClientConfiguration;
+import com.reedelk.rest.configuration.client.Proxy;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
@@ -53,9 +59,37 @@ public class ApacheClientHttpService implements HttpClientService {
     }
 
     private CloseableHttpAsyncClient createClientByConfig(ClientConfiguration configuration) {
-        HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
-        builder.setDefaultRequestConfig(createConfig(configuration));
-        return builder.build();
+
+        HttpAsyncClientBuilder builder = HttpAsyncClients.custom();
+
+
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+
+        if (Proxy.PROXY.equals(configuration.getProxy())) {
+
+        }
+        configureProxy(configuration, builder, credentialsProvider);
+
+        RequestConfig requestConfig = createConfig(configuration);
+        return builder
+                .setDefaultRequestConfig(requestConfig)
+                .setDefaultCredentialsProvider(credentialsProvider)
+                .build();
+    }
+
+    private void configureProxy(ClientConfiguration configuration, HttpAsyncClientBuilder builder, CredentialsProvider credentialsProvider) {
+        String theProxyHost = "";
+        int theProxyPort = 8889;
+        HttpHost proxyHost = new HttpHost(theProxyHost, theProxyPort);
+        builder.setProxy(proxyHost);
+
+        String proxyUserName = "";
+        String proxyPassword = "";
+
+        // This is done only if password
+        credentialsProvider.setCredentials(
+                new AuthScope(theProxyHost, theProxyPort),
+                new UsernamePasswordCredentials(proxyUserName, proxyPassword));
     }
 
     private RequestConfig createConfig(ClientConfiguration configuration) {
@@ -78,7 +112,7 @@ public class ApacheClientHttpService implements HttpClientService {
             builder.setExpectContinueEnabled(expectContinue);
         }
 
-        Integer connectionRequestTimeout = configuration.getConnectionRequestTimeout();
+        Integer connectionRequestTimeout = configuration.getRequestTimeout();
         if (connectionRequestTimeout != null) {
             builder.setConnectionRequestTimeout(connectionRequestTimeout);
         }
@@ -98,7 +132,7 @@ public class ApacheClientHttpService implements HttpClientService {
 
     private void closeClient(String key, CloseableHttpAsyncClient client) {
         try {
-            if  (client != null) {
+            if (client != null) {
                 client.close();
             }
         } catch (Exception e) {

@@ -1,10 +1,7 @@
 package com.reedelk.rest.configuration.client;
 
 import com.reedelk.rest.commons.HttpProtocol;
-import com.reedelk.runtime.api.annotation.Default;
-import com.reedelk.runtime.api.annotation.Hidden;
-import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.Shared;
+import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
@@ -14,8 +11,8 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = ClientConfiguration.class, scope = PROTOTYPE)
 public class ClientConfiguration implements Implementor {
 
-    @Property("id")
     @Hidden
+    @Property("id")
     private String id;
 
     // Base URL config
@@ -38,7 +35,6 @@ public class ClientConfiguration implements Implementor {
     @Default("true")
     private Boolean keepAlive;
 
-
     @Property("Follow redirects")
     @Default("true")
     private Boolean followRedirects;
@@ -49,8 +45,9 @@ public class ClientConfiguration implements Implementor {
     @Property("Expect continue")
     private Boolean expectContinue;
 
-    @Property("Connection request timeout")
-    private Integer connectionRequestTimeout;
+    @Property("Request timeout")
+    private Integer requestTimeout;
+
     @Property("Connect timeout")
     private Integer connectTimeout;
 
@@ -58,10 +55,21 @@ public class ClientConfiguration implements Implementor {
     @Default("NONE")
     private Authentication authentication;
 
+    @Property("Basic authentication")
+    @When(propertyName = "authentication", propertyValue = "BASIC")
+    private BasicAuthenticationConfiguration basicAuthentication;
+
+    @Property("Digest authentication")
+    @When(propertyName = "authentication", propertyValue = "DIGEST")
+    private DigestAuthenticationConfiguration digestAuthentication;
+
     @Property("Proxy")
     @Default("NONE")
     private Proxy proxy;
 
+    @Property("Proxy configuration")
+    @When(propertyName = "proxy", propertyValue = "PROXY")
+    private ProxyConfiguration proxyConfiguration;
 
     public String getId() {
         return id;
@@ -93,6 +101,14 @@ public class ClientConfiguration implements Implementor {
 
     public void setBasePath(String basePath) {
         this.basePath = basePath;
+    }
+
+    public HttpProtocol getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(HttpProtocol protocol) {
+        this.protocol = protocol;
     }
 
     public Boolean getKeepAlive() {
@@ -127,12 +143,12 @@ public class ClientConfiguration implements Implementor {
         this.expectContinue = expectContinue;
     }
 
-    public Integer getConnectionRequestTimeout() {
-        return connectionRequestTimeout;
+    public Integer getRequestTimeout() {
+        return requestTimeout;
     }
 
-    public void setConnectionRequestTimeout(Integer connectionRequestTimeout) {
-        this.connectionRequestTimeout = connectionRequestTimeout;
+    public void setRequestTimeout(Integer requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 
     public Integer getConnectTimeout() {
@@ -151,6 +167,22 @@ public class ClientConfiguration implements Implementor {
         this.authentication = authentication;
     }
 
+    public BasicAuthenticationConfiguration getBasicAuthentication() {
+        return basicAuthentication;
+    }
+
+    public void setBasicAuthentication(BasicAuthenticationConfiguration basicAuthentication) {
+        this.basicAuthentication = basicAuthentication;
+    }
+
+    public DigestAuthenticationConfiguration getDigestAuthentication() {
+        return digestAuthentication;
+    }
+
+    public void setDigestAuthentication(DigestAuthenticationConfiguration digestAuthentication) {
+        this.digestAuthentication = digestAuthentication;
+    }
+
     public Proxy getProxy() {
         return proxy;
     }
@@ -159,11 +191,11 @@ public class ClientConfiguration implements Implementor {
         this.proxy = proxy;
     }
 
-    public HttpProtocol getProtocol() {
-        return protocol;
+    public ProxyConfiguration getProxyConfiguration() {
+        return proxyConfiguration;
     }
 
-    public void setProtocol(HttpProtocol protocol) {
-        this.protocol = protocol;
+    public void setProxyConfiguration(ProxyConfiguration proxyConfiguration) {
+        this.proxyConfiguration = proxyConfiguration;
     }
 }
