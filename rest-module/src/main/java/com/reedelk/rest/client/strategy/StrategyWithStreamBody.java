@@ -20,10 +20,14 @@ import static org.apache.http.client.utils.URIUtils.extractHost;
  */
 public class StrategyWithStreamBody implements Strategy {
 
+    private final int requestBufferSize;
+    private final int responseBufferSize;
     private final RequestWithBodyFactory requestFactory;
 
-    StrategyWithStreamBody(RequestWithBodyFactory requestFactory) {
+    StrategyWithStreamBody(RequestWithBodyFactory requestFactory, int requestBufferSize, int responseBufferSize) {
         this.requestFactory = requestFactory;
+        this.requestBufferSize = requestBufferSize;
+        this.responseBufferSize = responseBufferSize;
     }
 
     @Override
@@ -41,8 +45,8 @@ public class StrategyWithStreamBody implements Strategy {
         headerProvider.headers().forEach(request::addHeader);
 
         client.execute(
-                new StreamRequestProducer(extractHost(uri), request, body),
-                new StreamResponseConsumer(callback, flowContext));
+                new StreamRequestProducer(extractHost(uri), request, body, requestBufferSize),
+                new StreamResponseConsumer(callback, flowContext, responseBufferSize));
 
     }
 }

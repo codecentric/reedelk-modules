@@ -19,19 +19,19 @@ import static reactor.core.scheduler.Schedulers.elastic;
 
 class StreamRequestProducer extends BasicAsyncRequestProducer {
 
-    StreamRequestProducer(HttpHost target, HttpEntityEnclosingRequest request, Publisher<byte[]> stream) {
-        super(target, request, new StreamProducer(stream));
+    StreamRequestProducer(HttpHost target, HttpEntityEnclosingRequest request, Publisher<byte[]> stream, int requestBufferSize) {
+        super(target, request, new StreamProducer(stream, requestBufferSize));
     }
 
     static class StreamProducer implements HttpAsyncContentProducer {
 
         private Throwable throwable;
-
+        private ByteBuffer byteBuffer;
         private BlockingQueue<byte[]> queue = new LinkedTransferQueue<>();
 
-        private ByteBuffer byteBuffer = ByteBuffer.allocate(16 * 1024);
+        StreamProducer(Publisher<byte[]> stream, int requestBufferSize) {
 
-        StreamProducer(Publisher<byte[]> stream) {
+            byteBuffer = ByteBuffer.allocate(requestBufferSize);
 
             Flux.from(stream).subscribeOn(elastic())
 
@@ -64,6 +64,8 @@ class StreamRequestProducer extends BasicAsyncRequestProducer {
                     encoder.complete();
 
                     queue = null;
+
+                    byteBuffer = null;
 
                 } else {
 

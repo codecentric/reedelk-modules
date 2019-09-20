@@ -29,12 +29,13 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
     private OnResult callback;
     private FlowContext flowContext;
-    private ByteBuffer byteBuffer = ByteBuffer.allocate(16 * 1024); // TODO: buffer size should be parameterized
+    private ByteBuffer byteBuffer;
     private BlockingQueue<byte[]> queue = new LinkedTransferQueue<>();
 
-    StreamResponseConsumer(OnResult callback, FlowContext flowContext) {
+    StreamResponseConsumer(OnResult callback, FlowContext flowContext, int responseByteBufferSize) {
         this.callback = callback;
         this.flowContext = flowContext;
+        this.byteBuffer = ByteBuffer.allocate(responseByteBufferSize);
     }
 
     @Override

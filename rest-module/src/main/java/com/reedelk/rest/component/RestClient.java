@@ -9,6 +9,7 @@ import com.reedelk.rest.client.strategy.Strategy;
 import com.reedelk.rest.client.uri.URIEvaluator;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.StreamingMode;
+import com.reedelk.rest.configuration.client.AdvancedConfiguration;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.OnResult;
@@ -79,6 +80,9 @@ public class RestClient implements ProcessorAsync {
     @Property("Query params")
     private Map<String, String> queryParameters = new HashMap<>();
 
+    @Property("Advanced configuration")
+    private AdvancedConfiguration advancedConfiguration;
+
     private volatile Strategy execution;
     private volatile URIEvaluator uriEvaluator;
     private volatile BodyEvaluator bodyEvaluator;
@@ -140,6 +144,10 @@ public class RestClient implements ProcessorAsync {
         this.queryParameters = queryParameters;
     }
 
+    public void setAdvancedConfiguration(AdvancedConfiguration advancedConfiguration) {
+        this.advancedConfiguration = advancedConfiguration;
+    }
+
     private HttpClient client() {
         if (configuration != null) {
             requireNonNull(configuration.getId(), "configuration id is mandatory");
@@ -155,6 +163,7 @@ public class RestClient implements ProcessorAsync {
             synchronized (this) {
                 if (execution == null) {
                     execution = ExecutionStrategyBuilder.builder()
+                            .advancedConfig(advancedConfiguration)
                             .streaming(streaming)
                             .method(method)
                             .build();

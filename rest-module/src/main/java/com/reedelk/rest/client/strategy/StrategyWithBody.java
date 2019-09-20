@@ -20,10 +20,12 @@ import static org.apache.http.client.utils.URIUtils.extractHost;
  */
 public class StrategyWithBody implements Strategy {
 
+    private final int responseBufferSize;
     private final RequestWithBodyFactory requestFactory;
 
-    StrategyWithBody(RequestWithBodyFactory requestFactory) {
+    StrategyWithBody(RequestWithBodyFactory requestFactory, int responseBufferSize) {
         this.requestFactory = requestFactory;
+        this.responseBufferSize = responseBufferSize;
     }
 
     @Override
@@ -42,6 +44,6 @@ public class StrategyWithBody implements Strategy {
 
         client.execute(
                 HttpAsyncMethods.create(extractHost(uri), request),
-                new StreamResponseConsumer(callback, flowContext));
+                new StreamResponseConsumer(callback, flowContext, responseBufferSize));
     }
 }

@@ -16,10 +16,12 @@ import static org.apache.http.client.utils.URIUtils.extractHost;
  */
 public class StrategyWithoutBody implements Strategy {
 
+    private final int responseBufferSize;
     private final RequestWithoutBodyFactory requestFactory;
 
-    StrategyWithoutBody(RequestWithoutBodyFactory requestFactory) {
+    StrategyWithoutBody(RequestWithoutBodyFactory requestFactory, int responseBufferSize) {
         this.requestFactory = requestFactory;
+        this.responseBufferSize = responseBufferSize;
     }
 
     @Override
@@ -30,6 +32,6 @@ public class StrategyWithoutBody implements Strategy {
 
         client.execute(
                 new EmptyStreamRequestProducer(extractHost(URIProvider.uri()), baseRequest),
-                new StreamResponseConsumer(callback, flowContext));
+                new StreamResponseConsumer(callback, flowContext, responseBufferSize));
     }
 }
