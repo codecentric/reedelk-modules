@@ -42,8 +42,10 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
     protected void onResponseReceived(HttpResponse response) throws HttpException, IOException {
         Flux<byte[]> bytesStream;
 
-        // HEAD method does not have an entity. Therefore the onContentReceived is never called.
+        // HEAD method does not have an entity: the onContentReceived will never be called.
+        // Our message body bytes stream will be therefore empty.
         if (response.getEntity() == null) {
+
             bytesStream = Flux.empty();
 
         } else {
@@ -79,6 +81,7 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
                     sink.error(e);
 
                 } finally {
+
                     queue = null;
 
                     throwable = null;
@@ -86,8 +89,7 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
                 // We must subscribe on a different scheduler because
                 // otherwise we would block the HTTP server NIO Thread.
-            }).subscribeOn(Schedulers.elastic())
-                    .cast(byte[].class);
+            }).subscribeOn(Schedulers.elastic()).cast(byte[].class);
         }
 
 
@@ -126,9 +128,9 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
             }
 
-        } catch (Exception e) {
+        } catch (Exception exception) {
 
-            this.throwable = e;
+            throwable = exception;
 
             queue.offer(DataMarker.ERROR);
 
@@ -148,8 +150,8 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
     @Override
     protected void releaseResources() {
-        flowContext = null;
         callback = null;
         byteBuffer = null;
+        flowContext = null;
     }
 }
