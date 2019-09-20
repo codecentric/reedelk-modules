@@ -1,5 +1,7 @@
 package com.reedelk.rest.client.body;
 
+import com.reedelk.runtime.api.message.FlowContext;
+import com.reedelk.runtime.api.message.Message;
 import org.reactivestreams.Publisher;
 
 public interface BodyProvider {
@@ -8,7 +10,7 @@ public interface BodyProvider {
      * of the payload is known in advance.
      * @return the byte array to be sent to the remote host.
      */
-    default byte[] asByteArray() {
+    default byte[] asByteArray(Message message, FlowContext flowContext) {
         throw new UnsupportedOperationException();
     }
 
@@ -16,7 +18,7 @@ public interface BodyProvider {
      * Used by chunked transfer encoding.
      * @return the byte array stream to be sent to the remote host.
      */
-    default Publisher<byte[]> asStream() {
+    default Publisher<byte[]> asStream(Message message, FlowContext flowContext) {
         throw new UnsupportedOperationException();
     }
 }

@@ -87,10 +87,10 @@ public class RestClient implements ProcessorAsync {
     public void apply(Message input, FlowContext flowContext, OnResult callback) {
         HttpClient client = client();
 
-        execution().execute(client, callback, flowContext,
+        execution().execute(client, callback, input, flowContext,
                 uriEvaluator().provider(input, flowContext),
                 headersEvaluator().provider(input, flowContext),
-                bodyEvaluator().provider(input, flowContext));
+                bodyEvaluator().provider());
     }
 
     @Override

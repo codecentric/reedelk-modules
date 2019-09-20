@@ -6,13 +6,10 @@ import com.reedelk.rest.client.header.HeaderProvider;
 import com.reedelk.rest.client.uri.URIProvider;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
+import com.reedelk.runtime.api.message.Message;
 
 public interface Strategy {
 
-    void execute(HttpClient client, OnResult callback, FlowContext flowContext,
+    void execute(HttpClient client, OnResult callback, Message input, FlowContext flowContext,
                  URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider);
-
-    default boolean isChunked() {
-        return false;
-    }
 }

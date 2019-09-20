@@ -1,10 +1,7 @@
 package com.reedelk.rest.client.body;
 
 import com.reedelk.rest.commons.RestMethod;
-import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import org.reactivestreams.Publisher;
 
 import static java.lang.Boolean.TRUE;
 
@@ -12,10 +9,7 @@ public class BodyEvaluator {
 
     private static final BodyProvider EMPTY_BODY_METHOD_PROVIDER = new EmptyBodyMethodProvider();
 
-    private ScriptEngineService scriptEngine;
-    private RestMethod method;
-    private String body;
-    private boolean chunked;
+    private BodyProvider bodyProvider;
 
     private BodyEvaluator() {
     }
@@ -24,23 +18,8 @@ public class BodyEvaluator {
         return new Builder();
     }
 
-    public BodyProvider provider(Message message, FlowContext flowContext) {
-        if (!method.hasBody()) {
-            return EMPTY_BODY_METHOD_PROVIDER;
-        }
-        return chunked ?
-                new BodyProvider() {
-                    @Override
-                    public Publisher<byte[]> asStream() {
-                        return new StreamBodyProvider(scriptEngine, body).from(message, flowContext);
-                    }
-                } :
-                new BodyProvider() {
-                    @Override
-                    public byte[] asByteArray() {
-                        return new ByteArrayBodyProvider(scriptEngine, body).from(message, flowContext);
-                    }
-                };
+    public BodyProvider provider() {
+        return bodyProvider;
     }
 
     public static class Builder {
@@ -72,10 +51,13 @@ public class BodyEvaluator {
 
         public BodyEvaluator build() {
             BodyEvaluator evaluator = new BodyEvaluator();
-            evaluator.chunked = TRUE.equals(chunked);
-            evaluator.scriptEngine = scriptEngine;
-            evaluator.method = method;
-            evaluator.body = body;
+            if (method.hasBody()) {
+                evaluator.bodyProvider = TRUE.equals(chunked) ?
+                        new StreamBodyProvider(scriptEngine, body) :
+                        new ByteArrayBodyProvider(scriptEngine, body);
+            } else {
+                evaluator.bodyProvider = EMPTY_BODY_METHOD_PROVIDER;
+            }
             return evaluator;
         }
     }

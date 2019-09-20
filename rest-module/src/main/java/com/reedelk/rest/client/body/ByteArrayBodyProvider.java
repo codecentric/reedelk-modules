@@ -1,9 +1,11 @@
 package com.reedelk.rest.client.body;
 
+import com.reedelk.runtime.api.message.FlowContext;
+import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
-public class ByteArrayBodyProvider extends AbstractBodyProvider<byte[]> {
+public class ByteArrayBodyProvider extends AbstractBodyProvider<byte[]> implements BodyProvider {
 
     private static final byte[] EMPTY = new byte[0];
 
@@ -12,8 +14,8 @@ public class ByteArrayBodyProvider extends AbstractBodyProvider<byte[]> {
     }
 
     @Override
-    protected byte[] empty() {
-        return EMPTY;
+    public byte[] asByteArray(Message message, FlowContext flowContext) {
+        return from(message, flowContext);
     }
 
     @Override
@@ -24,5 +26,10 @@ public class ByteArrayBodyProvider extends AbstractBodyProvider<byte[]> {
     @Override
     protected byte[] fromBytes(byte[] bytes) {
         return bytes;
+    }
+
+    @Override
+    protected byte[] empty() {
+        return EMPTY;
     }
 }

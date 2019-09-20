@@ -6,6 +6,7 @@ import com.reedelk.rest.client.header.HeaderProvider;
 import com.reedelk.rest.client.uri.URIProvider;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
+import com.reedelk.runtime.api.message.Message;
 import org.apache.http.client.methods.HttpRequestBase;
 
 import static org.apache.http.client.utils.URIUtils.extractHost;
@@ -17,7 +18,7 @@ abstract class BaseStrategy implements Strategy {
 
     @Override
     public void execute(HttpClient client,
-                        OnResult callback, FlowContext flowContext, URIProvider URIProvider,
+                        OnResult callback, Message input, FlowContext flowContext, URIProvider URIProvider,
                         HeaderProvider headerProvider, BodyProvider bodyProvider) {
 
         HttpRequestBase baseRequest = request();
