@@ -60,12 +60,13 @@ public class ExecutionStrategyBuilder {
 
     private Strategy strategyWithBody(RequestWithBodyFactory requestFactory) {
         int responseBufferSize = getResponseBufferSize();
-        int requestBufferSize = getRequestBufferSize();
         if (NONE.equals(streaming)) {
             return new StrategyWithBody(requestFactory, responseBufferSize);
         } else if (ALWAYS.equals(streaming)) {
+            int requestBufferSize = getRequestBufferSize();
             return new StrategyWithStreamBody(requestFactory, requestBufferSize, responseBufferSize);
         } else if (AUTO.equals(streaming)) {
+            int requestBufferSize = getRequestBufferSize();
             return new StrategyWithAutoStreamBody(requestFactory, requestBufferSize, responseBufferSize);
         } else {
             throw new IllegalArgumentException(format("Execution strategy not available for streaming mode '%s'", streaming));
