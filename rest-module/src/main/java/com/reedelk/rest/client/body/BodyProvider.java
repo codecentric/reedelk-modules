@@ -25,8 +25,9 @@ public interface BodyProvider {
     /**
      * Checks whether the content is streamable or not.
      * @return true if the content is a stream based content, false otherwise.
+     * @param message the input message.
      */
-    default boolean streamable() {
+    default boolean streamable(Message message) {
         return false;
     }
 }

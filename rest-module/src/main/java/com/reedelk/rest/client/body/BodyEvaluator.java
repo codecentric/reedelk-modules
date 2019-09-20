@@ -4,15 +4,15 @@ import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.StreamingMode;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
-import static java.lang.Boolean.TRUE;
+import static com.reedelk.rest.configuration.StreamingMode.*;
+import static java.lang.String.format;
 
 public class BodyEvaluator {
 
-    private static final BodyProvider EMPTY_BODY_METHOD_PROVIDER = new EmptyBodyMethodProvider();
+    private final BodyProvider bodyProvider;
 
-    private BodyProvider bodyProvider;
-
-    private BodyEvaluator() {
+    private BodyEvaluator(BodyProvider bodyProvider) {
+        this.bodyProvider = bodyProvider;
     }
 
     public static Builder builder() {
@@ -26,8 +26,8 @@ public class BodyEvaluator {
     public static class Builder {
 
         private ScriptEngineService scriptEngine;
+        private StreamingMode streaming;
         private RestMethod method;
-        private Boolean chunked;
         private String body;
 
         public Builder scriptEngine(ScriptEngineService scriptEngine) {
@@ -35,8 +35,8 @@ public class BodyEvaluator {
             return this;
         }
 
-        public Builder streaming(StreamingMode streamingMode) {
-            this.chunked = chunked;
+        public Builder streaming(StreamingMode streaming) {
+            this.streaming = streaming;
             return this;
         }
 
@@ -51,18 +51,22 @@ public class BodyEvaluator {
         }
 
         public BodyEvaluator build() {
-            BodyEvaluator evaluator = new BodyEvaluator();
-            if (method.hasBody()) {
-                evaluator.bodyProvider = TRUE.equals(chunked) ?
-                        new StreamBodyProvider(scriptEngine, body) :
-                        new ByteArrayBodyProvider(scriptEngine, body);
-            } else {
-                evaluator.bodyProvider = EMPTY_BODY_METHOD_PROVIDER;
-            }
-            return evaluator;
+            BodyProvider provider = method.hasBody() ?
+                    createBodyProvider() :
+                    EmptyBodyProvider.INSTANCE;
+            return new BodyEvaluator(provider);
         }
-    }
 
-    private static class EmptyBodyMethodProvider implements BodyProvider {
+        private BodyProvider createBodyProvider() {
+            if (NONE.equals(streaming)) {
+                return new ByteArrayBodyProvider(scriptEngine, body);
+            } else if (ALWAYS.equals(streaming)) {
+                return new StreamBodyProvider(scriptEngine, body);
+            } else if (AUTO.equals(streaming)){
+                return new AutoStreamBodyProvider(scriptEngine, body);
+            } else {
+                throw new IllegalArgumentException(format("Body provider not available for streaming mode '%s'", streaming));
+            }
+        }
     }
 }

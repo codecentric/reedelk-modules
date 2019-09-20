@@ -21,7 +21,7 @@ public class StrategyWithAutoStreamBody implements Strategy {
     @Override
     public void execute(HttpClient client, OnResult callback, Message input, FlowContext flowContext,
                         URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
-        if (bodyProvider.streamable()) {
+        if (bodyProvider.streamable(input)) {
             this.strategyWithStreamBody.execute(client, callback, input, flowContext, URIProvider, headerProvider, bodyProvider);
         } else {
             this.strategyWithBody.execute(client, callback, input, flowContext, URIProvider, headerProvider, bodyProvider);
