@@ -14,10 +14,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.commons.RestMethod.valueOf;
 import static com.reedelk.rest.utils.TestTag.INTEGRATION;
-import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.any;
@@ -27,7 +25,7 @@ import static org.mockito.Mockito.*;
 class RestClientRequestUriTest extends RestClientAbstractTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
     void shouldCorrectlyBuildRequestUriWithPathParams(String method) {
         // Given
         String path = "/resource/{id}/group/{group}";
@@ -40,7 +38,7 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
     void shouldCorrectlyBuildRequestUriWithQueryParams(String method) {
         // Given
         String path = "/resource";
@@ -53,7 +51,7 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
     void shouldCorrectlyBuildRequestUriWithPathAndQueryParams(String method) {
         // Given
         String path = "/resource/{id}/title/{title}";
@@ -68,13 +66,8 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
 
     void assertExpectedPath(String method, String path, String expectedPath, Map<String, String> pathParameters, Map<String, String> queryParameters) {
         // Given
-        String expectedResponseBody = "It works";
-
         givenThat(WireMock.any(urlEqualTo(expectedPath))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withBody(expectedResponseBody)
-                        .withHeader(CONTENT_TYPE, TEXT.toString())));
+                .willReturn(aResponse().withStatus(200)));
 
         Message message = MessageBuilder.get().empty().build();
 
@@ -86,7 +79,7 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
 
         // Expect
         AssertThatHttpResponseContent
-                .isSuccessful(component, message, flowContext, expectedResponseBody, TEXT);
+                .isSuccessful(component, message, flowContext);
     }
 
     private void configureRequestAndQueryParams(Map<String, String> pathParameters, Map<String, String> queryParameters, RestClient component) {

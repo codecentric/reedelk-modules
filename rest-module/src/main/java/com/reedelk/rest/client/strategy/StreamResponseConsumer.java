@@ -40,47 +40,55 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
     @Override
     protected void onResponseReceived(HttpResponse response) throws HttpException, IOException {
-        // Map the response to message and create a flux
-        Flux<byte[]> bytesStream = Flux.create(sink -> {
+        Flux<byte[]> bytesStream;
 
-            try {
+        // HEAD method does not have an entity. Therefore the onContentReceived is never called.
+        if (response.getEntity() == null) {
+            bytesStream = Flux.empty();
 
-                byte[] take = queue.take();
+        } else {
+            // Map the response to message and create a flux
+            bytesStream = Flux.create(sink -> {
 
-                while (take != DataMarker.END) {
+                try {
 
-                    if (take == DataMarker.ERROR) {
+                    byte[] take = queue.take();
 
-                        sink.error(throwable);
+                    while (take != DataMarker.END) {
 
-                        break;
+                        if (take == DataMarker.ERROR) {
 
-                    } else {
+                            sink.error(throwable);
 
-                        sink.next(take);
+                            break;
+
+                        } else {
+
+                            sink.next(take);
+
+                        }
+
+                        take = queue.take();
 
                     }
 
-                    take = queue.take();
+                    sink.complete();
 
+                } catch (Exception e) {
+
+                    sink.error(e);
+
+                } finally {
+                    queue = null;
+
+                    throwable = null;
                 }
 
-                sink.complete();
-
-            } catch (Exception e) {
-
-                sink.error(e);
-
-            } finally {
-                queue = null;
-
-                throwable = null;
-            }
-
-            // We must subscribe on a different scheduler because
-            // otherwise we would block the HTTP server NIO Thread.
-        }).subscribeOn(Schedulers.elastic())
-                .cast(byte[].class);
+                // We must subscribe on a different scheduler because
+                // otherwise we would block the HTTP server NIO Thread.
+            }).subscribeOn(Schedulers.elastic())
+                    .cast(byte[].class);
+        }
 
 
         if (IsSuccessfulStatus.status(response.getStatusLine().getStatusCode())) {

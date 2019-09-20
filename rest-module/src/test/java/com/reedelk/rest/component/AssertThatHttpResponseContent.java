@@ -29,6 +29,17 @@ class AssertThatHttpResponseContent {
         }
     }
 
+    static void isSuccessful(RestClient component,
+                             Message message,
+                             FlowContext context) {
+        SuccessAssertion successAssertion = new SuccessAssertion(component, message, context);
+        try {
+            successAssertion.assertThat();
+        } catch (InterruptedException e) {
+            fail(e);
+        }
+    }
+
     static void isNotSuccessful(RestClient component,
                                 Message message,
                                 FlowContext context,
@@ -78,6 +89,12 @@ class AssertThatHttpResponseContent {
             this.message = message;
         }
 
+        SuccessAssertion(RestClient component,
+                         Message message,
+                         FlowContext context) {
+            this(component, message, context, null, null);
+        }
+
         void assertThat() throws InterruptedException {
             CountDownLatch latch = new CountDownLatch(1);
             component.apply(message, context, new OnResult() {
@@ -100,7 +117,9 @@ class AssertThatHttpResponseContent {
             }
 
             if (response != null) {
-                assertContent(response, expectedBody, expectedMimeType);
+                if (expectedBody != null) {
+                    assertContent(response, expectedBody, expectedMimeType);
+                }
             } else {
                 fail("Response was not successful");
             }
