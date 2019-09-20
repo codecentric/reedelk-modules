@@ -52,23 +52,23 @@ public class LoggerComponent implements ProcessorSync {
         return message;
     }
 
-    private void debug(Message input, FlowContext flowContext) throws ScriptException {
-        if (ScriptUtils.isScript(message)) {
-            // The logger should just print the Stream object if it is a stream, otherwise if
-            // the stream was resolved (hence loaded into memory) it should print the value.
-            Object result = service.evaluate(message, input, flowContext);
-            level.log(result);
-        } else {
-            // If it is not a script we don't evaluate the message.
-            level.log(message);
-        }
-    }
-
     public void setLevel(LoggerLevel level) {
         this.level = level;
     }
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    private void debug(Message message, FlowContext flowContext) throws ScriptException {
+        if (ScriptUtils.isScript(this.message)) {
+            // The logger should just print the Stream object if it is a stream, otherwise if
+            // the stream was resolved (hence loaded into memory) it should print the value.
+            Object result = service.evaluate(this.message, message, flowContext);
+            level.log(result);
+        } else {
+            // If it is not a script we don't evaluate the message.
+            level.log(this.message);
+        }
     }
 }
