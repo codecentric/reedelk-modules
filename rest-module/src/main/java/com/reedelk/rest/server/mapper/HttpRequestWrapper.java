@@ -1,9 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.commons.AsSerializableMap;
-import com.reedelk.rest.commons.HttpHeadersAsMap;
-import com.reedelk.rest.commons.MimeTypeExtract;
-import com.reedelk.rest.commons.QueryParameters;
+import com.reedelk.rest.commons.*;
 import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.type.MimeType;
 import reactor.netty.ByteBufFlux;
@@ -11,7 +8,6 @@ import reactor.netty.http.server.HttpServerRequest;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 class HttpRequestWrapper {
 
@@ -75,7 +71,7 @@ class HttpRequestWrapper {
         return AsSerializableMap.of(request.params());
     }
 
-    TreeMap<String, List<String>> headers() {
+    HeadersMap headers() {
         return HttpHeadersAsMap.of(request.requestHeaders());
     }
 }
