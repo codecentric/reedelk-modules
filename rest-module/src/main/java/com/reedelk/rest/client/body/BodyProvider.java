@@ -21,4 +21,12 @@ public interface BodyProvider {
     default Publisher<byte[]> asStream(Message message, FlowContext flowContext) {
         throw new UnsupportedOperationException();
     }
+
+    /**
+     * Checks whether the content is streamable or not.
+     * @return true if the content is a stream based content, false otherwise.
+     */
+    default boolean streamable() {
+        return false;
+    }
 }

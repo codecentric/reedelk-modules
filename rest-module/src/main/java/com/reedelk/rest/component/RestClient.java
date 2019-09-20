@@ -8,6 +8,7 @@ import com.reedelk.rest.client.strategy.ExecutionStrategyBuilder;
 import com.reedelk.rest.client.strategy.Strategy;
 import com.reedelk.rest.client.uri.URIEvaluator;
 import com.reedelk.rest.commons.RestMethod;
+import com.reedelk.rest.configuration.StreamingMode;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.OnResult;
@@ -59,11 +60,12 @@ public class RestClient implements ProcessorAsync {
     @When(propertyName = "method", propertyValue = "PUT")
     private String body;
 
-    @Property("Chunked")
+    @Property("Streaming")
+    @Default("AUTO")
     @When(propertyName = "method", propertyValue = "DELETE")
     @When(propertyName = "method", propertyValue = "POST")
     @When(propertyName = "method", propertyValue = "PUT")
-    private Boolean chunked;
+    private StreamingMode streaming = StreamingMode.AUTO;
 
     @TabGroup("Headers and parameters")
     @Property("Headers")
@@ -77,11 +79,11 @@ public class RestClient implements ProcessorAsync {
     @Property("Query params")
     private Map<String, String> queryParameters = new HashMap<>();
 
+    private volatile Strategy execution;
     private volatile URIEvaluator uriEvaluator;
     private volatile BodyEvaluator bodyEvaluator;
     private volatile HeadersEvaluator headersEvaluator;
 
-    private volatile Strategy execution;
 
     @Override
     public void apply(Message input, FlowContext flowContext, OnResult callback) {
@@ -122,8 +124,8 @@ public class RestClient implements ProcessorAsync {
         this.body = body;
     }
 
-    public void setChunked(Boolean chunked) {
-        this.chunked = chunked;
+    public void setStreaming(StreamingMode streaming) {
+        this.streaming = streaming;
     }
 
     public void setHeaders(Map<String, String> headers) {
@@ -153,7 +155,7 @@ public class RestClient implements ProcessorAsync {
             synchronized (this) {
                 if (execution == null) {
                     execution = ExecutionStrategyBuilder.builder()
-                            .chunked(chunked)
+                            .streaming(streaming)
                             .method(method)
                             .build();
                 }
@@ -186,7 +188,7 @@ public class RestClient implements ProcessorAsync {
                 if (bodyEvaluator == null) {
                     bodyEvaluator = BodyEvaluator.builder()
                             .scriptEngine(scriptEngine)
-                            .chunked(chunked)
+                            .streaming(streaming)
                             .method(method)
                             .body(body)
                             .build();

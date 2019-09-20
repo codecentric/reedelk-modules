@@ -12,23 +12,24 @@ import org.apache.http.client.methods.HttpRequestBase;
 import static org.apache.http.client.utils.URIUtils.extractHost;
 
 /**
- * Strategy for methods without a body.
+ * Strategy for methods without a body: GET, OPTIONS, HEAD
  */
-abstract class BaseStrategy implements Strategy {
+public class StrategyWithoutBody implements Strategy {
+
+    private final RequestWithoutBodyFactory requestFactory;
+
+    StrategyWithoutBody(RequestWithoutBodyFactory requestFactory) {
+        this.requestFactory = requestFactory;
+    }
 
     @Override
-    public void execute(HttpClient client,
-                        OnResult callback, Message input, FlowContext flowContext, URIProvider URIProvider,
-                        HeaderProvider headerProvider, BodyProvider bodyProvider) {
-
-        HttpRequestBase baseRequest = request();
+    public void execute(HttpClient client, OnResult callback, Message input, FlowContext flowContext, URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
+        HttpRequestBase baseRequest = requestFactory.create();
         baseRequest.setURI(URIProvider.uri());
         headerProvider.headers().forEach(baseRequest::addHeader);
 
-        client.execute(new EmptyStreamRequestProducer(extractHost(URIProvider.uri()), baseRequest),
+        client.execute(
+                new EmptyStreamRequestProducer(extractHost(URIProvider.uri()), baseRequest),
                 new StreamResponseConsumer(callback, flowContext));
     }
-
-    protected abstract HttpRequestBase request();
-
 }

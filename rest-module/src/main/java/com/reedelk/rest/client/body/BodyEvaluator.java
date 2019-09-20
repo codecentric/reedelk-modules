@@ -1,6 +1,7 @@
 package com.reedelk.rest.client.body;
 
 import com.reedelk.rest.commons.RestMethod;
+import com.reedelk.rest.configuration.StreamingMode;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
 import static java.lang.Boolean.TRUE;
@@ -34,7 +35,7 @@ public class BodyEvaluator {
             return this;
         }
 
-        public Builder chunked(Boolean chunked) {
+        public Builder streaming(StreamingMode streamingMode) {
             this.chunked = chunked;
             return this;
         }
