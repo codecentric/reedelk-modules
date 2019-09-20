@@ -14,8 +14,8 @@ public class BodyEvaluator {
 
     private ScriptEngineService scriptEngine;
     private RestMethod method;
-    private boolean chunked;
     private String body;
+    private boolean chunked;
 
     private BodyEvaluator() {
     }
@@ -29,8 +29,18 @@ public class BodyEvaluator {
             return EMPTY_BODY_METHOD_PROVIDER;
         }
         return chunked ?
-                new StreamBodyProvider(BodyStreamProvider.from(message, flowContext, body, scriptEngine)) :
-                new ByteArrayBodyProvider(new byte[0]);
+                new BodyProvider() {
+                    @Override
+                    public Publisher<byte[]> asStream() {
+                        return new StreamBodyProvider(scriptEngine, body).from(message, flowContext);
+                    }
+                } :
+                new BodyProvider() {
+                    @Override
+                    public byte[] asByteArray() {
+                        return new ByteArrayBodyProvider(scriptEngine, body).from(message, flowContext);
+                    }
+                };
     }
 
     public static class Builder {
@@ -71,33 +81,5 @@ public class BodyEvaluator {
     }
 
     private static class EmptyBodyMethodProvider implements BodyProvider {
-    }
-
-    private static class StreamBodyProvider implements BodyProvider {
-
-        private final Publisher<byte[]> stream;
-
-        StreamBodyProvider(Publisher<byte[]> stream) {
-            this.stream = stream;
-        }
-
-        @Override
-        public Publisher<byte[]> asStream() {
-            return stream;
-        }
-    }
-
-    private static class ByteArrayBodyProvider implements BodyProvider {
-
-        private final byte[] bytes;
-
-        ByteArrayBodyProvider(byte[] bytes) {
-            this.bytes = bytes;
-        }
-
-        @Override
-        public byte[] asByteArray() {
-            return bytes;
-        }
     }
 }

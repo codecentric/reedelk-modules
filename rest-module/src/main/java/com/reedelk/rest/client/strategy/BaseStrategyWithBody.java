@@ -4,7 +4,6 @@ import com.reedelk.rest.client.HttpClient;
 import com.reedelk.rest.client.body.BodyProvider;
 import com.reedelk.rest.client.header.HeaderProvider;
 import com.reedelk.rest.client.uri.URIProvider;
-import com.reedelk.runtime.api.commons.ConsumeByteArrayStream;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -49,7 +48,7 @@ abstract class BaseStrategyWithBody implements Strategy {
 
         } else {
             // The content length header is sent.
-            byte[] bodyAsByteArray = ConsumeByteArrayStream.from(bodyProvider.asStream());
+            byte[] bodyAsByteArray = bodyProvider.asByteArray();
             NByteArrayEntity byteArrayEntity = new NByteArrayEntity(bodyAsByteArray);
             request.setEntity(byteArrayEntity);
             client.execute(HttpAsyncMethods.create(extractHost(uri), request),
