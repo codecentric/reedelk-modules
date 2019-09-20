@@ -43,13 +43,13 @@ abstract class BaseStrategyWithBody implements Strategy {
             // Chunked: payload stream is streamed in chunks.
             // The content length header is not sent.
             request.setEntity(new BasicHttpEntity());
-            Publisher<byte[]> body = bodyProvider.body();
+            Publisher<byte[]> body = bodyProvider.asStream();
             client.execute(new StreamRequestProducer(extractHost(uri), request, body),
                     new StreamResponseConsumer(callback, flowContext));
 
         } else {
             // The content length header is sent.
-            byte[] bodyAsByteArray = ConsumeByteArrayStream.from(bodyProvider.body());
+            byte[] bodyAsByteArray = ConsumeByteArrayStream.from(bodyProvider.asStream());
             NByteArrayEntity byteArrayEntity = new NByteArrayEntity(bodyAsByteArray);
             request.setEntity(byteArrayEntity);
             client.execute(HttpAsyncMethods.create(extractHost(uri), request),

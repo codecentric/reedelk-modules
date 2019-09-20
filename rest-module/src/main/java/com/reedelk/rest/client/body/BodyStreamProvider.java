@@ -25,7 +25,6 @@ public class BodyStreamProvider {
 
     private static Publisher<byte[]> fromScript(Message message, String body, FlowContext flowContext, ScriptEngineService scriptEngine) {
         if (ScriptUtils.isMessagePayload(body)) {
-
             if (message.getContent().isStream()) {
                 // The payload is a stream based payload.
                 // We don't know the content length, since it is not loaded into memory.
@@ -41,7 +40,6 @@ public class BodyStreamProvider {
             // If the script is empty, there is nothing to evaluate.
             // No content type header
             return Mono.empty();
-
         } else {
             // The is a script: we evaluate it and set it the result.
             // No content type header, it is set by the user

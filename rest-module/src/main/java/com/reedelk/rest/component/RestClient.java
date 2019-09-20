@@ -186,6 +186,7 @@ public class RestClient implements ProcessorAsync {
                 if (bodyEvaluator == null) {
                     bodyEvaluator = BodyEvaluator.builder()
                             .scriptEngine(scriptEngine)
+                            .chunked(chunked)
                             .method(method)
                             .body(body)
                             .build();
