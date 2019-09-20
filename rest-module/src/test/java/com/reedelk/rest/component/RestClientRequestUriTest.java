@@ -7,7 +7,6 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.script.NMapEvaluation;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -15,13 +14,12 @@ import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.reedelk.rest.commons.RestMethod.valueOf;
-import static com.reedelk.rest.utils.TestTag.INTEGRATION;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
-@Tag(INTEGRATION)
+
 class RestClientRequestUriTest extends RestClientAbstractTest {
 
     @ParameterizedTest

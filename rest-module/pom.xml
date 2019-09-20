@@ -20,6 +20,7 @@
         <assertj.version>3.11.1</assertj.version>
         <reactor.addons.version>3.2.3.RELEASE</reactor.addons.version>
         <reactor.netty.version>0.8.11.RELEASE</reactor.netty.version>
+        <http.async.client.version>4.1.4</http.async.client.version>
     </properties>
 
     <dependencies>
@@ -36,7 +37,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpasyncclient</artifactId>
-            <version>4.1.4</version>
+            <version>${http.async.client.version}</version>
         </dependency>
 
 
