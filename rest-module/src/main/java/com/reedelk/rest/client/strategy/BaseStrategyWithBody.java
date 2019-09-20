@@ -4,10 +4,13 @@ import com.reedelk.rest.client.HttpClient;
 import com.reedelk.rest.client.body.BodyProvider;
 import com.reedelk.rest.client.header.HeaderProvider;
 import com.reedelk.rest.client.uri.URIProvider;
+import com.reedelk.runtime.api.commons.ConsumeByteArrayStream;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.nio.client.methods.HttpAsyncMethods;
+import org.apache.http.nio.entity.NByteArrayEntity;
 import org.reactivestreams.Publisher;
 
 import java.net.URI;
@@ -19,24 +22,39 @@ import static org.apache.http.client.utils.URIUtils.extractHost;
  */
 abstract class BaseStrategyWithBody implements Strategy {
 
+    private final boolean chunked;
+
+    BaseStrategyWithBody(boolean chunked) {
+        this.chunked = chunked;
+    }
+
     @Override
     public void execute(HttpClient client,
                         OnResult callback, FlowContext flowContext, URIProvider URIProvider,
                         HeaderProvider headerProvider, BodyProvider bodyProvider) {
 
-        HttpEntityEnclosingRequestBase request = request(bodyProvider);
-
         URI uri = URIProvider.uri();
 
+        HttpEntityEnclosingRequestBase request = request(bodyProvider);
         request.setURI(uri);
-        request.setEntity(new BasicHttpEntity());
         headerProvider.headers().forEach(request::addHeader);
 
-        Publisher<byte[]> body = bodyProvider.body();
+        if (chunked) {
+            // Chunked: payload stream is streamed in chunks.
+            // The content length header is not sent.
+            request.setEntity(new BasicHttpEntity());
+            Publisher<byte[]> body = bodyProvider.body();
+            client.execute(new StreamRequestProducer(extractHost(uri), request, body),
+                    new StreamResponseConsumer(callback, flowContext));
 
-        client.execute(
-                new StreamRequestProducer(extractHost(uri), request, body),
-                new StreamResponseConsumer(callback, flowContext));
+        } else {
+            // The content length header is sent.
+            byte[] bodyAsByteArray = ConsumeByteArrayStream.from(bodyProvider.body());
+            NByteArrayEntity byteArrayEntity = new NByteArrayEntity(bodyAsByteArray);
+            request.setEntity(byteArrayEntity);
+            client.execute(HttpAsyncMethods.create(extractHost(uri), request),
+                    new StreamResponseConsumer(callback, flowContext));
+        }
     }
 
     protected abstract HttpEntityEnclosingRequestBase request(BodyProvider bodyProvider);

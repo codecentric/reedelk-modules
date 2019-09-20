@@ -9,7 +9,10 @@ import com.reedelk.runtime.api.message.FlowContext;
 
 public interface Strategy {
 
-    void execute(
-            HttpClient client, OnResult callback, FlowContext flowContext,
-            URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider);
+    void execute(HttpClient client, OnResult callback, FlowContext flowContext,
+                 URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider);
+
+    default boolean isChunked() {
+        return false;
+    }
 }

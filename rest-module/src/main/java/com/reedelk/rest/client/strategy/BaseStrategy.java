@@ -24,8 +24,7 @@ abstract class BaseStrategy implements Strategy {
         baseRequest.setURI(URIProvider.uri());
         headerProvider.headers().forEach(baseRequest::addHeader);
 
-        client.execute(
-                new EmptyStreamRequestProducer(extractHost(URIProvider.uri()), baseRequest),
+        client.execute(new EmptyStreamRequestProducer(extractHost(URIProvider.uri()), baseRequest),
                 new StreamResponseConsumer(callback, flowContext));
     }
 

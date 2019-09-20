@@ -6,6 +6,10 @@ import org.apache.http.client.methods.HttpPut;
 
 public class PUT extends BaseStrategyWithBody {
 
+    PUT(boolean chunked) {
+        super(chunked);
+    }
+
     @Override
     protected HttpEntityEnclosingRequestBase request(BodyProvider bodyProvider) {
         return new HttpPut();

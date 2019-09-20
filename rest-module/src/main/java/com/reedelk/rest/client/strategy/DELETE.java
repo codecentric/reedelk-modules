@@ -5,6 +5,10 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 public class DELETE extends BaseStrategyWithBody {
 
+    DELETE(boolean chunked) {
+        super(chunked);
+    }
+
     @Override
     protected HttpEntityEnclosingRequestBase request(BodyProvider bodyProvider) {
         return new HttpDeleteWithBody();

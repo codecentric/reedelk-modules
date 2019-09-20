@@ -4,7 +4,8 @@ import com.reedelk.rest.client.HttpClient;
 import com.reedelk.rest.client.HttpClientService;
 import com.reedelk.rest.client.body.BodyEvaluator;
 import com.reedelk.rest.client.header.HeadersEvaluator;
-import com.reedelk.rest.client.strategy.ExecutionStrategy;
+import com.reedelk.rest.client.strategy.ExecutionStrategyBuilder;
+import com.reedelk.rest.client.strategy.Strategy;
 import com.reedelk.rest.client.uri.URIEvaluator;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
@@ -58,6 +59,12 @@ public class RestClient implements ProcessorAsync {
     @When(propertyName = "method", propertyValue = "PUT")
     private String body;
 
+    @Property("Chunked")
+    @When(propertyName = "method", propertyValue = "DELETE")
+    @When(propertyName = "method", propertyValue = "POST")
+    @When(propertyName = "method", propertyValue = "PUT")
+    private Boolean chunked;
+
     @TabGroup("Headers and parameters")
     @Property("Headers")
     private Map<String, String> headers = new HashMap<>();
@@ -74,12 +81,13 @@ public class RestClient implements ProcessorAsync {
     private volatile BodyEvaluator bodyEvaluator;
     private volatile HeadersEvaluator headersEvaluator;
 
+    private volatile Strategy execution;
 
     @Override
     public void apply(Message input, FlowContext flowContext, OnResult callback) {
         HttpClient client = client();
 
-        ExecutionStrategy.get(method).execute(client, callback, flowContext,
+        execution().execute(client, callback, flowContext,
                 uriEvaluator().provider(input, flowContext),
                 headersEvaluator().provider(input, flowContext),
                 bodyEvaluator().provider(input, flowContext));
@@ -114,6 +122,10 @@ public class RestClient implements ProcessorAsync {
         this.body = body;
     }
 
+    public void setChunked(Boolean chunked) {
+        this.chunked = chunked;
+    }
+
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
@@ -134,6 +146,20 @@ public class RestClient implements ProcessorAsync {
             requireNonNull(baseURL, "base URL is mandatory");
             return httpClientService.clientByBaseURL(baseURL);
         }
+    }
+
+    private Strategy execution() {
+        if (execution == null) {
+            synchronized (this) {
+                if (execution == null) {
+                    execution = ExecutionStrategyBuilder.builder()
+                            .chunked(chunked)
+                            .method(method)
+                            .build();
+                }
+            }
+        }
+        return execution;
     }
 
     private URIEvaluator uriEvaluator() {

@@ -16,7 +16,6 @@ public class BodyStreamProvider {
         if (StringUtils.isBlank(body)) {
             // No content type header
             return Mono.empty();
-
         } else if (ScriptUtils.isScript(body)) {
             return fromScript(message, body, flowContext, scriptEngine);
         } else {
