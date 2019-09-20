@@ -88,4 +88,19 @@ class UriTemplateTest {
         assertThat(bindings.get("groupId")).isEqualTo("admins");
         assertThat(bindings.get("securityLevel")).isEqualTo("34");
     }
+
+    @Test
+    void shouldBindVariableWithCustomRegexp() {
+        // Given
+        String template = "/web/{page:.*}";
+        String callUri = "/web/assets/javascript/index.js";
+
+        UriTemplate uriTemplate = new UriTemplate(template);
+
+        // When
+        Map<String, String> bindings = uriTemplate.bind(callUri);
+
+        // Then
+        assertThat(bindings).containsEntry("page", "assets/javascript/index.js");
+    }
 }
