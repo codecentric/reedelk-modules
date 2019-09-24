@@ -5,8 +5,8 @@ import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import com.reedelk.runtime.api.service.ScriptExecutionResult;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -37,21 +37,21 @@ public class JsonMapper implements ProcessorSync {
     @AutocompleteContext(name = "outputContext", type = AutocompleteType.JSON_SCHEMA)
     private String outputJsonSchema;
 
-    @Script
     @Property("Mapping Script")
     @Variable(variableName = "input", contextName = "inputContext")
     @Variable(variableName = "output", contextName = "outputContext")
-    private String mappingScript;
+    private Script mappingScript;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
         String script = String.format(EXECUTION_SCRIPT_TEMPLATE, mappingScript);
 
-        ScriptExecutionResult result = service.evaluate(script, message, new ComponentVariableBindings(message));
+        // TODO: COmplete  me
+      //  ScriptExecutionResult result = service.evaluate(script, message, new ComponentVariableBindings(message));
 
-        Object mappedOutput = result.getBindings().get("output");
+        //Object mappedOutput = result.getBindings().get("output");
 
-        return MessageBuilder.get().javaObject(mappedOutput).build();
+        return MessageBuilder.get().empty().build();
     }
 
     public void setInputJsonSchema(String inputJsonSchema) {
@@ -62,7 +62,7 @@ public class JsonMapper implements ProcessorSync {
         this.outputJsonSchema = outputJsonSchema;
     }
 
-    public void setMappingScript(String mappingScript) {
+    public void setMappingScript(Script mappingScript) {
         this.mappingScript = mappingScript;
     }
 

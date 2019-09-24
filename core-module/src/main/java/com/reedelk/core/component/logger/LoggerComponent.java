@@ -1,11 +1,14 @@
 package com.reedelk.core.component.logger;
 
-import com.reedelk.runtime.api.annotation.*;
-import com.reedelk.runtime.api.commons.ScriptUtils;
+import com.reedelk.runtime.api.annotation.Default;
+import com.reedelk.runtime.api.annotation.ESBComponent;
+import com.reedelk.runtime.api.annotation.Hint;
+import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -29,11 +32,10 @@ public class LoggerComponent implements ProcessorSync {
     @Default("INFO")
     private LoggerLevel level;
 
-    @ScriptInline
     @Default("#[payload]")
     @Hint("my log message")
     @Property("Log message")
-    private String message;
+    private DynamicValue message;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -56,19 +58,14 @@ public class LoggerComponent implements ProcessorSync {
         this.level = level;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(DynamicValue message) {
         this.message = message;
     }
 
     private void debug(Message message, FlowContext flowContext) throws ScriptException {
-        if (ScriptUtils.isScript(this.message)) {
-            // The logger should just print the Stream object if it is a stream, otherwise if
-            // the stream was resolved (hence loaded into memory) it should print the value.
-            Object result = service.evaluate(this.message, message, flowContext);
-            level.log(result);
-        } else {
-            // If it is not a script we don't evaluate the message.
-            level.log(this.message);
-        }
+        // The logger should just print the Stream object if it is a stream, otherwise if
+        // the stream was resolved (hence loaded into memory) it should print the value.
+        Object result = service.evaluate(this.message, message, flowContext);
+        level.log(result);
     }
 }

@@ -2,13 +2,12 @@ package com.reedelk.core.component.script;
 
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.annotation.Script;
 import com.reedelk.runtime.api.annotation.Variable;
 import com.reedelk.runtime.api.component.Join;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import com.reedelk.runtime.api.service.ScriptExecutionResult;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -23,10 +22,9 @@ public class JavascriptJoin implements Join {
     @Reference
     private ScriptEngineService service;
 
-    @Script
     @Property("Script")
     @Variable(variableName = "messages")
-    private String script;
+    private Script script;
 
     private final String BASE_TEMPLATE = "function merge(object1, object2) {\n" +
             "    for (var attrname in object1) { \n" +
@@ -38,11 +36,13 @@ public class JavascriptJoin implements Join {
     @Override
     public Message apply(List<Message> messagesToJoin) {
         String actualScript = String.format(BASE_TEMPLATE, script);
-        ScriptExecutionResult result = service.evaluate(messagesToJoin, actualScript);
-        return MessageBuilder.get().javaObject(result.getObject()).build();
+        // TODO: Complete me
+        //ScriptExecutionResult result = service.evaluate(script, messagesToJoin, actualScript);
+       // return MessageBuilder.get().javaObject(result.getObject()).build();
+        return MessageBuilder.get().empty().build();
     }
 
-    public void setScript(String script) {
+    public void setScript(Script script) {
         this.script = script;
     }
 }
