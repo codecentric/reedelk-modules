@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ESBComponent {
+public class ESBRuntimeComponent {
 
     private static final Map<String, Class<? extends Component>> COMPONENTS;
 
@@ -24,7 +24,7 @@ public class ESBComponent {
         COMPONENTS = Collections.unmodifiableMap(tmp);
     }
 
-    private ESBComponent() {
+    private ESBRuntimeComponent() {
     }
 
     public static boolean is(String componentName) {
@@ -32,7 +32,6 @@ public class ESBComponent {
     }
 
     public static boolean is(Component componentObject) {
-        // TODO: Fix this is assignable is correct!???
         return COMPONENTS.keySet().stream().anyMatch(componentClassName -> {
             try {
                 Class<?> aClass = Class.forName(componentClassName);

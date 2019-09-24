@@ -2,31 +2,31 @@ package com.reedelk.esb.services.scriptengine;
 
 import org.junit.jupiter.api.Test;
 
-import javax.script.Bindings;
+import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 class NativeJavascriptEngineTest {
 
+
     @Test
-    void shouldCorrectlyUpdateBindingVariablesAfterExecution() throws ScriptException {
+    void shouldEvaluateMap() throws ScriptException, NoSuchMethodException {
         // Given
         ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
-        Bindings bindings = nashorn.createBindings();
-        bindings.put("input", "{\"firstName\":\"Mark\"}");
-        bindings.put("output", "{}");
+        String script = "var mapFunction = function(arg) {" +
+                "return {name: arg.getValue()}" +
+                "}";
+        nashorn.eval(script);
+        MyObjectArg arg = new MyObjectArg();
+        arg.setValue("hello spenk");
+
         // When
-        Object eval = nashorn.eval("" +
-                "input = JSON.parse(input); " +
-                "output = JSON.parse('{}'); " +
-                "output.firstName = input.firstName + ' test suffix'; " +
-                "output = JSON.stringify(output);", bindings);
+        Object result = ((Invocable) nashorn).invokeFunction("mapFunction", arg);
+
 
         // Then
-        Object output = bindings.get("output");
-        assertThat(output).isEqualTo("{\"firstName\":\"Mark test suffix\"}");
+        System.out.println(result);
     }
+
 }

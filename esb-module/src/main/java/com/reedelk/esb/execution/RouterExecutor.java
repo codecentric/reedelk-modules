@@ -3,9 +3,10 @@ package com.reedelk.esb.execution;
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.esb.services.scriptengine.ESBJavascriptEngine;
+import com.reedelk.esb.services.scriptengine.JavascriptEngine;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public class RouterExecutor implements FlowExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(RouterExecutor.class);
 
-    private static final ScriptEngineService ENGINE = ESBJavascriptEngine.INSTANCE;
+    private static final ScriptEngineService ENGINE = JavascriptEngine.INSTANCE;
 
     private final Mono<Boolean> FALSE = Mono.just(false);
 
@@ -65,7 +66,7 @@ public class RouterExecutor implements FlowExecutor {
     }
 
     private Mono<MessageAndContext> createConditionalBranch(RouterWrapper.PathExpressionPair pair, MessageAndContext event, ExecutionGraph graph) {
-        String expression = pair.expression;
+        DynamicValue expression = pair.expression;
         ExecutionNode pathExecutionNode = pair.pathReference;
         // This Mono evaluates the expression. If the expression is true,
         // then the branch subflow gets executed, otherwise the message is dropped
@@ -76,7 +77,7 @@ public class RouterExecutor implements FlowExecutor {
         return Mono.from(FlowExecutorFactory.get().execute(parent, pathExecutionNode, graph));
     }
 
-    private Mono<Boolean> evaluate(String expression, Message message, FlowContext flowContext) {
+    private Mono<Boolean> evaluate(DynamicValue expression, Message message, FlowContext flowContext) {
         try {
             Boolean evaluate = ENGINE.evaluate(expression, message, flowContext);
             return Mono.just(evaluate);

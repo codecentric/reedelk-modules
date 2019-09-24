@@ -6,7 +6,7 @@ import com.reedelk.esb.services.hotswap.ESBHotSwapService;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
 import com.reedelk.esb.services.module.ESBModuleService;
 import com.reedelk.esb.services.module.EventListener;
-import com.reedelk.esb.services.scriptengine.ESBJavascriptEngine;
+import com.reedelk.esb.services.scriptengine.JavascriptEngine;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import com.reedelk.runtime.system.api.HotSwapService;
@@ -21,7 +21,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
-public class ESBServicesManager {
+public class ServicesManager {
 
     private static final Dictionary<String, ?> NO_PROPERTIES = new Hashtable<>();
 
@@ -34,12 +34,13 @@ public class ESBServicesManager {
     private List<ServiceRegistration<?>> registeredServices = new ArrayList<>();
 
     private ESBConfigurationService configurationService;
+    private JavascriptEngine scriptEngineService;
 
-    public ESBServicesManager(EventListener eventListener,
-                              HotSwapListener hotSwapListener,
-                              ModulesManager modulesManager,
-                              SystemProperty systemProperty,
-                              ConfigurationAdmin configurationAdmin) {
+    public ServicesManager(EventListener eventListener,
+                           HotSwapListener hotSwapListener,
+                           ModulesManager modulesManager,
+                           SystemProperty systemProperty,
+                           ConfigurationAdmin configurationAdmin) {
         this.configurationAdmin = configurationAdmin;
         this.hotSwapListener = hotSwapListener;
         this.systemProperty = systemProperty;
@@ -60,6 +61,10 @@ public class ESBServicesManager {
 
     public ESBConfigurationService configurationService() {
         return configurationService;
+    }
+
+    public JavascriptEngine scriptEngineService() {
+        return scriptEngineService;
     }
 
     private void registerHotSwapService(BundleContext context) {
@@ -85,9 +90,9 @@ public class ESBServicesManager {
     }
 
     private void registerScriptEngineService(BundleContext context) {
-        ESBJavascriptEngine service = ESBJavascriptEngine.INSTANCE;
+        scriptEngineService = JavascriptEngine.INSTANCE;
         ServiceRegistration<ScriptEngineService> registration =
-                context.registerService(ScriptEngineService.class, service, NO_PROPERTIES);
+                context.registerService(ScriptEngineService.class, scriptEngineService, NO_PROPERTIES);
         registeredServices.add(registration);
     }
 }

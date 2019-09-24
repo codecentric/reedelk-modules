@@ -2,6 +2,7 @@ package com.reedelk.esb.component;
 
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.component.Router;
 
 import java.util.ArrayList;
@@ -19,17 +20,17 @@ public class RouterWrapper extends Router {
      */
     public List<PathExpressionPair> getPathExpressionPairs() {
         return pathExpressionPairs.stream()
-                .filter(pathExpressionPair -> !pathExpressionPair.expression.equals(DEFAULT_CONDITION))
+                .filter(pathExpressionPair -> !DEFAULT_CONDITION.equals(pathExpressionPair.expression))
                 .collect(toList());
     }
 
-    public void addPathExpressionPair(String expression, ExecutionNode pathExecutionNode) {
+    public void addPathExpressionPair(DynamicValue expression, ExecutionNode pathExecutionNode) {
         pathExpressionPairs.add(new PathExpressionPair(expression, pathExecutionNode));
     }
 
     public PathExpressionPair getDefaultPathOrThrow() {
         return pathExpressionPairs.stream()
-                .filter(pathExpressionPair -> pathExpressionPair.expression.equals(DEFAULT_CONDITION))
+                .filter(pathExpressionPair -> DEFAULT_CONDITION.equals(pathExpressionPair.expression))
                 .findFirst()
                 .orElseThrow(() -> new ESBException("Default router condition could not be found"));
     }
@@ -43,10 +44,10 @@ public class RouterWrapper extends Router {
     }
 
     public class PathExpressionPair {
-        public final String expression;
+        public final DynamicValue expression;
         public final ExecutionNode pathReference;
 
-        PathExpressionPair(String expression, ExecutionNode pathReference) {
+        PathExpressionPair(DynamicValue expression, ExecutionNode pathReference) {
             this.expression = expression;
             this.pathReference = pathReference;
         }

@@ -4,6 +4,7 @@ import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.script.DynamicMap;
 import com.reedelk.runtime.commons.CollectionFactory;
 import com.reedelk.runtime.commons.JsonParser;
 import com.reedelk.runtime.commons.PrimitiveTypeConverter;
@@ -57,7 +58,7 @@ public class GenericComponentDeserializer {
             checkArgument(CollectionFactory.isSupported(setterArgument.getClazz()), format("Could not map property %s: not a supported collection type", propertyName));
             return deserialize((JSONArray) propertyValue, setterArgument);
         } else {
-            // Primitive
+            // Primitive or dynamic value or script
             SetterArgument setterArgument = argumentOf(bean, propertyName);
             return deserialize(componentDefinition, propertyName, setterArgument);
         }
@@ -77,6 +78,12 @@ public class GenericComponentDeserializer {
             // The setter argument for this property is a map, so we just return
             // a de-serialized java map object.
             return object.toMap();
+        } else if (setterArgument.isDynamicMap()){
+            // The setter argument for this property is a Dynamic map, and we
+            // wrap the de-serialized java map object with a dynamic map adding
+            // a UUID to be used by the Script engine as a reference for the
+            // pre-compiled script to be used at runtime evaluation.
+            return DynamicMap.from(object.toMap());
         } else {
             // It is a complex type implementing implementor interface.
             // We expect that this JSONObject satisfies the properties

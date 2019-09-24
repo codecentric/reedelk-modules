@@ -10,10 +10,12 @@ import java.util.List;
 
 public class ExecutionNode {
 
-    private final ReferencePair<Component> componentReference;
-    private final List<ReferencePair<Implementor>> dependencyReferences = new ArrayList<>();
+    private ComponentDisposer disposer;
+    private ReferencePair<Component> componentReference;
+    private List<ReferencePair<Implementor>> dependencyReferences = new ArrayList<>();
 
-    public ExecutionNode(ReferencePair<Component> componentReference) {
+    public ExecutionNode(ComponentDisposer disposer, ReferencePair<Component> componentReference) {
+        this.disposer = disposer;
         this.componentReference = componentReference;
     }
 
@@ -35,8 +37,13 @@ public class ExecutionNode {
 
     public void clearReferences() {
         dispose(componentReference);
-        dependencyReferences.forEach(ExecutionNode::dispose);
+        dependencyReferences.forEach(this::dispose);
         dependencyReferences.clear();
+
+        // we help the gc to faster identify which objects can be garbage collected.
+        disposer = null;
+        componentReference = null;
+        dependencyReferences = null;
     }
 
     public boolean isUsingComponent(final String targetComponentName) {
@@ -53,10 +60,10 @@ public class ExecutionNode {
         return referencePair.getImplementor().getClass().getName();
     }
 
-    private static void dispose(ReferencePair<? extends Implementor> componentReference) {
+    private void dispose(ReferencePair<? extends Implementor> componentReference) {
         Implementor implementor = componentReference.implementor;
         if (implementor instanceof Component) {
-            ComponentDisposer.dispose((Component) implementor);
+            disposer.dispose((Component) implementor);
         }
         componentReference.implementor = null;
         componentReference.serviceReference = null;
@@ -86,5 +93,4 @@ public class ExecutionNode {
             return serviceReference;
         }
     }
-
 }

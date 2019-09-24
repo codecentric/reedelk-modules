@@ -1,10 +1,10 @@
 package com.reedelk.esb.services.scriptengine;
 
-import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.script.NMapEvaluation;
+import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 
+import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,6 +40,19 @@ class ESBJavascriptEngineTest {
     }
 
     @Test
+    void shouldCorrectlyEvaluateNumericValue() {
+        // Given
+        Message message = MessageBuilder.get().text("test").build();
+        DynamicValue script = DynamicValue.from("#[506]");
+
+        // When
+        int number = service.evaluate(script, message, context);
+
+        // Then
+        assertThat(number).isEqualTo(506);
+    }
+
+    @Test
     void shouldCorrectlyEvaluateMapWithScriptAndTextAndNumericValues() {
         // Given
         Message message = MessageBuilder.get().text("test").build();
@@ -54,7 +68,6 @@ class ESBJavascriptEngineTest {
                         "numeric", 23532));
 
         // Then
-        Map evaluated = maps.map(0);
         assertThat(evaluated.get("script")).isEqualTo("test");
         assertThat(evaluated.get("text")).isEqualTo("This is a text");
         assertThat(evaluated.get("numeric")).isEqualTo(23532);
@@ -92,10 +105,7 @@ class ESBJavascriptEngineTest {
         Message message = MessageBuilder.get().empty().build();
 
         // When
-        NMapEvaluation<Object> maps = service.evaluate(
-                message,
-                context,
-                ImmutableMap.of());
+        Map<String, Object> evaluated = service.evaluate(message, context, DynamicMap.empty());
 
         // Then
         Map<String,Object> evaluated0 = maps.map(0);

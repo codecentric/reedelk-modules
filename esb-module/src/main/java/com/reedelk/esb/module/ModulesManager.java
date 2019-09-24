@@ -1,6 +1,7 @@
 package com.reedelk.esb.module;
 
-import com.reedelk.esb.component.ESBComponent;
+import com.reedelk.esb.commons.ComponentDisposer;
+import com.reedelk.esb.component.ESBRuntimeComponent;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.runtime.api.component.Component;
@@ -22,7 +23,12 @@ import static java.util.stream.Collectors.toList;
 
 public class ModulesManager {
 
-    private Map<Long, Module> idModulesMap = new HashMap<>();
+    private final ComponentDisposer disposer;
+    private final Map<Long, Module> idModulesMap = new HashMap<>();
+
+    public ModulesManager(ComponentDisposer disposer) {
+        this.disposer = disposer;
+    }
 
     public void add(Module module) {
         long moduleId = module.id();
@@ -68,13 +74,13 @@ public class ModulesManager {
     }
 
     public ExecutionNode instantiateComponent(final BundleContext context, final String componentName) {
-        if (ESBComponent.is(componentName)) {
+        if (ESBRuntimeComponent.is(componentName)) {
             Component component = instantiateSystemComponent(componentName);
-            return new ExecutionNode(new ReferencePair<>(component));
+            return new ExecutionNode(disposer, new ReferencePair<>(component));
         }
 
         ReferencePair<Component> implementorReferencePair = instantiateImplementor(context, componentName);
-        return new ExecutionNode(implementorReferencePair);
+        return new ExecutionNode(disposer, implementorReferencePair);
     }
 
     public Implementor instantiateImplementor(final BundleContext context, final ExecutionNode executionNode, final String componentName) {
@@ -96,7 +102,7 @@ public class ModulesManager {
     }
 
     private Component instantiateSystemComponent(String componentName) {
-        Class<? extends Component> systemComponentClass = ESBComponent.getDefiningClass(componentName);
+        Class<? extends Component> systemComponentClass = ESBRuntimeComponent.getDefiningClass(componentName);
         try {
             return systemComponentClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -108,5 +114,4 @@ public class ModulesManager {
     private <T extends Implementor> Optional<ServiceReference<T>> getImplementorReferenceByName(BundleContext bundleContext, String name) {
         return Optional.ofNullable((ServiceReference<T>) bundleContext.getServiceReference(name));
     }
-
 }

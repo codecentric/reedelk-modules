@@ -1,11 +1,13 @@
 package com.reedelk.esb;
 
+import com.reedelk.esb.commons.AddComponentDisposerListeners;
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.ComponentRegistry;
-import com.reedelk.esb.component.ESBComponent;
+import com.reedelk.esb.component.ESBRuntimeComponent;
 import com.reedelk.esb.configuration.ApplyRuntimeConfiguration;
 import com.reedelk.esb.lifecycle.*;
 import com.reedelk.esb.module.ModulesManager;
-import com.reedelk.esb.services.ESBServicesManager;
+import com.reedelk.esb.services.ServicesManager;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
 import com.reedelk.esb.services.module.ESBEventService;
 import com.reedelk.esb.services.module.EventListener;
@@ -31,29 +33,28 @@ public class ESB implements EventListener, HotSwapListener {
     protected ModulesManager modulesManager;
 
     private ESBEventService eventDispatcher;
-    private ESBServicesManager servicesManager;
+    private ServicesManager servicesManager;
     private ComponentRegistry componentRegistry;
 
     @Activate
     public void start(BundleContext context) {
         this.context = context;
 
-        modulesManager = new ModulesManager();
-        componentRegistry = new ComponentRegistry(ESBComponent.allNames());
+        ComponentDisposer disposer = new ComponentDisposer();
+        modulesManager = new ModulesManager(disposer);
+
+        componentRegistry = new ComponentRegistry(ESBRuntimeComponent.allNames());
         eventDispatcher = new ESBEventService(this);
 
         context.addBundleListener(eventDispatcher);
         context.addServiceListener(eventDispatcher);
 
-        servicesManager = new ESBServicesManager(
-                ESB.this,
-                ESB.this,
-                modulesManager,
-                systemProperty,
-                configurationAdmin);
+        servicesManager = new ServicesManager(ESB.this, ESB.this,
+                modulesManager, systemProperty, configurationAdmin);
         servicesManager.registerServices(context);
 
         ApplyRuntimeConfiguration.from(servicesManager.configurationService());
+        AddComponentDisposerListeners.from(disposer, servicesManager.scriptEngineService());
     }
 
     @Deactivate
