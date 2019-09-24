@@ -1,5 +1,6 @@
 package com.reedelk.esb.flow.component.builder;
 
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
@@ -31,6 +32,8 @@ class ForkComponentBuilderTest {
     private final Class JOIN_COMPONENT_NAME = TestJoinComponent.class;
 
     @Mock
+    private ComponentDisposer disposer;
+    @Mock
     private ExecutionGraph graph;
     @Mock
     private FlowBuilderContext context;
@@ -45,8 +48,8 @@ class ForkComponentBuilderTest {
     @Mock
     private ExecutionNode testComponent6ExecutionNode;
 
-    private ExecutionNode stopExecutionNode = new ExecutionNode(new ReferencePair<>(new Stop()));
-    private ExecutionNode forkExecutionNode = new ExecutionNode(new ReferencePair<>(new ForkWrapper()));
+    private ExecutionNode stopExecutionNode = new ExecutionNode(disposer, new ReferencePair<>(new Stop()));
+    private ExecutionNode forkExecutionNode = new ExecutionNode(disposer, new ReferencePair<>(new ForkWrapper()));
 
     @BeforeEach
     void setUp() {

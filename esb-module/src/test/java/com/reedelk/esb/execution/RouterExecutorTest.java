@@ -1,8 +1,10 @@
 package com.reedelk.esb.execution;
 
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.component.Stop;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,9 +39,10 @@ class RouterExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionGraph graph = GraphWithRouterBuilder.get()
                 .router(routerNode)
+                .disposer(disposer)
                 .inbound(inbound)
-                .conditionWithSequence("payload == 'Route1'", route1Node)
-                .conditionWithSequence("payload == 'Route2'", route2Node)
+                .conditionWithSequence("#[payload == 'Route1']", route1Node)
+                .conditionWithSequence("#[payload == 'Route2']", route2Node)
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
 
@@ -61,9 +64,10 @@ class RouterExecutorTest extends AbstractExecutionTest {
         ExecutionNode route3Node = newExecutionNode(new AddPostfixSyncProcessor("-otherwise"));
         ExecutionGraph graph = GraphWithRouterBuilder.get()
                 .router(routerNode)
+                .disposer(disposer)
                 .inbound(inbound)
-                .conditionWithSequence("payload == 'Route1'", route1Node)
-                .conditionWithSequence("payload == 'Route2'", route2Node)
+                .conditionWithSequence("#[payload == 'Route1']", route1Node)
+                .conditionWithSequence("#[payload == 'Route2']", route2Node)
                 .conditionWithSequence("otherwise", route3Node)
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
@@ -85,9 +89,10 @@ class RouterExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionGraph graph = GraphWithRouterBuilder.get()
                 .router(routerNode)
+                .disposer(disposer)
                 .inbound(inbound)
-                .conditionWithSequence("payload == 'Route1'", route1Node)
-                .conditionWithSequence("payload == 'Route2'", route2Node)
+                .conditionWithSequence("#[payload == 'Route1']", route1Node)
+                .conditionWithSequence("#[payload == 'Route2']", route2Node)
                 .build();
 
         MessageAndContext event = newEventWithContent("Route1");
@@ -107,9 +112,10 @@ class RouterExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionGraph graph = GraphWithRouterBuilder.get()
                 .router(routerNode)
+                .disposer(disposer)
                 .inbound(inbound)
-                .conditionWithSequence("payload == 'Route1'", route1Node)
-                .conditionWithSequence("payload == 'Route2'", route2Node)
+                .conditionWithSequence("#[payload == 'Route1']", route1Node)
+                .conditionWithSequence("#[payload == 'Route2']", route2Node)
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
 
@@ -135,9 +141,10 @@ class RouterExecutorTest extends AbstractExecutionTest {
 
         ExecutionGraph graph = GraphWithRouterBuilder.get()
                 .router(routerNode)
+                .disposer(disposer)
                 .inbound(inbound)
-                .conditionWithSequence("payload == 'Route1'", processorThrowingException)
-                .conditionWithSequence("payload == 'Route2'", route2Node)
+                .conditionWithSequence("#[payload == 'Route1']", processorThrowingException)
+                .conditionWithSequence("#[payload == 'Route2']", route2Node)
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
 
@@ -154,6 +161,7 @@ class RouterExecutorTest extends AbstractExecutionTest {
 
     static class GraphWithRouterBuilder {
 
+        private ComponentDisposer disposer;
         private ExecutionNode router;
         private ExecutionNode inbound;
         private List<ExecutionNode> followingSequence = new ArrayList<>();
@@ -173,6 +181,11 @@ class RouterExecutorTest extends AbstractExecutionTest {
             return this;
         }
 
+        GraphWithRouterBuilder disposer(ComponentDisposer disposer) {
+            this.disposer = disposer;
+            return this;
+        }
+
         GraphWithRouterBuilder conditionWithSequence(String condition, ExecutionNode... sequence) {
             conditionWithSequences.add(new ConditionWithSequence(condition, sequence));
             return this;
@@ -188,18 +201,18 @@ class RouterExecutorTest extends AbstractExecutionTest {
             graph.putEdge(null, inbound);
             graph.putEdge(inbound, router);
 
-            ExecutionNode endOfRouter = newExecutionNode(new Stop());
+            ExecutionNode endOfRouter = newExecutionNode(disposer, new Stop());
 
             RouterWrapper routerWrapper = (RouterWrapper) router.getComponent();
             routerWrapper.setEndOfRouterStopNode(endOfRouter);
             for (ConditionWithSequence item : conditionWithSequences) {
                 if (item.sequence.size() > 0) {
-                    routerWrapper.addPathExpressionPair(item.condition, item.sequence.get(0));
+                    routerWrapper.addPathExpressionPair(DynamicValue.from(item.condition), item.sequence.get(0));
                     buildSequence(graph, router, endOfRouter, item.sequence);
                 }
             }
 
-            ExecutionNode endOfGraph = newExecutionNode(new Stop());
+            ExecutionNode endOfGraph = newExecutionNode(disposer, new Stop());
             if (followingSequence.size() > 0) {
                 buildSequence(graph, endOfRouter, endOfGraph, followingSequence);
             } else {

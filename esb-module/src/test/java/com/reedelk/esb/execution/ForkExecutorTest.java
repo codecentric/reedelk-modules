@@ -1,5 +1,6 @@
 package com.reedelk.esb.execution;
 
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -10,8 +11,6 @@ import com.reedelk.runtime.component.Stop;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -27,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-@ExtendWith(MockitoExtension.class)
+
 class ForkExecutorTest extends AbstractExecutionTest {
 
     private ForkExecutor executor = spy(new ForkExecutor());
@@ -222,6 +221,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
         private ExecutionNode fork;
         private ExecutionNode join;
         private ExecutionNode inbound;
+        private ComponentDisposer disposer;
         private List<ForkSequence> forkSequenceList = new ArrayList<>();
         private List<ExecutionNode> followingSequence = new ArrayList<>();
 
@@ -244,6 +244,11 @@ class ForkExecutorTest extends AbstractExecutionTest {
             return this;
         }
 
+        GraphWithForkBuilder disposer(ComponentDisposer disposer) {
+            this.disposer = disposer;
+            return this;
+        }
+
         GraphWithForkBuilder forkSequence(ExecutionNode... sequence) {
             this.forkSequenceList.add(new ForkSequence(sequence));
             return this;
@@ -259,7 +264,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
             graph.putEdge(null, inbound);
             graph.putEdge(inbound, fork);
 
-            ExecutionNode endOfFork = newExecutionNode(new Stop());
+            ExecutionNode endOfFork = newExecutionNode(disposer, new Stop());
 
             ForkWrapper forkWrapper = (ForkWrapper) fork.getComponent();
             forkWrapper.setStopNode(endOfFork);
@@ -277,7 +282,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
                 last = join;
             }
 
-            ExecutionNode endOfGraph = newExecutionNode(new Stop());
+            ExecutionNode endOfGraph = newExecutionNode(disposer, new Stop());
             if (followingSequence.size() > 0) {
                 buildSequence(graph, last, endOfGraph, followingSequence);
             } else {

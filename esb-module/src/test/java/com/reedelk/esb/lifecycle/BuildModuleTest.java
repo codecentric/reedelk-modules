@@ -1,5 +1,6 @@
 package com.reedelk.esb.lifecycle;
 
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -62,6 +63,8 @@ class BuildModuleTest {
     private Flow flow;
     @Mock
     private Bundle bundle;
+    @Mock
+    private ComponentDisposer disposer;
     @Mock
     private BundleContext bundleContext;
     @Mock
@@ -341,7 +344,8 @@ class BuildModuleTest {
     private <T extends Component> void mockComponentWithServiceReference(Class<T> clazz) {
         try {
             T component = clazz.getConstructor().newInstance();
-            ExecutionNode componentExecutionNode = new ExecutionNode(new ReferencePair<>(component, serviceReference));
+            ReferencePair<Component> referencePair = new ReferencePair<>(component, serviceReference);
+            ExecutionNode componentExecutionNode = new ExecutionNode(disposer, referencePair);
             mockInstantiateComponent(componentExecutionNode, clazz);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             fail("mockComponentWithServiceReference", e);
@@ -351,7 +355,8 @@ class BuildModuleTest {
     private <T extends Component> void mockComponent(Class<T> clazz, Class<? extends T> realInstance) {
         try {
             T component = realInstance.getConstructor().newInstance();
-            ExecutionNode componentExecutionNode = new ExecutionNode(new ReferencePair<>(component));
+            ReferencePair<Component> referencePair = new ReferencePair<>(component);
+            ExecutionNode componentExecutionNode = new ExecutionNode(disposer, referencePair);
             mockInstantiateComponent(componentExecutionNode, clazz);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             fail("mockComponent", e);
@@ -361,7 +366,8 @@ class BuildModuleTest {
     private <T extends Component> void mockComponent(Class<T> clazz) {
         try {
             T component = clazz.getConstructor().newInstance();
-            ExecutionNode componentExecutionNode = new ExecutionNode(new ReferencePair<>(component));
+            ReferencePair<Component> referencePair = new ReferencePair<>(component);
+            ExecutionNode componentExecutionNode = new ExecutionNode(disposer, referencePair);
             mockInstantiateComponent(componentExecutionNode, clazz);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             fail("mockComponent", e);

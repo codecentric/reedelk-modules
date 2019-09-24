@@ -1,5 +1,6 @@
 package com.reedelk.esb.flow;
 
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -26,6 +27,8 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ReleaseReferenceConsumerTest {
 
+    @Mock
+    private ComponentDisposer disposer;
     @Mock
     private Bundle bundle;
     @Mock
@@ -185,15 +188,14 @@ class ReleaseReferenceConsumerTest {
     }
 
     private class Dependency implements Implementor {
-
     }
 
     private ExecutionNode mockExecutionNodeWithComponent(Component component) {
-        return spy(new ExecutionNode(new ReferencePair<>(component)));
+        return spy(new ExecutionNode(disposer, new ReferencePair<>(component)));
     }
 
     private ExecutionNode mockExecutionNodeWithComponentAndReference(Component component, ServiceReference<Component> serviceReference) {
-        return spy(new ExecutionNode(new ReferencePair<>(component, serviceReference)));
+        return spy(new ExecutionNode(disposer, new ReferencePair<>(component, serviceReference)));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.reedelk.esb.execution;
 
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.TestInboundComponent;
@@ -9,18 +10,29 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.component.Stop;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(MockitoExtension.class)
 class AbstractExecutionTest {
+
+    @Mock
+    protected ComponentDisposer disposer;
 
     ExecutionNode inbound = newExecutionNode(new TestInboundComponent());
     ExecutionNode stop = newExecutionNode(new Stop());
 
-    static ExecutionNode newExecutionNode(Component component) {
-        return new ExecutionNode(new ExecutionNode.ReferencePair<>(component));
+    static ExecutionNode newExecutionNode(ComponentDisposer disposer, Component component) {
+        return new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(component));
+    }
+
+    ExecutionNode newExecutionNode(Component component) {
+        return new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(component));
     }
 
     MessageAndContext newEventWithContent(String content) {

@@ -1,5 +1,6 @@
 package com.reedelk.esb.flow;
 
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -39,6 +40,8 @@ class FlowTest {
 
     private final String flowId = UUID.randomUUID().toString();
 
+    @Mock
+    private ComponentDisposer disposer;
     @Mock
     private Bundle bundle;
     @Mock
@@ -104,7 +107,7 @@ class FlowTest {
 
         TestComponent testComponent = new TestComponent();
         ServiceReference<Component> serviceReference = mock(ServiceReference.class);
-        ExecutionNode EN = new ExecutionNode(new ExecutionNode.ReferencePair<>(testComponent, serviceReference));
+        ExecutionNode EN = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(testComponent, serviceReference));
 
         doReturn(Optional.of(EN)).when(mockExecutionGraph).findOne(ArgumentMatchers.any());
 

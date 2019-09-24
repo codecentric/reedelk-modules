@@ -17,9 +17,9 @@ import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class ESBJavascriptEngineTest {
+class JavascriptEngineTest {
 
-    private ScriptEngineService service = ESBJavascriptEngine.INSTANCE;
+    private ScriptEngineService service = JavascriptEngine.INSTANCE;
 
     @Mock
     private FlowContext context;
@@ -30,10 +30,10 @@ class ESBJavascriptEngineTest {
         Message message = MessageBuilder.get().text("test").build();
         message.getAttributes().put("property1", "test1");
         message.getAttributes().put("property2", "test2");
-        String script = "message.attributes.property1";
+        DynamicValue script = DynamicValue.from("#[message.attributes.property1]");
 
         // When
-        String attributeProperty = service.evaluate(script, message);
+        String attributeProperty = service.evaluate(script, message, context);
 
         // Then
         assertThat(attributeProperty).isEqualTo("test1");
@@ -58,45 +58,18 @@ class ESBJavascriptEngineTest {
         Message message = MessageBuilder.get().text("test").build();
         message.getAttributes().put("property1", "test");
 
+        DynamicMap<String> dynamicMap = DynamicMap.from(of(
+                "script", "#[message.attributes.property1]",
+                "text", "This is a text",
+                "numeric", "23532"));
+
         // When
-        NMapEvaluation maps = service.evaluate(
-                message,
-                context,
-                ImmutableMap.of(
-                        "script", "#[message.attributes.property1]",
-                        "text", "This is a text",
-                        "numeric", 23532));
+        Map<String, String> evaluated = service.evaluate(message, context, dynamicMap);
 
         // Then
         assertThat(evaluated.get("script")).isEqualTo("test");
         assertThat(evaluated.get("text")).isEqualTo("This is a text");
-        assertThat(evaluated.get("numeric")).isEqualTo(23532);
-    }
-
-    @Test
-    void shouldCorrectlyEvaluateMultipleMaps() {
-        // Given
-        Message message = MessageBuilder.get().text("test").build();
-
-        // When
-        NMapEvaluation<Object> maps = service.evaluate(
-                message,
-                context,
-                ImmutableMap.of(
-                        "text", "This is a text",
-                        "numeric", 23532),
-                ImmutableMap.of(
-                        "script", "#[payload]",
-                        "text", "second map"));
-
-        // Then
-        Map<String,Object> evaluated0 = maps.map(0);
-        assertThat(evaluated0.get("text")).isEqualTo("This is a text");
-        assertThat(evaluated0.get("numeric")).isEqualTo(23532);
-
-        Map<String,Object> evaluated1 = maps.map(1);
-        assertThat(evaluated1.get("script")).isEqualTo("test");
-        assertThat(evaluated1.get("text")).isEqualTo("second map");
+        assertThat(evaluated.get("numeric")).isEqualTo("23532");
     }
 
     @Test
@@ -108,7 +81,6 @@ class ESBJavascriptEngineTest {
         Map<String, Object> evaluated = service.evaluate(message, context, DynamicMap.empty());
 
         // Then
-        Map<String,Object> evaluated0 = maps.map(0);
-        assertThat(evaluated0).isEmpty();
+        assertThat(evaluated).isEmpty();
     }
 }

@@ -1,5 +1,6 @@
 package com.reedelk.esb.flow.component.builder;
 
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -21,6 +22,8 @@ import static org.mockito.Mockito.*;
 @DisplayName("Generic Component Builder")
 class GenericComponentBuilderTest {
 
+    @Mock
+    private ComponentDisposer disposer;
     @Mock
     private ExecutionGraph graph;
     @Mock
@@ -45,7 +48,7 @@ class GenericComponentBuilderTest {
             JSONObject componentDefinition = ComponentsBuilder.forComponent(TestComponent.class)
                     .build();
 
-            ExecutionNode en = new ExecutionNode(new ReferencePair<>(new TestComponent()));
+            ExecutionNode en = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
             mockInstantiation(en);
 
             // When
@@ -55,7 +58,6 @@ class GenericComponentBuilderTest {
             verify(graph).putEdge(parent, en);
             verifyNoMoreInteractions(graph);
         }
-
     }
 
     private void mockInstantiation(ExecutionNode executionNode) {
@@ -63,5 +65,4 @@ class GenericComponentBuilderTest {
                 .when(context)
                 .instantiateComponent(executionNode.getComponent().getClass().getName());
     }
-
 }

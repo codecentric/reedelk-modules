@@ -1,5 +1,6 @@
 package com.reedelk.esb.flow.component.builder;
 
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
@@ -7,6 +8,7 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.esb.test.utils.ComponentsBuilder;
 import com.reedelk.esb.test.utils.TestComponent;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.component.Stop;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,6 +37,8 @@ class RouterComponentBuilderTest {
     @Mock
     private FlowBuilderContext context;
     @Mock
+    private ComponentDisposer disposer;
+    @Mock
     private ExecutionNode parentEn;
     @Mock
     private ExecutionNode component1En;
@@ -49,8 +53,8 @@ class RouterComponentBuilderTest {
     @Mock
     private ExecutionNode component6En;
 
-    private ExecutionNode stopEn = new ExecutionNode(new ReferencePair<>(new Stop()));
-    private ExecutionNode routerEn = new ExecutionNode(new ReferencePair<>(new RouterWrapper()));
+    private ExecutionNode stopEn = new ExecutionNode(disposer, new ReferencePair<>(new Stop()));
+    private ExecutionNode routerEn = new ExecutionNode(disposer, new ReferencePair<>(new RouterWrapper()));
 
     @BeforeEach
     void setUp() {
@@ -75,8 +79,8 @@ class RouterComponentBuilderTest {
     void shouldCorrectlyHandleRouterComponent() {
         // Given
         JSONArray whenArray = new JSONArray();
-        whenArray.put(conditionalBranch("1 == 1", COMPONENT_3_NAME, COMPONENT_1_NAME));
-        whenArray.put(conditionalBranch("'hello' == 'hello1'", COMPONENT_2_NAME, COMPONENT_4_NAME));
+        whenArray.put(conditionalBranch(DynamicValue.from("1 == 1"), COMPONENT_3_NAME, COMPONENT_1_NAME));
+        whenArray.put(conditionalBranch(DynamicValue.from("'hello' == 'hello1'"), COMPONENT_2_NAME, COMPONENT_4_NAME));
         whenArray.put(conditionalBranch(DEFAULT_CONDITION, COMPONENT_6_NAME, COMPONENT_5_NAME));
 
         JSONObject componentDefinition = ComponentsBuilder.forComponent(RouterWrapper.class)
@@ -111,12 +115,10 @@ class RouterComponentBuilderTest {
         verifyNoMoreInteractions(parentEn);
     }
 
-    private JSONObject conditionalBranch(String condition, String... componentsNames) {
+    private JSONObject conditionalBranch(DynamicValue condition, String... componentsNames) {
         JSONObject object = new JSONObject();
-        object.put("condition", condition);
+        object.put("condition", condition.getBody());
         object.put("next", ComponentsBuilder.createNextComponentsArray(componentsNames));
         return object;
     }
-
-
 }

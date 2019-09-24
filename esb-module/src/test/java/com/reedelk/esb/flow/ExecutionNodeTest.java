@@ -1,5 +1,6 @@
 package com.reedelk.esb.flow;
 
+import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.esb.test.utils.TestComponent;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.*;
 class ExecutionNodeTest {
 
     @Mock
+    private ComponentDisposer disposer;
+    @Mock
     private ServiceReference<Component> serviceReference;
 
     private TestComponent testComponent;
@@ -37,7 +40,7 @@ class ExecutionNodeTest {
     void shouldReturnCorrectComponentReference() {
         // Given
         ReferencePair<Component> expectedReference = new ReferencePair<>(testComponent, serviceReference);
-        ExecutionNode EN = new ExecutionNode(expectedReference);
+        ExecutionNode EN = new ExecutionNode(disposer, expectedReference);
 
         // When
         ReferencePair<Component> actualReference = EN.getComponentReference();
@@ -92,10 +95,8 @@ class ExecutionNodeTest {
         testComponentEN.clearReferences();
 
         // Then
-        assertThat(testComponentEN.getComponentReference().getImplementor()).isNull();
-        assertThat(testComponentEN.getComponentReference().getServiceReference()).isNull();
-
-        assertThat(testComponentEN.getDependencyReferences()).isEmpty();
+        assertThat(testComponentEN.getComponentReference()).isNull();
+        assertThat(testComponentEN.getDependencyReferences()).isNull();
     }
 
     @Test
@@ -129,7 +130,7 @@ class ExecutionNodeTest {
         testComponentEN.clearReferences();
 
         // Then
-        verify(testComponentSpy).dispose();
+        verify(disposer).dispose(testComponentSpy);
     }
 
     @Test
@@ -179,12 +180,11 @@ class ExecutionNodeTest {
         return new ReferencePair<>(implementor, dependencyServiceReference);
     }
 
-
     private class Dependency implements Implementor {
     }
 
     private ExecutionNode mockExecutionNodeWithComponentAndReference(Component component, ServiceReference<Component> serviceReference) {
-        return spy(new ExecutionNode(new ReferencePair<>(component, serviceReference)));
+        return spy(new ExecutionNode(disposer, new ReferencePair<>(component, serviceReference)));
     }
 
 }
