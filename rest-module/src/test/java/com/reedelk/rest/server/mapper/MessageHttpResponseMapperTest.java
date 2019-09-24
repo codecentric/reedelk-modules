@@ -137,10 +137,6 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithStatus(status);
                 Message message = MessageBuilder.get().text("a body").build();
 
-                doReturn(201)
-                        .when(scriptEngine)
-                        .evaluate(status, message, flowContext);
-
                 // When
                 mapper.map(message, response, flowContext);
 
@@ -609,11 +605,6 @@ class MessageHttpResponseMapperTest {
         Response response = new Response();
         response.setBody(responseBody);
         response.setStatus(status);
-
-        doReturn(200)
-                .when(scriptEngine)
-                .evaluate(eq(status), any(Message.class), eq(flowContext));
-
         return new MessageHttpResponseMapper(scriptEngine, response, null);
     }
 
@@ -641,10 +632,6 @@ class MessageHttpResponseMapperTest {
         doReturn("sample body")
                 .when(scriptEngine)
                 .evaluate(eq(bodyValue), any(Message.class), eq(flowContext));
-
-        doReturn(200)
-                .when(scriptEngine)
-                .evaluate(eq(statusValue), any(Message.class), eq(flowContext));
 
         return new MessageHttpResponseMapper(scriptEngine, response, null);
     }

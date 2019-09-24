@@ -59,14 +59,23 @@ class EvaluateStatusCode {
 
         // If Message is defined, then use message,
         // Otherwise we use the exception
+        // TODO: Evaluate if it is text and Integer.valueOf throws an exception is should return error.
         if (message != null) {
-            int evaluate = scriptEngine.evaluate(status, message, flowContext);
-            return valueOf(evaluate);
+            if (status.isScript()) {
+                int evaluate = scriptEngine.evaluate(status, message, flowContext);
+                return valueOf(evaluate);
+            } else {
+                return valueOf(Integer.valueOf(status.getBody()));
+            }
         }
 
         if (throwable != null) {
-            int evaluate = scriptEngine.evaluate(status, throwable, flowContext);
-            return valueOf(evaluate);
+            if (status.isScript()) {
+                int evaluate = scriptEngine.evaluate(status, throwable, flowContext);
+                return valueOf(evaluate);
+            } else {
+                return valueOf(Integer.valueOf(status.getBody()));
+            }
         }
 
         throw new ESBException("error: Message or Throwable must be defined");

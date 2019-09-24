@@ -40,6 +40,7 @@ public enum JavascriptEngine implements ScriptEngineService {
         invocable = (Invocable) engine;
     }
 
+    // TODO: Return should be Optional<T> to avoid null pointers.
     @Override
     public <T> T evaluate(DynamicValue value, Throwable exception, FlowContext flowContext) {
         if (value.isScript()) {
@@ -76,12 +77,12 @@ public enum JavascriptEngine implements ScriptEngineService {
     private static final Map<String,?> EMPTY_MAP = Collections.unmodifiableMap(Collections.emptyMap());
 
     @Override
-    public <T> Map<String, T> evaluate(Message message, FlowContext context, DynamicMap<T> dyamicMap) {
-        if (dyamicMap.isEmpty()) {
+    public <T> Map<String, T> evaluate(Message message, FlowContext context, DynamicMap<T> dynamicMap) {
+        if (dynamicMap.isEmpty()) {
             // If dynamic map is empty, nothing to do.
             return (Map<String, T>) EMPTY_MAP;
         } else {
-            String functionName = functionNameOf(dyamicMap);
+            String functionName = functionNameOf(dynamicMap);
             try {
                 return (Map<String, T>) invocable.invokeFunction(functionName, message, message.getContent().data(), context);
             } catch (ScriptException | NoSuchMethodException e) {
