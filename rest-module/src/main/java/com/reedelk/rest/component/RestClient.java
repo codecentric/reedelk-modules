@@ -16,12 +16,11 @@ import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -53,13 +52,12 @@ public class RestClient implements ProcessorAsync {
     private String path;
 
     @Property("Body")
-    @ScriptInline
     @Hint("payload")
     @Default("#[payload]")
     @When(propertyName = "method", propertyValue = "DELETE")
     @When(propertyName = "method", propertyValue = "POST")
     @When(propertyName = "method", propertyValue = "PUT")
-    private String body;
+    private DynamicValue body;
 
     @Property("Streaming")
     @Default("AUTO")
@@ -70,15 +68,15 @@ public class RestClient implements ProcessorAsync {
 
     @TabGroup("Headers and parameters")
     @Property("Headers")
-    private Map<String, String> headers = new HashMap<>();
+    private DynamicMap<String> headers = DynamicMap.empty();
 
     @TabGroup("Headers and parameters")
     @Property("Path params")
-    private Map<String, String> pathParameters = new HashMap<>();
+    private DynamicMap<String> pathParameters = DynamicMap.empty();
 
     @TabGroup("Headers and parameters")
     @Property("Query params")
-    private Map<String, String> queryParameters = new HashMap<>();
+    private DynamicMap<String> queryParameters = DynamicMap.empty();
 
     @Property("Advanced configuration")
     private AdvancedConfiguration advancedConfiguration;
@@ -124,7 +122,7 @@ public class RestClient implements ProcessorAsync {
         this.path = path;
     }
 
-    public void setBody(String body) {
+    public void setBody(DynamicValue body) {
         this.body = body;
     }
 
@@ -132,15 +130,15 @@ public class RestClient implements ProcessorAsync {
         this.streaming = streaming;
     }
 
-    public void setHeaders(Map<String, String> headers) {
+    public void setHeaders(DynamicMap<String> headers) {
         this.headers = headers;
     }
 
-    public void setPathParameters(Map<String, String> pathParameters) {
+    public void setPathParameters(DynamicMap<String> pathParameters) {
         this.pathParameters = pathParameters;
     }
 
-    public void setQueryParameters(Map<String, String> queryParameters) {
+    public void setQueryParameters(DynamicMap<String> queryParameters) {
         this.queryParameters = queryParameters;
     }
 

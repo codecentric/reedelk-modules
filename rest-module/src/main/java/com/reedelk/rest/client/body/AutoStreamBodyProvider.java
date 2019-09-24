@@ -1,8 +1,9 @@
 package com.reedelk.rest.client.body;
 
-import com.reedelk.runtime.api.commons.ScriptUtils;
+import com.reedelk.rest.commons.IsMessagePayload;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 
@@ -10,9 +11,9 @@ public class AutoStreamBodyProvider implements BodyProvider {
 
     private final ByteArrayBodyProvider byteArrayBodyProvider;
     private final StreamBodyProvider streamBodyProvider;
-    private final String body;
+    private final DynamicValue body;
 
-    AutoStreamBodyProvider(ScriptEngineService scriptEngine, String body) {
+    AutoStreamBodyProvider(ScriptEngineService scriptEngine, DynamicValue body) {
         this.body = body;
         this.byteArrayBodyProvider = new ByteArrayBodyProvider(scriptEngine, body);
         this.streamBodyProvider = new StreamBodyProvider(scriptEngine, body);
@@ -40,7 +41,7 @@ public class AutoStreamBodyProvider implements BodyProvider {
      */
     @Override
     public boolean streamable(Message message) {
-        if (ScriptUtils.isMessagePayload(body)) {
+        if (IsMessagePayload.from(body)) {
             return message.getContent().isStream() &&
                     !message.getContent().isConsumed();
         }

@@ -4,16 +4,15 @@ import com.reedelk.rest.commons.Evaluate;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.Response;
 import com.reedelk.runtime.api.commons.ScriptUtils;
-import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.reactivestreams.Publisher;
 import reactor.netty.http.server.HttpServerResponse;
-
-import java.util.Map;
 
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
@@ -42,9 +41,9 @@ public class MessageHttpResponseMapper {
      * @return a stream of bytes representing the response to be sent back to the client.
      */
     public Publisher<byte[]> map(Message message, HttpServerResponse serverResponse, FlowContext flowContext) {
-        String responseStatus = response != null ? response.getStatus() : null;
-        String responseBody = response != null ? response.getBody() : ScriptUtils.EVALUATE_PAYLOAD;
-        Map<String, String> responseHeaders = response != null ? response.getHeaders() : null;
+        DynamicValue responseStatus = response != null ? response.getStatus() : null;
+        DynamicValue responseBody = response != null ? response.getBody() : ScriptUtils.EVALUATE_PAYLOAD;
+        DynamicMap<String> responseHeaders = response != null ? response.getHeaders() : null;
 
         // Map status code
         HttpResponseStatus status =
@@ -82,9 +81,9 @@ public class MessageHttpResponseMapper {
      * @return a stream of bytes representing the response to be sent back to the client.
      */
     public Publisher<byte[]> map(Throwable exception, HttpServerResponse serverResponse, FlowContext flowContext) {
-        String responseStatus = errorResponse != null ? errorResponse.getStatus() : null;
-        String responseBody = errorResponse != null ? errorResponse.getBody() : Evaluate.ERROR;
-        Map<String, String> responseHeaders = errorResponse != null ? errorResponse.getHeaders() : null;
+        DynamicValue responseStatus = errorResponse != null ? errorResponse.getStatus() : null;
+        DynamicValue responseBody = errorResponse != null ? errorResponse.getBody() : Evaluate.ERROR;
+        DynamicMap<String> responseHeaders = errorResponse != null ? errorResponse.getHeaders() : null;
 
         // Map status code
         HttpResponseStatus status =
@@ -97,7 +96,7 @@ public class MessageHttpResponseMapper {
         serverResponse.status(status);
 
         // note that the content type header is not set if the response body is null.
-        if (StringUtils.isNotNull(responseBody)) {
+        if (responseBody != null && responseBody.isNotNull()) {
             // Content type is by default text. If the user wants to output JSON
             // they must override with specific additional headers the content type.
             serverResponse.addHeader(CONTENT_TYPE, MimeType.TEXT.toString());

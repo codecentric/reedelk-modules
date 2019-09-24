@@ -1,10 +1,11 @@
 package com.reedelk.rest.client.header;
 
 import com.reedelk.rest.commons.ContentType;
-import com.reedelk.runtime.api.commons.ScriptUtils;
+import com.reedelk.rest.commons.IsMessagePayload;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.NMapEvaluation;
+import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
 import java.util.HashMap;
@@ -15,26 +16,23 @@ import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 public class HeadersEvaluator {
 
     private ScriptEngineService scriptEngine;
-    private Map<String, String> userHeaders;
-    private String body;
+    private DynamicMap<String> userHeaders;
+    private DynamicValue body;
 
     private HeadersEvaluator() {
     }
 
     public HeaderProvider provider(Message message, FlowContext flowContext) {
-        Map<String,String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>();
 
-        if (ScriptUtils.isScript(body)) {
-            if (ScriptUtils.isMessagePayload(body)) {
-                ContentType.from(message)
-                        .ifPresent(contentType -> headers.put(CONTENT_TYPE, contentType));
-            }
+        if (IsMessagePayload.from(body)) {
+            ContentType.from(message)
+                    .ifPresent(contentType -> headers.put(CONTENT_TYPE, contentType));
         }
 
         if (!userHeaders.isEmpty()) {
             // User-defined headers: interpret and add them
-            NMapEvaluation<String> evaluation = scriptEngine.evaluate(message, flowContext, userHeaders);
-            Map<String, String> evaluatedHeaders = evaluation.map(0);
+            Map<String, String> evaluatedHeaders = scriptEngine.evaluate(message, flowContext, userHeaders);
             headers.putAll(evaluatedHeaders);
         }
 
@@ -48,20 +46,20 @@ public class HeadersEvaluator {
     public static class Builder {
 
         private ScriptEngineService scriptEngine;
-        private Map<String,String> headers;
-        private String body;
+        private DynamicMap<String> headers;
+        private DynamicValue body;
 
         public Builder scriptEngine(ScriptEngineService scriptEngine) {
             this.scriptEngine = scriptEngine;
             return this;
         }
 
-        public Builder headers(Map<String, String> headers) {
+        public Builder headers(DynamicMap<String> headers) {
             this.headers = headers;
             return this;
         }
 
-        public Builder body(String body) {
+        public Builder body(DynamicValue body) {
             this.body = body;
             return this;
         }

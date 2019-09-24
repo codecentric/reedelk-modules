@@ -2,6 +2,7 @@ package com.reedelk.rest.client.body;
 
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.StreamingMode;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
 import static com.reedelk.rest.configuration.StreamingMode.*;
@@ -28,7 +29,7 @@ public class BodyEvaluator {
         private ScriptEngineService scriptEngine;
         private StreamingMode streaming;
         private RestMethod method;
-        private String body;
+        private DynamicValue body;
 
         public Builder scriptEngine(ScriptEngineService scriptEngine) {
             this.scriptEngine = scriptEngine;
@@ -45,7 +46,7 @@ public class BodyEvaluator {
             return this;
         }
 
-        public Builder body(String body) {
+        public Builder body(DynamicValue body) {
             this.body = body;
             return this;
         }

@@ -1,14 +1,11 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.runtime.api.commons.ScriptUtils;
-import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import io.netty.handler.codec.http.HttpResponseStatus;
-
-import javax.script.SimpleBindings;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.valueOf;
 
@@ -18,7 +15,7 @@ class EvaluateStatusCode {
 
     private Message message;
     private Throwable throwable;
-    private String statusAsString;
+    private DynamicValue status;
     private FlowContext flowContext;
     private ScriptEngineService scriptEngine;
 
@@ -35,8 +32,8 @@ class EvaluateStatusCode {
         return this;
     }
 
-    EvaluateStatusCode withStatus(String statusAsString) {
-        this.statusAsString = statusAsString;
+    EvaluateStatusCode withStatus(DynamicValue status) {
+        this.status = status;
         return this;
     }
 
@@ -56,30 +53,22 @@ class EvaluateStatusCode {
     }
 
     HttpResponseStatus evaluate() {
-        if (StringUtils.isBlank(statusAsString)) {
+        if (status == null || status.isBlank()) {
             return defaultCode;
         }
 
-        if (ScriptUtils.isScript(statusAsString)) {
-            // If Message is defined, then use message,
-            // Otherwise we use the exception
-            if (message != null) {
-                int evaluate = scriptEngine.evaluate(statusAsString, message, flowContext);
-                return valueOf(evaluate);
-            }
-
-            if (throwable != null) {
-                SimpleBindings additionalBindings = new SimpleBindings();
-                additionalBindings.put("error", throwable);
-                int evaluate = scriptEngine.evaluate(statusAsString, flowContext, additionalBindings);
-                return valueOf(evaluate);
-            }
-
-            throw new ESBException("error: Message or Throwable must be defined");
-
-        } else {
-            int code = Integer.valueOf(statusAsString);
-            return valueOf(code);
+        // If Message is defined, then use message,
+        // Otherwise we use the exception
+        if (message != null) {
+            int evaluate = scriptEngine.evaluate(status, message, flowContext);
+            return valueOf(evaluate);
         }
+
+        if (throwable != null) {
+            int evaluate = scriptEngine.evaluate(status, throwable, flowContext);
+            return valueOf(evaluate);
+        }
+
+        throw new ESBException("error: Message or Throwable must be defined");
     }
 }

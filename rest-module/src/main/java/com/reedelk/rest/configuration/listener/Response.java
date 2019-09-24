@@ -2,10 +2,9 @@ package com.reedelk.rest.configuration.listener;
 
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.Implementor;
+import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.DynamicValue;
 import org.osgi.service.component.annotations.Component;
-
-import java.util.Collections;
-import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -13,43 +12,41 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = Response.class, scope = PROTOTYPE)
 public class Response implements Implementor {
 
-    @ScriptInline
     @Default("#[payload]")
     @Hint("content body text")
     @Property("Response body")
-    private String body;
+    private DynamicValue body;
 
-    @ScriptInline
     @Default("200")
     @Hint("201")
     @Property("Response status")
-    private String status;
+    private DynamicValue status;
 
     @TabGroup("Response headers")
     @Property("Response headers")
-    private Map<String, String> headers = Collections.emptyMap();
+    private DynamicMap<String> headers = DynamicMap.empty();
 
-    public String getBody() {
+    public DynamicValue getBody() {
         return body;
     }
 
-    public void setBody(String body) {
+    public void setBody(DynamicValue body) {
         this.body = body;
     }
 
-    public String getStatus() {
+    public DynamicValue getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(DynamicValue status) {
         this.status = status;
     }
 
-    public Map<String, String> getHeaders() {
+    public DynamicMap<String> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(Map<String, String> headers) {
+    public void setHeaders(DynamicMap<String> headers) {
         this.headers = headers;
     }
 }

@@ -1,9 +1,9 @@
 package com.reedelk.rest.server.mapper;
 
+import com.reedelk.runtime.api.script.DynamicMap;
 import io.netty.handler.codec.http.HttpHeaders;
 import reactor.netty.http.server.HttpServerResponse;
 
-import java.util.Map;
 import java.util.Optional;
 
 class AdditionalHeader {
@@ -14,7 +14,7 @@ class AdditionalHeader {
      * @param response the current http response object.
      * @param additionalHeaders additional user defined headers.
      */
-    static void addAll(HttpServerResponse response, Map<String, String> additionalHeaders) {
+    static void addAll(HttpServerResponse response, DynamicMap<String> additionalHeaders) {
         if (additionalHeaders == null) return;
 
         HttpHeaders currentHeaders = response.responseHeaders();

@@ -2,6 +2,7 @@ package com.reedelk.rest.component;
 
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.script.DynamicValue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -91,7 +92,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         @Test
         void shouldNotSetContentTypeHeaderWhenPayloadIsEmpty() {
             // Given
-            String body = EVALUATE_PAYLOAD;
+            DynamicValue body = EVALUATE_PAYLOAD;
             Message emptyPayload = MessageBuilder.get().build();
 
             // Expect
@@ -101,7 +102,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         @Test
         void shouldNotSetContentTypeHeaderAndSendEmptyPayloadWhenBodyIsNull() {
             // Given
-            String body = null;
+            DynamicValue body = null;
             Message emptyPayload = MessageBuilder.get().build();
 
             // Expect
@@ -111,7 +112,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         @Test
         void shouldNotSetContentTypeHeaderAndSendEmptyPayloadWhenBodyIsEmptyString() {
             // Given
-            String body = " ";
+            DynamicValue body = DynamicValue.from(" ");
             Message emptyPayload = MessageBuilder.get().build();
 
             // Expect
@@ -121,7 +122,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         @Test
         void shouldNotSetContentTypeHeaderAndSendEmptyPayloadWhenBodyIsEmptyScript() {
             // Given
-            String body = "#[]";
+            DynamicValue body = DynamicValue.from("#[]");
             Message emptyPayload = MessageBuilder.get().build();
 
             // Expect
@@ -131,7 +132,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         @Test
         void shouldNotSetContentTypeHeaderWhenPayloadIsScript() {
             // Given
-            String body = "#['hello this is a script']";
+            DynamicValue body = DynamicValue.from("#['hello this is a script']");
             String expectedResponseBody = "POST was successful";
             RestClient component = componentWith(POST, baseURL, path, body);
 
@@ -153,7 +154,7 @@ class RestClientPostTest extends RestClientAbstractTest {
             verify(newRequestPattern().withoutHeader(CONTENT_TYPE));
         }
 
-        void assertEmptyContentTypeAndPayload(String body, Message message) {
+        void assertEmptyContentTypeAndPayload(DynamicValue body, Message message) {
             // Given
             String expectedResponseBody = "It works";
             RestClient component = componentWith(POST, baseURL, path, body);
@@ -191,7 +192,7 @@ class RestClientPostTest extends RestClientAbstractTest {
                 .isNotSuccessful(component, emptyPayload, flowContext, expectedErrorMessage);
     }
 
-    private void mockScriptEvaluation(String inputScript, Message message, Object returnValue) {
+    private void mockScriptEvaluation(DynamicValue inputScript, Message message, Object returnValue) {
         doReturn(returnValue)
                 .when(scriptEngine)
                 .evaluate(eq(inputScript), eq(message), eq(flowContext));

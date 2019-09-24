@@ -9,6 +9,8 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import com.reedelk.runtime.api.service.ScriptExecutionResult;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
@@ -26,9 +28,7 @@ import reactor.netty.http.server.HttpServerResponse;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,10 +55,14 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldOutputStreamFromGivenResponseBodyText() {
                 // Given
-                String responseBody = "test body";
+                DynamicValue responseBody = DynamicValue.from("test body");
 
                 MessageHttpResponseMapper mapper = newMapperWithBody(responseBody);
                 Message message = MessageBuilder.get().text("a discarded body").build();
+
+                doReturn("test body")
+                        .when(scriptEngine)
+                        .evaluate(responseBody, message, flowContext);
 
                 // When
                 Publisher<byte[]> actualStream = mapper.map(message, response, flowContext);
@@ -72,14 +76,14 @@ class MessageHttpResponseMapperTest {
             void shouldOutputStreamFromGivenResponseScript() throws ScriptException {
                 // Given
                 String expectedContent = "response content";
-                String responseBody = "#[myVariable]";
+                DynamicValue responseBody = DynamicValue.from("#[myVariable]");
 
                 MessageHttpResponseMapper mapper = newMapperWithBody(responseBody);
                 Message message = MessageBuilder.get().text(expectedContent).build();
 
-                doReturn(new TestScriptExecutionResult(expectedContent))
+                doReturn(expectedContent)
                         .when(scriptEngine)
-                        .evaluate("#[myVariable]", message, flowContext);
+                        .evaluate(DynamicValue.from("#[myVariable]"), message, flowContext);
 
                 // When
                 Publisher<byte[]> actualStream = mapper.map(message, response, flowContext);
@@ -91,7 +95,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldOutputStreamEmptyForEmptyResponseScript() {
                 // Given
-                String emptyResponseBody = "";
+                DynamicValue emptyResponseBody = DynamicValue.from("");
 
                 MessageHttpResponseMapper mapper = newMapperWithBody(emptyResponseBody);
                 Message message = MessageBuilder.get().build();
@@ -107,7 +111,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldOutputStreamEmptyForNullResponseScript() {
                 // Given
-                String nullResponseBody = null;
+                DynamicValue nullResponseBody = null;
 
                 MessageHttpResponseMapper mapper = newMapperWithBody(nullResponseBody);
                 Message message = MessageBuilder.get().text("something").build();
@@ -129,8 +133,13 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromString() {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithStatus("201");
+                DynamicValue status = DynamicValue.from("201");
+                MessageHttpResponseMapper mapper = newMapperWithStatus(status);
                 Message message = MessageBuilder.get().text("a body").build();
+
+                doReturn(201)
+                        .when(scriptEngine)
+                        .evaluate(status, message, flowContext);
 
                 // When
                 mapper.map(message, response, flowContext);
@@ -142,12 +151,12 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromScript() throws ScriptException {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithStatus("#[myStatusCodeVar]");
+                MessageHttpResponseMapper mapper = newMapperWithStatus(DynamicValue.from("#[myStatusCodeVar]"));
                 Message message = MessageBuilder.get().text("a body").build();
 
                 doReturn(201)
                         .when(scriptEngine)
-                        .evaluate("#[myStatusCodeVar]", message, flowContext);
+                        .evaluate(DynamicValue.from("#[myStatusCodeVar]"), message, flowContext);
 
                 // When
                 mapper.map(message, response, flowContext);
@@ -177,7 +186,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeHeaderFromMessageContentTypeWhenBodyIsPayload() throws ScriptException {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithBody("#[payload]");
+                MessageHttpResponseMapper mapper = newMapperWithBody(DynamicValue.from("#[payload]"));
                 Message message = MessageBuilder.get().text("my text body").build();
 
                 // When
@@ -191,8 +200,13 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeHeaderWhenBodyIsText() {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithBody("my text body");
+                DynamicValue body = DynamicValue.from("my text body");
+                MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().build();
+
+                doReturn("my text body")
+                        .when(scriptEngine)
+                        .evaluate(body, message, flowContext);
 
                 // When
                 mapper.map(message, response, flowContext);
@@ -205,7 +219,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeHeaderWhenBodyIsEmptyText() {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithBody("");
+                MessageHttpResponseMapper mapper = newMapperWithBody(DynamicValue.from(""));
                 Message message = MessageBuilder.get().build();
 
                 // When
@@ -241,7 +255,7 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(initialHeaders).when(response).responseHeaders();
 
-                Map<String,String> headers = new HashMap<>();
+                DynamicMap<String> headers = DynamicMap.empty();
                 headers.put("header1", "my header 1");
                 headers.put("header2", "my header 2");
 
@@ -252,8 +266,8 @@ class MessageHttpResponseMapperTest {
                 mapper.map(message, response, flowContext);
 
                 // Then
-                assertThatContainsHeader(initialHeaders,"header1", "my header 1");
-                assertThatContainsHeader(initialHeaders,"header2", "my header 2");
+                assertThatContainsHeader(initialHeaders, "header1", "my header 1");
+                assertThatContainsHeader(initialHeaders, "header2", "my header 2");
                 verifyNoMoreInteractions(scriptEngine);
             }
 
@@ -265,7 +279,7 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(initialHeaders).when(response).responseHeaders();
 
-                Map<String,String> headers = new HashMap<>();
+                DynamicMap<String> headers = DynamicMap.empty();
                 headers.put("coNteNt-TyPe", "new content type");
 
                 MessageHttpResponseMapper mapper = newMapperWithAdditionalHeaders(headers);
@@ -276,7 +290,7 @@ class MessageHttpResponseMapperTest {
 
                 // Then
                 assertThat(initialHeaders).hasSize(1);
-                assertThatContainsHeader(initialHeaders,"coNteNt-TyPe", "new content type");
+                assertThatContainsHeader(initialHeaders, "coNteNt-TyPe", "new content type");
                 verifyNoMoreInteractions(scriptEngine);
             }
 
@@ -310,9 +324,14 @@ class MessageHttpResponseMapperTest {
             void shouldOutputStreamFromGivenResponseBodyText() {
                 // Given
                 String expectedBody = "An exception has been thrown";
+                DynamicValue bodyValue = DynamicValue.from(expectedBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
-                MessageHttpResponseMapper mapper = newMapperWithErrorBody(expectedBody);
+                doReturn(expectedBody)
+                        .when(scriptEngine)
+                        .evaluate(bodyValue, exception, flowContext);
+
+                MessageHttpResponseMapper mapper = newMapperWithErrorBody(bodyValue);
 
                 // When
                 Publisher<byte[]> actualStream = mapper.map(exception, response, flowContext);
@@ -323,18 +342,18 @@ class MessageHttpResponseMapperTest {
             }
 
             @Test
-            void shouldOutputStreamFromGivenResponseScript() throws ScriptException {
+            void shouldOutputStreamFromGivenResponseScript() {
                 // Given
                 String expectedContent = "Error while processing JSON";
-                String errorResponseBody = "#[error.message]";
+                DynamicValue errorResponseBody = DynamicValue.from("#[error.message]");
 
                 Throwable exception = new ESBException(expectedContent);
 
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorResponseBody);
 
-                doReturn(new TestScriptExecutionResult(expectedContent))
+                doReturn(expectedContent)
                         .when(scriptEngine)
-                        .evaluate(eq("#[error.message]"), eq(flowContext), any(Bindings.class));
+                        .evaluate(eq(DynamicValue.from("#[error.message]")), eq(exception), eq(flowContext));
 
                 // When
                 Publisher<byte[]> actualStream = mapper.map(exception, response, flowContext);
@@ -346,7 +365,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldOutputStreamFromExceptionStackTraceWithoutCallingScriptEngine() {
                 // Given
-                String errorResponseBody = "#[error]";
+                DynamicValue errorResponseBody = DynamicValue.from("#[error]");
 
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -363,7 +382,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldOutputStreamEmptyForEmptyErrorResponseScript() {
                 // Given
-                String emptyErrorResponseBody = "";
+                DynamicValue emptyErrorResponseBody = DynamicValue.from("");
                 Throwable exception = new ESBException("Error while processing JSON");
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(emptyErrorResponseBody);
 
@@ -378,7 +397,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldOutputStreamEmptyForNullErrorResponseScript() {
                 // Given
-                String emptyErrorResponseBody = null;
+                DynamicValue emptyErrorResponseBody = null;
                 Throwable exception = new ESBException("Error while processing JSON");
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(emptyErrorResponseBody);
 
@@ -398,9 +417,12 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromString() {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithErrorStatus("507");
+                DynamicValue status = DynamicValue.from("#[507]");
+                MessageHttpResponseMapper mapper = newMapperWithErrorStatus(status);
                 Throwable exception = new ESBException("Error while processing JSON");
 
+                doReturn(507)
+                        .when(scriptEngine).evaluate(status, exception, flowContext);
                 // When
                 mapper.map(exception, response, flowContext);
 
@@ -411,12 +433,12 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromScript() throws ScriptException {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithErrorStatus("#[myStatusCodeVar]");
+                MessageHttpResponseMapper mapper = newMapperWithErrorStatus(DynamicValue.from("#[myStatusCodeVar]"));
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 doReturn(507)
                         .when(scriptEngine)
-                        .evaluate(eq("#[myStatusCodeVar]"), eq(flowContext), any(Bindings.class));
+                        .evaluate(eq(DynamicValue.from("#[myStatusCodeVar]")), eq(exception), eq(flowContext));
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -446,7 +468,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeTextPlainByDefault() {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithErrorBody("#[error]");
+                MessageHttpResponseMapper mapper = newMapperWithErrorBody(DynamicValue.from("#[error]"));
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 // When
@@ -460,7 +482,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeHeaderWhenBodyIsText() {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithErrorBody("my text body");
+                MessageHttpResponseMapper mapper = newMapperWithErrorBody(DynamicValue.from("my text body"));
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 // When
@@ -468,13 +490,12 @@ class MessageHttpResponseMapperTest {
 
                 // Then
                 verify(response).addHeader(CONTENT_TYPE, MimeType.TEXT.toString());
-                verifyNoMoreInteractions(scriptEngine);
             }
 
             @Test
             void shouldSetContentTypeHeaderWhenBodyIsEmptyText() {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithErrorBody("");
+                MessageHttpResponseMapper mapper = newMapperWithErrorBody(DynamicValue.from(""));
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 // When
@@ -511,7 +532,7 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(initialHeaders).when(response).responseHeaders();
 
-                Map<String,String> headers = new HashMap<>();
+                DynamicMap<String> headers = DynamicMap.empty();
                 headers.put("header1", "my header 1");
                 headers.put("header2", "my header 2");
 
@@ -522,9 +543,8 @@ class MessageHttpResponseMapperTest {
                 mapper.map(exception, response, flowContext);
 
                 // Then
-                assertThatContainsHeader(initialHeaders,"header1", "my header 1");
-                assertThatContainsHeader(initialHeaders,"header2", "my header 2");
-                verifyNoMoreInteractions(scriptEngine);
+                assertThatContainsHeader(initialHeaders, "header1", "my header 1");
+                assertThatContainsHeader(initialHeaders, "header2", "my header 2");
             }
 
             @Test
@@ -535,7 +555,7 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(initialHeaders).when(response).responseHeaders();
 
-                Map<String,String> headers = new HashMap<>();
+                DynamicMap<String> headers = DynamicMap.empty();
                 headers.put("coNteNt-TyPe", "new content type");
 
                 MessageHttpResponseMapper mapper = newMapperWithErrorAdditionalHeaders(headers);
@@ -546,8 +566,7 @@ class MessageHttpResponseMapperTest {
 
                 // Then
                 assertThat(initialHeaders).hasSize(1);
-                assertThatContainsHeader(initialHeaders,"coNteNt-TyPe", "new content type");
-                verifyNoMoreInteractions(scriptEngine);
+                assertThatContainsHeader(initialHeaders, "coNteNt-TyPe", "new content type");
             }
 
             @Test
@@ -563,7 +582,7 @@ class MessageHttpResponseMapperTest {
 
                 // Then
                 assertThat(initialHeaders).isEmpty();
-                verifyNoMoreInteractions(scriptEngine);
+                verify(scriptEngine, never()).evaluate(any(Message.class), any(FlowContext.class), any(DynamicMap.class));
             }
         }
     }
@@ -585,45 +604,68 @@ class MessageHttpResponseMapperTest {
         assertThat(initialHeaders.get(headerName)).isEqualTo(headerValue);
     }
 
-    private MessageHttpResponseMapper newMapperWithBody(String responseBody) {
+    private MessageHttpResponseMapper newMapperWithBody(DynamicValue responseBody) {
+        DynamicValue status = DynamicValue.from(HttpResponseStatus.OK.codeAsText().toString());
         Response response = new Response();
         response.setBody(responseBody);
-        response.setStatus(HttpResponseStatus.OK.codeAsText().toString());
+        response.setStatus(status);
+
+        doReturn(200)
+                .when(scriptEngine)
+                .evaluate(eq(status), any(Message.class), eq(flowContext));
+
         return new MessageHttpResponseMapper(scriptEngine, response, null);
     }
 
-    private MessageHttpResponseMapper newMapperWithStatus(String responseStatus) {
+    private MessageHttpResponseMapper newMapperWithStatus(DynamicValue responseStatus) {
+        DynamicValue value = DynamicValue.from("sample body");
         Response response = new Response();
-        response.setBody("sample body");
+        response.setBody(value);
         response.setStatus(responseStatus);
+
+        doReturn("sample body")
+                .when(scriptEngine)
+                .evaluate(eq(value), any(Message.class), eq(flowContext));
+
         return new MessageHttpResponseMapper(scriptEngine, response, null);
     }
 
-    private MessageHttpResponseMapper newMapperWithAdditionalHeaders(Map<String,String> responseHeaders) {
+    private MessageHttpResponseMapper newMapperWithAdditionalHeaders(DynamicMap<String> responseHeaders) {
+        DynamicValue bodyValue = DynamicValue.from("sample body");
+        DynamicValue statusValue = DynamicValue.from(HttpResponseStatus.OK.codeAsText().toString());
         Response response = new Response();
         response.setHeaders(responseHeaders);
-        response.setBody("sample body");
-        response.setStatus(HttpResponseStatus.OK.codeAsText().toString());
+        response.setBody(bodyValue);
+        response.setStatus(statusValue);
+
+        doReturn("sample body")
+                .when(scriptEngine)
+                .evaluate(eq(bodyValue), any(Message.class), eq(flowContext));
+
+        doReturn(200)
+                .when(scriptEngine)
+                .evaluate(eq(statusValue), any(Message.class), eq(flowContext));
+
         return new MessageHttpResponseMapper(scriptEngine, response, null);
     }
 
-    private MessageHttpResponseMapper newMapperWithErrorBody(String errorBody) {
+    private MessageHttpResponseMapper newMapperWithErrorBody(DynamicValue errorBody) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setBody(errorBody);
         return new MessageHttpResponseMapper(scriptEngine, null, errorResponse);
     }
 
-    private MessageHttpResponseMapper newMapperWithErrorStatus(String errorResponseStatus) {
+    private MessageHttpResponseMapper newMapperWithErrorStatus(DynamicValue errorResponseStatus) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setBody("error body");
+        errorResponse.setBody(DynamicValue.from("error body"));
         errorResponse.setStatus(errorResponseStatus);
         return new MessageHttpResponseMapper(scriptEngine, null, errorResponse);
     }
 
-    private MessageHttpResponseMapper newMapperWithErrorAdditionalHeaders(Map<String,String> errorResponseHeaders) {
+    private MessageHttpResponseMapper newMapperWithErrorAdditionalHeaders(DynamicMap<String> errorResponseHeaders) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setHeaders(errorResponseHeaders);
-        errorResponse.setBody("error body");
+        errorResponse.setBody(DynamicValue.from("error body"));
         return new MessageHttpResponseMapper(scriptEngine, null, errorResponse);
     }
 

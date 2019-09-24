@@ -2,22 +2,19 @@ package com.reedelk.rest.component;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.reedelk.rest.commons.RestMethod;
-import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.script.NMapEvaluation;
+import com.reedelk.runtime.api.script.DynamicMap;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Map;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.reedelk.rest.commons.RestMethod.valueOf;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import static com.reedelk.runtime.api.commons.ImmutableMap.of;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
 
 
 class RestClientRequestUriTest extends RestClientAbstractTest {
@@ -29,7 +26,9 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
         String path = "/resource/{id}/group/{group}";
         String expectedPath = "/resource/aabbccddeeff/group/user";
 
-        Map<String, String> pathParameters = ImmutableMap.of("id", "aabbccddeeff", "group", "user");
+        DynamicMap<String> pathParameters = DynamicMap.from(of(
+                "id", "aabbccddeeff",
+                "group", "user"));
 
         // Expect
         assertExpectedPath(method, path, expectedPath, pathParameters, null);
@@ -42,7 +41,9 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
         String path = "/resource";
         String expectedPath = "/resource?query1=value1&query2=value2";
 
-        Map<String, String> queryParameters = ImmutableMap.of("query1", "value1", "query2", "value2");
+        DynamicMap<String> queryParameters = DynamicMap.from(of(
+                "query1", "value1",
+                "query2", "value2"));
 
         // Expect
         assertExpectedPath(method, path, expectedPath, null, queryParameters);
@@ -55,14 +56,14 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
         String path = "/resource/{id}/title/{title}";
         String expectedPath = "/resource/aabb1122/title/manager?query1=value1&query2=value2";
 
-        Map<String, String> queryParameters = ImmutableMap.of("query1", "value1", "query2", "value2");
-        Map<String, String> pathParameters = ImmutableMap.of("id", "aabb1122", "title", "manager");
+        DynamicMap<String> queryParameters = DynamicMap.from(of("query1", "value1", "query2", "value2"));
+        DynamicMap<String> pathParameters = DynamicMap.from(of("id", "aabb1122", "title", "manager"));
 
         // Expect
         assertExpectedPath(method, path, expectedPath, pathParameters, queryParameters);
     }
 
-    void assertExpectedPath(String method, String path, String expectedPath, Map<String, String> pathParameters, Map<String, String> queryParameters) {
+    void assertExpectedPath(String method, String path, String expectedPath, DynamicMap<String> pathParameters, DynamicMap<String> queryParameters) {
         // Given
         givenThat(WireMock.any(urlEqualTo(expectedPath))
                 .willReturn(aResponse().withStatus(200)));
@@ -73,32 +74,35 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
         RestMethod restMethod = valueOf(method);
         RestClient component = componentWith(restMethod, baseURL, path);
 
-        configureRequestAndQueryParams(pathParameters, queryParameters, component);
+        configureRequestAndQueryParams(component, pathParameters, queryParameters);
 
         // Expect
         AssertThatHttpResponseContent
                 .isSuccessful(component, message, flowContext);
     }
 
-    private void configureRequestAndQueryParams(Map<String, String> pathParameters, Map<String, String> queryParameters, RestClient component) {
+    private void configureRequestAndQueryParams(RestClient client, DynamicMap<String> pathParameters, DynamicMap<String> queryParameters) {
         if (pathParameters != null && queryParameters != null) {
-            component.setPathParameters(pathParameters);
-            component.setQueryParameters(queryParameters);
-            doReturn(new NMapEvaluation<>(asList(pathParameters, queryParameters)))
+            client.setPathParameters(pathParameters);
+            client.setQueryParameters(queryParameters);
+            doReturn(pathParameters)
                     .when(scriptEngine)
-                    .evaluate(any(Message.class), any(FlowContext.class), anyMap(), anyMap());
+                    .evaluate(any(Message.class), any(FlowContext.class), eq(pathParameters));
+            doReturn(queryParameters)
+                    .when(scriptEngine)
+                    .evaluate(any(Message.class), any(FlowContext.class), eq(queryParameters));
         }
         if (pathParameters != null && queryParameters == null) {
-            component.setPathParameters(pathParameters);
-            doReturn(new NMapEvaluation<>(singletonList(pathParameters)))
+            client.setPathParameters(pathParameters);
+            doReturn(pathParameters)
                     .when(scriptEngine)
-                    .evaluate(any(Message.class), any(FlowContext.class), anyMap());
+                    .evaluate(any(Message.class), any(FlowContext.class), eq(pathParameters));
         }
         if (pathParameters == null && queryParameters != null) {
-            component.setQueryParameters(queryParameters);
-            doReturn(new NMapEvaluation<>(singletonList(queryParameters)))
+            client.setQueryParameters(queryParameters);
+            doReturn(queryParameters)
                     .when(scriptEngine)
-                    .evaluate(any(Message.class), any(FlowContext.class), anyMap());
+                    .evaluate(any(Message.class), any(FlowContext.class), eq(queryParameters));
         }
     }
 }

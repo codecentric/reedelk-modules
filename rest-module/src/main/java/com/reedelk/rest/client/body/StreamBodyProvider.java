@@ -3,13 +3,14 @@ package com.reedelk.rest.client.body;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 public class StreamBodyProvider extends AbstractBodyProvider<Publisher<byte[]>> implements BodyProvider {
 
-    StreamBodyProvider(ScriptEngineService scriptEngine, String body) {
+    StreamBodyProvider(ScriptEngineService scriptEngine, DynamicValue body) {
         super(scriptEngine, body);
     }
 

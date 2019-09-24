@@ -3,13 +3,14 @@ package com.reedelk.rest.client.body;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
 public class ByteArrayBodyProvider extends AbstractBodyProvider<byte[]> implements BodyProvider {
 
     private static final byte[] EMPTY = new byte[0];
 
-    ByteArrayBodyProvider(ScriptEngineService scriptEngine, String body) {
+    ByteArrayBodyProvider(ScriptEngineService scriptEngine, DynamicValue body) {
         super(scriptEngine, body);
     }
 
