@@ -1,26 +1,24 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.commons.Evaluate;
 import com.reedelk.rest.commons.StackTraceUtils;
 import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.script.DynamicValue;
+import com.reedelk.runtime.api.script.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
 
 class EvaluateErrorResponseBody {
 
-    private final DynamicValue responseBody;
+    private final DynamicByteArray responseBody;
 
     private Throwable exception;
     private FlowContext flowContext;
     private ScriptEngineService scriptEngine;
 
-    private EvaluateErrorResponseBody(DynamicValue responseBody) {
+    private EvaluateErrorResponseBody(DynamicByteArray responseBody) {
         this.responseBody = responseBody;
     }
 
-    static EvaluateErrorResponseBody withResponseBody(DynamicValue responseBody) {
+    static EvaluateErrorResponseBody withResponseBody(DynamicByteArray responseBody) {
         return new EvaluateErrorResponseBody(responseBody);
     }
 
@@ -40,22 +38,8 @@ class EvaluateErrorResponseBody {
     }
 
     Publisher<byte[]> evaluate() {
-        if (responseBody == null|| responseBody.isBlank()) {
-            return Mono.empty();
-        } else if  (Evaluate.isErrorPayload(responseBody)) {
-            // We avoid evaluating a script if we just want
-            // to return the exception stacktrace (optimization).
-            return StackTraceUtils.asByteStream(exception);
-        } else {
-            return evaluateBodyScript();
-        }
-    }
-
-    private Publisher<byte[]> evaluateBodyScript() {
         try {
-            Object result =
-                    scriptEngine.evaluate(responseBody, exception, flowContext);
-            return Mono.just(result.toString().getBytes());
+            return scriptEngine.evaluateStream(responseBody, exception, flowContext);
         } catch (Exception exception) {
             // Evaluating an error response, cannot throw again an exception,
             // Hence we catch any exception and we return the exception message.

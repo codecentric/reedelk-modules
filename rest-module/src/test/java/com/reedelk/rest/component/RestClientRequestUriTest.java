@@ -77,7 +77,7 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
         configureRequestAndQueryParams(component, pathParameters, queryParameters);
 
         // Expect
-        AssertThatHttpResponseContent
+        AssertHttpResponse
                 .isSuccessful(component, message, flowContext);
     }
 

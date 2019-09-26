@@ -1,12 +1,8 @@
 package com.reedelk.rest.client.body;
 
 import com.reedelk.rest.commons.RestMethod;
-import com.reedelk.rest.configuration.StreamingMode;
-import com.reedelk.runtime.api.script.DynamicValue;
+import com.reedelk.runtime.api.script.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-
-import static com.reedelk.rest.configuration.StreamingMode.*;
-import static java.lang.String.format;
 
 public class BodyEvaluator {
 
@@ -27,17 +23,11 @@ public class BodyEvaluator {
     public static class Builder {
 
         private ScriptEngineService scriptEngine;
-        private StreamingMode streaming;
         private RestMethod method;
-        private DynamicValue body;
+        private DynamicByteArray body;
 
         public Builder scriptEngine(ScriptEngineService scriptEngine) {
             this.scriptEngine = scriptEngine;
-            return this;
-        }
-
-        public Builder streaming(StreamingMode streaming) {
-            this.streaming = streaming;
             return this;
         }
 
@@ -46,28 +36,16 @@ public class BodyEvaluator {
             return this;
         }
 
-        public Builder body(DynamicValue body) {
+        public Builder body(DynamicByteArray body) {
             this.body = body;
             return this;
         }
 
         public BodyEvaluator build() {
             BodyProvider provider = method.hasBody() ?
-                    createBodyProvider() :
+                    new DefaultBodyProvider(scriptEngine, body) :
                     EmptyBodyProvider.INSTANCE;
             return new BodyEvaluator(provider);
-        }
-
-        private BodyProvider createBodyProvider() {
-            if (NONE.equals(streaming)) {
-                return new ByteArrayBodyProvider(scriptEngine, body);
-            } else if (ALWAYS.equals(streaming)) {
-                return new StreamBodyProvider(scriptEngine, body);
-            } else if (AUTO.equals(streaming)){
-                return new AutoStreamBodyProvider(scriptEngine, body);
-            } else {
-                throw new IllegalArgumentException(format("Body provider not available for streaming mode '%s'", streaming));
-            }
         }
     }
 }

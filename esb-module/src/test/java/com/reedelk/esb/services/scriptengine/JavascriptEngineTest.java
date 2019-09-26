@@ -3,8 +3,9 @@ package com.reedelk.esb.services.scriptengine;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.script.DynamicInteger;
 import com.reedelk.runtime.api.script.DynamicMap;
-import com.reedelk.runtime.api.script.DynamicValue;
+import com.reedelk.runtime.api.script.DynamicString;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,26 +32,26 @@ class JavascriptEngineTest {
         Message message = MessageBuilder.get().text("test").build();
         message.getAttributes().put("property1", "test1");
         message.getAttributes().put("property2", "test2");
-        DynamicValue script = DynamicValue.from("#[message.attributes.property1]");
+        DynamicString script = DynamicString.from("#[message.attributes.property1]");
 
         // When
-        String attributeProperty = service.evaluate(script, message, context);
+        Optional<String> attributeProperty = service.evaluate(script, message, context);
 
         // Then
-        assertThat(attributeProperty).isEqualTo("test1");
+        assertThat(attributeProperty).isPresent().contains("test1");
     }
 
     @Test
     void shouldCorrectlyEvaluateNumericValue() {
         // Given
         Message message = MessageBuilder.get().text("test").build();
-        DynamicValue script = DynamicValue.from("#[506]");
+        DynamicInteger script = DynamicInteger.from("#[506]");
 
         // When
-        int number = service.evaluate(script, message, context);
+        Optional<Integer> number = service.evaluate(script, message, context);
 
         // Then
-        assertThat(number).isEqualTo(506);
+        assertThat(number).isPresent().contains(506);
     }
 
     @Test

@@ -4,8 +4,8 @@ import com.reedelk.rest.commons.ContentType;
 import com.reedelk.rest.commons.IsMessagePayload;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.DynamicByteArray;
 import com.reedelk.runtime.api.script.DynamicMap;
-import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public class HeadersEvaluator {
 
     private ScriptEngineService scriptEngine;
     private DynamicMap<String> userHeaders;
-    private DynamicValue body;
+    private DynamicByteArray body;
 
     private HeadersEvaluator() {
     }
@@ -47,7 +47,7 @@ public class HeadersEvaluator {
 
         private ScriptEngineService scriptEngine;
         private DynamicMap<String> headers;
-        private DynamicValue body;
+        private DynamicByteArray body;
 
         public Builder scriptEngine(ScriptEngineService scriptEngine) {
             this.scriptEngine = scriptEngine;
@@ -59,7 +59,7 @@ public class HeadersEvaluator {
             return this;
         }
 
-        public Builder body(DynamicValue body) {
+        public Builder body(DynamicByteArray body) {
             this.body = body;
             return this;
         }

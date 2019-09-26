@@ -2,13 +2,13 @@ package com.reedelk.rest.server.mapper;
 
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.script.DynamicValue;
+import com.reedelk.runtime.api.script.DynamicByteArray;
 
 import java.util.Optional;
 
 public class ContentType {
 
-    public static Optional<String> from(DynamicValue responseBody, Message message) {
+    public static Optional<String> from(DynamicByteArray responseBody, Message message) {
         if (responseBody == null) {
             return Optional.empty();
 

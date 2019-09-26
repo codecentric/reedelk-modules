@@ -14,14 +14,14 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-class AssertThatHttpResponseContent {
+class AssertHttpResponse {
 
-    static void isSuccessful(RestClient component,
+    static void isSuccessful(RestClient client,
                              Message message,
                              FlowContext context,
                              String expectedBody,
                              MimeType expectedMimeType) {
-        SuccessAssertion successAssertion = new SuccessAssertion(component, message, context, expectedBody, expectedMimeType);
+        SuccessAssertion successAssertion = new SuccessAssertion(client, message, context, expectedBody, expectedMimeType);
         try {
             successAssertion.assertThat();
         } catch (InterruptedException e) {

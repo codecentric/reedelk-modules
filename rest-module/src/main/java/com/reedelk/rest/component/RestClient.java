@@ -16,8 +16,8 @@ import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.DynamicByteArray;
 import com.reedelk.runtime.api.script.DynamicMap;
-import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -57,7 +57,7 @@ public class RestClient implements ProcessorAsync {
     @When(propertyName = "method", propertyValue = "DELETE")
     @When(propertyName = "method", propertyValue = "POST")
     @When(propertyName = "method", propertyValue = "PUT")
-    private DynamicValue body;
+    private DynamicByteArray body;
 
     @Property("Streaming")
     @Default("AUTO")
@@ -122,7 +122,7 @@ public class RestClient implements ProcessorAsync {
         this.path = path;
     }
 
-    public void setBody(DynamicValue body) {
+    public void setBody(DynamicByteArray body) {
         this.body = body;
     }
 
@@ -195,7 +195,6 @@ public class RestClient implements ProcessorAsync {
                 if (bodyEvaluator == null) {
                     bodyEvaluator = BodyEvaluator.builder()
                             .scriptEngine(scriptEngine)
-                            .streaming(streaming)
                             .method(method)
                             .body(body)
                             .build();

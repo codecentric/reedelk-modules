@@ -1,23 +1,33 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.script.DynamicByteArray;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.commons.RestMethod.PUT;
-import static com.reedelk.runtime.api.commons.ScriptUtils.EVALUATE_PAYLOAD;
 import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.*;
 
 class RestClientPutTest extends RestClientAbstractTest {
 
     @Test
-    void shouldPutWithBodyExecuteCorrectlyWhenResponse200() {
+    void shouldWithBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String requestBody = "{\"Name\":\"John\"}";
         String expectedResponseBody = "PUT was successful";
-        RestClient component = componentWith(PUT, baseURL, path, EVALUATE_PAYLOAD);
+        RestClient client = componentWith(PUT, baseURL, path, EVALUATE_PAYLOAD_BODY);
+
+        doReturn(Optional.of(requestBody.getBytes()))
+                .when(scriptEngine)
+                .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
 
         givenThat(put(urlEqualTo(path))
                 .withRequestBody(equalToJson(requestBody))
@@ -29,15 +39,18 @@ class RestClientPutTest extends RestClientAbstractTest {
         Message payload = MessageBuilder.get().json(requestBody).build();
 
         // Expect
-        AssertThatHttpResponseContent
-                .isSuccessful(component, payload, flowContext, expectedResponseBody, TEXT);
+        AssertHttpResponse.isSuccessful(client, payload, flowContext, expectedResponseBody, TEXT);
     }
 
     @Test
-    void shouldPutWithEmptyBodyExecuteCorrectlyWhenResponse200() {
+    void shouldWithEmptyBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String expectedResponseBody = "It works";
-        RestClient component = componentWith(PUT, baseURL, path);
+        RestClient client = componentWith(PUT, baseURL, path);
+
+        doReturn(Optional.of(new byte[]{}))
+                .when(scriptEngine)
+                .evaluate(Mockito.isNull(DynamicByteArray.class), any(Message.class), any(FlowContext.class));
 
         givenThat(put(urlEqualTo(path))
                 .withRequestBody(binaryEqualTo(new byte[0]))
@@ -49,12 +62,11 @@ class RestClientPutTest extends RestClientAbstractTest {
         Message emptyPayload = MessageBuilder.get().build();
 
         // Expect
-        AssertThatHttpResponseContent
-                .isSuccessful(component, emptyPayload, flowContext, expectedResponseBody, TEXT);
+        AssertHttpResponse.isSuccessful(client, emptyPayload, flowContext, expectedResponseBody, TEXT);
     }
 
     @Test
-    void shouldPostThrowExceptionWhenResponseNot2xx() {
+    void shouldThrowExceptionWhenResponseNot2xx() {
         // Given
         String expectedErrorMessage = "Error exception caused by XYZ";
         RestClient component = componentWith(PUT, baseURL, path);
@@ -68,7 +80,6 @@ class RestClientPutTest extends RestClientAbstractTest {
         Message emptyPayload = MessageBuilder.get().build();
 
         // Expect
-        AssertThatHttpResponseContent
-                .isNotSuccessful(component, emptyPayload, flowContext, expectedErrorMessage);
+        AssertHttpResponse.isNotSuccessful(component, emptyPayload, flowContext, expectedErrorMessage);
     }
 }

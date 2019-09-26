@@ -1,12 +1,13 @@
 package com.reedelk.esb.execution;
 
 import com.reedelk.esb.component.RouterWrapper;
+import com.reedelk.esb.component.RouterWrapper.PathExpressionPair;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.services.scriptengine.JavascriptEngine;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.DynamicValue;
+import com.reedelk.runtime.api.script.DynamicBoolean;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -42,8 +43,7 @@ public class RouterExecutor implements FlowExecutor {
                     .map(pathExpressionPair -> createConditionalBranch(pathExpressionPair, messageContext, graph))
                     .collect(toList());
 
-            // Create a flow with all conditional flows, only the flow
-            // evaluating to true will be executed.
+            // Create a flow with all conditional flows, only the flow evaluating to true will be executed.
             return Flux.concat(choiceBranches)
                     .take(1) // We just select the first one, in case there are more than one matching
                     .switchIfEmpty(subscriber -> // If there is no match, the default path is then executed
@@ -58,15 +58,15 @@ public class RouterExecutor implements FlowExecutor {
         return FlowExecutorFactory.get().execute(flux, nodeAfterStop, graph);
     }
 
-    private Mono<MessageAndContext> createDefaultMono(RouterWrapper.PathExpressionPair pair, MessageAndContext message, ExecutionGraph graph) {
+    private Mono<MessageAndContext> createDefaultMono(PathExpressionPair pair, MessageAndContext message, ExecutionGraph graph) {
         ExecutionNode defaultExecutionNode = pair.pathReference;
         Publisher<MessageAndContext> parent = Flux.just(message);
         return Mono.from(FlowExecutorFactory.get()
                 .execute(parent, defaultExecutionNode, graph));
     }
 
-    private Mono<MessageAndContext> createConditionalBranch(RouterWrapper.PathExpressionPair pair, MessageAndContext event, ExecutionGraph graph) {
-        DynamicValue expression = pair.expression;
+    private Mono<MessageAndContext> createConditionalBranch(PathExpressionPair pair, MessageAndContext event, ExecutionGraph graph) {
+        DynamicBoolean expression = pair.expression;
         ExecutionNode pathExecutionNode = pair.pathReference;
         // This Mono evaluates the expression. If the expression is true,
         // then the branch subflow gets executed, otherwise the message is dropped
@@ -77,10 +77,10 @@ public class RouterExecutor implements FlowExecutor {
         return Mono.from(FlowExecutorFactory.get().execute(parent, pathExecutionNode, graph));
     }
 
-    private Mono<Boolean> evaluate(DynamicValue expression, Message message, FlowContext flowContext) {
+    private Mono<Boolean> evaluate(DynamicBoolean expression, Message message, FlowContext flowContext) {
         try {
-            Boolean evaluate = ENGINE.evaluate(expression, message, flowContext);
-            return Mono.just(evaluate);
+            boolean result = ENGINE.evaluate(expression, message, flowContext).orElse(false);
+            return Mono.just(result);
         } catch (Exception e) {
             logger.error(String.format("Could not evaluate Router path expression (%s)", expression), e);
             return FALSE;

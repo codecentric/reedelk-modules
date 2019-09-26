@@ -8,6 +8,7 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.esb.test.utils.ComponentsBuilder;
 import com.reedelk.esb.test.utils.TestComponent;
+import com.reedelk.runtime.api.script.DynamicBoolean;
 import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.component.Stop;
 import org.json.JSONArray;
@@ -79,8 +80,8 @@ class RouterComponentBuilderTest {
     void shouldCorrectlyHandleRouterComponent() {
         // Given
         JSONArray whenArray = new JSONArray();
-        whenArray.put(conditionalBranch(DynamicValue.from("1 == 1"), COMPONENT_3_NAME, COMPONENT_1_NAME));
-        whenArray.put(conditionalBranch(DynamicValue.from("'hello' == 'hello1'"), COMPONENT_2_NAME, COMPONENT_4_NAME));
+        whenArray.put(conditionalBranch(DynamicBoolean.from("1 == 1"), COMPONENT_3_NAME, COMPONENT_1_NAME));
+        whenArray.put(conditionalBranch(DynamicBoolean.from("'hello' == 'hello1'"), COMPONENT_2_NAME, COMPONENT_4_NAME));
         whenArray.put(conditionalBranch(DEFAULT_CONDITION, COMPONENT_6_NAME, COMPONENT_5_NAME));
 
         JSONObject componentDefinition = ComponentsBuilder.forComponent(RouterWrapper.class)

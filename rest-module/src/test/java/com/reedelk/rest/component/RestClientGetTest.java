@@ -28,7 +28,7 @@ class RestClientGetTest extends RestClientAbstractTest {
         Message payload = MessageBuilder.get().build();
 
         // Expect
-        AssertThatHttpResponseContent
+        AssertHttpResponse
                 .isSuccessful(component, payload, flowContext, responseBody, APPLICATION_JSON);
     }
 
@@ -47,7 +47,7 @@ class RestClientGetTest extends RestClientAbstractTest {
         Message emptyPayload = MessageBuilder.get().build();
 
         // Expect
-        AssertThatHttpResponseContent
+        AssertHttpResponse
                 .isNotSuccessful(component, emptyPayload, flowContext, expectedErrorMessage);
     }
 }

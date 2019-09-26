@@ -5,7 +5,7 @@ import com.reedelk.rest.client.DefaultHttpClientService;
 import com.reedelk.rest.client.HttpClientService;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.script.DynamicValue;
+import com.reedelk.runtime.api.script.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,11 +19,14 @@ import java.lang.reflect.Field;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static com.reedelk.rest.utils.TestTag.INTEGRATION;
+import static com.reedelk.runtime.api.commons.ScriptUtils.EVALUATE_PAYLOAD;
 import static org.junit.Assert.fail;
 
 @ExtendWith(MockitoExtension.class)
 @Tag(INTEGRATION)
 abstract class RestClientAbstractTest {
+
+    DynamicByteArray EVALUATE_PAYLOAD_BODY = DynamicByteArray.from(EVALUATE_PAYLOAD);
 
     @Mock
     protected ScriptEngineService scriptEngine;
@@ -67,7 +70,7 @@ abstract class RestClientAbstractTest {
         return restClient;
     }
 
-    RestClient componentWith(RestMethod method, String baseURL, String path, DynamicValue body) {
+    RestClient componentWith(RestMethod method, String baseURL, String path, DynamicByteArray body) {
         RestClient restClient = componentWith(method, baseURL, path);
         restClient.setBody(body);
         return restClient;

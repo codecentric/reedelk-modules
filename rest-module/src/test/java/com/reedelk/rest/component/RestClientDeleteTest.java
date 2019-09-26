@@ -1,14 +1,19 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.commons.RestMethod.DELETE;
-import static com.reedelk.runtime.api.commons.ScriptUtils.EVALUATE_PAYLOAD;
 import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 
 class RestClientDeleteTest extends RestClientAbstractTest {
 
@@ -17,7 +22,11 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         // Given
         String requestBody = "{\"Name\":\"John\"}";
         String expectedResponseBody = "DELETE was successful";
-        RestClient component = componentWith(DELETE, baseURL, path, EVALUATE_PAYLOAD);
+        RestClient component = componentWith(DELETE, baseURL, path, EVALUATE_PAYLOAD_BODY);
+
+        doReturn(Optional.of(requestBody.getBytes()))
+                .when(scriptEngine)
+                .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
 
         givenThat(delete(urlEqualTo(path))
                 .withRequestBody(equalToJson(requestBody))
@@ -29,7 +38,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         Message payload = MessageBuilder.get().json(requestBody).build();
 
         // Expect
-        AssertThatHttpResponseContent
+        AssertHttpResponse
                 .isSuccessful(component, payload, flowContext, expectedResponseBody, TEXT);
     }
 
@@ -49,7 +58,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         Message emptyPayload = MessageBuilder.get().build();
 
         // Expect
-        AssertThatHttpResponseContent
+        AssertHttpResponse
                 .isSuccessful(component, emptyPayload, flowContext, expectedResponseBody, TEXT);
     }
 
@@ -68,7 +77,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         Message emptyPayload = MessageBuilder.get().build();
 
         // Expect
-        AssertThatHttpResponseContent
+        AssertHttpResponse
                 .isNotSuccessful(component, emptyPayload, flowContext, expectedErrorMessage);
     }
 }

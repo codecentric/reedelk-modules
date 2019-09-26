@@ -9,7 +9,6 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import com.reedelk.runtime.api.service.ScriptExecutionResult;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -28,8 +27,9 @@ public class JavascriptComponent implements ProcessorSync {
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
-        ScriptExecutionResult result = service.evaluate(script, message, flowContext);
-        return MessageBuilder.get().javaObject(result.getObject()).build();
+        Object result = service.evaluate(script, message, flowContext)
+                .orElse(null);
+        return MessageBuilder.get().javaObject(result).build();
     }
 
     public void setScript(Script script) {

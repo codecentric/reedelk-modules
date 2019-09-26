@@ -2,24 +2,23 @@ package com.reedelk.rest.server.mapper;
 
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.DynamicValue;
+import com.reedelk.runtime.api.script.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
 
 class EvaluateResponseBody {
 
-    private final DynamicValue responseBody;
+    private final DynamicByteArray responseBody;
 
     private Message message;
     private FlowContext flowContext;
     private ScriptEngineService scriptEngine;
 
-    private EvaluateResponseBody(DynamicValue responseBody) {
+    private EvaluateResponseBody(DynamicByteArray responseBody) {
         this.responseBody = responseBody;
     }
 
-    static EvaluateResponseBody withResponseBody(DynamicValue responseBody) {
+    static EvaluateResponseBody withResponseBody(DynamicByteArray responseBody) {
         return new EvaluateResponseBody(responseBody);
     }
 
@@ -39,21 +38,6 @@ class EvaluateResponseBody {
     }
 
     Publisher<byte[]> evaluate() {
-        return responseBody == null ?
-                Mono.empty():
-                bodyStreamFromScript();
-    }
-
-    private Publisher<byte[]> bodyStreamFromScript() {
-        if (responseBody == null || responseBody.isBlank()) {
-            return Mono.empty();
-        } else if (responseBody.isMessagePayload()) {
-            // We avoid evaluating a script if we just want
-            // to return the message payload (optimization).
-            return message.getContent().asByteArrayStream();
-        } else {
-            Object result = scriptEngine.evaluate(responseBody, message, flowContext);
-            return Mono.just(result.toString().getBytes());
-        }
+        return scriptEngine.evaluateStream(responseBody, message, flowContext);
     }
 }

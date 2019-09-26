@@ -4,11 +4,11 @@ import com.reedelk.runtime.api.commons.ConsumeByteArrayStream;
 import com.reedelk.runtime.api.exception.ESBException;
 import org.reactivestreams.Publisher;
 
-public class ErrorResponse extends ESBException {
+public class ErrorResponseException extends ESBException {
 
     private final Publisher<byte[]> data;
 
-    public ErrorResponse(Publisher<byte[]> data) {
+    public ErrorResponseException(Publisher<byte[]> data) {
         super();
         this.data = data;
     }

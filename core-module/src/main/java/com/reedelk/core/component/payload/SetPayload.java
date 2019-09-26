@@ -5,8 +5,11 @@ import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.*;
-import com.reedelk.runtime.api.script.DynamicValue;
+import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.message.type.Type;
+import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.message.type.TypedContentFactory;
+import com.reedelk.runtime.api.script.DynamicObject;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -32,30 +35,21 @@ public class SetPayload implements ProcessorSync {
     @Property("Message Payload")
     @Default("#[]")
     @Hint("payload text value")
-    private DynamicValue payload;
+    private DynamicObject payload;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
-
         MimeType mimeType = MimeType.parse(this.mimeType);
 
-        if (payload.isScript()) {
-            Object result = scriptEngine.evaluate(this.payload, message, flowContext);
-
-            Type contentType = new Type(mimeType);
-            TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
-            return MessageBuilder.get().typedContent(content).build();
-
-        } else {
-            // Since it is only a text value, we set the
-            // class of the content as String.class.
-            Type contentType = new Type(mimeType, String.class);
-            TypedContent<?> content = new StringContent(payload.getBody(), contentType);
-            return MessageBuilder.get().typedContent(content).build();
-        }
+        // It is a script, hence we need to evaluate it.
+        Object result = scriptEngine.evaluate(payload, message, flowContext)
+                .orElse(null);
+        Type contentType = new Type(mimeType);
+        TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
+        return MessageBuilder.get().typedContent(content).build();
     }
 
-    public void setPayload(DynamicValue payload) {
+    public void setPayload(DynamicObject payload) {
         this.payload = payload;
     }
 
