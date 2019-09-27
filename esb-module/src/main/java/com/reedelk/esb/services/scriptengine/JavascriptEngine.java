@@ -43,53 +43,75 @@ public enum JavascriptEngine implements ScriptEngineService {
         invocable = (Invocable) engine;
     }
 
-    /**
-     *        if (body == null || body.isBlank()) {
-     *             // If the script is empty, there is nothing to evaluate.
-     *             // No content type header
-     *             return empty();
-     *         } else if (body.isMessagePayload()) {
-     *             // Content == Payload
-     *             return fromContent(message.getContent());
-     *         } else {
-     *             // The is a script: we evaluate it and set the result.
-     *             // No content type header, it is set by the user
-     *             Object result = scriptEngine.evaluate(body, message, flowContext);
-     *             byte[] bodyAsBytes = result.toString().getBytes();
-     *             return fromBytes(bodyAsBytes);
-     *         }
-     * @param value
-     * @param message
-     * @param flowContext
-     * @param <T>
-     * @return
-     */
-    // TODO: What if the result I want is a stream!?
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> value, Message message, FlowContext flowContext) {
-        if (value == null) {
+    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
+
+        if (dynamicValue == null) {
+
             return Optional.empty();
 
-        } else if (value.isScript()) {
+        } else if (dynamicValue.isScript()) {
+
             // If script is empty, no need to evaluate it.
-            if (value.isEmptyScript()) {
+
+            if (dynamicValue.isEmptyScript()) {
+
                 return Optional.empty();
-            } else if (value.isMessagePayload()) {
-                throw new ESBException("asdf");
-                //return Optional.ofNullable(message.getContent().data())
+
+            } else if (dynamicValue.isMessagePayload()) {
+
+                // We avoid interpreting the message payload in javascript (this is an optimization)...
+
+                T payload = message.payload();
+
+                if (payload == null) {
+                    return Optional.empty();
+
+                } else if (dynamicValue.getEvaluatedType().isAssignableFrom(payload.getClass())) {
+                    return Optional.of(payload);
+
+                } else {
+                    throw new ESBException(String.format("Could not convert payload class [%s] to wanted [%s]", payload.getClass(), dynamicValue.getEvaluatedType()));
+                }
+
+
             } else {
-                String functionName = functionNameOf(value, INLINE_SCRIPT);
+
+                String functionName = functionNameOf(dynamicValue, INLINE_SCRIPT);
+
                 try {
-                    Object payload = message.getContent().data();
-                    return Optional.ofNullable((T) invocable.invokeFunction(functionName, message, payload, flowContext));
+
+                    T evaluationResult = (T) invocable.invokeFunction(functionName, message, flowContext);
+
+                    if (evaluationResult == null) {
+                        return Optional.empty();
+
+                    } else if (dynamicValue.getEvaluatedType().isAssignableFrom(evaluationResult.getClass())) {
+                        return Optional.of(evaluationResult);
+
+                    } else {
+
+                        // Not a script, just text, we need to convert the string to the desired type.
+
+                        T converted = DynamicValueConverterFactory.convert(evaluationResult, evaluationResult.getClass(), dynamicValue.getEvaluatedType());
+
+                        return Optional.ofNullable(converted);
+
+                    }
+
                 } catch (ScriptException | NoSuchMethodException e) {
                     throw new ESBException(e);
                 }
             }
+
         } else {
-            // TODO: Need a converter to convert from string to int, string to X and so on...
-            throw new UnsupportedOperationException("not implemented yet");
-            //return Optional.ofNullable(value.getBody());
+
+            // Not a script, just text, we need to convert the string to the desired type.
+
+            T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
+
+            return Optional.ofNullable(converted);
+
         }
     }
 
@@ -173,7 +195,7 @@ public enum JavascriptEngine implements ScriptEngineService {
         } else {
             String functionName = functionNameOf(dynamicMap);
             try {
-                return (Map<String, T>) invocable.invokeFunction(functionName, message, message.getContent().data(), context);
+                return (Map<String, T>) invocable.invokeFunction(functionName, message, context);
             } catch (ScriptException | NoSuchMethodException e) {
                 throw new ESBException(e);
             }
@@ -190,7 +212,7 @@ public enum JavascriptEngine implements ScriptEngineService {
 
 
     private static final String INLINE_SCRIPT =
-            "var %s = function(message, payload, context) {\n" +
+            "var %s = function(message, context) {\n" +
                     "  return %s\n" +
                     "};";
 
@@ -216,7 +238,7 @@ public enum JavascriptEngine implements ScriptEngineService {
             synchronized (this) {
                 if (functionName == null) {
                     functionName = "fun" + valueUUID;
-                    String scriptBody = (String) dynamicValue.getBody();
+                    String scriptBody = dynamicValue.getBody();
                     String functionDefinition = format(template, functionName, ScriptUtils.unwrap(scriptBody));
                     try {
                         engine.eval(functionDefinition);

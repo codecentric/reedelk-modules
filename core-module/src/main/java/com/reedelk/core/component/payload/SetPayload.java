@@ -42,8 +42,7 @@ public class SetPayload implements ProcessorSync {
         MimeType mimeType = MimeType.parse(this.mimeType);
 
         // It is a script, hence we need to evaluate it.
-        Object result = scriptEngine.evaluate(payload, message, flowContext)
-                .orElse(null);
+        Object result = scriptEngine.evaluate(payload, message, flowContext).orElse(null);
         Type contentType = new Type(mimeType);
         TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
         return MessageBuilder.get().typedContent(content).build();

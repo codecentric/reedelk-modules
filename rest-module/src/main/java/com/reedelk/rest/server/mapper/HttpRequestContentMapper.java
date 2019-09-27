@@ -34,7 +34,7 @@ class HttpRequestContentMapper {
         } else {
             // Generic byte array stream.
             Type type = new Type(mimeType, byte[].class);
-            return new ByteArrayStreamContent(byteArrayStream, type);
+            return new ByteArrayContent(byteArrayStream, type);
         }
     }
 
@@ -50,7 +50,7 @@ class HttpRequestContentMapper {
         });
 
         // The TypedContent is String stream.
-        return new StringStreamContent(streamAsString, mimeType);
+        return new StringContent(streamAsString, mimeType);
     }
 
     // TODO: What would happen if an exception is thrown before all the byte buffers have been read!??

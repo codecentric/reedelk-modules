@@ -41,8 +41,8 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 .router(routerNode)
                 .disposer(disposer)
                 .inbound(inbound)
-                .conditionWithSequence("#[payload == 'Route1']", route1Node)
-                .conditionWithSequence("#[payload == 'Route2']", route2Node)
+                .conditionWithSequence("#[message.payload() == 'Route1']", route1Node)
+                .conditionWithSequence("#[message.payload() == 'Route2']", route2Node)
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
 
@@ -66,8 +66,8 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 .router(routerNode)
                 .disposer(disposer)
                 .inbound(inbound)
-                .conditionWithSequence("#[payload == 'Route1']", route1Node)
-                .conditionWithSequence("#[payload == 'Route2']", route2Node)
+                .conditionWithSequence("#[message.payload() == 'Route1']", route1Node)
+                .conditionWithSequence("#[message.payload() == 'Route2']", route2Node)
                 .conditionWithSequence("otherwise", route3Node)
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
@@ -91,8 +91,8 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 .router(routerNode)
                 .disposer(disposer)
                 .inbound(inbound)
-                .conditionWithSequence("#[payload == 'Route1']", route1Node)
-                .conditionWithSequence("#[payload == 'Route2']", route2Node)
+                .conditionWithSequence("#[message.payload() == 'Route1']", route1Node)
+                .conditionWithSequence("#[message.payload() == 'Route2']", route2Node)
                 .build();
 
         MessageAndContext event = newEventWithContent("Route1");
@@ -114,8 +114,8 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 .router(routerNode)
                 .disposer(disposer)
                 .inbound(inbound)
-                .conditionWithSequence("#[payload == 'Route1']", route1Node)
-                .conditionWithSequence("#[payload == 'Route2']", route2Node)
+                .conditionWithSequence("#[message.payload() == 'Route1']", route1Node)
+                .conditionWithSequence("#[message.payload() == 'Route2']", route2Node)
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
 
@@ -143,8 +143,8 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 .router(routerNode)
                 .disposer(disposer)
                 .inbound(inbound)
-                .conditionWithSequence("#[payload == 'Route1']", processorThrowingException)
-                .conditionWithSequence("#[payload == 'Route2']", route2Node)
+                .conditionWithSequence("#[message.payload() == 'Route1']", processorThrowingException)
+                .conditionWithSequence("#[message.payload() == 'Route2']", route2Node)
                 .afterRouterSequence(nodeFollowingStop)
                 .build();
 

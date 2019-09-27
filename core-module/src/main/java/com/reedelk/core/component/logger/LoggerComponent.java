@@ -8,7 +8,7 @@ import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.DynamicString;
+import com.reedelk.runtime.api.script.DynamicObject;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -32,10 +32,10 @@ public class LoggerComponent implements ProcessorSync {
     @Default("INFO")
     private LoggerLevel level;
 
-    @Default("#[payload]")
+    @Default("#[message]")
     @Hint("my log message")
     @Property("Log message")
-    private DynamicString message;
+    private DynamicObject message;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -58,14 +58,14 @@ public class LoggerComponent implements ProcessorSync {
         this.level = level;
     }
 
-    public void setMessage(DynamicString message) {
+    public void setMessage(DynamicObject message) {
         this.message = message;
     }
 
     private void debug(Message message, FlowContext flowContext) throws ScriptException {
         // The logger should just print the Stream object if it is a stream, otherwise if
         // the stream was resolved (hence loaded into memory) it should print the value.
-        String evaluationResult = service.evaluate(this.message, message, flowContext).orElse(null);
+        Object evaluationResult = service.evaluate(this.message, message, flowContext).orElse(null);
         level.log(evaluationResult);
     }
 }

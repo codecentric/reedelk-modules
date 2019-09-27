@@ -196,7 +196,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeHeaderFromMessageContentTypeWhenBodyIsPayload() throws ScriptException {
                 // Given
-                DynamicByteArray body = DynamicByteArray.from("#[payload]");
+                DynamicByteArray body = DynamicByteArray.from("#[message.payload()]");
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().text("my text body").build();
 

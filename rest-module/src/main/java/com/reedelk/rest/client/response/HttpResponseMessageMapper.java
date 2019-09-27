@@ -5,7 +5,7 @@ import com.reedelk.rest.commons.HttpHeadersAsMap;
 import com.reedelk.rest.commons.MimeTypeExtract;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.ByteArrayStreamContent;
+import com.reedelk.runtime.api.message.type.ByteArrayContent;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.Type;
 import org.apache.http.HttpResponse;
@@ -30,7 +30,7 @@ public class HttpResponseMessageMapper {
 
         MimeType mimeType = MimeTypeExtract.from(response.getAllHeaders());
         Type payloadType = new Type(mimeType);
-        ByteArrayStreamContent content = new ByteArrayStreamContent(bytesStream, payloadType);
+        ByteArrayContent content = new ByteArrayContent(bytesStream, payloadType);
         message.setContent(content);
         return message;
     }

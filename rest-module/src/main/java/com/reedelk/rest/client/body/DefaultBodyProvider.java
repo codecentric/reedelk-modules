@@ -21,9 +21,7 @@ public class DefaultBodyProvider implements BodyProvider {
 
     @Override
     public byte[] asByteArray(Message message, FlowContext flowContext) {
-        return scriptEngine
-                .evaluate(body, message, flowContext)
-                .orElse(EMPTY);
+        return scriptEngine.evaluate(body, message, flowContext).orElse(EMPTY);
     }
 
     @Override

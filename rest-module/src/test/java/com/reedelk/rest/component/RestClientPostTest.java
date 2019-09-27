@@ -4,7 +4,6 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.script.DynamicByteArray;
-import com.reedelk.runtime.api.script.DynamicValue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -207,11 +206,5 @@ class RestClientPostTest extends RestClientAbstractTest {
         // Expect
         AssertHttpResponse
                 .isNotSuccessful(component, emptyPayload, flowContext, expectedErrorMessage);
-    }
-
-    private void mockScriptEvaluation(DynamicValue inputScript, Message message, Object returnValue) {
-        doReturn(returnValue)
-                .when(scriptEngine)
-                .evaluate(eq(inputScript), eq(message), eq(flowContext));
     }
 }

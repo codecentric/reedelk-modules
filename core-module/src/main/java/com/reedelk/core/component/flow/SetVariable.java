@@ -53,11 +53,16 @@ public class SetVariable implements ProcessorSync {
         MimeType mimeType = MimeType.parse(this.mimeType);
 
         // It is a script, hence we need to evaluate it.
-        Object result = scriptEngine.evaluate(value, message, flowContext)
-                .orElse(null);
-        Type contentType = new Type(mimeType);
-        TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
-        flowContext.setVariable(name, content);
+        Object result = scriptEngine.evaluate(value, message, flowContext).orElse(null);
+        // TODO: The result here might be typed content ...
+        //if (result instanceof TypedContent) {
+          //  flowContext.setVariable(name, (TypedContent<?>) result);
+        //} else {
+            // TODO: Nope typed content factory should also take in consideration that result is typed content
+            Type contentType = new Type(mimeType);
+            TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
+            flowContext.setVariable(name, content);
+      //  }
         return message;
     }
 

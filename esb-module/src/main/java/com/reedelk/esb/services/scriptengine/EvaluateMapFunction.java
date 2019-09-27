@@ -8,7 +8,7 @@ import java.util.Map;
 public class EvaluateMapFunction<T> {
 
     private static final String EVALUATE_MAP_SCRIPT =
-            "var %s = function(message, payload, context) {\n" +
+            "var %s = function(message, context) {\n" +
                     "  return %s\n" +
                     "};";
 

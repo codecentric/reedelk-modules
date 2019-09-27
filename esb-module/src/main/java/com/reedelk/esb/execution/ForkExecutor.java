@@ -56,7 +56,7 @@ public class ForkExecutor implements FlowExecutor {
                     .collect(toList());
 
             // Join fork branches (Join step)
-            return Flux.zip(forkBranches, messagesCombinator())
+            return Mono.zip(forkBranches, messagesCombinator())
                     .flatMap(eventsToJoin -> Mono.create(new JoinConsumer(messageContext, eventsToJoin, join)))
                     .publishOn(flowScheduler()); // switch back using the flow threads
         });

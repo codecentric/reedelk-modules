@@ -33,7 +33,7 @@ class HttpRequestContentMapperTest {
         assertThat(type.getMimeType()).isEqualTo(MimeType.APPLICATION_JSON);
         assertThat(type.getTypeClass()).isEqualTo(String.class);
 
-        assertThat(content).isInstanceOf(StringStreamContent.class);
+        assertThat(content).isInstanceOf(StringContent.class);
         assertThat(content.asString()).isEqualTo("test body");
     }
 
@@ -51,7 +51,7 @@ class HttpRequestContentMapperTest {
         assertThat(type.getMimeType()).isEqualTo(MimeType.BINARY);
         assertThat(type.getTypeClass()).isEqualTo(byte[].class);
 
-        assertThat(content).isInstanceOf(ByteArrayStreamContent.class);
+        assertThat(content).isInstanceOf(ByteArrayContent.class);
         assertThat(content.asByteArray()).isEqualTo(testPayload);
     }
 
@@ -69,7 +69,7 @@ class HttpRequestContentMapperTest {
         assertThat(type.getMimeType()).isEqualTo(MimeType.UNKNOWN);
         assertThat(type.getTypeClass()).isEqualTo(byte[].class);
 
-        assertThat(content).isInstanceOf(ByteArrayStreamContent.class);
+        assertThat(content).isInstanceOf(ByteArrayContent.class);
         assertThat(content.asByteArray()).isEqualTo(testPayload);
     }
 }

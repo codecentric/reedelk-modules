@@ -2,11 +2,8 @@ package com.reedelk.esb.execution;
 
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
-import reactor.core.publisher.SynchronousSink;
 
 import java.util.Collection;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import static com.reedelk.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
@@ -25,15 +22,5 @@ class ExecutionUtils {
         return checkAtLeastOneAndGetOrThrow(
                 nextExecutorNodes.stream(),
                 "Expected only one following node");
-    }
-
-    static BiConsumer<MessageAndContext, SynchronousSink<MessageAndContext>> nullSafeMap(Function<MessageAndContext, MessageAndContext> mapper) {
-        return (event, sink) -> {
-            // TODO:If it is null this still needs to notify the end otherwise we would never return from HTTP request.
-            if (event != null) {
-                MessageAndContext result = mapper.apply(event);
-                sink.next(result);
-            }
-        };
     }
 }
