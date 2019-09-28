@@ -1,6 +1,6 @@
 package com.reedelk.esb.services.scriptengine.converter.integertype;
 
-import com.reedelk.esb.services.scriptengine.DynamicValueConverter;
+import com.reedelk.esb.services.scriptengine.evaluator.DynamicValueConverter;
 
 public class AsInteger implements DynamicValueConverter<Integer,Integer> {
     @Override

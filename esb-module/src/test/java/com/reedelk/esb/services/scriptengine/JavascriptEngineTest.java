@@ -291,7 +291,7 @@ class JavascriptEngineTest {
                     "numeric", "23532"));
 
             // When
-            Map<String, String> evaluated = service.evaluate(message, context, dynamicMap);
+            Map<String, String> evaluated = service.evaluate(dynamicMap, message, context);
 
             // Then
             assertThat(evaluated.get("script")).isEqualTo("test");
@@ -305,7 +305,7 @@ class JavascriptEngineTest {
             Message message = MessageBuilder.get().empty().build();
 
             // When
-            Map<String, Object> evaluated = service.evaluate(message, context, DynamicMap.empty());
+            Map<String, Object> evaluated = service.evaluate(DynamicMap.empty(), message, context);
 
             // Then
             assertThat(evaluated).isEmpty();

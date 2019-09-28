@@ -690,7 +690,7 @@ class MessageHttpResponseMapperTest {
 
                 // Then
                 assertThat(initialHeaders).isEmpty();
-                verify(scriptEngine, never()).evaluate(any(Message.class), any(FlowContext.class), any(DynamicMap.class));
+                verify(scriptEngine, never()).evaluate(any(DynamicMap.class), any(Message.class), any(FlowContext.class));
             }
         }
     }
