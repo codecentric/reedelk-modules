@@ -19,14 +19,13 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
         if (dynamicValue == null) {
             return (Optional<T>) PROVIDER.empty();
+
             // Script
         } else if (dynamicValue.isScript()) {
-            if (dynamicValue.isEvaluateMessagePayload()) {
-                // We avoid evaluating the payload (optimization)
-                return (Optional<T>) convert(message.payload(), dynamicValue.getEvaluatedType(), PROVIDER);
-            } else {
-                return (Optional<T>) execute(dynamicValue, PROVIDER, FUNCTION, message, flowContext);
-            }
+            return dynamicValue.isEvaluateMessagePayload() ?
+                    (Optional<T>) convert(message.payload(), dynamicValue.getEvaluatedType(), PROVIDER) :
+                    (Optional<T>) execute(dynamicValue, PROVIDER, FUNCTION, message, flowContext);
+
         } else {
             // Not a script
             T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
