@@ -15,7 +15,7 @@ public class ContentType {
         } else if (responseBody.isScript()) {
             // If it is a script and the script is payload, then we set the content type
             // from the message type
-            if (responseBody.isMessagePayload()) {
+            if (responseBody.isEvaluateMessagePayload()) {
                 // Then we use the content type from the payload's mime type.
                 return com.reedelk.rest.commons.ContentType.from(message);
             }

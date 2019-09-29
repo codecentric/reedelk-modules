@@ -6,6 +6,6 @@ public class IsMessagePayload {
     public static boolean from(DynamicValue<?> body) {
         return body != null &&
                 body.isScript() &&
-                body.isMessagePayload();
+                body.isEvaluateMessagePayload();
     }
 }

@@ -42,75 +42,41 @@ public class DynamicValueEvaluator extends ScriptEngineServiceAdapter {
 
     @Override
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
-        if (dynamicValue == null) {
-            return Optional.empty();
+        if (dynamicValue == null) return Optional.empty();
 
-        } else if (dynamicValue.isScript()) {
-            // If script is empty, no need to evaluate it.
+        if (dynamicValue.isScript()) {
+
             if (dynamicValue.isEmptyScript()) {
+                // If script is empty, no need to evaluate it.
                 return Optional.empty();
-
-            } else if (dynamicValue.isMessagePayload()) {
-                // We avoid interpreting the message payload in javascript (this is an optimization)...
-                T payload = message.payload();
-                if (payload == null) {
-                    return Optional.empty();
-                } else if (dynamicValue.getEvaluatedType().isAssignableFrom(payload.getClass())) {
-                    return Optional.of(payload);
-                } else {
-                    throw new ESBException(String.format("Could not convert payload class [%s] to wanted [%s]", payload.getClass(), dynamicValue.getEvaluatedType()));
-                }
-
+            } else if (dynamicValue.isEvaluateMessagePayload()) {
+                return evaluateMessagePayloadOptimization(dynamicValue.getEvaluatedType(), message);
+                // Script
             } else {
-                String functionName = functionNameOf(dynamicValue, INLINE_SCRIPT);
-                try {
-                    T evaluationResult = (T) invocable.invokeFunction(functionName, message, flowContext);
-                    if (evaluationResult == null) {
-                        return Optional.empty();
-                    } else if (dynamicValue.getEvaluatedType().isAssignableFrom(evaluationResult.getClass())) {
-                        return Optional.of(evaluationResult);
-                    } else {
-                        // Not a script, just text, we need to convert the string to the desired type.
-                        T converted = DynamicValueConverterFactory.convert(evaluationResult, evaluationResult.getClass(), dynamicValue.getEvaluatedType());
-                        return Optional.ofNullable(converted);
-                    }
-                } catch (ScriptException | NoSuchMethodException e) {
-                    throw new ESBException(e);
-                }
+                return execute(dynamicValue, INLINE_SCRIPT, message, flowContext);
             }
 
         } else {
-            // Not a script, just text, we need to convert the string to the desired type.
+            // Not a script
             T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
             return Optional.ofNullable(converted);
         }
     }
 
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> value, Throwable exception, FlowContext flowContext) {
-        /**
-         *        if (responseBody == null|| responseBody.isBlank()) {
-         *             return Mono.empty();
-         *         } else if  (Evaluate.isErrorPayload(responseBody)) {
-         *             // We avoid evaluating a script if we just want
-         *             // to return the exception stacktrace (optimization).
-         *             return StackTraceUtils.asByteStream(exception);
-         *         } else {
-         *             return evaluateBodyScript();
-         *         }
-         */
-        if (value == null) {
+    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Throwable exception, FlowContext flowContext) {
+        if (dynamicValue == null) {
             return Optional.empty();
-        } else if (value.isScript()) {
-            String functionName = functionNameOf(value, INLINE_ERROR_SCRIPT);
-            try {
-                return Optional.ofNullable((T) invocable.invokeFunction(functionName, exception, flowContext));
-            } catch (ScriptException | NoSuchMethodException e) {
-                throw new ESBException(e);
-            }
+
+            // Script
+        } else if (dynamicValue.isScript()) {
+            return dynamicValue.isEmptyScript() ?
+                    Optional.empty() : // If script is empty, no need to evaluate it.
+                    execute(dynamicValue, INLINE_ERROR_SCRIPT, exception, flowContext);
         } else {
-            throw new UnsupportedOperationException("not implemented yet");
-            //return Optional.ofNullable(value.getBody());
+            // Not a script
+            T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
+            return Optional.ofNullable(converted);
         }
     }
 
@@ -124,11 +90,29 @@ public class DynamicValueEvaluator extends ScriptEngineServiceAdapter {
         return Mono.empty();
     }
 
-    /**
-     * We compile the function body if a function has not been registered yet.
-     * @param dynamicValue the dynamic value.
-     * @return the function name required to evaluate this dynamic value.
-     */
+    @SuppressWarnings("unchecked")
+    private <T> Optional<T> execute(DynamicValue<T> dynamicValue, String template, Object... args) {
+        String functionName = functionNameOf(dynamicValue, template);
+
+        Object evaluationResult;
+        try {
+            evaluationResult = invocable.invokeFunction(functionName, args);
+        } catch (ScriptException | NoSuchMethodException e) {
+            throw new ESBException(e);
+        }
+
+        if (evaluationResult == null) {
+            return Optional.empty();
+        } else if (dynamicValue.getEvaluatedType().isAssignableFrom(evaluationResult.getClass())) {
+            return Optional.of((T) evaluationResult);
+        } else {
+            // If the evaluation result does not have the desired type, we try to convert it
+            // to the desired type.
+            T converted = DynamicValueConverterFactory.convert(evaluationResult, evaluationResult.getClass(), dynamicValue.getEvaluatedType());
+            return Optional.ofNullable(converted);
+        }
+    }
+
     private <T> String functionNameOf(DynamicValue<T> dynamicValue, String template) {
         String valueUUID =  dynamicValue.getUUID();
         String functionName = ORIGIN_FUNCTION_NAME.getOrDefault(valueUUID, null);
@@ -139,6 +123,7 @@ public class DynamicValueEvaluator extends ScriptEngineServiceAdapter {
                     String scriptBody = dynamicValue.getBody();
                     String functionDefinition = format(template, functionName, ScriptUtils.unwrap(scriptBody));
                     try {
+                        // Compiling the function definition.
                         engine.eval(functionDefinition);
                         ORIGIN_FUNCTION_NAME.put(valueUUID, functionName);
                     } catch (ScriptException e) {
@@ -148,5 +133,17 @@ public class DynamicValueEvaluator extends ScriptEngineServiceAdapter {
             }
         }
         return functionName;
+    }
+
+    private static <T> Optional<T> evaluateMessagePayloadOptimization(Class<T> targetDesiredClass, Message message) {
+        // We avoid interpreting the message payload in javascript (this is an optimization)...
+        T payload = message.payload();
+        if (payload == null) {
+            return Optional.empty();
+        } else {
+            // Convert the payload to the desired type
+            T converted = DynamicValueConverterFactory.convert(payload, payload.getClass(), targetDesiredClass);
+            return Optional.ofNullable(converted);
+        }
     }
 }
