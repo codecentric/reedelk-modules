@@ -15,14 +15,14 @@ import java.util.Map;
 
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
 
-    private final Map<String, String> ORIGIN_FUNCTION_NAME = new HashMap<>();
+    final Map<String, String> ORIGIN_FUNCTION_NAME = new HashMap<>();
 
     static final FunctionBuilder ERROR_FUNCTION = new EvaluateErrorFunctionBuilder();
     static final FunctionBuilder FUNCTION = new EvaluateFunctionBuilder();
 
 
-    private final ScriptEngine engine;
-    private final Invocable invocable;
+    final ScriptEngine engine;
+    final Invocable invocable;
 
     AbstractDynamicValueEvaluator(ScriptEngine engine, Invocable invocable) {
         this.engine = engine;
@@ -68,7 +68,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         if (functionName == null) {
             synchronized (this) {
                 if (!ORIGIN_FUNCTION_NAME.containsKey(valueUUID)) {
-                    functionName = "fun" + valueUUID;
+                    functionName = functionNameFrom(valueUUID);
                     String scriptBody = dynamicValue.getBody();
                     String functionDefinition =
                             functionBuilder.build(functionName, ScriptUtils.unwrap(scriptBody));
@@ -83,6 +83,12 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             }
         }
         return functionName;
+    }
+
+    private static final String FUNCTION_NAME_TEMPLATE = "fun_%s";
+
+    static String functionNameFrom(String uuid) {
+        return String.format(FUNCTION_NAME_TEMPLATE, uuid);
     }
 
     private static boolean sourceAssignableToTarget(Class<?> sourceClazz, Class<?> targetClazz) {

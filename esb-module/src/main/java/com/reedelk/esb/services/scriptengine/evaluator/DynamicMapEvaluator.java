@@ -9,21 +9,14 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
-public class DynamicMapEvaluator extends ScriptEngineServiceAdapter {
-
-    private final Map<String, String> ORIGIN_FUNCTION_NAME = new HashMap<>();
+public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
 
     private static final Map<String,?> EMPTY_MAP = Collections.unmodifiableMap(Collections.emptyMap());
 
-    private final ScriptEngine engine;
-    private final Invocable invocable;
-
     public DynamicMapEvaluator(ScriptEngine engine, Invocable invocable) {
-        this.engine = engine;
-        this.invocable = invocable;
+        super(engine, invocable);
     }
 
     @SuppressWarnings("unchecked")
@@ -42,14 +35,13 @@ public class DynamicMapEvaluator extends ScriptEngineServiceAdapter {
         }
     }
 
-
     private <T> String functionNameOf(DynamicMap<T> dynamicMap) {
         String valueUUID =  dynamicMap.getUUID();
         String functionName = ORIGIN_FUNCTION_NAME.getOrDefault(valueUUID, null);
         if (functionName == null) {
             synchronized (this) {
-                if (functionName == null) {
-                    functionName = "fun" + valueUUID;
+                if (!ORIGIN_FUNCTION_NAME.containsKey(valueUUID)) {
+                    functionName = functionNameFrom(valueUUID);
                     EvaluateMapFunction<T> evaluateMapFunction = new EvaluateMapFunction<>(functionName, dynamicMap);
                     String functionDefinition = evaluateMapFunction.script();
                     try {
