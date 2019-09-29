@@ -11,7 +11,6 @@ import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -61,12 +60,12 @@ public class JavascriptEngine implements ScriptEngineService {
 
     @Override
     public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext) {
-        throw new IllegalArgumentException("Not implemented yet.");
+        throw new UnsupportedOperationException("Implement me");
     }
 
     @Override
     public <T> Publisher<T> evaluateStream(Script script, Message message, FlowContext flowContext) {
-        return Mono.empty();
+        throw new UnsupportedOperationException("Implement me");
     }
 
     @Override
