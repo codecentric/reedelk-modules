@@ -4,23 +4,23 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.DynamicValue;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import java.util.Optional;
 
-public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
+public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
-    public DynamicValueEvaluator(ScriptEngine engine, Invocable invocable) {
+    public DynamicValueStreamEvaluator(ScriptEngine engine, Invocable invocable) {
         super(engine, invocable);
     }
 
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
+    public <T> Publisher<T> evaluateStream(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
         if (dynamicValue == null) {
-            return Optional.empty();
-            // Script
+            return Mono.empty();
         } else if (dynamicValue.isScript()) {
             if (dynamicValue.isEvaluateMessagePayload()) {
                 // We avoid evaluating the payload (optimization)
@@ -31,28 +31,28 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
         } else {
             // Not a script
             T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
-            return Optional.ofNullable(converted);
+            return Mono.just(converted);
         }
     }
 
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Throwable exception, FlowContext flowContext) {
+    public <T> Publisher<T> evaluateStream(DynamicValue<T> dynamicValue, Throwable throwable, FlowContext flowContext) {
         if (dynamicValue == null) {
-            return Optional.empty();
-            // Script
+            return Mono.empty();
         } else if (dynamicValue.isScript()) {
-            return execute(dynamicValue, INLINE_ERROR_SCRIPT, exception, flowContext);
-            // Not a script
+            // Script
+            return execute(dynamicValue, INLINE_ERROR_SCRIPT, throwable, flowContext);
         } else {
+            // Not a script
             T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
-            return Optional.ofNullable(converted);
+            return Mono.just(converted);
         }
     }
 
-    private <T> Optional<T> execute(DynamicValue<T> dynamicValue, String template, Object... args) {
+    private <T> Publisher<T> execute(DynamicValue<T> dynamicValue, String template, Object... args) {
         // If script is empty, no need to evaluate it.
         if (dynamicValue.isEmptyScript()) {
-            return Optional.empty();
+            return Mono.empty();
         }
 
         String functionName = functionNameOf(dynamicValue, template);
@@ -65,14 +65,14 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Optional<T> convert(Object valueToConvert, Class<?> targetClazz) {
+    private <T> Publisher<T> convert(Object valueToConvert, Class<?> targetClazz) {
         if (valueToConvert == null) {
-            return Optional.empty();
+            return Mono.empty();
         } else if (sourceAssignableToTarget(valueToConvert.getClass(), targetClazz)) {
-            return Optional.of((T) valueToConvert);
+            return Mono.just((T) valueToConvert);
         } else {
             T converted = (T) DynamicValueConverterFactory.convert(valueToConvert, valueToConvert.getClass(), targetClazz);
-            return Optional.of(converted);
+            return Mono.just(converted);
         }
     }
 }

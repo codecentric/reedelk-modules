@@ -2,6 +2,7 @@ package com.reedelk.esb.services.scriptengine;
 
 import com.reedelk.esb.services.scriptengine.evaluator.DynamicMapEvaluator;
 import com.reedelk.esb.services.scriptengine.evaluator.DynamicValueEvaluator;
+import com.reedelk.esb.services.scriptengine.evaluator.DynamicValueStreamEvaluator;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -26,12 +27,14 @@ public class JavascriptEngine implements ScriptEngineService {
 
     private DynamicValueEvaluator dynamicValueEvaluator;
     private DynamicMapEvaluator dynamicMapEvaluator;
+    private DynamicValueStreamEvaluator dynamicValueStreamEvaluator;
 
 
     private JavascriptEngine() {
         ScriptEngine engine = new ScriptEngineManager().getEngineByName(ENGINE_NAME);
         Invocable invocable = (Invocable) engine;
 
+        dynamicValueStreamEvaluator = new DynamicValueStreamEvaluator(engine, invocable);
         dynamicValueEvaluator = new DynamicValueEvaluator(engine, invocable);
         dynamicMapEvaluator = new DynamicMapEvaluator(engine, invocable);
     }
@@ -48,12 +51,12 @@ public class JavascriptEngine implements ScriptEngineService {
 
     @Override
     public <T> Publisher<T> evaluateStream(DynamicValue<T> dynamicValue, Throwable throwable, FlowContext flowContext) {
-        return dynamicValueEvaluator.evaluateStream(dynamicValue, throwable, flowContext);
+        return dynamicValueStreamEvaluator.evaluateStream(dynamicValue, throwable, flowContext);
     }
 
     @Override
     public <T> Publisher<T> evaluateStream(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
-        return dynamicValueEvaluator.evaluateStream(dynamicValue, message, flowContext);
+        return dynamicValueStreamEvaluator.evaluateStream(dynamicValue, message, flowContext);
     }
 
     @Override
