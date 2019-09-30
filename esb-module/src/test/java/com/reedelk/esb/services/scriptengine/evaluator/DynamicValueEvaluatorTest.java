@@ -194,6 +194,19 @@ class DynamicValueEvaluatorTest {
             // Then
             assertThat(result).isNotPresent();
         }
+
+        @Test
+        void shouldCorrectlyEvaluateInteger() {
+            // Given
+            Message message = MessageBuilder.get().javaObject(23432).build();
+            DynamicString dynamicString = DynamicString.from("#[message.payload()]");
+
+            // When
+            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+
+            // Then
+            assertThat(result).contains("23432");
+        }
     }
 
     @Nested
@@ -239,6 +252,19 @@ class DynamicValueEvaluatorTest {
 
             // Then
             assertThat(evaluated).isPresent().contains(53);
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateIntegerFromMessagePayload() {
+            // Given
+            Message message = MessageBuilder.get().javaObject(120).build();
+            DynamicInteger dynamicInteger = DynamicInteger.from("#[message.payload()]");
+
+            // When
+            Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, message, context);
+
+            // Then
+            assertThat(evaluated).isPresent().contains(120);
         }
     }
 
