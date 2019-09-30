@@ -1,10 +1,11 @@
-package com.reedelk.esb.services.scriptengine;
+package com.reedelk.esb.services.scriptengine.evaluator;
 
+import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.script.DynamicMap;
-import com.reedelk.runtime.api.service.ScriptEngineService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,13 +19,17 @@ import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class ScriptEngineTest {
-
-    private ScriptEngineService service = ScriptEngine.INSTANCE;
+class DynamicMapEvaluatorTest {
 
     @Mock
     private FlowContext context;
 
+    private DynamicMapEvaluator evaluator;
+
+    @BeforeEach
+    void setUp() {
+        evaluator = new DynamicMapEvaluator(JavascriptEngineProvider.INSTANCE);
+    }
 
     @Nested
     @DisplayName("Evaluate dynamic map with message and context")
@@ -42,7 +47,7 @@ class ScriptEngineTest {
                     "numeric", "23532"));
 
             // When
-            Map<String, String> evaluated = service.evaluate(dynamicMap, message, context);
+            Map<String, String> evaluated = evaluator.evaluate(dynamicMap, message, context);
 
             // Then
             assertThat(evaluated.get("script")).isEqualTo("test");
@@ -56,7 +61,7 @@ class ScriptEngineTest {
             Message message = MessageBuilder.get().empty().build();
 
             // When
-            Map<String, Object> evaluated = service.evaluate(DynamicMap.empty(), message, context);
+            Map<String, Object> evaluated = evaluator.evaluate(DynamicMap.empty(), message, context);
 
             // Then
             assertThat(evaluated).isEmpty();

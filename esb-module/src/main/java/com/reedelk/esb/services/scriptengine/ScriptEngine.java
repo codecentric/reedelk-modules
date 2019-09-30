@@ -20,9 +20,9 @@ public class ScriptEngine implements ScriptEngineService {
 
     public static final ScriptEngine INSTANCE = new ScriptEngine();
 
+    private DynamicValueStreamEvaluator dynamicValueStreamEvaluator;
     private DynamicValueEvaluator dynamicValueEvaluator;
     private DynamicMapEvaluator dynamicMapEvaluator;
-    private DynamicValueStreamEvaluator dynamicValueStreamEvaluator;
 
     private ScriptEngine() {
         ScriptEngineProvider provider = JavascriptEngineProvider.INSTANCE;
@@ -69,8 +69,8 @@ public class ScriptEngine implements ScriptEngineService {
 
     @Override
     public void onDisposed(Component component) {
-        // TODO: Complete me. Need to remove defined functions from maps.
-        //String key = key(component);
-        //ORIGIN_FUNCTION_NAME.remove(key);
+        dynamicValueStreamEvaluator.onDisposed(component);
+        dynamicValueEvaluator.onDisposed(component);
+        dynamicMapEvaluator.onDisposed(component);
     }
 }
