@@ -15,4 +15,7 @@ public class Converters {
         tmp.put(Integer.class, new AsInteger());
         ALL = Collections.unmodifiableMap(tmp);
     }
+
+    private Converters() {
+    }
 }

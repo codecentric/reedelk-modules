@@ -15,4 +15,7 @@ public class Converters {
         tmp.put(byte[].class, new AsByteArray());
         ALL = Collections.unmodifiableMap(tmp);
     }
+
+    private Converters() {
+    }
 }

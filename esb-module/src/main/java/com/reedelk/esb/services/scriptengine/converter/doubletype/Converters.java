@@ -14,4 +14,7 @@ public class Converters {
         tmp.put(Integer.class, new com.reedelk.esb.services.scriptengine.converter.doubletype.AsInteger());
         ALL = Collections.unmodifiableMap(tmp);
     }
+
+    private Converters() {
+    }
 }

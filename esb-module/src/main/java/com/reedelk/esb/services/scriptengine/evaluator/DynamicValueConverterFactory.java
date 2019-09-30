@@ -20,6 +20,9 @@ class DynamicValueConverterFactory {
         CONVERTERS = Collections.unmodifiableMap(tmp);
     }
 
+    private DynamicValueConverterFactory() {
+    }
+
     @SuppressWarnings("unchecked")
     static <Input,Output> Output convert(Object input, Class<Input> inputClass, Class<Output> outputClass) {
         Map<Class<?>, DynamicValueConverter<?, ?>> typeConverters = CONVERTERS.get(inputClass);
