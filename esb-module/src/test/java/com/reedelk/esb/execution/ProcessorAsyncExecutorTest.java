@@ -142,9 +142,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
     class ProcessorThrowingExceptionAsync implements ProcessorAsync {
         @Override
         public void apply(Message input, FlowContext flowContext, OnResult callback) {
-            new Thread(() -> {
-                callback.onError(new IllegalStateException("Error"), flowContext);
-            }).start();
+            new Thread(() -> callback.onError(new IllegalStateException("Error"), flowContext)).start();
         }
     }
 
