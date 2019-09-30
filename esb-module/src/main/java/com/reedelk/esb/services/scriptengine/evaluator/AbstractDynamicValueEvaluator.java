@@ -24,7 +24,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         this.scriptEngine = scriptEngine;
     }
 
-    <ConvertedType, T> ConvertedType execute(DynamicValue<T> dynamicValue, ValueProvider<ConvertedType> provider, FunctionBuilder functionBuilder, Object... args) {
+    <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider<S> provider, FunctionBuilder functionBuilder, Object... args) {
         if (dynamicValue.isEmptyScript()) {
             return provider.empty();
         } else {
@@ -34,13 +34,14 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    <ConvertedType> ConvertedType convert(Object valueToConvert, Class<?> targetClazz, ValueProvider<ConvertedType> provider) {
+    <S> S convert(Object valueToConvert, Class<?> targetClazz, ValueProvider<S> provider) {
         return valueToConvert == null ?
                 provider.empty() :
                 convert(valueToConvert, valueToConvert.getClass(), targetClazz, provider);
     }
 
-    <ConvertedType> ConvertedType convert(Object valueToConvert, Class<?> sourceClass, Class<?> targetClazz, ValueProvider<ConvertedType> provider) {
+    @SuppressWarnings("unchecked")
+    <S> S convert(Object valueToConvert, Class<?> sourceClass, Class<?> targetClazz, ValueProvider<S> provider) {
         // Value is a stream
         if (valueToConvert instanceof Publisher<?>) {
             Object converted = DynamicValueConverterFactory.convertStream((Publisher) valueToConvert, sourceClass, targetClazz);
@@ -57,10 +58,9 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    interface ValueProvider<ConvertedType> {
-        ConvertedType empty();
-
-        ConvertedType from(Object value);
+    interface ValueProvider<S> {
+        S empty();
+        S from(Object value);
     }
 
     private <T> String functionNameOf(DynamicValue<T> dynamicValue, FunctionBuilder functionBuilder) {
