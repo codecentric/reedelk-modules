@@ -9,9 +9,10 @@ import java.util.Map;
 
 class DynamicValueConverterFactory {
 
-    private static final Map<Class<?>, Map<Class<?>, DynamicValueConverter<?,?>>> CONVERTERS;
+    private static final Map<Class<?>, Map<Class<?>, DynamicValueConverter<?, ?>>> CONVERTERS;
+
     static {
-        Map<Class<?>, Map<Class<?>, DynamicValueConverter<?,?>>> tmp = new HashMap<>();
+        Map<Class<?>, Map<Class<?>, DynamicValueConverter<?, ?>>> tmp = new HashMap<>();
         tmp.put(String.class, com.reedelk.esb.services.scriptengine.converter.stringtype.Converters.ALL);
         tmp.put(Double.class, com.reedelk.esb.services.scriptengine.converter.doubletype.Converters.ALL);
         tmp.put(Integer.class, com.reedelk.esb.services.scriptengine.converter.integertype.Converters.ALL);
@@ -24,36 +25,36 @@ class DynamicValueConverterFactory {
     }
 
     @SuppressWarnings("unchecked")
-    static <Input,Output> Output convert(Object input, Class<Input> inputClass, Class<Output> outputClass) {
+    static <I, O> O convert(Object input, Class<I> inputClass, Class<O> outputClass) {
         Map<Class<?>, DynamicValueConverter<?, ?>> typeConverters = CONVERTERS.get(inputClass);
 
         if (typeConverters != null) {
-            DynamicValueConverter<Input, Output> outputConverters =
-                    (DynamicValueConverter<Input, Output>) typeConverters.get(outputClass);
-            if (outputConverters != null) return outputConverters.from((Input) input);
+            DynamicValueConverter<I, O> outputConverters =
+                    (DynamicValueConverter<I, O>) typeConverters.get(outputClass);
+            if (outputConverters != null) return outputConverters.from((I) input);
 
         } else if (input instanceof Exception) {
             Map<Class<?>, DynamicValueConverter<?, ?>> exceptionConverters = CONVERTERS.get(Exception.class);
-            DynamicValueConverter<Input, Output> outputConverters =
-                    (DynamicValueConverter<Input, Output>) exceptionConverters.get(outputClass);
-            if (outputConverters != null) return outputConverters.from((Input) input);
+            DynamicValueConverter<I, O> outputConverters =
+                    (DynamicValueConverter<I, O>) exceptionConverters.get(outputClass);
+            if (outputConverters != null) return outputConverters.from((I) input);
         }
 
         if (String.class.equals(outputClass)) {
-            return (Output) input.toString();
+            return (O) input.toString();
         } else if (Object.class.equals(outputClass)) {
-            return (Output) input;
+            return (O) input;
         }
 
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
     }
 
     @SuppressWarnings("unchecked")
-    static <Input,Output> Publisher<Output> convertStream(Publisher<Input> input, Class<Input> inputClass, Class<Output> outputClass) {
+    static <I, O> Publisher<O> convertStream(Publisher<I> input, Class<I> inputClass, Class<O> outputClass) {
         Map<Class<?>, DynamicValueConverter<?, ?>> typeConverters = CONVERTERS.get(inputClass);
         if (typeConverters != null) {
-            DynamicValueConverter<Input, Output> outputConverters =
-                    (DynamicValueConverter<Input, Output>) typeConverters.get(outputClass);
+            DynamicValueConverter<I, O> outputConverters =
+                    (DynamicValueConverter<I, O>) typeConverters.get(outputClass);
             if (outputConverters != null) {
                 return outputConverters.from(input);
             }

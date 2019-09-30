@@ -207,6 +207,19 @@ class DynamicValueEvaluatorTest {
             // Then
             assertThat(result).contains("23432");
         }
+
+        @Test
+        void shouldEvaluateNullScriptResults() {
+            // Given
+            Message message = MessageBuilder.get().text("A text").build();
+            DynamicString dynamicString = DynamicString.from("#[null]");
+
+            // When
+            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+
+            // Then
+            assertThat(result).isNotPresent();
+        }
     }
 
     @Nested
