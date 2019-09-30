@@ -61,9 +61,9 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
         }
     }
 
-    private final ValueProvider<Publisher<?>> PROVIDER = new StreamValueProvider();
+    private static final ValueProvider<Publisher<?>> PROVIDER = new StreamValueProvider();
 
-    class StreamValueProvider implements ValueProvider<Publisher<?>> {
+    static class StreamValueProvider implements ValueProvider<Publisher<?>> {
         @Override
         public Publisher<?> empty() {
             return Mono.empty();
