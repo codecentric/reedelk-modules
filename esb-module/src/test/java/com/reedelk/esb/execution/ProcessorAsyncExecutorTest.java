@@ -143,11 +143,6 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
         @Override
         public void apply(Message input, FlowContext flowContext, OnResult callback) {
             new Thread(() -> {
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    // nothing to do
-                }
                 callback.onError(new IllegalStateException("Error"), flowContext);
             }).start();
         }
@@ -164,11 +159,6 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
         @Override
         public void apply(Message input, FlowContext flowContext, OnResult callback) {
             new Thread(() -> {
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    // nothing to do
-                }
                 String inputString = input.getContent().asString();
                 String outputString = inputString + postfix;
                 Message out = MessageBuilder.get().text(outputString).build();
