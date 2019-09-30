@@ -1,13 +1,13 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
+import com.reedelk.runtime.api.commons.StackTraceUtils;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.StringContent;
-import com.reedelk.runtime.api.message.type.TypedContent;
-import com.reedelk.runtime.api.script.DynamicString;
+import com.reedelk.runtime.api.message.type.*;
+import com.reedelk.runtime.api.script.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
+
+import java.util.Arrays;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicValueStreamEvaluatorTest {
@@ -226,5 +228,370 @@ class DynamicValueStreamEvaluatorTest {
                     .expectNext("23432")
                     .verifyComplete();
         }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic integer value with message and context")
+    class EvaluateDynamicIntegerValueWithMessageAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateInteger() {
+            // Given
+            Message message = MessageBuilder.get().text("test").build();
+            DynamicInteger dynamicInteger = DynamicInteger.from("#[506]");
+
+            // When
+            Publisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(506)
+                    .verifyComplete();
+        }
+
+        // Testing optimistic typing (Nashorn uses optimistic typing (since JDK 8u40))
+        // http://openjdk.java.net/jeps/196.
+        @Test
+        void shouldCorrectlySumNumber() {
+            // Given
+            Message message = MessageBuilder.get().text("12").build();
+            DynamicInteger dynamicInteger = DynamicInteger.from("#[parseInt(message.payload()) + 10]");
+
+            // When
+            Publisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(22)
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateIntegerFromText() {
+            // Given
+            Message message = MessageBuilder.get().text("test").build();
+            DynamicInteger dynamicInteger = DynamicInteger.from("53");
+
+            // When
+            Publisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(53)
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateIntegerFromMessagePayload() {
+            // Given
+            Message message = MessageBuilder.get().javaObject(120).build();
+            DynamicInteger dynamicInteger = DynamicInteger.from("#[message.payload()]");
+
+            // When
+            Publisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(120)
+                    .verifyComplete();
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic boolean value with message and context")
+    class EvaluateDynamicBooleanValueWithMessageAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateBoolean() {
+            // Given
+            Message message = MessageBuilder.get().text("a test").build();
+            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[1 == 1]");
+
+            // When
+            Publisher<Boolean> publisher = evaluator.evaluateStream(dynamicBoolean, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(true)
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateBooleanFromPayload() {
+            // Given
+            Message message = MessageBuilder.get().text("true").build();
+            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[message.payload()]");
+
+            // When
+            Publisher<Boolean> publisher = evaluator.evaluateStream(dynamicBoolean, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(true)
+                    .verifyComplete();
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic byte array value with message and context")
+    class EvaluateDynamicByteArrayWithMessageAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateByteArrayFromPayload() {
+            // Given
+            String payload = "My sample payload";
+            Message message = MessageBuilder.get().text(payload).build();
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]");
+
+            // When
+            Publisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNextMatches(bytes -> Arrays.equals(bytes, payload.getBytes()))
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateByteArrayFromPayloadByteArrayStream() {
+            // Given
+            Flux<byte[]> stream = Flux.just("one".getBytes(), "two".getBytes());
+            ByteArrayContent streamContent = new ByteArrayContent(stream, MimeType.TEXT);
+            Message message = MessageBuilder.get().typedContent(streamContent).build();
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]");
+
+            // When
+            Publisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNextMatches(bytes -> Arrays.equals(bytes, "one".getBytes()))
+                    .expectNextMatches(bytes -> Arrays.equals(bytes, "two".getBytes()))
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateByteArrayFromPayloadStringStream() {
+            // Given
+            Flux<String> stream =  Flux.just("one","two");
+            StringContent streamContent = new StringContent(stream, MimeType.TEXT);
+            Message message = MessageBuilder.get().typedContent(streamContent).build();
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]");
+
+            // When
+            Publisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNextMatches(bytes -> Arrays.equals(bytes, "one".getBytes()))
+                    .expectNextMatches(bytes -> Arrays.equals(bytes, "two".getBytes()))
+                    .verifyComplete();
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic object value with message and context")
+    class EvaluateDynamicObjectValueWithMessageAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateDynamicObject() {
+            // Given
+            Flux<String> content = Flux.just("Hello", ", this", " is", " just", " a");
+            Type type = new Type(MimeType.TEXT, String.class);
+            TypedContent<String> typedContent = new StringContent(content, type);
+
+            Message message = MessageBuilder.get().typedContent(typedContent).build();
+
+            DynamicObject dynamicObject = DynamicObject.from("#[message.content]");
+
+            // When
+            Publisher<Object> publisher = evaluator.evaluateStream(dynamicObject, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(typedContent)
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateMessage() {
+            // Given
+            Message message = MessageBuilder.get().text("test").build();
+            DynamicObject dynamicString = DynamicObject.from("#[message]");
+
+            // When
+            Publisher<Object> publisher = evaluator.evaluateStream(dynamicString, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(message)
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateMessagePayload() {
+            // Given
+            MyObject given = new MyObject();
+            Message message = MessageBuilder.get().javaObject(given).build();
+            DynamicObject dynamicString = DynamicObject.from("#[message.payload()]");
+
+            // When
+            Publisher<Object> publisher = evaluator.evaluateStream(dynamicString, message, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(given)
+                    .verifyComplete();
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic string with throwable and context")
+    class EvaluateDynamicStringWithThrowableAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateErrorPayload() {
+            // Given
+            Throwable myException = new ESBException("Test error");
+            DynamicString dynamicString = DynamicString.from("#[error]");
+
+            // When
+            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(StackTraceUtils.asString(myException))
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateExceptionMessage() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicString dynamicString = DynamicString.from("#[error.getMessage()]");
+
+            // When
+            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext("My exception message")
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldReturnEmptyWhenScriptIsEmpty() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicString dynamicString = DynamicString.from("#[]");
+
+            // When
+            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldReturnEmptyWhenNullString() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicString dynamicString = DynamicString.from(null);
+
+            // When
+            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldReturnStringValue() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicString dynamicString = DynamicString.from("my text");
+
+            // When
+            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext("my text")
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldReturnEmptyWhenNullDynamicValue() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicString dynamicString = null;
+
+            // When
+            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .verifyComplete();
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic object value with throwable and context")
+    class EvaluateDynamicObjectValueWithThrowableAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateDynamicObject() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicObject dynamicObject = DynamicObject.from("#[error]");
+
+            // When
+            Publisher<Object> publisher = evaluator.evaluateStream(dynamicObject, myException, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext(myException)
+                    .verifyComplete();
+        }
+
+        @Test
+        void shouldReturnStringDynamicObject() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicObject dynamicObject = DynamicObject.from("my text");
+
+            // When
+            Publisher<Object> publisher = evaluator.evaluateStream(dynamicObject, myException, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNext("my text")
+                    .verifyComplete();
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic byte array with throwable and context")
+    class EvaluateDynamicByteArrayWithThrowableAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateDynamicByteArrayFromException() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[error]");
+
+            // When
+            Publisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, myException, context);
+
+            // Then
+            StepVerifier.create(publisher)
+                    .expectNextMatches(bytes -> Arrays.equals(bytes, StackTraceUtils.asByteArray(myException)))
+                    .verifyComplete();
+        }
+    }
+
+    private class MyObject {
     }
 }
