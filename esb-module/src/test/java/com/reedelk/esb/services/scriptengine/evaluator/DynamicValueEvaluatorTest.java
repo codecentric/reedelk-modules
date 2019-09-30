@@ -8,10 +8,7 @@ import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.StringContent;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
-import com.reedelk.runtime.api.script.DynamicBoolean;
-import com.reedelk.runtime.api.script.DynamicInteger;
-import com.reedelk.runtime.api.script.DynamicObject;
-import com.reedelk.runtime.api.script.DynamicString;
+import com.reedelk.runtime.api.script.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -304,6 +301,19 @@ class DynamicValueEvaluatorTest {
     @DisplayName("Evaluate dynamic byte array value with message and context")
     class EvaluateDynamicByteArrayWithMessageAndContext {
 
+        @Test
+        void shouldCorrectlyEvaluateByteArrayFromPayload() {
+            // Given
+            String payload = "My sample payload";
+            Message message = MessageBuilder.get().text(payload).build();
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]");
+
+            // When
+            Optional<byte[]> evaluated = evaluator.evaluate(dynamicByteArray, message, context);
+
+            // Then
+            assertThat(evaluated).isPresent().contains(payload.getBytes());
+        }
     }
 
     @Nested
