@@ -46,8 +46,8 @@ public class ForkWrapper extends Fork {
 
     @Override
     public void dispose() {
-        if (scheduler != null) {
-            if (!scheduler.isDisposed()) {
+        synchronized (this) {
+            if (scheduler != null && !scheduler.isDisposed()) {
                 scheduler.dispose();
             }
         }

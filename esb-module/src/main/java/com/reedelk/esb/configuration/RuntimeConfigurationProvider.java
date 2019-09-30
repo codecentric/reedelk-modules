@@ -2,22 +2,30 @@ package com.reedelk.esb.configuration;
 
 import com.reedelk.esb.services.configuration.ESBConfigurationService;
 
+import static com.reedelk.esb.commons.Preconditions.checkState;
+
 public class RuntimeConfigurationProvider {
 
     private static final String RUNTIME_CONFIG_FILE_PID = "com.reedelk.runtime";
 
-    private static volatile RuntimeConfigurationProvider INSTANCE;
+    private static final RuntimeConfigurationProvider PROVIDER = new RuntimeConfigurationProvider();
 
-    private final ESBConfigurationService configService;
+    private ESBConfigurationService configService;
     private FlowExecutorConfig executorConfig;
 
-    private RuntimeConfigurationProvider(ESBConfigurationService configService) {
-        this.configService = configService;
-        loadProperties();
+    private RuntimeConfigurationProvider() {
+    }
+
+    private void init(ESBConfigurationService configService) {
+        synchronized (PROVIDER) {
+            checkState(configService == null, "Config service already initialized");
+            this.configService = configService;
+            loadProperties();
+        }
     }
 
     public static RuntimeConfigurationProvider get() {
-        return INSTANCE;
+        return PROVIDER;
     }
 
     public FlowExecutorConfig getFlowExecutorConfig() {
@@ -25,13 +33,7 @@ public class RuntimeConfigurationProvider {
     }
 
     static void initialize(ESBConfigurationService configService) {
-        if (INSTANCE == null) {
-            synchronized (RuntimeConfigurationProvider.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new RuntimeConfigurationProvider(configService);
-                }
-            }
-        }
+        PROVIDER.init(configService);
     }
 
     private void loadProperties() {
