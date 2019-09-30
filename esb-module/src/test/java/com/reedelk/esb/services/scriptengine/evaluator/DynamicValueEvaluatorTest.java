@@ -8,6 +8,7 @@ import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.StringContent;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.script.DynamicBoolean;
 import com.reedelk.runtime.api.script.DynamicInteger;
 import com.reedelk.runtime.api.script.DynamicObject;
 import com.reedelk.runtime.api.script.DynamicString;
@@ -269,6 +270,43 @@ class DynamicValueEvaluatorTest {
     }
 
     @Nested
+    @DisplayName("Evaluate dynamic boolean value with message and context")
+    class EvaluateDynamicBooleanValueWithMessageAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateBoolean() {
+            // Given
+            Message message = MessageBuilder.get().text("a test").build();
+            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[1 == 1]");
+
+            // When
+            Optional<Boolean> evaluated = evaluator.evaluate(dynamicBoolean, message, context);
+
+            // Then
+            assertThat(evaluated).isPresent().contains(true);
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateBooleanFromPayload() {
+            // Given
+            Message message = MessageBuilder.get().text("true").build();
+            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[message.payload()]");
+
+            // When
+            Optional<Boolean> evaluated = evaluator.evaluate(dynamicBoolean, message, context);
+
+            // Then
+            assertThat(evaluated).isPresent().contains(true);
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic byte array value with message and context")
+    class EvaluateDynamicByteArrayWithMessageAndContext {
+
+    }
+
+    @Nested
     @DisplayName("Evaluate dynamic object value with message and context")
     class EvaluateDynamicObjectValueWithMessageAndContext {
 
@@ -302,5 +340,22 @@ class DynamicValueEvaluatorTest {
             // Then
             assertThat(evaluated).isPresent().contains(message);
         }
+
+        @Test
+        void shouldCorrectlyEvaluateMessagePayload() {
+            // Given
+            MyObject given = new MyObject();
+            Message message = MessageBuilder.get().javaObject(given).build();
+            DynamicObject dynamicString = DynamicObject.from("#[message.payload()]");
+
+            // When
+            Optional<Object> evaluated = evaluator.evaluate(dynamicString, message, context);
+
+            // Then
+            assertThat(evaluated).isPresent().contains(given);
+        }
+    }
+
+    private class MyObject {
     }
 }

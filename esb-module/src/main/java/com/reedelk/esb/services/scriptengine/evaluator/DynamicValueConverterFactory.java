@@ -1,8 +1,6 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
-import com.reedelk.esb.services.scriptengine.converter.stringtype.AsByteArray;
-import com.reedelk.esb.services.scriptengine.converter.stringtype.AsInteger;
-import com.reedelk.esb.services.scriptengine.converter.stringtype.AsString;
+import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
 import org.reactivestreams.Publisher;
 
 import java.util.HashMap;
@@ -13,11 +11,11 @@ class DynamicValueConverterFactory {
     private static final Map<Class<?>, Map<Class<?>, DynamicValueConverter<?,?>>> CONVERTERS;
     static {
         Map<Class<?>, Map<Class<?>, DynamicValueConverter<?,?>>> tmp = new HashMap<>();
-        tmp.put(String.class, FromStringConverters.CONVERTERS);
-        tmp.put(Double.class, FromDoubleConverters.CONVERTERS);
-        tmp.put(Integer.class, FromIntegerConverters.CONVERTERS);
-        tmp.put(byte[].class, FromByteArrayConverters.CONVERTERS);
-        tmp.put(Exception.class, FromExceptionConverters.CONVERTERS);
+        tmp.put(String.class, com.reedelk.esb.services.scriptengine.converter.stringtype.Converters.ALL);
+        tmp.put(Double.class, com.reedelk.esb.services.scriptengine.converter.doubletype.Converters.ALL);
+        tmp.put(Integer.class, com.reedelk.esb.services.scriptengine.converter.integertype.Converters.ALL);
+        tmp.put(byte[].class, com.reedelk.esb.services.scriptengine.converter.bytearraytype.Converters.ALL);
+        tmp.put(Exception.class, com.reedelk.esb.services.scriptengine.converter.exceptiontype.Converters.ALL);
         CONVERTERS = tmp;
     }
 
@@ -28,27 +26,21 @@ class DynamicValueConverterFactory {
         if (typeConverters != null) {
             DynamicValueConverter<Input, Output> outputConverters =
                     (DynamicValueConverter<Input, Output>) typeConverters.get(outputClass);
-            if (outputConverters != null) {
-                return outputConverters.from((Input) input);
-            }
-        }
+            if (outputConverters != null) return outputConverters.from((Input) input);
 
-        if (String.class.equals(outputClass)) {
+        } else if (String.class.equals(outputClass)) {
             return (Output) input.toString();
-        }
 
-        if (Object.class.equals(outputClass)) {
+        } else if (Object.class.equals(outputClass)) {
             return (Output) input;
-        }
 
-        if (input instanceof Exception) {
+        } else if (input instanceof Exception) {
             Map<Class<?>, DynamicValueConverter<?, ?>> exceptionConverters = CONVERTERS.get(Exception.class);
             DynamicValueConverter<Input, Output> outputConverters =
                     (DynamicValueConverter<Input, Output>) exceptionConverters.get(outputClass);
-            if (outputConverters != null) {
-                return outputConverters.from((Input) input);
-            }
+            if (outputConverters != null) return outputConverters.from((Input) input);
         }
+
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
     }
 
@@ -63,54 +55,5 @@ class DynamicValueConverterFactory {
             }
         }
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
-    }
-
-    private static class FromStringConverters {
-        static final Map<Class<?>, DynamicValueConverter<?, ?>> CONVERTERS;
-        static {
-            Map<Class<?>, DynamicValueConverter<?, ?>> tmp = new HashMap<>();
-            tmp.put(String.class, new AsString());
-            tmp.put(Integer.class, new AsInteger());
-            tmp.put(byte[].class, new AsByteArray());
-            CONVERTERS = tmp;
-        }
-    }
-
-    private static class FromIntegerConverters {
-        static final Map<Class<?>, DynamicValueConverter<?, ?>> CONVERTERS;
-        static {
-            Map<Class<?>, DynamicValueConverter<?, ?>> tmp = new HashMap<>();
-            tmp.put(String.class, new com.reedelk.esb.services.scriptengine.converter.integertype.AsString());
-            tmp.put(Integer.class, new com.reedelk.esb.services.scriptengine.converter.integertype.AsInteger());
-            CONVERTERS = tmp;
-        }
-    }
-
-    private static class FromDoubleConverters {
-        static final Map<Class<?>, DynamicValueConverter<?, ?>> CONVERTERS;
-        static {
-            Map<Class<?>, DynamicValueConverter<?, ?>> tmp = new HashMap<>();
-            tmp.put(Integer.class, new com.reedelk.esb.services.scriptengine.converter.doubletype.AsInteger());
-            CONVERTERS = tmp;
-        }
-    }
-
-    private static class FromByteArrayConverters {
-        static final Map<Class<?>, DynamicValueConverter<?, ?>> CONVERTERS;
-        static {
-            Map<Class<?>, DynamicValueConverter<?, ?>> tmp = new HashMap<>();
-            tmp.put(byte[].class, new com.reedelk.esb.services.scriptengine.converter.bytearraytype.AsByteArray());
-            CONVERTERS = tmp;
-        }
-    }
-
-    private static class FromExceptionConverters {
-        static final Map<Class<?>, DynamicValueConverter<?, ?>> CONVERTERS;
-        static {
-            Map<Class<?>, DynamicValueConverter<?, ?>> tmp = new HashMap<>();
-            tmp.put(String.class, new com.reedelk.esb.services.scriptengine.converter.exceptiontype.AsString());
-            tmp.put(byte[].class, new com.reedelk.esb.services.scriptengine.converter.exceptiontype.AsByteArray());
-            CONVERTERS = tmp;
-        }
     }
 }

@@ -1,6 +1,6 @@
 package com.reedelk.esb.services.scriptengine.converter.stringtype;
 
-import com.reedelk.esb.services.scriptengine.evaluator.DynamicValueConverter;
+import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
 import org.reactivestreams.Publisher;
 
 public class AsString implements DynamicValueConverter<String,String> {
