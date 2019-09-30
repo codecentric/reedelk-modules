@@ -14,11 +14,10 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
 
     private static final String FUNCTION_NAME_TEMPLATE = "fun_%s";
 
-    final Map<String, String> ORIGIN_FUNCTION_NAME = new HashMap<>();
-
     static final FunctionBuilder ERROR_FUNCTION = new EvaluateErrorFunctionBuilder();
     static final FunctionBuilder FUNCTION = new EvaluateFunctionBuilder();
 
+    final Map<String, String> uuidFunctionNameMap = new HashMap<>();
     final ScriptEngineProvider scriptEngine;
 
     AbstractDynamicValueEvaluator(ScriptEngineProvider scriptEngine) {
@@ -66,16 +65,16 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
 
     private <T> String functionNameOf(DynamicValue<T> dynamicValue, FunctionBuilder functionBuilder) {
         String valueUUID = dynamicValue.getUUID();
-        String functionName = ORIGIN_FUNCTION_NAME.get(valueUUID);
+        String functionName = uuidFunctionNameMap.get(valueUUID);
         if (functionName == null) {
             synchronized (this) {
-                if (!ORIGIN_FUNCTION_NAME.containsKey(valueUUID)) {
+                if (!uuidFunctionNameMap.containsKey(valueUUID)) {
                     functionName = functionNameFrom(valueUUID);
                     String scriptBody = dynamicValue.getBody();
                     String functionDefinition = functionBuilder.build(functionName, ScriptUtils.unwrap(scriptBody));
                     // pre-compile the function definition.
                     scriptEngine.eval(functionDefinition);
-                    ORIGIN_FUNCTION_NAME.put(valueUUID, functionName);
+                    uuidFunctionNameMap.put(valueUUID, functionName);
                 }
             }
         }

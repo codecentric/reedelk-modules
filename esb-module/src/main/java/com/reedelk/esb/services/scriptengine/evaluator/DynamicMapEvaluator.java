@@ -29,15 +29,15 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
 
     private <T> String functionNameOf(DynamicMap<T> dynamicMap) {
         String valueUUID =  dynamicMap.getUUID();
-        String functionName = ORIGIN_FUNCTION_NAME.getOrDefault(valueUUID, null);
+        String functionName = uuidFunctionNameMap.getOrDefault(valueUUID, null);
         if (functionName == null) {
             synchronized (this) {
-                if (!ORIGIN_FUNCTION_NAME.containsKey(valueUUID)) {
+                if (!uuidFunctionNameMap.containsKey(valueUUID)) {
                     functionName = functionNameFrom(valueUUID);
                     EvaluateMapFunction<T> evaluateMapFunction = new EvaluateMapFunction<>(functionName, dynamicMap);
                     String functionDefinition = evaluateMapFunction.script();
                     scriptEngine.eval(functionDefinition);
-                    ORIGIN_FUNCTION_NAME.put(valueUUID, functionName);
+                    uuidFunctionNameMap.put(valueUUID, functionName);
                 }
             }
         }
