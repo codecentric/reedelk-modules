@@ -2,6 +2,7 @@ package com.reedelk.esb.services.scriptengine.converter.stringtype;
 
 import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,6 @@ public class Converters {
         tmp.put(Integer.class, new AsInteger());
         tmp.put(Boolean.class, new AsBoolean());
         tmp.put(byte[].class, new AsByteArray());
-        ALL = tmp;
+        ALL = Collections.unmodifiableMap(tmp);
     }
 }
