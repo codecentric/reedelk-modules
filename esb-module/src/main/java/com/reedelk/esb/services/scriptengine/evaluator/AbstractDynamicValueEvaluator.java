@@ -61,7 +61,6 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
 
     interface ValueProvider<ConvertedType> {
         ConvertedType empty();
-
         ConvertedType from(Object value);
     }
 

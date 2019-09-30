@@ -3,6 +3,7 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
 import org.reactivestreams.Publisher;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ class DynamicValueConverterFactory {
         tmp.put(Integer.class, com.reedelk.esb.services.scriptengine.converter.integertype.Converters.ALL);
         tmp.put(byte[].class, com.reedelk.esb.services.scriptengine.converter.bytearraytype.Converters.ALL);
         tmp.put(Exception.class, com.reedelk.esb.services.scriptengine.converter.exceptiontype.Converters.ALL);
-        CONVERTERS = tmp;
+        CONVERTERS = Collections.unmodifiableMap(tmp);
     }
 
     @SuppressWarnings("unchecked")
