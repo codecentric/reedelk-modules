@@ -1,10 +1,17 @@
 package com.reedelk.esb.services.scriptengine.converter.integertype;
 
 import com.reedelk.esb.services.scriptengine.evaluator.DynamicValueConverter;
+import org.reactivestreams.Publisher;
 
 public class AsInteger implements DynamicValueConverter<Integer,Integer> {
+
     @Override
-    public Integer to(Integer value) {
+    public Integer from(Integer value) {
         return value;
+    }
+
+    @Override
+    public Publisher<Integer> from(Publisher<Integer> stream) {
+        return stream;
     }
 }

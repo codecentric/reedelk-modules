@@ -1,7 +1,9 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
+import com.reedelk.esb.services.scriptengine.converter.stringtype.AsByteArray;
 import com.reedelk.esb.services.scriptengine.converter.stringtype.AsInteger;
 import com.reedelk.esb.services.scriptengine.converter.stringtype.AsString;
+import org.reactivestreams.Publisher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +26,7 @@ class DynamicValueConverterFactory {
             DynamicValueConverter<Input, Output> outputConverters =
                     (DynamicValueConverter<Input, Output>) typeConverters.getOrDefault(outputClass, null);
             if (outputConverters != null) {
-                return outputConverters.to((Input) input);
+                return outputConverters.from((Input) input);
             }
         }
         if (String.class.equals(outputClass)) {
@@ -36,12 +38,26 @@ class DynamicValueConverterFactory {
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
     }
 
+    @SuppressWarnings("unchecked")
+    static <Input,Output> Publisher<Output> convertStream(Publisher<Input> input, Class<Input> inputClass, Class<Output> outputClass) {
+        Map<Class<?>, DynamicValueConverter<?, ?>> typeConverters = CONVERTERS.getOrDefault(inputClass, null);
+        if (typeConverters != null) {
+            DynamicValueConverter<Input, Output> outputConverters =
+                    (DynamicValueConverter<Input, Output>) typeConverters.getOrDefault(outputClass, null);
+            if (outputConverters != null) {
+                return outputConverters.from(input);
+            }
+        }
+        throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
+    }
+
     private static class FromStringConverters {
         static final Map<Class<?>, DynamicValueConverter<?, ?>> CONVERTERS;
         static {
             Map<Class<?>, DynamicValueConverter<?, ?>> tmp = new HashMap<>();
             tmp.put(String.class, new AsString());
             tmp.put(Integer.class, new AsInteger());
+            tmp.put(byte[].class, new AsByteArray());
             CONVERTERS = tmp;
         }
     }

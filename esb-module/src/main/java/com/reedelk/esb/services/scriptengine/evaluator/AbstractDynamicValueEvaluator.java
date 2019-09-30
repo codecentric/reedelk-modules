@@ -6,6 +6,7 @@ import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionBuilder;
 import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.script.DynamicValue;
+import org.reactivestreams.Publisher;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -19,7 +20,6 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
 
     static final FunctionBuilder ERROR_FUNCTION = new EvaluateErrorFunctionBuilder();
     static final FunctionBuilder FUNCTION = new EvaluateFunctionBuilder();
-
 
     final ScriptEngine engine;
     final Invocable invocable;
@@ -52,8 +52,13 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         } else if (sourceAssignableToTarget(sourceClass, targetClazz)) {
             return provider.from(valueToConvert);
         } else {
-            Object converted = DynamicValueConverterFactory.convert(valueToConvert, valueToConvert.getClass(), targetClazz);
-            return provider.from(converted);
+            if (valueToConvert instanceof Publisher<?>) {
+                Object converted = DynamicValueConverterFactory.convertStream((Publisher)valueToConvert, valueToConvert.getClass(), targetClazz);
+                return provider.from(converted);
+            } else {
+                Object converted = DynamicValueConverterFactory.convert(valueToConvert, valueToConvert.getClass(), targetClazz);
+                return provider.from(converted);
+            }
         }
     }
 
