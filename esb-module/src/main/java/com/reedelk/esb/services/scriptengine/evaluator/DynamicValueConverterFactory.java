@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 class DynamicValueConverterFactory {
 
     private static final Map<Class<?>, Map<Class<?>, DynamicValueConverter<?, ?>>> CONVERTERS;
@@ -24,7 +25,6 @@ class DynamicValueConverterFactory {
     private DynamicValueConverterFactory() {
     }
 
-    @SuppressWarnings("unchecked")
     static <I, O> O convert(Object input, Class<I> inputClass, Class<O> outputClass) {
         Map<Class<?>, DynamicValueConverter<?, ?>> typeConverters = CONVERTERS.get(inputClass);
 
@@ -49,7 +49,6 @@ class DynamicValueConverterFactory {
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
     }
 
-    @SuppressWarnings("unchecked")
     static <I, O> Publisher<O> convertStream(Publisher<I> input, Class<I> inputClass, Class<O> outputClass) {
         Map<Class<?>, DynamicValueConverter<?, ?>> typeConverters = CONVERTERS.get(inputClass);
         if (typeConverters != null) {
