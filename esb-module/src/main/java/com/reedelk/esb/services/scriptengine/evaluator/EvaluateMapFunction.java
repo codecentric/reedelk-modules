@@ -1,6 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.runtime.api.commons.ScriptUtils;
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.script.DynamicMap;
 
 import java.util.Map;
@@ -15,13 +16,9 @@ public class EvaluateMapFunction<T> {
     private final DynamicMap<T> map;
     private final String functionName;
 
-    public EvaluateMapFunction(String functionName, DynamicMap<T> map) {
+    EvaluateMapFunction(String functionName, DynamicMap<T> map) {
         this.map = map;
         this.functionName = functionName;
-    }
-
-    public String name() {
-        return functionName;
     }
 
     public String script() {
@@ -47,8 +44,7 @@ public class EvaluateMapFunction<T> {
                 value = (T) ScriptUtils.unwrap((String) value);
             } else if (value instanceof String) {
                 // If it is text we need to surround the values with quotes.
-                // TODO: Escape value if  it contains quotes already!
-                value = (T) ("'" + value + "'");
+                value = (T) ("'" + StringUtils.escapeQuotes((String) value) + "'");
             }
 
             builder.append(key)

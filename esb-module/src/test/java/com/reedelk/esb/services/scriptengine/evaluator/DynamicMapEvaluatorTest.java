@@ -66,5 +66,19 @@ class DynamicMapEvaluatorTest {
             // Then
             assertThat(evaluated).isEmpty();
         }
+
+        @Test
+        void shouldCorrectlyEvaluateMapWithValueContainingQuotes() {
+            // Given
+            Message message = MessageBuilder.get().text("test").build();
+            DynamicMap<String> dynamicMap = DynamicMap.from(
+                    of("text", "a simple text 'with quotes'"));
+
+            // When
+            Map<String,String> evaluated = evaluator.evaluate(dynamicMap, message, context);
+
+            // Then
+            assertThat(evaluated.get("text")).isEqualTo("a simple text 'with quotes'");
+        }
     }
 }
