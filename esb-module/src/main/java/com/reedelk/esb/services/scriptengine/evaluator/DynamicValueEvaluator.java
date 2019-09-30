@@ -17,13 +17,11 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
         if (dynamicValue == null) {
             return (Optional<T>) PROVIDER.empty();
-
             // Script
         } else if (dynamicValue.isScript()) {
             return dynamicValue.isEvaluateMessagePayload() ?
                     (Optional<T>) convert(message.payload(), dynamicValue.getEvaluatedType(), PROVIDER) :
                     (Optional<T>) execute(dynamicValue, PROVIDER, FUNCTION, message, flowContext);
-
         } else {
             // Not a script
             T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
@@ -36,11 +34,9 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Throwable exception, FlowContext flowContext) {
         if (dynamicValue == null) {
             return (Optional<T>) PROVIDER.empty();
-
             // Script
         } else if (dynamicValue.isScript()) {
             return (Optional<T>) execute(dynamicValue, PROVIDER, ERROR_FUNCTION, exception, flowContext);
-
             // Not a script
         } else {
             T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
@@ -48,9 +44,9 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
         }
     }
 
-    private final ValueProvider<Optional<?>> PROVIDER = new OptionalValueProvider();
+    private static final ValueProvider<Optional<?>> PROVIDER = new OptionalValueProvider();
 
-    class OptionalValueProvider implements ValueProvider<Optional<?>> {
+    static class OptionalValueProvider implements ValueProvider<Optional<?>> {
         @Override
         public Optional<?> empty() {
             return Optional.empty();

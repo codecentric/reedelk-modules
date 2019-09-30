@@ -28,17 +28,17 @@ class DynamicValueConverterFactory {
                     (DynamicValueConverter<Input, Output>) typeConverters.get(outputClass);
             if (outputConverters != null) return outputConverters.from((Input) input);
 
-        } else if (String.class.equals(outputClass)) {
-            return (Output) input.toString();
-
-        } else if (Object.class.equals(outputClass)) {
-            return (Output) input;
-
         } else if (input instanceof Exception) {
             Map<Class<?>, DynamicValueConverter<?, ?>> exceptionConverters = CONVERTERS.get(Exception.class);
             DynamicValueConverter<Input, Output> outputConverters =
                     (DynamicValueConverter<Input, Output>) exceptionConverters.get(outputClass);
             if (outputConverters != null) return outputConverters.from((Input) input);
+        }
+
+        if (String.class.equals(outputClass)) {
+            return (Output) input.toString();
+        } else if (Object.class.equals(outputClass)) {
+            return (Output) input;
         }
 
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));

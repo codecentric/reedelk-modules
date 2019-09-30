@@ -1,6 +1,8 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
+import com.reedelk.runtime.api.commons.StackTraceUtils;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -363,6 +365,107 @@ class DynamicValueEvaluatorTest {
 
             // Then
             assertThat(evaluated).isPresent().contains(given);
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic string with throwable and context")
+    class EvaluateDynamicStringWithThrowableAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateErrorPayload() {
+            // Given
+            Throwable myException = new ESBException("Test error");
+            DynamicString dynamicString = DynamicString.from("#[error]");
+
+            // When
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+
+            // Then
+            assertThat(evaluated).isPresent().contains(StackTraceUtils.asString(myException));
+        }
+
+        @Test
+        void shouldCorrectlyEvaluateExceptionMessage() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicString dynamicString = DynamicString.from("#[error.getMessage()]");
+
+            // When
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+
+            // Then
+            assertThat(evaluated).isPresent().contains("My exception message");
+        }
+
+        @Test
+        void shouldReturnEmptyWhenScriptIsEmpty() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicString dynamicString = DynamicString.from("#[]");
+
+            // When
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+
+            // Then
+            assertThat(evaluated).isNotPresent();
+        }
+
+        @Test
+        void shouldReturnEmptyWhenNullString() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicString dynamicString = DynamicString.from(null);
+
+            // When
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+
+            // Then
+            assertThat(evaluated).isNotPresent();
+        }
+
+        @Test
+        void shouldReturnStringValue() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicString dynamicString = DynamicString.from("my text");
+
+            // When
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+
+            // Then
+            assertThat(evaluated).contains("my text");
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic object value with throwable and context")
+    class EvaluateDynamicObjectValueWithThrowableAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateDynamicObject() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicObject dynamicObject = DynamicObject.from("#[error]");
+
+            // When
+            Optional<Object> result = evaluator.evaluate(dynamicObject, myException, context);
+
+            // Then
+            assertThat(result).isPresent().containsSame(myException);
+        }
+
+        @Test
+        void shouldReturnStringDynamicObject() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicObject dynamicObject = DynamicObject.from("my text");
+
+            // When
+            Optional<Object> result = evaluator.evaluate(dynamicObject, myException, context);
+
+            // Then
+            assertThat(result).isPresent().contains("my text");
         }
     }
 
