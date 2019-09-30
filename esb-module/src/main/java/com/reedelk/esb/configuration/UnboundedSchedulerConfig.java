@@ -20,16 +20,16 @@ public class UnboundedSchedulerConfig implements SchedulerConfig {
 
     @Override
     public int poolMinSize() {
-        throw new UnsupportedOperationException("Config not supported for unbounded scheduler");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int poolMaxSize() {
-        throw new UnsupportedOperationException("Config not supported for unbounded scheduler");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int queueSize() {
-        throw new UnsupportedOperationException("Config not supported for unbounded scheduler");
+        throw new UnsupportedOperationException();
     }
 }
