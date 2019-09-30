@@ -57,6 +57,6 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
 
     @Override
     public void onDisposed(Component component) {
-        throw new UnsupportedOperationException();
+        // by default nothing gets done.
     }
 }
