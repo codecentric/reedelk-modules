@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class AbstractExecutionTest {
+abstract class AbstractExecutionTest {
 
     @Mock
     protected ComponentDisposer disposer;

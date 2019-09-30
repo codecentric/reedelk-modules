@@ -2,9 +2,9 @@ package com.reedelk.esb.services.scriptengine.converter;
 
 import org.reactivestreams.Publisher;
 
-public interface DynamicValueConverter<Input,Output> {
+public interface DynamicValueConverter<I, O> {
 
-    Output from(Input value);
+    O from(I value);
 
-    Publisher<Output> from(Publisher<Input> stream);
+    Publisher<O> from(Publisher<I> stream);
 }
