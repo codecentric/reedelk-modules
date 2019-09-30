@@ -26,7 +26,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
                     // We don't resolve the stream
                     Publisher<?> stream = message.getContent().stream();
                     Class<?> targetType = dynamicValue.getEvaluatedType();
-                    Class<?> streamType = message.getContent().type().getTypeClass();
+                    Class<?> streamType = message.getContent().streamType();
                     return (Publisher<T>) convert(stream, streamType, targetType, PROVIDER);
                 } else {
                     // We avoid evaluating the payload (optimization)
@@ -67,7 +67,9 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
         @Override
         public Publisher<?> from(Object value) {
-            return Mono.just(value);
+            return value instanceof Publisher ?
+                    (Publisher<?>) value :
+                    Mono.just(value);
         }
     }
 }
