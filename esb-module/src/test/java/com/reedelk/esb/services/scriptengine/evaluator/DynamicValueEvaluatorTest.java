@@ -436,6 +436,19 @@ class DynamicValueEvaluatorTest {
             // Then
             assertThat(evaluated).contains("my text");
         }
+
+        @Test
+        void shouldReturnEmptyWhenNullDynamicValue() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicString dynamicString = null;
+
+            // When
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+
+            // Then
+            assertThat(evaluated).isNotPresent();
+        }
     }
 
     @Nested
