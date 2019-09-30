@@ -11,14 +11,18 @@ public class ModuleStateLogger {
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleState.class);
 
+    private ModuleStateLogger() {
+    }
+
     public static void log(Module module) {
-        if (!logger.isDebugEnabled()) return;
-        logger.debug(format(
-                "Module=[%s], " +
-                        "id=[%d], " +
-                        "state=[%s]",
-                module.name(),
-                module.id(),
-                module.state()));
+        if (logger.isDebugEnabled()) {
+            logger.debug(format(
+                    "Module=[%s], " +
+                            "id=[%d], " +
+                            "state=[%s]",
+                    module.name(),
+                    module.id(),
+                    module.state()));
+        }
     }
 }
