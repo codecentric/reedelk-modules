@@ -9,6 +9,9 @@ import com.reedelk.esb.services.configuration.ESBConfigurationService;
  */
 public class ApplyRuntimeConfiguration {
 
+    private ApplyRuntimeConfiguration() {
+    }
+
     public static void from(ESBConfigurationService configurationService) {
         RuntimeConfigurationProvider.initialize(configurationService);
         SchedulerProvider.initialize();
