@@ -26,7 +26,7 @@ public class RouterExecutor implements FlowExecutor {
 
     private static final ScriptEngineService ENGINE = ScriptEngine.INSTANCE;
 
-    private final Mono<Boolean> FALSE = Mono.just(false);
+    private static final Mono<Boolean> FALSE = Mono.just(false);
 
     @Override
     public Publisher<MessageAndContext> execute(Publisher<MessageAndContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
