@@ -23,7 +23,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     }
 
     @Override
-    public Object invokeFunction(String functionName, Object... args) throws ESBException {
+    public Object invokeFunction(String functionName, Object... args) {
         try {
             return invocable.invokeFunction(functionName, args);
         } catch (NoSuchMethodException | ScriptException e) {
