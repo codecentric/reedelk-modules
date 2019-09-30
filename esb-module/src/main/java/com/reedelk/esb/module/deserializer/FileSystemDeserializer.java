@@ -28,7 +28,7 @@ public class FileSystemDeserializer extends AbstractDeserializer {
         Path targetPath = Paths.get(resourcesRootDirectory, directory);
         try (Stream<Path> walk = Files.walk(targetPath)) {
             return walk
-                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toFile().isFile())
                     .filter(path -> FileUtils.hasExtension(path, suffix))
                     .map(unchecked(path -> path.toFile().toURI().toURL()))
                     .collect(toList());
