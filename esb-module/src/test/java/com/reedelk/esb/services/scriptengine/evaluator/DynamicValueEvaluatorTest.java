@@ -482,6 +482,24 @@ class DynamicValueEvaluatorTest {
         }
     }
 
+    @Nested
+    @DisplayName("Evaluate dynamic byte array with throwable and context")
+    class EvaluateDynamicByteArrayWithThrowableAndContext {
+
+        @Test
+        void shouldCorrectlyEvaluateDynamicByteArrayFromException() {
+            // Given
+            Throwable myException = new ESBException("My exception message");
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[error]");
+
+            // When
+            Optional<byte[]> result = evaluator.evaluate(dynamicByteArray, myException, context);
+
+            // Then
+            assertThat(result).isPresent().contains(StackTraceUtils.asByteArray(myException));
+        }
+    }
+
     private class MyObject {
     }
 }

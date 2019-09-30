@@ -71,7 +71,13 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
         @Override
         public Publisher<?> from(Object value) {
-            return value instanceof Publisher ? (Publisher<?>) value : Mono.just(value);
+            if (value == null) {
+                return Mono.empty();
+            } else if (value instanceof Publisher<?>){
+                return (Publisher<?>) value;
+            } else {
+                return Mono.just(value);
+            }
         }
     }
 }
