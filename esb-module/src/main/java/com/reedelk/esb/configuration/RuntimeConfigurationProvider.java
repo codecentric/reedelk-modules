@@ -18,7 +18,7 @@ public class RuntimeConfigurationProvider {
 
     private void init(ESBConfigurationService configService) {
         synchronized (PROVIDER) {
-            checkState(configService == null, "Config service already initialized");
+            checkState(this.configService == null, "Config service already initialized");
             this.configService = configService;
             loadProperties();
         }
