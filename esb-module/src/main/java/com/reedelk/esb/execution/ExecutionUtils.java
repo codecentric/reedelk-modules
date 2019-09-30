@@ -8,6 +8,10 @@ import java.util.Collection;
 import static com.reedelk.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
 
 class ExecutionUtils {
+
+    private ExecutionUtils() {
+    }
+    
     /**
      * Returns the successor node of the current node and it throws
      * an exception if a node was not found.
