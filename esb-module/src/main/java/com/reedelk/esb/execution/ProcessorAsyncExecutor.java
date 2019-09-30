@@ -34,11 +34,7 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
 
             // Build a Mono out of the async processor callback.
             Mono<MessageAndContext> callbackMono =
-                    sinkFromCallback(processorAsync, event)
-                            // TODO: should this one use its own scheduler?
-                            // TODO: You might have a batch job, which you don't want
-                            //  to run in the same scheduler Threads.
-                            .publishOn(flowScheduler());
+                    sinkFromCallback(processorAsync, event).publishOn(flowScheduler());
 
             // If a timeout has been defined for the async processor callback,
             // then we set it here.
