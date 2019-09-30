@@ -4,14 +4,12 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.DynamicValue;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
 import java.util.Optional;
 
 public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
 
-    public DynamicValueEvaluator(ScriptEngine engine, Invocable invocable) {
-        super(engine, invocable);
+    public DynamicValueEvaluator(ScriptEngineProvider provider) {
+        super(provider);
     }
 
     @SuppressWarnings("unchecked")
@@ -38,9 +36,11 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Throwable exception, FlowContext flowContext) {
         if (dynamicValue == null) {
             return (Optional<T>) PROVIDER.empty();
+
             // Script
         } else if (dynamicValue.isScript()) {
             return (Optional<T>) execute(dynamicValue, PROVIDER, ERROR_FUNCTION, exception, flowContext);
+
             // Not a script
         } else {
             T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());

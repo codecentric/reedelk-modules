@@ -18,9 +18,9 @@ import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class JavascriptEngineTest {
+class ScriptEngineTest {
 
-    private ScriptEngineService service = JavascriptEngine.INSTANCE;
+    private ScriptEngineService service = ScriptEngine.INSTANCE;
 
     @Mock
     private FlowContext context;

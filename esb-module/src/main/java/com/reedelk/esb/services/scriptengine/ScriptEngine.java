@@ -3,6 +3,7 @@ package com.reedelk.esb.services.scriptengine;
 import com.reedelk.esb.services.scriptengine.evaluator.DynamicMapEvaluator;
 import com.reedelk.esb.services.scriptengine.evaluator.DynamicValueEvaluator;
 import com.reedelk.esb.services.scriptengine.evaluator.DynamicValueStreamEvaluator;
+import com.reedelk.esb.services.scriptengine.evaluator.ScriptEngineProvider;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -12,30 +13,23 @@ import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.util.Map;
 import java.util.Optional;
 
-public class JavascriptEngine implements ScriptEngineService {
+public class ScriptEngine implements ScriptEngineService {
 
-    public static final JavascriptEngine INSTANCE = new JavascriptEngine();
-
-    private static final String ENGINE_NAME = "nashorn";
+    public static final ScriptEngine INSTANCE = new ScriptEngine();
 
     private DynamicValueEvaluator dynamicValueEvaluator;
     private DynamicMapEvaluator dynamicMapEvaluator;
     private DynamicValueStreamEvaluator dynamicValueStreamEvaluator;
 
+    private ScriptEngine() {
+        ScriptEngineProvider provider = JavascriptEngineProvider.INSTANCE;
 
-    private JavascriptEngine() {
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName(ENGINE_NAME);
-        Invocable invocable = (Invocable) engine;
-
-        dynamicValueStreamEvaluator = new DynamicValueStreamEvaluator(engine, invocable);
-        dynamicValueEvaluator = new DynamicValueEvaluator(engine, invocable);
-        dynamicMapEvaluator = new DynamicMapEvaluator(engine, invocable);
+        dynamicValueStreamEvaluator = new DynamicValueStreamEvaluator(provider);
+        dynamicValueEvaluator = new DynamicValueEvaluator(provider);
+        dynamicMapEvaluator = new DynamicMapEvaluator(provider);
     }
 
     @Override
@@ -75,7 +69,7 @@ public class JavascriptEngine implements ScriptEngineService {
 
     @Override
     public void onDisposed(Component component) {
-        // TODO: Complete me
+        // TODO: Complete me. Need to remove defined functions from maps.
         //String key = key(component);
         //ORIGIN_FUNCTION_NAME.remove(key);
     }

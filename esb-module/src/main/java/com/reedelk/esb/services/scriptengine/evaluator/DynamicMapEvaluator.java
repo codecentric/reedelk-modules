@@ -1,13 +1,9 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.DynamicMap;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -15,8 +11,8 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
 
     private static final Map<String,?> EMPTY_MAP = Collections.unmodifiableMap(Collections.emptyMap());
 
-    public DynamicMapEvaluator(ScriptEngine engine, Invocable invocable) {
-        super(engine, invocable);
+    public DynamicMapEvaluator(ScriptEngineProvider provider) {
+        super(provider);
     }
 
     @SuppressWarnings("unchecked")
@@ -27,11 +23,7 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
             return (Map<String, T>) EMPTY_MAP;
         } else {
             String functionName = functionNameOf(dynamicMap);
-            try {
-                return (Map<String, T>) invocable.invokeFunction(functionName, message, context);
-            } catch (ScriptException | NoSuchMethodException e) {
-                throw new ESBException(e);
-            }
+            return (Map<String, T>) scriptEngine.invokeFunction(functionName, message, context);
         }
     }
 
@@ -44,12 +36,8 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
                     functionName = functionNameFrom(valueUUID);
                     EvaluateMapFunction<T> evaluateMapFunction = new EvaluateMapFunction<>(functionName, dynamicMap);
                     String functionDefinition = evaluateMapFunction.script();
-                    try {
-                        engine.eval(functionDefinition);
-                        ORIGIN_FUNCTION_NAME.put(valueUUID, functionName);
-                    } catch (ScriptException e) {
-                        throw new ESBException(e);
-                    }
+                    scriptEngine.eval(functionDefinition);
+                    ORIGIN_FUNCTION_NAME.put(valueUUID, functionName);
                 }
             }
         }

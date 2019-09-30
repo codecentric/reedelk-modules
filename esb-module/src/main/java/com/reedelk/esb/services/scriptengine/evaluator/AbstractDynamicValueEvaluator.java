@@ -4,41 +4,34 @@ import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateErrorFun
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateFunctionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionBuilder;
 import com.reedelk.runtime.api.commons.ScriptUtils;
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.script.DynamicValue;
 import org.reactivestreams.Publisher;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import java.util.HashMap;
 import java.util.Map;
 
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
+
+    private static final String FUNCTION_NAME_TEMPLATE = "fun_%s";
 
     final Map<String, String> ORIGIN_FUNCTION_NAME = new HashMap<>();
 
     static final FunctionBuilder ERROR_FUNCTION = new EvaluateErrorFunctionBuilder();
     static final FunctionBuilder FUNCTION = new EvaluateFunctionBuilder();
 
-    final ScriptEngine engine;
-    final Invocable invocable;
+    final ScriptEngineProvider scriptEngine;
 
-    AbstractDynamicValueEvaluator(ScriptEngine engine, Invocable invocable) {
-        this.engine = engine;
-        this.invocable = invocable;
+    AbstractDynamicValueEvaluator(ScriptEngineProvider scriptEngine) {
+        this.scriptEngine = scriptEngine;
     }
 
     <ConvertedType, T> ConvertedType execute(DynamicValue<T> dynamicValue, ValueProvider<ConvertedType> provider, FunctionBuilder functionBuilder, Object... args) {
         if (dynamicValue.isEmptyScript()) {
             return provider.empty();
-        }
-        String functionName = functionNameOf(dynamicValue, functionBuilder);
-        try {
-            Object evaluationResult = invocable.invokeFunction(functionName, args);
+        } else {
+            String functionName = functionNameOf(dynamicValue, functionBuilder);
+            Object evaluationResult = scriptEngine.invokeFunction(functionName, args);
             return convert(evaluationResult, dynamicValue.getEvaluatedType(), provider);
-        } catch (ScriptException | NoSuchMethodException e) {
-            throw new ESBException(e);
         }
     }
 
@@ -49,10 +42,14 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     <ConvertedType> ConvertedType convert(Object valueToConvert, Class<?> sourceClass, Class<?> targetClazz, ValueProvider<ConvertedType> provider) {
         if (valueToConvert == null) {
             return provider.empty();
-        } if (valueToConvert instanceof Publisher<?>) {
-            Object converted = DynamicValueConverterFactory.convertStream((Publisher)valueToConvert, sourceClass, targetClazz);
+
+            // Value is a stream
+        } else if (valueToConvert instanceof Publisher<?>) {
+            Object converted = DynamicValueConverterFactory.convertStream((Publisher) valueToConvert, sourceClass, targetClazz);
             return provider.from(converted);
         } else {
+
+            // Value is not a stream
             if (sourceAssignableToTarget(sourceClass, targetClazz)) {
                 return provider.from(valueToConvert);
             } else {
@@ -64,33 +61,27 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
 
     interface ValueProvider<ConvertedType> {
         ConvertedType empty();
+
         ConvertedType from(Object value);
     }
 
     private <T> String functionNameOf(DynamicValue<T> dynamicValue, FunctionBuilder functionBuilder) {
-        String valueUUID =  dynamicValue.getUUID();
+        String valueUUID = dynamicValue.getUUID();
         String functionName = ORIGIN_FUNCTION_NAME.get(valueUUID);
         if (functionName == null) {
             synchronized (this) {
                 if (!ORIGIN_FUNCTION_NAME.containsKey(valueUUID)) {
                     functionName = functionNameFrom(valueUUID);
                     String scriptBody = dynamicValue.getBody();
-                    String functionDefinition =
-                            functionBuilder.build(functionName, ScriptUtils.unwrap(scriptBody));
-                    // Compiling the function definition.
-                    try {
-                        engine.eval(functionDefinition);
-                        ORIGIN_FUNCTION_NAME.put(valueUUID, functionName);
-                    } catch (ScriptException e) {
-                        throw new ESBException(e);
-                    }
+                    String functionDefinition = functionBuilder.build(functionName, ScriptUtils.unwrap(scriptBody));
+                    // pre-compile the function definition.
+                    scriptEngine.eval(functionDefinition);
+                    ORIGIN_FUNCTION_NAME.put(valueUUID, functionName);
                 }
             }
         }
         return functionName;
     }
-
-    private static final String FUNCTION_NAME_TEMPLATE = "fun_%s";
 
     static String functionNameFrom(String uuid) {
         return String.format(FUNCTION_NAME_TEMPLATE, uuid);

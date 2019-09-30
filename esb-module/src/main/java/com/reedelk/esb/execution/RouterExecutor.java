@@ -4,7 +4,7 @@ import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.component.RouterWrapper.PathExpressionPair;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.esb.services.scriptengine.JavascriptEngine;
+import com.reedelk.esb.services.scriptengine.ScriptEngine;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.DynamicBoolean;
@@ -24,7 +24,7 @@ public class RouterExecutor implements FlowExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(RouterExecutor.class);
 
-    private static final ScriptEngineService ENGINE = JavascriptEngine.INSTANCE;
+    private static final ScriptEngineService ENGINE = ScriptEngine.INSTANCE;
 
     private final Mono<Boolean> FALSE = Mono.just(false);
 

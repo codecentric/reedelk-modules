@@ -13,8 +13,11 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ScriptEngineServiceAdapter implements ScriptEngineService {
+
+    // Dynamic value
+
     @Override
-    public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext) {
+    public <T> Optional<T> evaluate(DynamicValue<T> value, Message message, FlowContext flowContext) {
         throw new UnsupportedOperationException();
     }
 
@@ -24,12 +27,7 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
     }
 
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> value, Message message, FlowContext flowContext) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T> Publisher<T> evaluateStream(Script script, Message message, FlowContext flowContext) {
+    public <T> Publisher<T> evaluateStream(DynamicValue<T> value, Message message, FlowContext flowContext) {
         throw new UnsupportedOperationException();
     }
 
@@ -38,10 +36,19 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
         throw new UnsupportedOperationException();
     }
 
+    // Script
+
     @Override
-    public <T> Publisher<T> evaluateStream(DynamicValue<T> value, Message message, FlowContext flowContext) {
+    public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public <T> Publisher<T> evaluateStream(Script script, Message message, FlowContext flowContext) {
+        throw new UnsupportedOperationException();
+    }
+
+    // Dynamic map
 
     @Override
     public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, Message message, FlowContext context) {

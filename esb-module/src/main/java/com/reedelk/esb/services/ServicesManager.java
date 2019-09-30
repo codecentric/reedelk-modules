@@ -6,7 +6,7 @@ import com.reedelk.esb.services.hotswap.ESBHotSwapService;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
 import com.reedelk.esb.services.module.ESBModuleService;
 import com.reedelk.esb.services.module.EventListener;
-import com.reedelk.esb.services.scriptengine.JavascriptEngine;
+import com.reedelk.esb.services.scriptengine.ScriptEngine;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import com.reedelk.runtime.system.api.HotSwapService;
@@ -34,7 +34,7 @@ public class ServicesManager {
     private List<ServiceRegistration<?>> registeredServices = new ArrayList<>();
 
     private ESBConfigurationService configurationService;
-    private JavascriptEngine scriptEngineService;
+    private ScriptEngine scriptEngineService;
 
     public ServicesManager(EventListener eventListener,
                            HotSwapListener hotSwapListener,
@@ -63,7 +63,7 @@ public class ServicesManager {
         return configurationService;
     }
 
-    public JavascriptEngine scriptEngineService() {
+    public ScriptEngine scriptEngineService() {
         return scriptEngineService;
     }
 
@@ -90,7 +90,7 @@ public class ServicesManager {
     }
 
     private void registerScriptEngineService(BundleContext context) {
-        scriptEngineService = JavascriptEngine.INSTANCE;
+        scriptEngineService = ScriptEngine.INSTANCE;
         ServiceRegistration<ScriptEngineService> registration =
                 context.registerService(ScriptEngineService.class, scriptEngineService, NO_PROPERTIES);
         registeredServices.add(registration);

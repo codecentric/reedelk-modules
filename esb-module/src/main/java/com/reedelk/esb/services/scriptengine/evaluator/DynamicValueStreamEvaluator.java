@@ -6,32 +6,21 @@ import com.reedelk.runtime.api.script.DynamicValue;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-
+@SuppressWarnings("unchecked")
 public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
-    public DynamicValueStreamEvaluator(ScriptEngine engine, Invocable invocable) {
-        super(engine, invocable);
+    public DynamicValueStreamEvaluator(ScriptEngineProvider provider) {
+        super(provider);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> Publisher<T> evaluateStream(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
         if (dynamicValue == null) {
             return (Publisher<T>) PROVIDER.empty();
         } else if (dynamicValue.isScript()) {
             if (dynamicValue.isEvaluateMessagePayload()) {
-                if (message.getContent().isStream()) {
-                    // We don't resolve the stream
-                    Publisher<?> stream = message.getContent().stream();
-                    Class<?> targetType = dynamicValue.getEvaluatedType();
-                    Class<?> streamType = message.getContent().streamType();
-                    return (Publisher<T>) convert(stream, streamType, targetType, PROVIDER);
-                } else {
-                    // We avoid evaluating the payload (optimization)
-                    return (Publisher<T>) convert(message.payload(), dynamicValue.getEvaluatedType(), PROVIDER);
-                }
+                // We avoid evaluating the payload (optimization)
+                return evaluateMessagePayload(dynamicValue, message);
             } else {
                 return (Publisher<T>) execute(dynamicValue, PROVIDER, FUNCTION, message, flowContext);
             }
@@ -48,12 +37,27 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
         if (dynamicValue == null) {
             return (Publisher<T>) PROVIDER.empty();
         } else if (dynamicValue.isScript()) {
+
             // Script
             return (Publisher<T>) execute(dynamicValue, PROVIDER, ERROR_FUNCTION, throwable, flowContext);
+
         } else {
             // Not a script
             T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
             return (Publisher<T>) PROVIDER.from(converted);
+        }
+    }
+
+    private <T> Publisher<T> evaluateMessagePayload(DynamicValue<T> dynamicValue, Message message) {
+        if (message.getContent().isStream()) {
+            // We don't resolve the stream, but we still might need to
+            // map its content from source type to a target type.
+            Publisher<?> stream = message.getContent().stream();
+            Class<?> targetType = dynamicValue.getEvaluatedType();
+            Class<?> sourceType = message.getContent().streamType();
+            return (Publisher<T>) convert(stream, sourceType, targetType, PROVIDER);
+        } else {
+            return (Publisher<T>) convert(message.payload(), dynamicValue.getEvaluatedType(), PROVIDER);
         }
     }
 
@@ -67,9 +71,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
         @Override
         public Publisher<?> from(Object value) {
-            return value instanceof Publisher ?
-                    (Publisher<?>) value :
-                    Mono.just(value);
+            return value instanceof Publisher ? (Publisher<?>) value : Mono.just(value);
         }
     }
 }
