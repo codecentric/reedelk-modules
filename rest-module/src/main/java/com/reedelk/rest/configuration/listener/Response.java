@@ -23,8 +23,8 @@ public class Response implements Implementor {
     @Property("Response status")
     private DynamicInteger status;
 
-    @TabGroup("Response headers")
-    @Property("Response headers")
+    @TabGroup("Headers")
+    @Property("Additional Headers")
     private DynamicStringMap headers = DynamicStringMap.empty();
 
     public DynamicByteArray getBody() {
