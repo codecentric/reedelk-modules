@@ -26,7 +26,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
         } else {
             // Not a script
-            T converted = DynamicValueConverterFactory.convert(dynamicValue.getValue(), String.class, dynamicValue.getEvaluatedType());
+            T converted = DynamicValueConverterFactory.convert(dynamicValue.getValue(), dynamicValue.getEvaluatedType());
             return (Publisher<T>) PROVIDER.from(converted);
         }
     }
@@ -43,7 +43,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
         } else {
             // Not a script
-            T converted = DynamicValueConverterFactory.convert(dynamicValue.getValue(), String.class, dynamicValue.getEvaluatedType());
+            T converted = DynamicValueConverterFactory.convert(dynamicValue.getValue(), dynamicValue.getEvaluatedType());
             return (Publisher<T>) PROVIDER.from(converted);
         }
     }

@@ -26,23 +26,22 @@ class DynamicValueConverterFactory {
     }
 
     static <O> O convert(Object input, Class<O> outputClass) {
-        if (input == null) return null;
-        return convert(input, input.getClass(), outputClass);
+        return input == null ? null : convert(input, input.getClass(), outputClass);
     }
 
     static <I, O> O convert(Object input, Class<I> inputClass, Class<O> outputClass) {
-        Map<Class<?>, DynamicValueConverter<?, ?>> typeConverters = CONVERTERS.get(inputClass);
+        Map<Class<?>, DynamicValueConverter<?, ?>> fromConverters = CONVERTERS.get(inputClass);
 
-        if (typeConverters != null) {
-            DynamicValueConverter<I, O> outputConverters =
-                    (DynamicValueConverter<I, O>) typeConverters.get(outputClass);
-            if (outputConverters != null) return outputConverters.from((I) input);
+        if (fromConverters != null) {
+            DynamicValueConverter<I, O> toConverters =
+                    (DynamicValueConverter<I, O>) fromConverters.get(outputClass);
+            if (toConverters != null) return toConverters.from((I) input);
 
         } else if (input instanceof Exception) {
-            Map<Class<?>, DynamicValueConverter<?, ?>> exceptionConverters = CONVERTERS.get(Exception.class);
-            DynamicValueConverter<I, O> outputConverters =
-                    (DynamicValueConverter<I, O>) exceptionConverters.get(outputClass);
-            if (outputConverters != null) return outputConverters.from((I) input);
+            Map<Class<?>, DynamicValueConverter<?, ?>> fromExceptionConverters = CONVERTERS.get(Exception.class);
+            DynamicValueConverter<I, O> toConverters =
+                    (DynamicValueConverter<I, O>) fromExceptionConverters.get(outputClass);
+            if (toConverters != null) return toConverters.from((I) input);
         }
 
         if (String.class.equals(outputClass)) {
@@ -55,12 +54,12 @@ class DynamicValueConverterFactory {
     }
 
     static <I, O> Publisher<O> convertStream(Publisher<I> input, Class<I> inputClass, Class<O> outputClass) {
-        Map<Class<?>, DynamicValueConverter<?, ?>> typeConverters = CONVERTERS.get(inputClass);
-        if (typeConverters != null) {
-            DynamicValueConverter<I, O> outputConverters =
-                    (DynamicValueConverter<I, O>) typeConverters.get(outputClass);
-            if (outputConverters != null) {
-                return outputConverters.from(input);
+        Map<Class<?>, DynamicValueConverter<?, ?>> fromConverters = CONVERTERS.get(inputClass);
+        if (fromConverters != null) {
+            DynamicValueConverter<I, O> toConverters =
+                    (DynamicValueConverter<I, O>) fromConverters.get(outputClass);
+            if (toConverters != null) {
+                return toConverters.from(input);
             }
         }
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
