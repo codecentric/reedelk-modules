@@ -1,6 +1,7 @@
 package com.reedelk.rest.component;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class RestClientGetTest extends RestClientAbstractTest {
     }
 
     @Test
-    void shouldDeleteThrowExceptionWhenResponseNot2xx() {
+    void shouldGetThrowExceptionWhenResponseNot2xxAndNotEmptyBody() {
         // Given
         String expectedErrorMessage = "Error exception caused by XYZ";
         RestClient component = componentWith(GET, baseURL, path);
@@ -49,5 +50,20 @@ class RestClientGetTest extends RestClientAbstractTest {
         // Expect
         AssertHttpResponse
                 .isNotSuccessful(component, emptyPayload, flowContext, expectedErrorMessage);
+    }
+
+    @Test
+    void shouldGetThrowExceptionWhenResponseNot2xxAndEmptyBody() {
+        RestClient component = componentWith(GET, baseURL, path);
+
+        givenThat(get(urlEqualTo(path))
+                .willReturn(aResponse()
+                        .withStatus(500)));
+
+        Message emptyPayload = MessageBuilder.get().build();
+
+        // Expect
+        AssertHttpResponse
+                .isNotSuccessful(component, emptyPayload, flowContext, StringUtils.EMPTY);
     }
 }

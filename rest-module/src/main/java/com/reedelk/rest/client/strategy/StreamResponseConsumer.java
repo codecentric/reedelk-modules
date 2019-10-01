@@ -25,7 +25,7 @@ import java.util.concurrent.LinkedTransferQueue;
 
 class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
-    private Throwable throwable;
+    private Exception exception;
 
     private OnResult callback;
     private FlowContext flowContext;
@@ -60,9 +60,7 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
                         if (take == DataMarker.ERROR) {
 
-                            sink.error(throwable);
-
-                            break;
+                            throw exception;
 
                         } else {
 
@@ -84,7 +82,7 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
                     queue = null;
 
-                    throwable = null;
+                    exception = null;
                 }
 
                 // We must subscribe on a different scheduler because
@@ -130,7 +128,7 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
         } catch (Exception exception) {
 
-            throwable = exception;
+            this.exception = exception;
 
             queue.offer(DataMarker.ERROR);
 
