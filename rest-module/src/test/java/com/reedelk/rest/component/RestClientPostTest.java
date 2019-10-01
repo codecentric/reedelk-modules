@@ -30,7 +30,7 @@ class RestClientPostTest extends RestClientAbstractTest {
             // Given
             String requestBody = "{\"Name\":\"John\"}";
             String expectedResponseBody = "POST was successful";
-            RestClient component = componentWith(POST, baseURL, path, EVALUATE_PAYLOAD_BODY);
+            RestClient component = clientWith(POST, baseURL, path, EVALUATE_PAYLOAD_BODY);
 
             doReturn(Optional.of(requestBody.getBytes()))
                     .when(scriptEngine)
@@ -57,7 +57,7 @@ class RestClientPostTest extends RestClientAbstractTest {
             // Given
             String requestBody = "text payload";
             String expectedResponseBody = "POST was successful";
-            RestClient component = componentWith(POST, baseURL, path, EVALUATE_PAYLOAD_BODY);
+            RestClient component = clientWith(POST, baseURL, path, EVALUATE_PAYLOAD_BODY);
 
             doReturn(Optional.of(requestBody.getBytes()))
                     .when(scriptEngine)
@@ -83,7 +83,7 @@ class RestClientPostTest extends RestClientAbstractTest {
             // Given
             byte[] requestBody = "My binary request body".getBytes();
             String expectedResponseBody = "POST was successful";
-            RestClient component = componentWith(POST, baseURL, path, EVALUATE_PAYLOAD_BODY);
+            RestClient component = clientWith(POST, baseURL, path, EVALUATE_PAYLOAD_BODY);
 
             doReturn(Optional.of(requestBody))
                     .when(scriptEngine)
@@ -148,7 +148,7 @@ class RestClientPostTest extends RestClientAbstractTest {
             // Given
             DynamicByteArray body = DynamicByteArray.from("#['hello this is a script']");
             String expectedResponseBody = "POST was successful";
-            RestClient component = componentWith(POST, baseURL, path, body);
+            RestClient component = clientWith(POST, baseURL, path, body);
 
             doReturn(Optional.of("hello this is a script".getBytes()))
                     .when(scriptEngine)
@@ -173,7 +173,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         void assertEmptyContentTypeAndPayload(DynamicByteArray body, Message message) {
             // Given
             String expectedResponseBody = "It works";
-            RestClient component = componentWith(POST, baseURL, path, body);
+            RestClient component = clientWith(POST, baseURL, path, body);
 
             givenThat(post(urlEqualTo(path))
                     .withRequestBody(binaryEqualTo(new byte[0]))
@@ -193,7 +193,7 @@ class RestClientPostTest extends RestClientAbstractTest {
     void shouldPostThrowExceptionWhenResponseNot2xx() {
         // Given
         String expectedErrorMessage = "Error exception caused by XYZ";
-        RestClient component = componentWith(POST, baseURL, path);
+        RestClient component = clientWith(POST, baseURL, path);
 
         givenThat(post(urlEqualTo(path))
                 .willReturn(aResponse()

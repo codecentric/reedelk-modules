@@ -72,7 +72,7 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
 
         // When
         RestMethod restMethod = valueOf(method);
-        RestClient component = componentWith(restMethod, baseURL, path);
+        RestClient component = clientWith(restMethod, baseURL, path);
 
         configureRequestAndQueryParams(component, pathParameters, queryParameters);
 

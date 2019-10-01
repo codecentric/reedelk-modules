@@ -18,7 +18,7 @@ class RestClientGetTest extends RestClientAbstractTest {
     void shouldGetExecuteCorrectlyWhenResponse200() {
         // Given
         String responseBody = "{\"Name\":\"John\"}";
-        RestClient component = componentWith(GET, baseURL, path);
+        RestClient component = clientWith(GET, baseURL, path);
 
         WireMock.givenThat(get(urlEqualTo(path))
                 .willReturn(aResponse()
@@ -37,7 +37,7 @@ class RestClientGetTest extends RestClientAbstractTest {
     void shouldGetThrowExceptionWhenResponseNot2xxAndNotEmptyBody() {
         // Given
         String expectedErrorMessage = "Error exception caused by XYZ";
-        RestClient component = componentWith(GET, baseURL, path);
+        RestClient component = clientWith(GET, baseURL, path);
 
         givenThat(get(urlEqualTo(path))
                 .willReturn(aResponse()
@@ -54,7 +54,7 @@ class RestClientGetTest extends RestClientAbstractTest {
 
     @Test
     void shouldGetThrowExceptionWhenResponseNot2xxAndEmptyBody() {
-        RestClient component = componentWith(GET, baseURL, path);
+        RestClient component = clientWith(GET, baseURL, path);
 
         givenThat(get(urlEqualTo(path))
                 .willReturn(aResponse()

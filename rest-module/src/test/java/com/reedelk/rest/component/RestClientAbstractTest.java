@@ -60,7 +60,7 @@ abstract class RestClientAbstractTest {
         mockServer.resetAll();
     }
 
-    RestClient componentWith(RestMethod method, String baseURL, String path) {
+    RestClient clientWith(RestMethod method, String baseURL, String path) {
         RestClient restClient = new RestClient();
         restClient.setBaseURL(baseURL);
         restClient.setMethod(method);
@@ -70,8 +70,8 @@ abstract class RestClientAbstractTest {
         return restClient;
     }
 
-    RestClient componentWith(RestMethod method, String baseURL, String path, DynamicByteArray body) {
-        RestClient restClient = componentWith(method, baseURL, path);
+    RestClient clientWith(RestMethod method, String baseURL, String path, DynamicByteArray body) {
+        RestClient restClient = clientWith(method, baseURL, path);
         restClient.setBody(body);
         return restClient;
     }

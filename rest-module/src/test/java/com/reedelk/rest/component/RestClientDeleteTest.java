@@ -22,7 +22,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         // Given
         String requestBody = "{\"Name\":\"John\"}";
         String expectedResponseBody = "DELETE was successful";
-        RestClient component = componentWith(DELETE, baseURL, path, EVALUATE_PAYLOAD_BODY);
+        RestClient component = clientWith(DELETE, baseURL, path, EVALUATE_PAYLOAD_BODY);
 
         doReturn(Optional.of(requestBody.getBytes()))
                 .when(scriptEngine)
@@ -46,7 +46,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
     void shouldDeleteWithEmptyBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String expectedResponseBody = "It works";
-        RestClient component = componentWith(DELETE, baseURL, path);
+        RestClient component = clientWith(DELETE, baseURL, path);
 
         givenThat(delete(urlEqualTo(path))
                 .withRequestBody(binaryEqualTo(new byte[0]))
@@ -66,7 +66,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
     void shouldDeleteThrowExceptionWhenResponseNot2xx() {
         // Given
         String expectedErrorMessage = "Error exception caused by XYZ";
-        RestClient component = componentWith(DELETE, baseURL, path);
+        RestClient component = clientWith(DELETE, baseURL, path);
 
         givenThat(delete(urlEqualTo(path))
                 .willReturn(aResponse()

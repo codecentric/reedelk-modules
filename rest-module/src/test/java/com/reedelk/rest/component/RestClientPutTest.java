@@ -23,7 +23,7 @@ class RestClientPutTest extends RestClientAbstractTest {
         // Given
         String requestBody = "{\"Name\":\"John\"}";
         String expectedResponseBody = "PUT was successful";
-        RestClient client = componentWith(PUT, baseURL, path, EVALUATE_PAYLOAD_BODY);
+        RestClient client = clientWith(PUT, baseURL, path, EVALUATE_PAYLOAD_BODY);
 
         doReturn(Optional.of(requestBody.getBytes()))
                 .when(scriptEngine)
@@ -46,7 +46,7 @@ class RestClientPutTest extends RestClientAbstractTest {
     void shouldWithEmptyBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String expectedResponseBody = "It works";
-        RestClient client = componentWith(PUT, baseURL, path);
+        RestClient client = clientWith(PUT, baseURL, path);
 
         doReturn(Optional.of(new byte[]{}))
                 .when(scriptEngine)
@@ -69,7 +69,7 @@ class RestClientPutTest extends RestClientAbstractTest {
     void shouldThrowExceptionWhenResponseNot2xx() {
         // Given
         String expectedErrorMessage = "Error exception caused by XYZ";
-        RestClient component = componentWith(PUT, baseURL, path);
+        RestClient component = clientWith(PUT, baseURL, path);
 
         givenThat(put(urlEqualTo(path))
                 .willReturn(aResponse()
