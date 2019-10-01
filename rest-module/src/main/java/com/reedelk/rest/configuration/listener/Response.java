@@ -19,7 +19,7 @@ public class Response implements Implementor {
     private DynamicByteArray body;
 
     @Default("200")
-    @Hint("201")
+    @Hint("200")
     @Property("Response status")
     private DynamicInteger status;
 
