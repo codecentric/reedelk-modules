@@ -17,15 +17,17 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
         if (dynamicValue == null) {
             return (Optional<T>) PROVIDER.empty();
-            // Script
+
         } else if (dynamicValue.isScript()) {
+            // Script
             return dynamicValue.isEvaluateMessagePayload() ?
                     // we avoid evaluating the payload with the script engine (optimization)
                     (Optional<T>) convert(message.payload(), dynamicValue.getEvaluatedType(), PROVIDER) :
                     (Optional<T>) execute(dynamicValue, PROVIDER, FUNCTION, message, flowContext);
+
         } else {
             // Not a script
-            T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
+            T converted = DynamicValueConverterFactory.convert(dynamicValue.getValue(), String.class, dynamicValue.getEvaluatedType());
             return (Optional<T>) PROVIDER.from(converted);
         }
     }
@@ -35,12 +37,14 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Throwable exception, FlowContext flowContext) {
         if (dynamicValue == null) {
             return (Optional<T>) PROVIDER.empty();
-            // Script
+
         } else if (dynamicValue.isScript()) {
+            // Script
             return (Optional<T>) execute(dynamicValue, PROVIDER, ERROR_FUNCTION, exception, flowContext);
-            // Not a script
+
         } else {
-            T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
+            // Not a script
+            T converted = DynamicValueConverterFactory.convert(dynamicValue.getValue(), String.class, dynamicValue.getEvaluatedType());
             return (Optional<T>) PROVIDER.from(converted);
         }
     }

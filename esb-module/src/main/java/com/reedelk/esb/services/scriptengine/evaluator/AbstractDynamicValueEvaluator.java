@@ -70,7 +70,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             synchronized (this) {
                 if (!uuidFunctionNameMap.containsKey(valueUUID)) {
                     functionName = functionNameFrom(valueUUID);
-                    String scriptBody = dynamicValue.getBody();
+                    String scriptBody = dynamicValue.getScriptBody();
                     String functionDefinition = functionBuilder.build(functionName, ScriptUtils.unwrap(scriptBody));
                     // pre-compile the function definition.
                     scriptEngine.eval(functionDefinition);

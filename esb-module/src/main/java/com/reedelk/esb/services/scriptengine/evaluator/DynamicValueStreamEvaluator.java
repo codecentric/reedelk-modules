@@ -17,13 +17,16 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
     public <T> Publisher<T> evaluateStream(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
         if (dynamicValue == null) {
             return (Publisher<T>) PROVIDER.empty();
+
         } else if (dynamicValue.isScript()) {
+            // Script
             return dynamicValue.isEvaluateMessagePayload() ?
                     evaluateMessagePayload(dynamicValue, message) :
                     (Publisher<T>) execute(dynamicValue, PROVIDER, FUNCTION, message, flowContext);
+
         } else {
             // Not a script
-            T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
+            T converted = DynamicValueConverterFactory.convert(dynamicValue.getValue(), String.class, dynamicValue.getEvaluatedType());
             return (Publisher<T>) PROVIDER.from(converted);
         }
     }
@@ -33,14 +36,14 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
     public <T> Publisher<T> evaluateStream(DynamicValue<T> dynamicValue, Throwable throwable, FlowContext flowContext) {
         if (dynamicValue == null) {
             return (Publisher<T>) PROVIDER.empty();
-        } else if (dynamicValue.isScript()) {
 
+        } else if (dynamicValue.isScript()) {
             // Script
             return (Publisher<T>) execute(dynamicValue, PROVIDER, ERROR_FUNCTION, throwable, flowContext);
 
         } else {
             // Not a script
-            T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
+            T converted = DynamicValueConverterFactory.convert(dynamicValue.getValue(), String.class, dynamicValue.getEvaluatedType());
             return (Publisher<T>) PROVIDER.from(converted);
         }
     }
