@@ -18,12 +18,9 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
         if (dynamicValue == null) {
             return (Publisher<T>) PROVIDER.empty();
         } else if (dynamicValue.isScript()) {
-            if (dynamicValue.isEvaluateMessagePayload()) {
-                // We avoid evaluating the payload (optimization)
-                return evaluateMessagePayload(dynamicValue, message);
-            } else {
-                return (Publisher<T>) execute(dynamicValue, PROVIDER, FUNCTION, message, flowContext);
-            }
+            return dynamicValue.isEvaluateMessagePayload() ?
+                    evaluateMessagePayload(dynamicValue, message) :
+                    (Publisher<T>) execute(dynamicValue, PROVIDER, FUNCTION, message, flowContext);
         } else {
             // Not a script
             T converted = DynamicValueConverterFactory.convert(dynamicValue.getBody(), String.class, dynamicValue.getEvaluatedType());
@@ -48,6 +45,11 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
         }
     }
 
+    /**
+     * Evaluate the payload without invoking the script engine. This is an optimization
+     * since we can get the payload directly from Java without making an expensive call
+     * to the script engine.
+     */
     private <T> Publisher<T> evaluateMessagePayload(DynamicValue<T> dynamicValue, Message message) {
         if (message.getContent().isStream()) {
             // We don't resolve the stream, but we still might need to
@@ -73,7 +75,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
         public Publisher<?> from(Object value) {
             if (value == null) {
                 return Mono.empty();
-            } else if (value instanceof Publisher<?>){
+            } else if (value instanceof Publisher<?>) {
                 return (Publisher<?>) value;
             } else {
                 return Mono.just(value);

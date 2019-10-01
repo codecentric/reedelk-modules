@@ -20,6 +20,7 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
             // Script
         } else if (dynamicValue.isScript()) {
             return dynamicValue.isEvaluateMessagePayload() ?
+                    // we avoid evaluating the payload with the script engine (optimization)
                     (Optional<T>) convert(message.payload(), dynamicValue.getEvaluatedType(), PROVIDER) :
                     (Optional<T>) execute(dynamicValue, PROVIDER, FUNCTION, message, flowContext);
         } else {
