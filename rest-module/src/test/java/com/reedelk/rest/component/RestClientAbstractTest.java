@@ -5,7 +5,7 @@ import com.reedelk.rest.client.DefaultHttpClientService;
 import com.reedelk.rest.client.HttpClientService;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.script.DynamicByteArray;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

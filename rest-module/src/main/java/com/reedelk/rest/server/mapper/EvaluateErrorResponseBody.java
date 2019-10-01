@@ -2,7 +2,7 @@ package com.reedelk.rest.server.mapper;
 
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.script.DynamicByteArray;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 

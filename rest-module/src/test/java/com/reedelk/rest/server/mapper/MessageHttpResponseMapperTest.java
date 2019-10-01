@@ -8,9 +8,9 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.script.DynamicByteArray;
-import com.reedelk.runtime.api.script.DynamicInteger;
-import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -291,7 +291,7 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(initialHeaders).when(response).responseHeaders();
 
-                DynamicMap<String> headers = DynamicMap.empty();
+                DynamicStringMap headers = DynamicStringMap.empty();
                 headers.put("header1", "my header 1");
                 headers.put("header2", "my header 2");
 
@@ -315,7 +315,7 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(initialHeaders).when(response).responseHeaders();
 
-                DynamicMap<String> headers = DynamicMap.empty();
+                DynamicStringMap headers = DynamicStringMap.empty();
                 headers.put("coNteNt-TyPe", "new content type");
 
                 MessageHttpResponseMapper mapper = newMapperWithAdditionalHeaders(headers);
@@ -640,7 +640,7 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(initialHeaders).when(response).responseHeaders();
 
-                DynamicMap<String> headers = DynamicMap.empty();
+                DynamicStringMap headers = DynamicStringMap.empty();
                 headers.put("header1", "my header 1");
                 headers.put("header2", "my header 2");
 
@@ -663,7 +663,7 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(initialHeaders).when(response).responseHeaders();
 
-                DynamicMap<String> headers = DynamicMap.empty();
+                DynamicStringMap headers = DynamicStringMap.empty();
                 headers.put("coNteNt-TyPe", "new content type");
 
                 MessageHttpResponseMapper mapper = newMapperWithErrorAdditionalHeaders(headers);
@@ -690,7 +690,7 @@ class MessageHttpResponseMapperTest {
 
                 // Then
                 assertThat(initialHeaders).isEmpty();
-                verify(scriptEngine, never()).evaluate(any(DynamicMap.class), any(Message.class), any(FlowContext.class));
+                verify(scriptEngine, never()).evaluate(any(DynamicStringMap.class), any(Message.class), any(FlowContext.class));
             }
         }
     }
@@ -738,7 +738,7 @@ class MessageHttpResponseMapperTest {
         return new MessageHttpResponseMapper(scriptEngine, response, null);
     }
 
-    private MessageHttpResponseMapper newMapperWithAdditionalHeaders(DynamicMap<String> responseHeaders) {
+    private MessageHttpResponseMapper newMapperWithAdditionalHeaders(DynamicStringMap responseHeaders) {
         String bodyContent = "sample body";
         DynamicByteArray bodyValue = DynamicByteArray.from(bodyContent);
         DynamicInteger statusValue = DynamicInteger.from(HttpResponseStatus.OK.codeAsText().toString());
@@ -769,7 +769,7 @@ class MessageHttpResponseMapperTest {
         return new MessageHttpResponseMapper(scriptEngine, null, errorResponse);
     }
 
-    private MessageHttpResponseMapper newMapperWithErrorAdditionalHeaders(DynamicMap<String> errorResponseHeaders) {
+    private MessageHttpResponseMapper newMapperWithErrorAdditionalHeaders(DynamicStringMap errorResponseHeaders) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setHeaders(errorResponseHeaders);
         errorResponse.setBody(DynamicByteArray.from("error body"));

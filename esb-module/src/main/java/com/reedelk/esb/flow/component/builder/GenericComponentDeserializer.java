@@ -4,10 +4,9 @@ import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.script.DynamicMap;
 import com.reedelk.runtime.commons.CollectionFactory;
 import com.reedelk.runtime.commons.JsonParser;
-import com.reedelk.runtime.commons.PrimitiveTypeConverter;
+import com.reedelk.runtime.commons.JsonTypeConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -48,19 +47,26 @@ public class GenericComponentDeserializer {
 
     private Object deserialize(JSONObject componentDefinition, Implementor bean, String propertyName) {
         Object propertyValue = componentDefinition.get(propertyName);
+        SetterArgument setterArgument = argumentOf(bean, propertyName);
+
+        // Dynamic Map or declared Implementor object
         if (propertyValue instanceof JSONObject) {
-            // Object
-            SetterArgument setterArgument = argumentOf(bean, propertyName);
-            return deserialize((JSONObject) propertyValue, setterArgument);
-        } else if (propertyValue instanceof JSONArray) {
+            return deserialize((JSONObject) propertyValue, propertyName, setterArgument);
+
             // Collection
-            SetterArgument setterArgument = argumentOf(bean, propertyName);
+        } else if (propertyValue instanceof JSONArray) {
             checkArgument(CollectionFactory.isSupported(setterArgument.getClazz()), format("Could not map property %s: not a supported collection type", propertyName));
             return deserialize((JSONArray) propertyValue, setterArgument);
+
+            // Enum
+        } else if (setterArgument.isEnum()){
+            Class enumClazz = setterArgument.getClazz();
+            return componentDefinition.getEnum(enumClazz, propertyName);
+
+            // Primitive or Dynamic Value
         } else {
-            // Primitive or dynamic value or script
-            SetterArgument setterArgument = argumentOf(bean, propertyName);
-            return deserialize(componentDefinition, propertyName, setterArgument);
+            Class<?> clazz = setterArgument.getClazz();
+            return JsonTypeConverter.convert(clazz, componentDefinition, propertyName);
         }
     }
 
@@ -73,17 +79,19 @@ public class GenericComponentDeserializer {
      * @param setterArgument the setter argument of the field this object represents.
      * @return a de-serialized Java Instance of the JSON object or a Java Map representing the JSON object
      */
-    private Object deserialize(JSONObject object, SetterArgument setterArgument) {
+    private Object deserialize(JSONObject object, String propertyName, SetterArgument setterArgument) {
         if (setterArgument.isMap()) {
             // The setter argument for this property is a map, so we just return
             // a de-serialized java map object.
             return object.toMap();
         } else if (setterArgument.isDynamicMap()){
-            // The setter argument for this property is a Dynamic map, and we
-            // wrap the de-serialized java map object with a dynamic map adding
-            // a UUID to be used by the Script engine as a reference for the
-            // pre-compiled script to be used at runtime evaluation.
-            return DynamicMap.from(object.toMap());
+            // The setter argument for this property is any type of Dynamic map,
+            // we must wrap the de-serialized java map object with a type specific
+            // dynamic map which adds a UUID identifying the dynamic map function to
+            // be used by the Script engine as a reference for the pre-compiled script
+            // to be used at runtime evaluation.
+            Class<?> clazz = setterArgument.getClazz();
+            return JsonTypeConverter.convert(clazz, object, propertyName);
         } else {
             // It is a complex type implementing implementor interface.
             // We expect that this JSONObject satisfies the properties
@@ -108,29 +116,10 @@ public class GenericComponentDeserializer {
         Collection collection = CollectionFactory.from(clazz);
         Class<?> genericType = argument.getGenericType();
         for (int index = 0; index < array.length(); index++) {
-            Object converted = PrimitiveTypeConverter.convert(genericType, array, index);
+            Object converted = JsonTypeConverter.convert(genericType, array, index);
             collection.add(converted);
         }
         return collection;
-    }
-
-    /**
-     * Deserialize a JSON primitive type. The de-serialized primitive type converted
-     * to the given setter argument type.
-     *
-     * @param componentDefinition the JSON object holding the primitive type
-     * @param propertyName        the name of the JSON object's property for which we want the primitive type de-serialized
-     * @param setterArgument      the bean setter argument
-     * @return a de-serialized primitive type or an enum if the setter argument resolves to an enum type
-     */
-    private <E extends Enum<E>> Object deserialize(JSONObject componentDefinition, String propertyName, SetterArgument setterArgument) {
-        if (setterArgument.isEnum()) {
-            Class<E> enumClazz = setterArgument.getClazz();
-            return componentDefinition.getEnum(enumClazz, propertyName);
-        } else {
-            Class<?> clazz = setterArgument.getClazz();
-            return PrimitiveTypeConverter.convert(clazz, componentDefinition, propertyName);
-        }
     }
 
     private Object deserialize(String referenceId) {

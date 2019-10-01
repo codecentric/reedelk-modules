@@ -12,6 +12,7 @@ public class Converters {
     static {
         Map<Class<?>, DynamicValueConverter<?, ?>> tmp = new HashMap<>();
         tmp.put(Integer.class, new com.reedelk.esb.services.scriptengine.converter.doubletype.AsInteger());
+        tmp.put(Float.class, new com.reedelk.esb.services.scriptengine.converter.doubletype.AsFloat());
         ALL = Collections.unmodifiableMap(tmp);
     }
 

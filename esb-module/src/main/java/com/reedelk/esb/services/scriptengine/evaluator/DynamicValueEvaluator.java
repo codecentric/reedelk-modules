@@ -2,7 +2,7 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.DynamicValue;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 
 import java.util.Optional;
 

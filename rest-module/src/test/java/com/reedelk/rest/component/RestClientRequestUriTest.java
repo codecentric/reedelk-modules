@@ -5,7 +5,7 @@ import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -26,7 +26,7 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
         String path = "/resource/{id}/group/{group}";
         String expectedPath = "/resource/aabbccddeeff/group/user";
 
-        DynamicMap<String> pathParameters = DynamicMap.from(of(
+        DynamicStringMap pathParameters = DynamicStringMap.from(of(
                 "id", "aabbccddeeff",
                 "group", "user"));
 
@@ -41,7 +41,7 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
         String path = "/resource";
         String expectedPath = "/resource?query1=value1&query2=value2";
 
-        DynamicMap<String> queryParameters = DynamicMap.from(of(
+        DynamicStringMap queryParameters = DynamicStringMap.from(of(
                 "query1", "value1",
                 "query2", "value2"));
 
@@ -56,14 +56,14 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
         String path = "/resource/{id}/title/{title}";
         String expectedPath = "/resource/aabb1122/title/manager?query1=value1&query2=value2";
 
-        DynamicMap<String> queryParameters = DynamicMap.from(of("query1", "value1", "query2", "value2"));
-        DynamicMap<String> pathParameters = DynamicMap.from(of("id", "aabb1122", "title", "manager"));
+        DynamicStringMap queryParameters = DynamicStringMap.from(of("query1", "value1", "query2", "value2"));
+        DynamicStringMap pathParameters = DynamicStringMap.from(of("id", "aabb1122", "title", "manager"));
 
         // Expect
         assertExpectedPath(method, path, expectedPath, pathParameters, queryParameters);
     }
 
-    void assertExpectedPath(String method, String path, String expectedPath, DynamicMap<String> pathParameters, DynamicMap<String> queryParameters) {
+    void assertExpectedPath(String method, String path, String expectedPath, DynamicStringMap pathParameters, DynamicStringMap queryParameters) {
         // Given
         givenThat(WireMock.any(urlEqualTo(expectedPath))
                 .willReturn(aResponse().withStatus(200)));
@@ -81,7 +81,7 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
                 .isSuccessful(component, message, flowContext);
     }
 
-    private void configureRequestAndQueryParams(RestClient client, DynamicMap<String> pathParameters, DynamicMap<String> queryParameters) {
+    private void configureRequestAndQueryParams(RestClient client, DynamicStringMap pathParameters, DynamicStringMap queryParameters) {
         if (pathParameters != null && queryParameters != null) {
             client.setPathParameters(pathParameters);
             client.setQueryParameters(queryParameters);

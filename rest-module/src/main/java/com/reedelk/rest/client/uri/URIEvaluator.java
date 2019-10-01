@@ -4,7 +4,7 @@ import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
 import java.net.URI;
@@ -21,8 +21,8 @@ public class URIEvaluator {
     private String baseURL;
     private URIPathComponent pathComponent;
     private ScriptEngineService scriptEngine;
-    private DynamicMap<String> pathParameters;
-    private DynamicMap<String> queryParameters;
+    private DynamicStringMap pathParameters;
+    private DynamicStringMap queryParameters;
 
     private static final Map<String, String> EMPTY_MAP = new HashMap<>();
 
@@ -70,8 +70,8 @@ public class URIEvaluator {
         private String baseURL;
         private ScriptEngineService scriptEngine;
         private ClientConfiguration configuration;
-        private DynamicMap<String> pathParameters;
-        private DynamicMap<String> queryParameters;
+        private DynamicStringMap pathParameters;
+        private DynamicStringMap queryParameters;
 
         public Builder baseURL(String baseURL) {
             this.baseURL = baseURL;
@@ -93,12 +93,12 @@ public class URIEvaluator {
             return this;
         }
 
-        public Builder pathParameters(DynamicMap<String> pathParameters) {
+        public Builder pathParameters(DynamicStringMap pathParameters) {
             this.pathParameters = pathParameters;
             return this;
         }
 
-        public Builder queryParameters(DynamicMap<String> queryParameters) {
+        public Builder queryParameters(DynamicStringMap queryParameters) {
             this.queryParameters = queryParameters;
             return this;
         }

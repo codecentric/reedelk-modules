@@ -1,58 +1,42 @@
-package com.reedelk.esb.services.scriptengine.evaluator;
+package com.reedelk.esb.services.scriptengine.evaluator.function;
 
 import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.commons.StringUtils;
-import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 
 import java.util.Map;
 
-public class EvaluateMapFunction<T> {
+public class EvaluateMapFunctionBuilder implements FunctionBuilder {
 
     private static final String EVALUATE_MAP_SCRIPT =
             "var %s = function(message, context) {\n" +
                     "  return %s\n" +
                     "};";
 
-    private final DynamicMap<T> map;
-    private final String functionName;
-
-    EvaluateMapFunction(String functionName, DynamicMap<T> map) {
-        this.map = map;
-        this.functionName = functionName;
-    }
-
-    public String script() {
-        return asScript();
-    }
-
     /**
+     * This method builds the following script:
      * {
      *  key1:value1,
      *  key2:value2
      * }
      */
-    @SuppressWarnings("unchecked")
-    private String asScript() {
+    @Override
+    public <T> String build(String functionName, DynamicMap<T> map) {
         StringBuilder builder = new StringBuilder("{");
 
-        for (Map.Entry<String,T> entry : map.entrySet()) {
+        for (Map.Entry<String,Object> entry : map.entrySet()) {
             String key = entry.getKey();
-            T value = entry.getValue();
+            Object value = entry.getValue();
 
             if (value instanceof String && ScriptUtils.isScript((String) value)) {
                 // If it is a script, we need to unwrap it.
-                value = (T) ScriptUtils.unwrap((String) value);
+                value = ScriptUtils.unwrap((String) value);
             } else if (value instanceof String) {
                 // If it is text we need to surround the values with quotes.
-                value = (T) ("'" + StringUtils.escapeQuotes((String) value) + "'");
+                value = ("'" + StringUtils.escapeQuotes((String) value) + "'");
             }
 
-            builder.append(key)
-                    .append(":")
-                    .append(" ")
-                    .append(value)
-                    .append(",")
-                    .append(" ");
+            builder.append(key).append(": ").append(value).append(", ");
         }
 
         // Remove final space and comma (,) character

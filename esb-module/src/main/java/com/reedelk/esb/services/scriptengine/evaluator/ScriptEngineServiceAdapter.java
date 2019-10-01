@@ -3,9 +3,9 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.DynamicMap;
-import com.reedelk.runtime.api.script.DynamicValue;
 import com.reedelk.runtime.api.script.Script;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 

@@ -3,7 +3,7 @@ package com.reedelk.rest.component;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.script.DynamicByteArray;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

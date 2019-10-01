@@ -4,7 +4,7 @@ import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateErrorFun
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateFunctionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionBuilder;
 import com.reedelk.runtime.api.commons.ScriptUtils;
-import com.reedelk.runtime.api.script.DynamicValue;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import org.reactivestreams.Publisher;
 
 import java.util.HashMap;

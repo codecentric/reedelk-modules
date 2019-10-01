@@ -1,14 +1,17 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
+import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateMapFunctionBuilder;
+import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionBuilder;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 
 import java.util.Collections;
 import java.util.Map;
 
 public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
 
+    private static final FunctionBuilder FUNCTION = new EvaluateMapFunctionBuilder();
     private static final Map<String,?> EMPTY_MAP = Collections.unmodifiableMap(Collections.emptyMap());
 
     public DynamicMapEvaluator(ScriptEngineProvider provider) {
@@ -23,7 +26,13 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
             return (Map<String, T>) EMPTY_MAP;
         } else {
             String functionName = functionNameOf(dynamicMap);
-            return (Map<String, T>) scriptEngine.invokeFunction(functionName, message, context);
+            Map<String, T> evaluatedMap = (Map<String, T>) scriptEngine.invokeFunction(functionName, message, context);
+            // We map the values to the correct desired type
+            evaluatedMap.forEach((key, value) -> {
+                T converted = DynamicValueConverterFactory.convert(value, dynamicMap.getEvaluatedType());
+                evaluatedMap.put(key, converted);
+            });
+            return evaluatedMap;
         }
     }
 
@@ -34,8 +43,7 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
             synchronized (this) {
                 if (!uuidFunctionNameMap.containsKey(valueUUID)) {
                     functionName = functionNameFrom(valueUUID);
-                    EvaluateMapFunction<T> evaluateMapFunction = new EvaluateMapFunction<>(functionName, dynamicMap);
-                    String functionDefinition = evaluateMapFunction.script();
+                    String functionDefinition = FUNCTION.build(functionName, dynamicMap);
                     scriptEngine.eval(functionDefinition);
                     uuidFunctionNameMap.put(valueUUID, functionName);
                 }

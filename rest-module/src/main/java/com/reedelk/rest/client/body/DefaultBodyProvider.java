@@ -3,7 +3,7 @@ package com.reedelk.rest.client.body;
 import com.reedelk.rest.commons.IsMessagePayload;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.DynamicByteArray;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 

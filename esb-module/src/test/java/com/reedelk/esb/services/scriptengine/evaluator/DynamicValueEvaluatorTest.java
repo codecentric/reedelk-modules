@@ -10,7 +10,7 @@ import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.StringContent;
 import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
-import com.reedelk.runtime.api.script.*;
+import com.reedelk.runtime.api.script.dynamicvalue.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

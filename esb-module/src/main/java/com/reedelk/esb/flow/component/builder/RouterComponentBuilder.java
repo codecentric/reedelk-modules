@@ -5,7 +5,7 @@ import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.runtime.api.script.DynamicBoolean;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicBoolean;
 import com.reedelk.runtime.component.Stop;
 import org.json.JSONArray;
 import org.json.JSONObject;

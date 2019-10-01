@@ -2,7 +2,7 @@ package com.reedelk.esb.component;
 
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.script.DynamicBoolean;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicBoolean;
 import com.reedelk.runtime.component.Router;
 
 import java.util.ArrayList;

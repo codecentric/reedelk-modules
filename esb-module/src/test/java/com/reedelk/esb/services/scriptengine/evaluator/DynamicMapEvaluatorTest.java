@@ -4,10 +4,10 @@ import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicFloatMap;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicIntegerMap;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -31,54 +31,82 @@ class DynamicMapEvaluatorTest {
         evaluator = new DynamicMapEvaluator(JavascriptEngineProvider.INSTANCE);
     }
 
-    @Nested
-    @DisplayName("Evaluate dynamic map with message and context")
-    class EvaluateDynamicMapWithMessageAndContext {
 
-        @Test
-        void shouldCorrectlyEvaluateMapWithScriptAndTextAndNumericValues() {
-            // Given
-            Message message = MessageBuilder.get().text("test").build();
-            message.getAttributes().put("property1", "test");
+    @Test
+    void shouldCorrectlyEvaluateMapWithScriptAndTextAndNumericValues() {
+        // Given
+        Message message = MessageBuilder.get().text("test").build();
+        message.getAttributes().put("property1", "test");
 
-            DynamicMap<String> dynamicMap = DynamicMap.from(of(
-                    "script", "#[message.attributes.property1]",
-                    "text", "This is a text",
-                    "numeric", "23532"));
+        DynamicStringMap dynamicMap = DynamicStringMap.from(of(
+                "script", "#[message.attributes.property1]",
+                "text", "This is a text",
+                "numeric", "23532"));
 
-            // When
-            Map<String, String> evaluated = evaluator.evaluate(dynamicMap, message, context);
+        // When
+        Map<String, String> evaluated = evaluator.evaluate(dynamicMap, message, context);
 
-            // Then
-            assertThat(evaluated.get("script")).isEqualTo("test");
-            assertThat(evaluated.get("text")).isEqualTo("This is a text");
-            assertThat(evaluated.get("numeric")).isEqualTo("23532");
-        }
+        // Then
+        assertThat(evaluated.get("script")).isEqualTo("test");
+        assertThat(evaluated.get("text")).isEqualTo("This is a text");
+        assertThat(evaluated.get("numeric")).isEqualTo("23532");
+    }
 
-        @Test
-        void shouldCorrectlyEvaluateEmptyMap() {
-            // Given
-            Message message = MessageBuilder.get().empty().build();
+    @Test
+    void shouldCorrectlyEvaluateEmptyMap() {
+        // Given
+        Message message = MessageBuilder.get().empty().build();
 
-            // When
-            Map<String, Object> evaluated = evaluator.evaluate(DynamicMap.empty(), message, context);
+        // When
+        Map<String, String> evaluated = evaluator.evaluate(DynamicStringMap.empty(), message, context);
 
-            // Then
-            assertThat(evaluated).isEmpty();
-        }
+        // Then
+        assertThat(evaluated).isEmpty();
+    }
 
-        @Test
-        void shouldCorrectlyEvaluateMapWithValueContainingQuotes() {
-            // Given
-            Message message = MessageBuilder.get().text("test").build();
-            DynamicMap<String> dynamicMap = DynamicMap.from(
-                    of("text", "a simple text 'with quotes'"));
+    @Test
+    void shouldCorrectlyEvaluateMapWithValueContainingQuotes() {
+        // Given
+        Message message = MessageBuilder.get().text("test").build();
+        DynamicStringMap dynamicMap = DynamicStringMap.from(
+                of("text", "a simple text 'with quotes'"));
 
-            // When
-            Map<String,String> evaluated = evaluator.evaluate(dynamicMap, message, context);
+        // When
+        Map<String, String> evaluated = evaluator.evaluate(dynamicMap, message, context);
 
-            // Then
-            assertThat(evaluated.get("text")).isEqualTo("a simple text 'with quotes'");
-        }
+        // Then
+        assertThat(evaluated.get("text")).isEqualTo("a simple text 'with quotes'");
+    }
+
+    @Test
+    void shouldCorrectlyEvaluateMapWithIntegerValues() {
+        // Given
+        Message message = MessageBuilder.get().text("a text").build();
+        DynamicIntegerMap dynamicMap = DynamicIntegerMap.from(of(
+                "aNumericValue", 23,
+                "aScriptedNumericValue", "#[45 + 23]"));
+
+        // When
+        Map<String,Integer> evaluated = evaluator.evaluate(dynamicMap, message, context);
+
+        // Then
+        assertThat(evaluated.get("aNumericValue")).isEqualTo(23);
+        assertThat(evaluated.get("aScriptedNumericValue")).isEqualTo(68);
+    }
+
+    @Test
+    void shouldCorrectlyEvaluateMapWithFloatValues() {
+        // Given
+        Message message = MessageBuilder.get().text("a text").build();
+        DynamicFloatMap dynamicMap = DynamicFloatMap.from(of(
+                "aFloatValue", 23.23f,
+                "aScriptedFloatValue", "#[34.23 + 12.1]"));
+
+        // When
+        Map<String,Float> evaluated = evaluator.evaluate(dynamicMap, message, context);
+
+        // Then
+        assertThat(evaluated.get("aFloatValue")).isEqualTo(23.23f);
+        assertThat(evaluated.get("aScriptedFloatValue")).isEqualTo(46.33f);
     }
 }

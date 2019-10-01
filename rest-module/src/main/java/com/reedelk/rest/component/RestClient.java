@@ -16,8 +16,8 @@ import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.DynamicByteArray;
-import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -68,15 +68,15 @@ public class RestClient implements ProcessorAsync {
 
     @TabGroup("Headers and parameters")
     @Property("Headers")
-    private DynamicMap<String> headers = DynamicMap.empty();
+    private DynamicStringMap headers = DynamicStringMap.empty();
 
     @TabGroup("Headers and parameters")
     @Property("Path params")
-    private DynamicMap<String> pathParameters = DynamicMap.empty();
+    private DynamicStringMap pathParameters = DynamicStringMap.empty();
 
     @TabGroup("Headers and parameters")
     @Property("Query params")
-    private DynamicMap<String> queryParameters = DynamicMap.empty();
+    private DynamicStringMap queryParameters = DynamicStringMap.empty();
 
     @Property("Advanced configuration")
     private AdvancedConfiguration advancedConfiguration;
@@ -130,15 +130,15 @@ public class RestClient implements ProcessorAsync {
         this.streaming = streaming;
     }
 
-    public void setHeaders(DynamicMap<String> headers) {
+    public void setHeaders(DynamicStringMap headers) {
         this.headers = headers;
     }
 
-    public void setPathParameters(DynamicMap<String> pathParameters) {
+    public void setPathParameters(DynamicStringMap pathParameters) {
         this.pathParameters = pathParameters;
     }
 
-    public void setQueryParameters(DynamicMap<String> queryParameters) {
+    public void setQueryParameters(DynamicStringMap queryParameters) {
         this.queryParameters = queryParameters;
     }
 

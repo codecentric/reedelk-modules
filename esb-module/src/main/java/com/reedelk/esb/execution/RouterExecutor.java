@@ -7,7 +7,7 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.services.scriptengine.ScriptEngine;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.DynamicBoolean;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicBoolean;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;

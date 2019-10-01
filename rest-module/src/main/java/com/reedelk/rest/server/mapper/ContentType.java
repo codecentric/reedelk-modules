@@ -2,7 +2,7 @@ package com.reedelk.rest.server.mapper;
 
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.script.DynamicByteArray;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 
 import java.util.Optional;
 

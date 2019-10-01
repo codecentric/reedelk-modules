@@ -5,9 +5,9 @@ import com.reedelk.rest.configuration.listener.Response;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.script.DynamicByteArray;
-import com.reedelk.runtime.api.script.DynamicInteger;
-import com.reedelk.runtime.api.script.DynamicMap;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.reactivestreams.Publisher;
@@ -65,7 +65,7 @@ public class MessageHttpResponseMapper {
                 .ifPresent(contentType -> serverResponse.addHeader(CONTENT_TYPE, contentType));
 
         // 4. Headers (which might override headers above)
-        DynamicMap<String> responseHeaders = ofNullable(response)
+        DynamicStringMap responseHeaders = ofNullable(response)
                 .map(Response::getHeaders).orElse(null);
         AdditionalHeader.addAll(serverResponse, responseHeaders);
 
@@ -111,7 +111,7 @@ public class MessageHttpResponseMapper {
         }
 
         // User defined response headers (which might override headers above)
-        DynamicMap<String> responseHeaders = ofNullable(errorResponse)
+        DynamicStringMap responseHeaders = ofNullable(errorResponse)
                 .map(ErrorResponse::getHeaders).orElse(null);
         AdditionalHeader.addAll(serverResponse, responseHeaders);
 

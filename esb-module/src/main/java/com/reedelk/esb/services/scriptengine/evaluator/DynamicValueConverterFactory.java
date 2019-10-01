@@ -25,6 +25,11 @@ class DynamicValueConverterFactory {
     private DynamicValueConverterFactory() {
     }
 
+    static <O> O convert(Object input, Class<O> outputClass) {
+        if (input == null) return null;
+        return convert(input, input.getClass(), outputClass);
+    }
+
     static <I, O> O convert(Object input, Class<I> inputClass, Class<O> outputClass) {
         Map<Class<?>, DynamicValueConverter<?, ?>> typeConverters = CONVERTERS.get(inputClass);
 
