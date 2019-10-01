@@ -2,7 +2,7 @@ package com.reedelk.esb.component;
 
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.script.dynamicvalue.DynamicBoolean;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.component.Router;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class RouterWrapper extends Router {
                 .collect(toList());
     }
 
-    public void addExpressionAndPathPair(DynamicBoolean expression, ExecutionNode pathExecutionNode) {
+    public void addExpressionAndPathPair(DynamicString expression, ExecutionNode pathExecutionNode) {
         pathExpressionPairs.add(new PathExpressionPair(expression, pathExecutionNode));
     }
 
@@ -44,10 +44,10 @@ public class RouterWrapper extends Router {
     }
 
     public class PathExpressionPair {
-        public final DynamicBoolean expression;
+        public final DynamicString expression;
         public final ExecutionNode pathReference;
 
-        PathExpressionPair(DynamicBoolean expression, ExecutionNode pathReference) {
+        PathExpressionPair(DynamicString expression, ExecutionNode pathReference) {
             this.expression = expression;
             this.pathReference = pathReference;
         }

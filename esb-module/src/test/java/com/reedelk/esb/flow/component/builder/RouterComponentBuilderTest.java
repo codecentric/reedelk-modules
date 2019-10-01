@@ -8,8 +8,6 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.esb.test.utils.ComponentsBuilder;
 import com.reedelk.esb.test.utils.TestComponent;
-import com.reedelk.runtime.api.script.dynamicvalue.DynamicBoolean;
-import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import com.reedelk.runtime.component.Stop;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -80,9 +78,9 @@ class RouterComponentBuilderTest {
     void shouldCorrectlyHandleRouterComponent() {
         // Given
         JSONArray whenArray = new JSONArray();
-        whenArray.put(conditionalBranch(DynamicBoolean.from("#[1 == 1]"), COMPONENT_3_NAME, COMPONENT_1_NAME));
-        whenArray.put(conditionalBranch(DynamicBoolean.from("#['hello' == 'hello1']"), COMPONENT_2_NAME, COMPONENT_4_NAME));
-        whenArray.put(conditionalBranch(DEFAULT_CONDITION, COMPONENT_6_NAME, COMPONENT_5_NAME));
+        whenArray.put(conditionalBranch("#[1 == 1]", COMPONENT_3_NAME, COMPONENT_1_NAME));
+        whenArray.put(conditionalBranch("#['hello' == 'hello1']", COMPONENT_2_NAME, COMPONENT_4_NAME));
+        whenArray.put(conditionalBranch(DEFAULT_CONDITION.getValue(), COMPONENT_6_NAME, COMPONENT_5_NAME));
 
         JSONObject componentDefinition = ComponentsBuilder.forComponent(RouterWrapper.class)
                 .with("when", whenArray)
@@ -116,9 +114,9 @@ class RouterComponentBuilderTest {
         verifyNoMoreInteractions(parentEn);
     }
 
-    private JSONObject conditionalBranch(DynamicValue condition, String... componentsNames) {
+    private JSONObject conditionalBranch(String condition, String... componentsNames) {
         JSONObject object = new JSONObject();
-        object.put("condition", condition.getValue());
+        object.put("condition", condition);
         object.put("next", ComponentsBuilder.createNextComponentsArray(componentsNames));
         return object;
     }

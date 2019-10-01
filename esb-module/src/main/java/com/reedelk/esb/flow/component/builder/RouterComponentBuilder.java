@@ -5,7 +5,7 @@ import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.runtime.api.script.dynamicvalue.DynamicBoolean;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.component.Stop;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,7 +50,7 @@ class RouterComponentBuilder extends AbstractBuilder {
                 // The first component of A GIVEN router path,
                 // must be added as a router expression pair.
                 if (j == 0) {
-                    DynamicBoolean expression = DynamicBoolean.from(condition);
+                    DynamicString expression = DynamicString.from(condition);
                     routerWrapper.addExpressionAndPathPair(expression, lastNode);
                 }
 

@@ -7,8 +7,9 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.services.scriptengine.ScriptEngine;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.dynamicvalue.DynamicBoolean;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.api.service.ScriptEngineService;
+import com.reedelk.runtime.component.Router;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ public class RouterExecutor implements FlowExecutor {
     private static final ScriptEngineService ENGINE = ScriptEngine.INSTANCE;
 
     private static final Mono<Boolean> FALSE = Mono.just(false);
+    private static final Mono<Boolean> TRUE = Mono.just(true);
 
     @Override
     public Publisher<MessageAndContext> execute(Publisher<MessageAndContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
@@ -66,7 +68,7 @@ public class RouterExecutor implements FlowExecutor {
     }
 
     private Mono<MessageAndContext> createConditionalBranch(PathExpressionPair pair, MessageAndContext event, ExecutionGraph graph) {
-        DynamicBoolean expression = pair.expression;
+        DynamicString expression = pair.expression;
         ExecutionNode pathExecutionNode = pair.pathReference;
         // This Mono evaluates the expression. If the expression is true,
         // then the branch subflow gets executed, otherwise the message is dropped
@@ -77,10 +79,13 @@ public class RouterExecutor implements FlowExecutor {
         return Mono.from(FlowExecutorFactory.get().execute(parent, pathExecutionNode, graph));
     }
 
-    private Mono<Boolean> evaluate(DynamicBoolean expression, Message message, FlowContext flowContext) {
+    private Mono<Boolean> evaluate(DynamicString expression, Message message, FlowContext flowContext) {
         try {
-            boolean result = ENGINE.evaluate(expression, message, flowContext).orElse(false);
-            return Mono.just(result);
+            return Router.DEFAULT_CONDITION.equals(expression) ?
+                    TRUE :
+                    ENGINE.evaluate(expression, message, flowContext)
+                            .map(resultAsString -> Mono.just(Boolean.parseBoolean(resultAsString)))
+                            .orElse(FALSE);
         } catch (Exception e) {
             logger.error(String.format("Could not evaluate Router path expression (%s)", expression), e);
             return FALSE;

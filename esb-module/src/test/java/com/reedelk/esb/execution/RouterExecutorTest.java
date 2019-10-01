@@ -4,7 +4,7 @@ import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.runtime.api.script.dynamicvalue.DynamicBoolean;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.component.Stop;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -207,7 +207,7 @@ class RouterExecutorTest extends AbstractExecutionTest {
             routerWrapper.setEndOfRouterStopNode(endOfRouter);
             for (ConditionWithSequence item : conditionWithSequences) {
                 if (item.sequence.size() > 0) {
-                    routerWrapper.addExpressionAndPathPair(DynamicBoolean.from(item.condition), item.sequence.get(0));
+                    routerWrapper.addExpressionAndPathPair(DynamicString.from(item.condition), item.sequence.get(0));
                     buildSequence(graph, router, endOfRouter, item.sequence);
                 }
             }
