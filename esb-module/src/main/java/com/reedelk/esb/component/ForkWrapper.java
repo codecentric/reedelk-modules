@@ -13,7 +13,7 @@ public class ForkWrapper extends Fork {
 
     private List<ExecutionNode> forkNodes = new ArrayList<>();
 
-    private volatile Scheduler scheduler;
+    private Scheduler scheduler;
 
     private ExecutionNode stopNode;
 
