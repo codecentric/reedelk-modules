@@ -1,7 +1,7 @@
 package com.reedelk.esb.module;
 
 import com.reedelk.esb.commons.ComponentDisposer;
-import com.reedelk.esb.component.ESBRuntimeComponent;
+import com.reedelk.esb.component.RuntimeComponents;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.runtime.api.component.Component;
@@ -74,7 +74,7 @@ public class ModulesManager {
     }
 
     public ExecutionNode instantiateComponent(final BundleContext context, final String componentName) {
-        if (ESBRuntimeComponent.is(componentName)) {
+        if (RuntimeComponents.is(componentName)) {
             Component component = instantiateSystemComponent(componentName);
             return new ExecutionNode(disposer, new ReferencePair<>(component));
         }
@@ -102,7 +102,7 @@ public class ModulesManager {
     }
 
     private Component instantiateSystemComponent(String componentName) {
-        Class<? extends Component> systemComponentClass = ESBRuntimeComponent.getDefiningClass(componentName);
+        Class<? extends Component> systemComponentClass = RuntimeComponents.getDefiningClass(componentName);
         try {
             return systemComponentClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

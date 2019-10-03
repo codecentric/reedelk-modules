@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ESBRuntimeComponent {
+public class RuntimeComponents {
 
     private static final Map<String, Class<? extends Component>> COMPONENTS;
 
@@ -24,7 +24,7 @@ public class ESBRuntimeComponent {
         COMPONENTS = Collections.unmodifiableMap(tmp);
     }
 
-    private ESBRuntimeComponent() {
+    private RuntimeComponents() {
     }
 
     public static boolean is(String componentName) {

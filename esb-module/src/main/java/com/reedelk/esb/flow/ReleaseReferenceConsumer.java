@@ -1,6 +1,6 @@
 package com.reedelk.esb.flow;
 
-import com.reedelk.esb.component.ESBRuntimeComponent;
+import com.reedelk.esb.component.RuntimeComponents;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.runtime.api.component.Component;
@@ -37,7 +37,7 @@ public class ReleaseReferenceConsumer implements Consumer<ExecutionNode> {
         ReferencePair<Component> componentReference = executionNode.getComponentReference();
         Component component = componentReference.getImplementor();
 
-        if (ESBRuntimeComponent.is(component)) {
+        if (RuntimeComponents.is(component)) {
             // An ESB runtime component (e.g Fork, Router, Flow Reference ...)
             // does not have an associated OSGi service reference and service object
             // because it is just a java class instantiated by the core runtime.

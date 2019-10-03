@@ -3,7 +3,7 @@ package com.reedelk.esb;
 import com.reedelk.esb.commons.AddComponentDisposerListeners;
 import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.ComponentRegistry;
-import com.reedelk.esb.component.ESBRuntimeComponent;
+import com.reedelk.esb.component.RuntimeComponents;
 import com.reedelk.esb.configuration.ApplyRuntimeConfiguration;
 import com.reedelk.esb.lifecycle.*;
 import com.reedelk.esb.module.ModulesManager;
@@ -43,7 +43,7 @@ public class ESB implements EventListener, HotSwapListener {
         ComponentDisposer disposer = new ComponentDisposer();
         modulesManager = new ModulesManager(disposer);
 
-        componentRegistry = new ComponentRegistry(ESBRuntimeComponent.allNames());
+        componentRegistry = new ComponentRegistry(RuntimeComponents.allNames());
         eventDispatcher = new ESBEventService(this);
 
         context.addBundleListener(eventDispatcher);
