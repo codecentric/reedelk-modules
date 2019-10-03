@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
 
-    static final FunctionBuilder FUNCTION = new ScriptFunctionBuilder();
+    private static final FunctionBuilder FUNCTION = new ScriptFunctionBuilder();
 
     public ScriptEvaluator(ScriptEngineProvider provider) {
         super(provider);
