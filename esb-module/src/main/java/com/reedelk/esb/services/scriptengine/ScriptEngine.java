@@ -1,13 +1,10 @@
 package com.reedelk.esb.services.scriptengine;
 
-import com.reedelk.esb.services.scriptengine.evaluator.DynamicMapEvaluator;
-import com.reedelk.esb.services.scriptengine.evaluator.DynamicValueEvaluator;
-import com.reedelk.esb.services.scriptengine.evaluator.DynamicValueStreamEvaluator;
-import com.reedelk.esb.services.scriptengine.evaluator.ScriptEngineProvider;
+import com.reedelk.esb.services.scriptengine.evaluator.*;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.Script;
+import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
@@ -23,6 +20,7 @@ public class ScriptEngine implements ScriptEngineService {
     private DynamicValueStreamEvaluator dynamicValueStreamEvaluator;
     private DynamicValueEvaluator dynamicValueEvaluator;
     private DynamicMapEvaluator dynamicMapEvaluator;
+    private ScriptEvaluator scriptEvaluator;
 
     private ScriptEngine() {
         ScriptEngineProvider provider = JavascriptEngineProvider.INSTANCE;
@@ -30,7 +28,10 @@ public class ScriptEngine implements ScriptEngineService {
         dynamicValueStreamEvaluator = new DynamicValueStreamEvaluator(provider);
         dynamicValueEvaluator = new DynamicValueEvaluator(provider);
         dynamicMapEvaluator = new DynamicMapEvaluator(provider);
+        scriptEvaluator = new ScriptEvaluator(provider);
     }
+
+    // Dynamic value
 
     @Override
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
@@ -52,15 +53,19 @@ public class ScriptEngine implements ScriptEngineService {
         return dynamicValueStreamEvaluator.evaluateStream(dynamicValue, message, flowContext);
     }
 
+    // Script
+
     @Override
-    public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext) {
-        throw new UnsupportedOperationException("Implement me");
+    public <T> Optional<T> evaluate(ScriptBlock script, Message message, FlowContext flowContext, Class<T> returnType) {
+        return scriptEvaluator.evaluate(script, message, flowContext, returnType);
     }
 
     @Override
-    public <T> Publisher<T> evaluateStream(Script script, Message message, FlowContext flowContext) {
-        throw new UnsupportedOperationException("Implement me");
+    public <T> Publisher<T> evaluateStream(ScriptBlock script, Message message, FlowContext flowContext, Class<T> returnType) {
+        return scriptEvaluator.evaluateStream(script, message, flowContext, returnType);
     }
+
+    // Dynamic map
 
     @Override
     public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, Message message, FlowContext context) {
@@ -72,5 +77,6 @@ public class ScriptEngine implements ScriptEngineService {
         dynamicValueStreamEvaluator.onDisposed(component);
         dynamicValueEvaluator.onDisposed(component);
         dynamicMapEvaluator.onDisposed(component);
+        scriptEvaluator.onDisposed(component);
     }
 }

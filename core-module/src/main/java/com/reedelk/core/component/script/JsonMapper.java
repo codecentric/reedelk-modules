@@ -10,19 +10,13 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.script.SimpleBindings;
+import java.util.Optional;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("JSON Mapper")
 @Component(service = JsonMapper.class, scope = PROTOTYPE)
 public class JsonMapper implements ProcessorSync {
-
-    private static final String EXECUTION_SCRIPT_TEMPLATE =
-            "input = JSON.parse(input); " +
-                    "output = JSON.parse('{}'); " +
-                    "%s" +
-                    "output = JSON.stringify(output);";
 
     @Reference
     private ScriptEngineService service;
@@ -42,16 +36,27 @@ public class JsonMapper implements ProcessorSync {
     @Variable(variableName = "output", contextName = "outputContext")
     private Script mappingScript;
 
+    private volatile ScriptEnhancer enhancer;
+
     @Override
     public Message apply(Message message, FlowContext flowContext) {
-        String script = String.format(EXECUTION_SCRIPT_TEMPLATE, mappingScript);
+        // TODO: Test what happens if a function with the same name and id gets evaluated twice!!
+        //  does it override the original definition?
 
-        // TODO: COmplete  me
-      //  ScriptExecutionResult result = service.evaluate(script, message, new ComponentVariableBindings(message));
+        if (enhancer == null) {
+            synchronized (this) {
+                if (enhancer == null) {
+                    enhancer = new ScriptEnhancer(mappingScript);
+                }
+            }
+        }
 
-        //Object mappedOutput = result.getBindings().get("output");
-
-        return MessageBuilder.get().empty().build();
+        Optional<String> mappedJson = service.evaluate(enhancer, message, flowContext, String.class);
+        if (!mappedJson.isPresent()) {
+            return MessageBuilder.get().empty().build();
+        } else {
+            return MessageBuilder.get().json(mappedJson.get()).build();
+        }
     }
 
     public void setInputJsonSchema(String inputJsonSchema) {
@@ -64,16 +69,5 @@ public class JsonMapper implements ProcessorSync {
 
     public void setMappingScript(Script mappingScript) {
         this.mappingScript = mappingScript;
-    }
-
-    class ComponentVariableBindings extends SimpleBindings {
-        ComponentVariableBindings(Message message) {
-            if (message.getContent() != null) {
-                put("input", message.getContent().data());
-            } else {
-                put("input", "{}");
-            }
-            put("output", "{}");
-        }
     }
 }

@@ -270,7 +270,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateIntegerFromText() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicInteger dynamicInteger = DynamicInteger.from("53");
+            DynamicInteger dynamicInteger = DynamicInteger.from(53);
 
             // When
             Publisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);

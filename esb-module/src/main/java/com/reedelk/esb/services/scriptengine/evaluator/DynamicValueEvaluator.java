@@ -6,60 +6,41 @@ import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 
 import java.util.Optional;
 
+
 public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
 
     public DynamicValueEvaluator(ScriptEngineProvider provider) {
         super(provider);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
         if (dynamicValue == null) {
-            return (Optional<T>) PROVIDER.empty();
-
+            // Value is not present
+            return OPTIONAL_PROVIDER.empty();
         } else if (dynamicValue.isScript()) {
             // Script
             return dynamicValue.isEvaluateMessagePayload() ?
                     // we avoid evaluating the payload with the script engine (optimization)
-                    (Optional<T>) convert(message.payload(), dynamicValue.getEvaluatedType(), PROVIDER) :
-                    (Optional<T>) execute(dynamicValue, PROVIDER, FUNCTION, message, flowContext);
-
+                    convert(message.payload(), dynamicValue.getEvaluatedType(), OPTIONAL_PROVIDER) :
+                    execute(dynamicValue, OPTIONAL_PROVIDER, FUNCTION, message, flowContext);
         } else {
             // Not a script
-            T converted = DynamicValueConverterFactory.convert(dynamicValue.getValue(), dynamicValue.getEvaluatedType());
-            return (Optional<T>) PROVIDER.from(converted);
+            return Optional.ofNullable(dynamicValue.getValue());
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Throwable exception, FlowContext flowContext) {
         if (dynamicValue == null) {
-            return (Optional<T>) PROVIDER.empty();
-
+            // Value is not present
+            return OPTIONAL_PROVIDER.empty();
         } else if (dynamicValue.isScript()) {
             // Script
-            return (Optional<T>) execute(dynamicValue, PROVIDER, ERROR_FUNCTION, exception, flowContext);
-
+            return execute(dynamicValue, OPTIONAL_PROVIDER, ERROR_FUNCTION, exception, flowContext);
         } else {
             // Not a script
-            T converted = DynamicValueConverterFactory.convert(dynamicValue.getValue(), dynamicValue.getEvaluatedType());
-            return (Optional<T>) PROVIDER.from(converted);
-        }
-    }
-
-    private static final ValueProvider<Optional<?>> PROVIDER = new OptionalValueProvider();
-
-    static class OptionalValueProvider implements ValueProvider<Optional<?>> {
-        @Override
-        public Optional<?> empty() {
-            return Optional.empty();
-        }
-
-        @Override
-        public Optional<?> from(Object value) {
-            return Optional.ofNullable(value);
+            return Optional.ofNullable(dynamicValue.getValue());
         }
     }
 }

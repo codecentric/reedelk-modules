@@ -258,7 +258,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateIntegerFromText() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicInteger dynamicInteger = DynamicInteger.from("53");
+            DynamicInteger dynamicInteger = DynamicInteger.from(53);
 
             // When
             Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, message, context);
