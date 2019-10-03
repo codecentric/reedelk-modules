@@ -6,7 +6,7 @@ import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 
 import java.util.Map;
 
-public class EvaluateMapFunctionBuilder implements FunctionBuilder {
+public class EvaluateDynamicMapFunctionDefinitionBuilder implements FunctionDefinitionBuilder<DynamicMap<Object>> {
 
     private static final String EVALUATE_MAP_SCRIPT =
             "var %s = function(message, context) {\n" +
@@ -21,7 +21,7 @@ public class EvaluateMapFunctionBuilder implements FunctionBuilder {
      * }
      */
     @Override
-    public <T> String build(String functionName, DynamicMap<T> map) {
+    public String from(String functionName, DynamicMap<Object> map) {
         StringBuilder builder = new StringBuilder("{");
 
         for (Map.Entry<String,Object> entry : map.entrySet()) {

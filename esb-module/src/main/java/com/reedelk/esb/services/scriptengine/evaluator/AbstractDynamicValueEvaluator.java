@@ -2,10 +2,9 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.commons.FunctionName;
 import com.reedelk.esb.commons.IsSourceAssignableToTarget;
-import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateErrorFunctionBuilder;
-import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateFunctionBuilder;
-import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionBuilder;
-import com.reedelk.runtime.api.commons.ScriptUtils;
+import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueErrorFunctionDefinitionBuilder;
+import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueFunctionDefinitionBuilder;
+import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import org.reactivestreams.Publisher;
@@ -13,11 +12,10 @@ import org.reactivestreams.Publisher;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("unchecked")
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
 
-    static final FunctionBuilder ERROR_FUNCTION = new EvaluateErrorFunctionBuilder();
-    static final FunctionBuilder FUNCTION = new EvaluateFunctionBuilder();
+    static final FunctionDefinitionBuilder<DynamicValue> ERROR_FUNCTION = new EvaluateDynamicValueErrorFunctionDefinitionBuilder();
+    static final FunctionDefinitionBuilder<DynamicValue> FUNCTION = new EvaluateDynamicValueFunctionDefinitionBuilder();
 
     final ScriptEngineProvider scriptEngine;
 
@@ -27,12 +25,11 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         this.scriptEngine = scriptEngine;
     }
 
-    <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider provider, FunctionBuilder functionBuilder, Object... args) {
+    <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider provider, FunctionDefinitionBuilder<DynamicValue> functionDefinitionBuilder, Object... args) {
         if (dynamicValue.isEmpty()) {
             return provider.empty();
         } else {
-            String functionName = functionNameOf(dynamicValue,
-                    funName -> functionBuilder.build(funName, ScriptUtils.unwrap(dynamicValue.body())));
+            String functionName = functionNameOf(dynamicValue, functionDefinitionBuilder);
             Object evaluationResult = scriptEngine.invokeFunction(functionName, args);
             return convert(evaluationResult, dynamicValue.getEvaluatedType(), provider);
         }
@@ -44,6 +41,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
                 convert(valueToConvert, valueToConvert.getClass(), targetClazz, provider);
     }
 
+    @SuppressWarnings("unchecked")
     <S> S convert(Object valueToConvert, Class<?> sourceClass, Class<?> targetClazz, ValueProvider provider) {
         if (valueToConvert instanceof Publisher<?>) {
             // Value is a stream
@@ -61,14 +59,14 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    String functionNameOf(ScriptBlock scriptBlock, FunctionDefinitionProvider definitionProvider) {
+    <T extends ScriptBlock> String functionNameOf(T scriptBlock, FunctionDefinitionBuilder<T> functionDefinitionBuilder) {
         String valueUUID = scriptBlock.uuid();
         String functionName = uuidFunctionNameMap.get(valueUUID);
         if (functionName == null) {
             synchronized (this) {
                 if (!uuidFunctionNameMap.containsKey(valueUUID)) {
                     functionName = FunctionName.from(valueUUID);
-                    String functionDefinition = definitionProvider.definitionWith(functionName);
+                    String functionDefinition = functionDefinitionBuilder.from(functionName, scriptBlock);
 
                     // pre-compile the function definition.
                     scriptEngine.eval(functionDefinition);
@@ -77,9 +75,5 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             }
         }
         return functionName;
-    }
-
-    interface FunctionDefinitionProvider {
-        String definitionWith(String functionName);
     }
 }

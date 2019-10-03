@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
-import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateMapFunctionBuilder;
-import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionBuilder;
+import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicMapFunctionDefinitionBuilder;
+import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
 
-    private static final FunctionBuilder MAP_FUNCTION_BUILDER = new EvaluateMapFunctionBuilder();
+    private static final FunctionDefinitionBuilder MAP_FUNCTION_BUILDER = new EvaluateDynamicMapFunctionDefinitionBuilder();
     private static final Map<String,?> EMPTY_MAP = Collections.unmodifiableMap(Collections.emptyMap());
 
     public DynamicMapEvaluator(ScriptEngineProvider provider) {
@@ -27,8 +27,7 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
 
         } else {
 
-            String functionName = functionNameOf(dynamicMap,
-                    funName -> MAP_FUNCTION_BUILDER.build(funName, dynamicMap));
+            String functionName = functionNameOf(dynamicMap, MAP_FUNCTION_BUILDER);
 
             Map<String, T> evaluatedMap = (Map<String, T>) scriptEngine.invokeFunction(functionName, message, context);
 

@@ -1,8 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
-import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateFunctionBuilder;
-import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionBuilder;
-import com.reedelk.runtime.api.commons.ScriptUtils;
+import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateScriptFunctionDefinitionBuilder;
+import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.ScriptBlock;
@@ -16,7 +15,8 @@ import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STR
 @SuppressWarnings("unchecked")
 public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
 
-    private static final FunctionBuilder FUNCTION = new EvaluateFunctionBuilder();
+    private static final FunctionDefinitionBuilder FUNCTION = new EvaluateScriptFunctionDefinitionBuilder();
+
 
     public ScriptEvaluator(ScriptEngineProvider provider) {
         super(provider);
@@ -41,8 +41,7 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     private <T> T evaluateScript(ScriptBlock script, Message message, FlowContext flowContext, Class<T> returnType, ValueProvider valueProvider) {
-        String functionName = functionNameOf(script,
-                funName -> FUNCTION.build(funName, ScriptUtils.unwrap(script.body())));
+        String functionName = functionNameOf(script,FUNCTION);
         Object evaluationResult = scriptEngine.invokeFunction(functionName, message, flowContext);
         return convert(evaluationResult, returnType, valueProvider);
     }
