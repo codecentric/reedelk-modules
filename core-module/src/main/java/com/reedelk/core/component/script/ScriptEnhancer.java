@@ -8,7 +8,7 @@ public class ScriptEnhancer implements ScriptBlock {
 
     private static final String EXECUTION_SCRIPT_TEMPLATE =
             "var input = JSON.parse(message.payload());\n" +
-            "var output = {};\n" + // TODO: EMPTY object is just {}
+            "var output = {};\n" +
             "%s\n" +
             "return JSON.stringify(output);";
 
