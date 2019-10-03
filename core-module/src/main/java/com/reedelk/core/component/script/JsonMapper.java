@@ -40,9 +40,16 @@ public class JsonMapper implements ProcessorSync {
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
-        // TODO: Test what happens if a function with the same name and id gets evaluated twice!!
-        //  does it override the original definition?
+        ScriptEnhancer enhancer = enhancer();
+        Optional<String> mappedJson = service.evaluate(enhancer, message, flowContext, String.class);
+        if (!mappedJson.isPresent()) {
+            return MessageBuilder.get().empty().build();
+        } else {
+            return MessageBuilder.get().json(mappedJson.get()).build();
+        }
+    }
 
+    private ScriptEnhancer enhancer() {
         if (enhancer == null) {
             synchronized (this) {
                 if (enhancer == null) {
@@ -50,13 +57,7 @@ public class JsonMapper implements ProcessorSync {
                 }
             }
         }
-
-        Optional<String> mappedJson = service.evaluate(enhancer, message, flowContext, String.class);
-        if (!mappedJson.isPresent()) {
-            return MessageBuilder.get().empty().build();
-        } else {
-            return MessageBuilder.get().json(mappedJson.get()).build();
-        }
+        return enhancer;
     }
 
     public void setInputJsonSchema(String inputJsonSchema) {
