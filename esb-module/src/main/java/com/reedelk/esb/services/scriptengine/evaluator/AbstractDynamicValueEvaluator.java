@@ -44,24 +44,6 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
                 convert(valueToConvert, valueToConvert.getClass(), targetClazz, provider);
     }
 
-    @SuppressWarnings("unchecked")
-    <S> S convert(Object valueToConvert, Class<?> sourceClass, Class<?> targetClazz, ValueProvider provider) {
-        if (valueToConvert instanceof Publisher<?>) {
-            // Value is a stream
-            Object converted = DynamicValueConverterFactory.convertStream((Publisher) valueToConvert, sourceClass, targetClazz);
-            return provider.from(converted);
-
-        } else {
-            // Value is not a stream
-            if (IsSourceAssignableToTarget.from(sourceClass, targetClazz)) {
-                return provider.from(valueToConvert);
-            } else {
-                Object converted = DynamicValueConverterFactory.convert(valueToConvert, sourceClass, targetClazz);
-                return provider.from(converted);
-            }
-        }
-    }
-
     <T extends ScriptBlock> String functionNameOf(T scriptBlock, FunctionDefinitionBuilder<T> functionDefinitionBuilder) {
         String valueUUID = scriptBlock.uuid();
         String functionName = uuidFunctionNameMap.get(valueUUID);
@@ -94,6 +76,24 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             return convert(stream, sourceType, targetType, STREAM_PROVIDER);
         } else {
             return convert(message.payload(), targetType, STREAM_PROVIDER);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <S> S convert(Object valueToConvert, Class<?> sourceClass, Class<?> targetClazz, ValueProvider provider) {
+        if (valueToConvert instanceof Publisher<?>) {
+            // Value is a stream
+            Object converted = DynamicValueConverterFactory.convertStream((Publisher) valueToConvert, sourceClass, targetClazz);
+            return provider.from(converted);
+
+        } else {
+            // Value is not a stream
+            if (IsSourceAssignableToTarget.from(sourceClass, targetClazz)) {
+                return provider.from(valueToConvert);
+            } else {
+                Object converted = DynamicValueConverterFactory.convert(valueToConvert, sourceClass, targetClazz);
+                return provider.from(converted);
+            }
         }
     }
 }

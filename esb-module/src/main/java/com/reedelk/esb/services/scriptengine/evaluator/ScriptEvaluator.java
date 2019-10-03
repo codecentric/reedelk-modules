@@ -4,7 +4,6 @@ import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateScriptFu
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.api.script.ScriptBlock;
 import org.reactivestreams.Publisher;
 
@@ -24,7 +23,7 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     @Override
-    public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
+    public <T> Optional<T> evaluate(ScriptBlock script, Message message, FlowContext flowContext, Class<T> returnType) {
         if (script == null || script.isEmpty()) {
             return OPTIONAL_PROVIDER.empty();
         } else {
@@ -33,7 +32,7 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     @Override
-    public <T> Publisher<T> evaluateStream(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
+    public <T> Publisher<T> evaluateStream(ScriptBlock script, Message message, FlowContext flowContext, Class<T> returnType) {
         if (script == null || script.isEmpty()) {
             return STREAM_PROVIDER.empty();
         } else if (script.isEvaluateMessagePayload()) {
