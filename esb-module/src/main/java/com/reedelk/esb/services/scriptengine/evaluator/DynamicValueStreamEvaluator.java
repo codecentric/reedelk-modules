@@ -6,6 +6,8 @@ import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
+import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STREAM_PROVIDER;
+
 public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
     public DynamicValueStreamEvaluator(ScriptEngineProvider provider) {

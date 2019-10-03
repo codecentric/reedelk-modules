@@ -20,19 +20,19 @@ public class ScriptEnhancer implements ScriptBlock {
     }
 
     @Override
-    public String getUUID() {
-        return delegate.getUUID();
+    public String uuid() {
+        return delegate.uuid();
     }
 
     @Override
-    public String getScriptBody() {
-        String userDefined = ScriptUtils.unwrap(delegate.getScriptBody());
+    public String body() {
+        String userDefined = ScriptUtils.unwrap(delegate.body());
         return String.format(EXECUTION_SCRIPT_TEMPLATE, userDefined);
     }
 
     @Override
-    public boolean isEmptyScript() {
+    public boolean isEmpty() {
         // TODO: Not sure if this is right...
-        return ScriptUtils.isEmpty(delegate.getScriptBody());
+        return ScriptUtils.isEmpty(delegate.body());
     }
 }

@@ -19,18 +19,20 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     static final FunctionBuilder ERROR_FUNCTION = new EvaluateErrorFunctionBuilder();
     static final FunctionBuilder FUNCTION = new EvaluateFunctionBuilder();
 
-    final Map<String, String> uuidFunctionNameMap = new HashMap<>();
     final ScriptEngineProvider scriptEngine;
+
+    private final Map<String, String> uuidFunctionNameMap = new HashMap<>();
 
     AbstractDynamicValueEvaluator(ScriptEngineProvider scriptEngine) {
         this.scriptEngine = scriptEngine;
     }
 
     <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider provider, FunctionBuilder functionBuilder, Object... args) {
-        if (dynamicValue.isEmptyScript()) {
+        if (dynamicValue.isEmpty()) {
             return provider.empty();
         } else {
-            String functionName = functionNameOf(dynamicValue, functionBuilder);
+            String functionName = functionNameOf(dynamicValue,
+                    funName -> functionBuilder.build(funName, ScriptUtils.unwrap(dynamicValue.body())));
             Object evaluationResult = scriptEngine.invokeFunction(functionName, args);
             return convert(evaluationResult, dynamicValue.getEvaluatedType(), provider);
         }
@@ -59,15 +61,14 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    String functionNameOf(ScriptBlock scriptBlock, FunctionBuilder functionBuilder) {
-        String valueUUID = scriptBlock.getUUID();
+    String functionNameOf(ScriptBlock scriptBlock, FunctionDefinitionProvider definitionProvider) {
+        String valueUUID = scriptBlock.uuid();
         String functionName = uuidFunctionNameMap.get(valueUUID);
         if (functionName == null) {
             synchronized (this) {
                 if (!uuidFunctionNameMap.containsKey(valueUUID)) {
                     functionName = FunctionName.from(valueUUID);
-                    String scriptBody = scriptBlock.getScriptBody();
-                    String functionDefinition = functionBuilder.build(functionName, ScriptUtils.unwrap(scriptBody));
+                    String functionDefinition = definitionProvider.definitionWith(functionName);
 
                     // pre-compile the function definition.
                     scriptEngine.eval(functionDefinition);
@@ -76,5 +77,9 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             }
         }
         return functionName;
+    }
+
+    interface FunctionDefinitionProvider {
+        String definitionWith(String functionName);
     }
 }

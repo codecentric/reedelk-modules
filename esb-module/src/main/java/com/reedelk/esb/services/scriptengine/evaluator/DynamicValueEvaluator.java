@@ -6,6 +6,7 @@ import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 
 import java.util.Optional;
 
+import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.OPTIONAL_PROVIDER;
 
 public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
 

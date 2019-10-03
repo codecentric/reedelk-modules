@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
 
-    private static final FunctionBuilder FUNCTION = new EvaluateMapFunctionBuilder();
+    private static final FunctionBuilder MAP_FUNCTION_BUILDER = new EvaluateMapFunctionBuilder();
     private static final Map<String,?> EMPTY_MAP = Collections.unmodifiableMap(Collections.emptyMap());
 
     public DynamicMapEvaluator(ScriptEngineProvider provider) {
@@ -24,31 +24,21 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
         if (dynamicMap.isEmpty()) {
             // If dynamic map is empty, nothing to do.
             return (Map<String, T>) EMPTY_MAP;
+
         } else {
-            String functionName = functionNameOf(dynamicMap);
+
+            String functionName = functionNameOf(dynamicMap,
+                    funName -> MAP_FUNCTION_BUILDER.build(funName, dynamicMap));
+
             Map<String, T> evaluatedMap = (Map<String, T>) scriptEngine.invokeFunction(functionName, message, context);
-            // We map the values to the correct desired type
+
+            // We map the values to the correct output value type
             evaluatedMap.forEach((key, value) -> {
                 T converted = DynamicValueConverterFactory.convert(value, dynamicMap.getEvaluatedType());
                 evaluatedMap.put(key, converted);
             });
+
             return evaluatedMap;
         }
-    }
-
-    private <T> String functionNameOf(DynamicMap<T> dynamicMap) {
-        String valueUUID =  dynamicMap.getUUID();
-        String functionName = uuidFunctionNameMap.getOrDefault(valueUUID, null);
-        if (functionName == null) {
-            synchronized (this) {
-                if (!uuidFunctionNameMap.containsKey(valueUUID)) {
-                    functionName = functionNameFrom(valueUUID);
-                    String functionDefinition = FUNCTION.build(functionName, dynamicMap);
-                    scriptEngine.eval(functionDefinition);
-                    uuidFunctionNameMap.put(valueUUID, functionName);
-                }
-            }
-        }
-        return functionName;
     }
 }
