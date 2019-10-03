@@ -30,7 +30,7 @@ public class RouterWrapper extends Router {
 
     public PathExpressionPair getDefaultPathOrThrow() {
         return pathExpressionPairs.stream()
-                .filter(pathExpressionPair -> DEFAULT_CONDITION.equals(pathExpressionPair.expression))
+                .filter(pathExpressionPair -> DEFAULT_CONDITION.getValue().equals(pathExpressionPair.expression.getValue()))
                 .findFirst()
                 .orElseThrow(() -> new ESBException("Default router condition could not be found"));
     }
