@@ -467,7 +467,7 @@ class MessageHttpResponseMapperTest {
                 Publisher<byte[]> actualStream = mapper.map(exception, response, flowContext);
 
                 // Then
-                assertThat(actualStream).isNull();
+                assertThatStreamIsEmpty(actualStream);
                 verifyNoMoreInteractions(scriptEngine);
             }
         }
