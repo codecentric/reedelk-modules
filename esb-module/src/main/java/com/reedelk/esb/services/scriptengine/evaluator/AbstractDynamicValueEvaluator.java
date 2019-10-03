@@ -1,5 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
+import com.reedelk.esb.commons.FunctionName;
+import com.reedelk.esb.commons.IsSourceAssignableToTarget;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateErrorFunctionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateFunctionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionBuilder;
@@ -7,16 +9,12 @@ import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @SuppressWarnings("unchecked")
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
-
-    private static final String FUNCTION_NAME_TEMPLATE = "fun_%s";
 
     static final FunctionBuilder ERROR_FUNCTION = new EvaluateErrorFunctionBuilder();
     static final FunctionBuilder FUNCTION = new EvaluateFunctionBuilder();
@@ -52,7 +50,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
 
         } else {
             // Value is not a stream
-            if (sourceAssignableToTarget(sourceClass, targetClazz)) {
+            if (IsSourceAssignableToTarget.from(sourceClass, targetClazz)) {
                 return provider.from(valueToConvert);
             } else {
                 Object converted = DynamicValueConverterFactory.convert(valueToConvert, sourceClass, targetClazz);
@@ -61,18 +59,13 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    interface ValueProvider {
-        <S> S empty();
-        <S> S from(Object value);
-    }
-
     String functionNameOf(ScriptBlock scriptBlock, FunctionBuilder functionBuilder) {
         String valueUUID = scriptBlock.getUUID();
         String functionName = uuidFunctionNameMap.get(valueUUID);
         if (functionName == null) {
             synchronized (this) {
                 if (!uuidFunctionNameMap.containsKey(valueUUID)) {
-                    functionName = functionNameFrom(valueUUID);
+                    functionName = FunctionName.from(valueUUID);
                     String scriptBody = scriptBlock.getScriptBody();
                     String functionDefinition = functionBuilder.build(functionName, ScriptUtils.unwrap(scriptBody));
 
@@ -83,47 +76,5 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             }
         }
         return functionName;
-    }
-
-    static String functionNameFrom(String uuid) {
-        return String.format(FUNCTION_NAME_TEMPLATE, uuid);
-    }
-
-    static final ValueProvider OPTIONAL_PROVIDER = new OptionalValueProvider();
-
-    static final ValueProvider STREAM_PROVIDER = new StreamValueProvider();
-
-    private static class OptionalValueProvider implements ValueProvider {
-        @Override
-        public Optional<?> empty() {
-            return Optional.empty();
-        }
-
-        @Override
-        public Optional<?> from(Object value) {
-            return Optional.ofNullable(value);
-        }
-    }
-
-    private static class StreamValueProvider implements ValueProvider {
-        @Override
-        public Publisher<?> empty() {
-            return Mono.empty();
-        }
-
-        @Override
-        public Publisher<?> from(Object value) {
-            if (value == null) {
-                return Mono.empty();
-            } else if (value instanceof Publisher<?>) {
-                return (Publisher<?>) value;
-            } else {
-                return Mono.just(value);
-            }
-        }
-    }
-
-    private static boolean sourceAssignableToTarget(Class<?> sourceClazz, Class<?> targetClazz) {
-        return sourceClazz.isAssignableFrom(targetClazz);
     }
 }

@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
+import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateFunctionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionBuilder;
-import com.reedelk.esb.services.scriptengine.evaluator.function.ScriptFunctionBuilder;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.ScriptBlock;
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
 
-    private static final FunctionBuilder FUNCTION = new ScriptFunctionBuilder();
+    private static final FunctionBuilder FUNCTION = new EvaluateFunctionBuilder();
 
     public ScriptEvaluator(ScriptEngineProvider provider) {
         super(provider);
