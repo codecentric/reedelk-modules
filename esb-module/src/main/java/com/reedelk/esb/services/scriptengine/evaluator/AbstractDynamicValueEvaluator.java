@@ -6,9 +6,9 @@ import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicV
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.type.TypedPublisher;
 import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
-import org.reactivestreams.Publisher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,9 +39,14 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     }
 
     <S> S convert(Object valueToConvert, Class<?> targetClazz, ValueProvider provider) {
-        return valueToConvert == null ?
-                provider.empty() :
-                convert(valueToConvert, valueToConvert.getClass(), targetClazz, provider);
+        if (valueToConvert == null) {
+            return provider.empty();
+        } else if (valueToConvert instanceof TypedPublisher<?>) {
+            TypedPublisher<?> publisher = (TypedPublisher<?>) valueToConvert;
+            return convert(publisher, publisher.getType(), targetClazz, provider);
+        } else {
+            return convert(valueToConvert, valueToConvert.getClass(), targetClazz, provider);
+        }
     }
 
     <T extends ScriptBlock> String functionNameOf(T scriptBlock, FunctionDefinitionBuilder<T> functionDefinitionBuilder) {
@@ -67,23 +72,22 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
      * since we can get the payload directly from Java without making an expensive call
      * to the script engine.
      */
-    <T> Publisher<T> evaluateMessagePayload(Class<T> targetType, Message message) {
+    <T> TypedPublisher<T> evaluateMessagePayload(Class<T> targetType, Message message) {
         if (message.getContent().isStream()) {
             // We don't resolve the stream, but we still might need to
             // map its content from source type to a target type.
-            Publisher<?> stream = message.getContent().stream();
-            Class<?> sourceType = message.getContent().streamType();
-            return convert(stream, sourceType, targetType, STREAM_PROVIDER);
+            TypedPublisher<?> stream = message.getContent().stream();
+            return convert(stream, targetType, STREAM_PROVIDER);
         } else {
-            return convert(message.payload(), targetType, STREAM_PROVIDER);
+            return TypedPublisher.from(convert(message.payload(), targetType, STREAM_PROVIDER), targetType);
         }
     }
 
     @SuppressWarnings("unchecked")
     private <S> S convert(Object valueToConvert, Class<?> sourceClass, Class<?> targetClazz, ValueProvider provider) {
-        if (valueToConvert instanceof Publisher<?>) {
+        if (valueToConvert instanceof TypedPublisher<?>) {
             // Value is a stream
-            Object converted = DynamicValueConverterFactory.convertStream((Publisher) valueToConvert, sourceClass, targetClazz);
+            Object converted = DynamicValueConverterFactory.convertStream((TypedPublisher) valueToConvert, sourceClass, targetClazz);
             return provider.from(converted);
 
         } else {

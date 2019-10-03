@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.converter.stringtype;
 
 import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
-import org.reactivestreams.Publisher;
+import com.reedelk.runtime.api.message.type.TypedPublisher;
 import reactor.core.publisher.Flux;
 
 public class AsBoolean implements DynamicValueConverter<String,Boolean> {
@@ -12,7 +12,7 @@ public class AsBoolean implements DynamicValueConverter<String,Boolean> {
     }
 
     @Override
-    public Publisher<Boolean> from(Publisher<String> stream) {
-        return Flux.from(stream).map(this::from);
+    public TypedPublisher<Boolean> from(TypedPublisher<String> stream) {
+        return TypedPublisher.from(Flux.from(stream).map(this::from), boolean.class);
     }
 }

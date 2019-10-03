@@ -2,7 +2,7 @@ package com.reedelk.esb.services.scriptengine.converter.exceptiontype;
 
 import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
-import org.reactivestreams.Publisher;
+import com.reedelk.runtime.api.message.type.TypedPublisher;
 import reactor.core.publisher.Flux;
 
 public class AsString implements DynamicValueConverter<Exception,String> {
@@ -13,7 +13,7 @@ public class AsString implements DynamicValueConverter<Exception,String> {
     }
 
     @Override
-    public Publisher<String> from(Publisher<Exception> stream) {
-        return Flux.from(stream).map(this::from);
+    public TypedPublisher<String> from(TypedPublisher<Exception> stream) {
+        return TypedPublisher.from(Flux.from(stream).map(this::from), String.class);
     }
 }

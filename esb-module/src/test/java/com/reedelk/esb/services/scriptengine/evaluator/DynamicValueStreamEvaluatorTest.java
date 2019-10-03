@@ -15,11 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicValueStreamEvaluatorTest {
@@ -46,7 +47,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.attributes.property1]");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -61,7 +62,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.payload()]");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -78,7 +79,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.payload()]");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -100,7 +101,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -118,7 +119,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -134,7 +135,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#['evaluation test']");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -149,7 +150,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("Expected text");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -164,7 +165,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -173,17 +174,16 @@ class DynamicValueStreamEvaluatorTest {
         }
 
         @Test
-        void shouldResultNotBePresentWhenDynamicValueIsNull() {
+        void shouldResultBeNullWhenDynamicValueIsNull() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
             DynamicString dynamicString = null;
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
-            StepVerifier.create(publisher)
-                    .verifyComplete();
+            assertThat(publisher).isNull();
         }
 
         @Test
@@ -193,7 +193,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[]");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -207,7 +207,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from(null);
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -221,7 +221,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.payload()]");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -241,7 +241,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicInteger dynamicInteger = DynamicInteger.from("#[506]");
 
             // When
-            Publisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
+            TypedPublisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -258,7 +258,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicInteger dynamicInteger = DynamicInteger.from("#[parseInt(message.payload()) + 10]");
 
             // When
-            Publisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
+            TypedPublisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -273,7 +273,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicInteger dynamicInteger = DynamicInteger.from(53);
 
             // When
-            Publisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
+            TypedPublisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -288,7 +288,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicInteger dynamicInteger = DynamicInteger.from("#[message.payload()]");
 
             // When
-            Publisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
+            TypedPublisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -308,7 +308,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[1 == 1]");
 
             // When
-            Publisher<Boolean> publisher = evaluator.evaluateStream(dynamicBoolean, message, context);
+            TypedPublisher<Boolean> publisher = evaluator.evaluateStream(dynamicBoolean, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -323,7 +323,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[message.payload()]");
 
             // When
-            Publisher<Boolean> publisher = evaluator.evaluateStream(dynamicBoolean, message, context);
+            TypedPublisher<Boolean> publisher = evaluator.evaluateStream(dynamicBoolean, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -344,7 +344,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]");
 
             // When
-            Publisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, message, context);
+            TypedPublisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -361,7 +361,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]");
 
             // When
-            Publisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, message, context);
+            TypedPublisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -379,7 +379,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]");
 
             // When
-            Publisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, message, context);
+            TypedPublisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -405,7 +405,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[message.content]");
 
             // When
-            Publisher<Object> publisher = evaluator.evaluateStream(dynamicObject, message, context);
+            TypedPublisher<Object> publisher = evaluator.evaluateStream(dynamicObject, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -420,7 +420,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicObject dynamicString = DynamicObject.from("#[message]");
 
             // When
-            Publisher<Object> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<Object> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -436,7 +436,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicObject dynamicString = DynamicObject.from("#[message.payload()]");
 
             // When
-            Publisher<Object> publisher = evaluator.evaluateStream(dynamicString, message, context);
+            TypedPublisher<Object> publisher = evaluator.evaluateStream(dynamicString, message, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -456,7 +456,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[error]");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -471,7 +471,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[error.getMessage()]");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -486,7 +486,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[]");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -500,7 +500,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from(null);
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -514,7 +514,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("my text");
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -523,17 +523,16 @@ class DynamicValueStreamEvaluatorTest {
         }
 
         @Test
-        void shouldReturnEmptyWhenNullDynamicValue() {
+        void shouldReturnNullWhenNullDynamicValue() {
             // Given
             Throwable myException = new ESBException("My exception message");
             DynamicString dynamicString = null;
 
             // When
-            Publisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
+            TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, myException, context);
 
             // Then
-            StepVerifier.create(publisher)
-                    .verifyComplete();
+            assertThat(publisher).isNull();
         }
     }
 
@@ -548,7 +547,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[error]");
 
             // When
-            Publisher<Object> publisher = evaluator.evaluateStream(dynamicObject, myException, context);
+            TypedPublisher<Object> publisher = evaluator.evaluateStream(dynamicObject, myException, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -563,7 +562,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("my text");
 
             // When
-            Publisher<Object> publisher = evaluator.evaluateStream(dynamicObject, myException, context);
+            TypedPublisher<Object> publisher = evaluator.evaluateStream(dynamicObject, myException, context);
 
             // Then
             StepVerifier.create(publisher)
@@ -583,7 +582,7 @@ class DynamicValueStreamEvaluatorTest {
             DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[error]");
 
             // When
-            Publisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, myException, context);
+            TypedPublisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, myException, context);
 
             // Then
             StepVerifier.create(publisher)

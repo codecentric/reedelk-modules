@@ -1,6 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
+import com.reedelk.runtime.api.message.type.TypedPublisher;
 import org.reactivestreams.Publisher;
 
 import java.util.Collections;
@@ -29,6 +30,7 @@ class DynamicValueConverterFactory {
         return input == null ? null : convert(input, input.getClass(), outputClass);
     }
 
+    // TODO: This function is ugly!
     static <I, O> O convert(Object input, Class<I> inputClass, Class<O> outputClass) {
         Map<Class<?>, DynamicValueConverter<?, ?>> fromConverters = CONVERTERS.get(inputClass);
 
@@ -53,14 +55,12 @@ class DynamicValueConverterFactory {
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
     }
 
-    static <I, O> Publisher<O> convertStream(Publisher<I> input, Class<I> inputClass, Class<O> outputClass) {
+    static <I, O> Publisher<O> convertStream(TypedPublisher<I> input, Class<I> inputClass, Class<O> outputClass) {
         Map<Class<?>, DynamicValueConverter<?, ?>> fromConverters = CONVERTERS.get(inputClass);
         if (fromConverters != null) {
             DynamicValueConverter<I, O> toConverters =
                     (DynamicValueConverter<I, O>) fromConverters.get(outputClass);
-            if (toConverters != null) {
-                return toConverters.from(input);
-            }
+            if (toConverters != null) return toConverters.from(input);
         }
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
     }

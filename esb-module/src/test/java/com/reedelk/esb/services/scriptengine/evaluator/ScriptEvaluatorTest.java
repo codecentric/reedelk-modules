@@ -9,6 +9,7 @@ import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.ByteArrayContent;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.Type;
+import com.reedelk.runtime.api.message.type.TypedPublisher;
 import com.reedelk.runtime.api.script.Script;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -155,14 +156,41 @@ class ScriptEvaluatorTest {
             ByteArrayContent byteArrayContent = new ByteArrayContent(stream, type);
             Message message = MessageBuilder.get().typedContent(byteArrayContent).build();
 
-            Script extractStream = Script.from("#[message.payload()]");
+            Script extractStreamScript = Script.from("#[message.payload()]");
 
             // When
-            Publisher<byte[]> actual = evaluator.evaluateStream(extractStream, message, context, byte[].class);
+            TypedPublisher<byte[]> actual = evaluator.evaluateStream(extractStreamScript, message, context, byte[].class);
 
             // Then
-            assertThat(actual).isEqualTo(stream);
+            assertThat(actual.getType()).isEqualTo(byte[].class);
+            StepVerifier.create(actual)
+                    .expectNextMatches(bytes -> Arrays.equals(bytes, "one".getBytes()))
+                    .expectNextMatches(bytes -> Arrays.equals(bytes, "two".getBytes()))
+                    .verifyComplete();
+        }
 
+        @Test
+        void shouldReturnNullStreamWhenScriptIsNull() {
+            // Given
+            Script nullScript = null;
+
+            // When
+            Publisher<byte[]> actual = evaluator.evaluateStream(nullScript, emptyMessage, context, byte[].class);
+
+            // Then
+            assertThat(actual).isNull();
+        }
+
+        @Test
+        void shouldReturnEmptyStreamWhenScriptIsEmpty() {
+            // Given
+            Script emptyScript = Script.from("#[]");
+
+            // When
+            Publisher<byte[]> actual = evaluator.evaluateStream(emptyScript, emptyMessage, context, byte[].class);
+
+            // Then
+            StepVerifier.create(actual).verifyComplete();
         }
     }
 }

@@ -4,7 +4,8 @@ import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateScriptFu
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.script.ScriptBlock;
+import com.reedelk.runtime.api.message.type.TypedPublisher;
+import com.reedelk.runtime.api.script.Script;
 import org.reactivestreams.Publisher;
 
 import java.util.Optional;
@@ -17,13 +18,12 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
 
     private static final FunctionDefinitionBuilder FUNCTION = new EvaluateScriptFunctionDefinitionBuilder();
 
-
     public ScriptEvaluator(ScriptEngineProvider provider) {
         super(provider);
     }
 
     @Override
-    public <T> Optional<T> evaluate(ScriptBlock script, Message message, FlowContext flowContext, Class<T> returnType) {
+    public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
         if (script == null || script.isEmpty()) {
             return OPTIONAL_PROVIDER.empty();
         } else {
@@ -32,17 +32,21 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     @Override
-    public <T> Publisher<T> evaluateStream(ScriptBlock script, Message message, FlowContext flowContext, Class<T> returnType) {
-        if (script == null || script.isEmpty()) {
-            return STREAM_PROVIDER.empty();
+    public <T> TypedPublisher<T> evaluateStream(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
+        if (script == null) {
+            return null;
+        } else if (script.isEmpty()) {
+            return TypedPublisher.from(STREAM_PROVIDER.empty(), returnType);
         } else if (script.isEvaluateMessagePayload()) {
-            return evaluateMessagePayload(returnType, message);
+            return TypedPublisher.from(evaluateMessagePayload(returnType, message), returnType);
         } else {
-            return (Publisher<T>) evaluateScript(script, message, flowContext, returnType, STREAM_PROVIDER);
+            return TypedPublisher.from(
+                    (Publisher<T>) evaluateScript(script, message, flowContext, returnType, STREAM_PROVIDER),
+                    returnType);
         }
     }
 
-    private <T> T evaluateScript(ScriptBlock script, Message message, FlowContext flowContext, Class<T> returnType, ValueProvider valueProvider) {
+    private <T> T evaluateScript(Script script, Message message, FlowContext flowContext, Class<T> returnType, ValueProvider valueProvider) {
         String functionName = functionNameOf(script, FUNCTION);
         Object evaluationResult = scriptEngine.invokeFunction(functionName, message, flowContext);
         return convert(evaluationResult, returnType, valueProvider);

@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.converter.doubletype;
 
 import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
-import org.reactivestreams.Publisher;
+import com.reedelk.runtime.api.message.type.TypedPublisher;
 import reactor.core.publisher.Flux;
 
 public class AsInteger implements DynamicValueConverter<Double,Integer> {
@@ -12,7 +12,7 @@ public class AsInteger implements DynamicValueConverter<Double,Integer> {
     }
 
     @Override
-    public Publisher<Integer> from(Publisher<Double> stream) {
-        return Flux.from(stream).map(aDouble -> aDouble == null ? null : aDouble.intValue());
+    public TypedPublisher<Integer> from(TypedPublisher<Double> stream) {
+        return TypedPublisher.from(Flux.from(stream).map(this::from), Integer.class);
     }
 }

@@ -11,6 +11,7 @@ import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerResponse;
 
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
@@ -69,7 +70,7 @@ public class MessageHttpResponseMapper {
                 .map(Response::getHeaders).orElse(null);
         AdditionalHeader.addAll(serverResponse, responseHeaders);
 
-        return bodyAsStream;
+        return bodyAsStream == null ? Mono.empty() : bodyAsStream;
     }
 
     /**

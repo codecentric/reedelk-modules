@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.converter.bytearraytype;
 
 import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
-import org.reactivestreams.Publisher;
+import com.reedelk.runtime.api.message.type.TypedPublisher;
 
 public class AsByteArray implements DynamicValueConverter<byte[], byte[]> {
 
@@ -11,7 +11,7 @@ public class AsByteArray implements DynamicValueConverter<byte[], byte[]> {
     }
 
     @Override
-    public Publisher<byte[]> from(Publisher<byte[]> stream) {
-        return stream;
+    public TypedPublisher<byte[]> from(TypedPublisher<byte[]> stream) {
+        return TypedPublisher.from(stream, byte[].class);
     }
 }

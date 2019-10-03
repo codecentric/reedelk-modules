@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.converter.stringtype;
 
 import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
-import org.reactivestreams.Publisher;
+import com.reedelk.runtime.api.message.type.TypedPublisher;
 import reactor.core.publisher.Flux;
 
 public class AsByteArray implements DynamicValueConverter<String,byte[]> {
@@ -14,8 +14,7 @@ public class AsByteArray implements DynamicValueConverter<String,byte[]> {
     }
 
     @Override
-    public Publisher<byte[]> from(Publisher<String> stream) {
-        return Flux.from(stream).map(input ->
-                input == null ? new byte[0] : input.getBytes());
+    public TypedPublisher<byte[]> from(TypedPublisher<String> stream) {
+        return TypedPublisher.from(Flux.from(stream).map(this::from), byte[].class);
     }
 }

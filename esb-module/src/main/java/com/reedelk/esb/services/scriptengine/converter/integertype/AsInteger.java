@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.converter.integertype;
 
 import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
-import org.reactivestreams.Publisher;
+import com.reedelk.runtime.api.message.type.TypedPublisher;
 
 public class AsInteger implements DynamicValueConverter<Integer,Integer> {
 
@@ -11,7 +11,7 @@ public class AsInteger implements DynamicValueConverter<Integer,Integer> {
     }
 
     @Override
-    public Publisher<Integer> from(Publisher<Integer> stream) {
+    public TypedPublisher<Integer> from(TypedPublisher<Integer> stream) {
         return stream;
     }
 }
