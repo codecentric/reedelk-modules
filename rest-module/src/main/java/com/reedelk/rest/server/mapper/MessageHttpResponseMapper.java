@@ -116,6 +116,6 @@ public class MessageHttpResponseMapper {
                 .map(ErrorResponse::getHeaders).orElse(null);
         AdditionalHeader.addAll(serverResponse, responseHeaders);
 
-        return bodyAsStream;
+        return bodyAsStream == null ? Mono.empty() : bodyAsStream;
     }
 }
