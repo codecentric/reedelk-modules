@@ -5,12 +5,15 @@ import com.reedelk.esb.commons.IsSourceAssignableToTarget;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueErrorFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
+import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import org.reactivestreams.Publisher;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STREAM_PROVIDER;
 
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
 
@@ -75,5 +78,22 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             }
         }
         return functionName;
+    }
+
+    /**
+     * Evaluate the payload without invoking the script engine. This is an optimization
+     * since we can get the payload directly from Java without making an expensive call
+     * to the script engine.
+     */
+    <T> Publisher<T> evaluateMessagePayload(Class<T> targetType, Message message) {
+        if (message.getContent().isStream()) {
+            // We don't resolve the stream, but we still might need to
+            // map its content from source type to a target type.
+            Publisher<?> stream = message.getContent().stream();
+            Class<?> sourceType = message.getContent().streamType();
+            return convert(stream, sourceType, targetType, STREAM_PROVIDER);
+        } else {
+            return convert(message.payload(), targetType, STREAM_PROVIDER);
+        }
     }
 }

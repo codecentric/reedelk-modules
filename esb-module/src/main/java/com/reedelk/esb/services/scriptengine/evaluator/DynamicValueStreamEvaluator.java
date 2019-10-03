@@ -22,7 +22,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
         } else if (dynamicValue.isScript()) {
             // Script
             return dynamicValue.isEvaluateMessagePayload() ?
-                    evaluateMessagePayload(dynamicValue, message) :
+                    evaluateMessagePayload(dynamicValue.getEvaluatedType(), message) :
                     execute(dynamicValue, STREAM_PROVIDER, FUNCTION, message, flowContext);
         } else {
             // Not a script
@@ -41,24 +41,6 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
         } else {
             // Not a script
             return Mono.justOrEmpty(dynamicValue.getValue());
-        }
-    }
-
-    /**
-     * Evaluate the payload without invoking the script engine. This is an optimization
-     * since we can get the payload directly from Java without making an expensive call
-     * to the script engine.
-     */
-    private <T> Publisher<T> evaluateMessagePayload(DynamicValue<T> dynamicValue, Message message) {
-        if (message.getContent().isStream()) {
-            // We don't resolve the stream, but we still might need to
-            // map its content from source type to a target type.
-            Publisher<?> stream = message.getContent().stream();
-            Class<?> targetType = dynamicValue.getEvaluatedType();
-            Class<?> sourceType = message.getContent().streamType();
-            return convert(stream, sourceType, targetType, STREAM_PROVIDER);
-        } else {
-            return convert(message.payload(), dynamicValue.getEvaluatedType(), STREAM_PROVIDER);
         }
     }
 }
