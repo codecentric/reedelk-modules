@@ -23,7 +23,6 @@ class FlowReferenceComponentDeserializer extends AbstractDeserializer {
     public ExecutionNode deserialize(ExecutionNode parent, JSONObject componentDefinition) {
         String flowReference = FlowReference.ref(componentDefinition);
 
-        // TODO: This is part of the validation to be done on components.
         checkState(flowReference != null,
                 "configRef property inside a FlowReference component cannot be null");
 
