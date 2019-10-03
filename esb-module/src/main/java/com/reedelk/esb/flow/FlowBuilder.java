@@ -1,7 +1,7 @@
 package com.reedelk.esb.flow;
 
 
-import com.reedelk.esb.flow.component.builder.ExecutionNodeBuilder;
+import com.reedelk.esb.flow.deserializer.ExecutionNodeDeserializer;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.commons.JsonParser;
@@ -28,12 +28,12 @@ public class FlowBuilder {
 
             JSONObject componentDefinition = (JSONObject) componentDefinitionObject;
 
-            current = ExecutionNodeBuilder.get()
+            current = ExecutionNodeDeserializer.get()
                     .componentDefinition(componentDefinition)
                     .context(context)
                     .graph(flowGraph)
                     .parent(current)
-                    .build();
+                    .deserialize();
         }
 
         // Last node of the graph is always a Stop node.

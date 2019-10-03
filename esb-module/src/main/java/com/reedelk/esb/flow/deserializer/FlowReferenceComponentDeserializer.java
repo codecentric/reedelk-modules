@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.component.builder;
+package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
@@ -13,14 +13,14 @@ import static com.reedelk.esb.commons.Preconditions.checkState;
 import static com.reedelk.runtime.commons.JsonParser.FlowReference;
 import static com.reedelk.runtime.commons.JsonParser.Subflow;
 
-class FlowReferenceComponentBuilder extends AbstractBuilder {
+class FlowReferenceComponentDeserializer extends AbstractDeserializer {
 
-    FlowReferenceComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
+    FlowReferenceComponentDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
         super(graph, context);
     }
 
     @Override
-    public ExecutionNode build(ExecutionNode parent, JSONObject componentDefinition) {
+    public ExecutionNode deserialize(ExecutionNode parent, JSONObject componentDefinition) {
         String flowReference = FlowReference.ref(componentDefinition);
 
         // TODO: This is part of the validation to be done on components.
@@ -36,12 +36,12 @@ class FlowReferenceComponentBuilder extends AbstractBuilder {
         for (int i = 0; i < subflowComponents.length(); i++) {
             JSONObject currentComponent = subflowComponents.getJSONObject(i);
 
-            currentNode = ExecutionNodeBuilder.get()
+            currentNode = ExecutionNodeDeserializer.get()
                     .componentDefinition(currentComponent)
                     .parent(currentNode)
                     .context(context)
                     .graph(graph)
-                    .build();
+                    .deserialize();
         }
 
         return currentNode;

@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.component.builder;
+package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.flow.FlowBuilderContext;
@@ -11,14 +11,14 @@ import org.json.JSONObject;
 import static com.reedelk.runtime.commons.JsonParser.Fork;
 import static com.reedelk.runtime.commons.JsonParser.Implementor;
 
-class ForkComponentBuilder extends AbstractBuilder {
+class ForkComponentDeserializer extends AbstractDeserializer {
 
-    ForkComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
+    ForkComponentDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
         super(graph, context);
     }
 
     @Override
-    public ExecutionNode build(ExecutionNode parent, JSONObject componentDefinition) {
+    public ExecutionNode deserialize(ExecutionNode parent, JSONObject componentDefinition) {
         String componentName = Implementor.name(componentDefinition);
 
         ExecutionNode stopComponent = context.instantiateComponent(Stop.class);
@@ -41,12 +41,12 @@ class ForkComponentBuilder extends AbstractBuilder {
             for (int j = 0; j < nextComponents.length(); j++) {
 
                 JSONObject currentComponentDefinition = nextComponents.getJSONObject(j);
-                ExecutionNode lastNode = ExecutionNodeBuilder.get()
+                ExecutionNode lastNode = ExecutionNodeDeserializer.get()
                         .componentDefinition(currentComponentDefinition)
                         .parent(currentNode)
                         .context(context)
                         .graph(graph)
-                        .build();
+                        .deserialize();
 
                 // The first nextObject of A GIVEN fork path,
                 // must be added as a fork execution node.

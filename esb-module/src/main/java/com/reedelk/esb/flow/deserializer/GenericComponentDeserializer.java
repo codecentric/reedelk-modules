@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.component.builder;
+package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
@@ -7,24 +7,23 @@ import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.commons.JsonParser;
 import org.json.JSONObject;
 
-public class GenericComponentBuilder extends AbstractBuilder {
+public class GenericComponentDeserializer extends AbstractDeserializer {
 
-    GenericComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
+    GenericComponentDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
         super(graph, context);
     }
 
     @Override
-    public ExecutionNode build(ExecutionNode parent, JSONObject componentDefinition) {
+    public ExecutionNode deserialize(ExecutionNode parent, JSONObject componentDefinition) {
         String componentName = JsonParser.Implementor.name(componentDefinition);
 
         ExecutionNode executionNode = context.instantiateComponent(componentName);
         Component component = executionNode.getComponent();
 
-        GenericComponentDeserializer deserializer = new GenericComponentDeserializer(executionNode, context);
+        ComponentDefinitionDeserializer deserializer = new ComponentDefinitionDeserializer(executionNode, context);
         deserializer.deserialize(componentDefinition, component);
 
         graph.putEdge(parent, executionNode);
         return executionNode;
     }
-
 }

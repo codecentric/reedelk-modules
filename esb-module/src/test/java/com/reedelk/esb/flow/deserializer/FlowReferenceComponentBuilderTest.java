@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.component.builder;
+package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
@@ -69,10 +69,10 @@ class FlowReferenceComponentBuilderTest {
                 .with("ref", "subflow1")
                 .build();
 
-        FlowReferenceComponentBuilder builder = new FlowReferenceComponentBuilder(graph, context);
+        FlowReferenceComponentDeserializer builder = new FlowReferenceComponentDeserializer(graph, context);
 
         // When
-        ExecutionNode lastNode = builder.build(parentExecutionNode, componentDefinition);
+        ExecutionNode lastNode = builder.deserialize(parentExecutionNode, componentDefinition);
 
         // Then
         assertThat(lastNode).isEqualTo(testComponent2ExecutionNode);

@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.component.builder;
+package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -31,18 +31,18 @@ import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class GenericComponentDeserializerTest {
+class ComponentDefinitionDeserializerTest {
 
     @Mock
     private ExecutionNode mockExecutionNode;
     @Mock
     private FlowBuilderContext context;
 
-    private GenericComponentDeserializer deserializer;
+    private ComponentDefinitionDeserializer deserializer;
 
     @BeforeEach
-    public void setUp() {
-        deserializer = new GenericComponentDeserializer(mockExecutionNode, context);
+    void setUp() {
+        deserializer = new ComponentDefinitionDeserializer(mockExecutionNode, context);
     }
 
     @Nested

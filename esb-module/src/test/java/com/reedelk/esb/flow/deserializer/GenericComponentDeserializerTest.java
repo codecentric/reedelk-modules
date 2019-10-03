@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.component.builder;
+package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.flow.FlowBuilderContext;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Generic Component Builder")
-class GenericComponentBuilderTest {
+class GenericComponentDeserializerTest {
 
     @Mock
     private ComponentDisposer disposer;
@@ -31,11 +31,11 @@ class GenericComponentBuilderTest {
     @Mock
     private FlowBuilderContext context;
 
-    private GenericComponentBuilder builder;
+    private GenericComponentDeserializer builder;
 
     @BeforeEach
     void setUp() {
-        builder = new GenericComponentBuilder(graph, context);
+        builder = new GenericComponentDeserializer(graph, context);
     }
 
     @Nested
@@ -52,7 +52,7 @@ class GenericComponentBuilderTest {
             mockInstantiation(en);
 
             // When
-            builder.build(parent, componentDefinition);
+            builder.deserialize(parent, componentDefinition);
 
             // Then
             verify(graph).putEdge(parent, en);

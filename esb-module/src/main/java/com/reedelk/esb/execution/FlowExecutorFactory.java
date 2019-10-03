@@ -18,7 +18,7 @@ public class FlowExecutorFactory {
 
     private static final FlowExecutorFactory INSTANCE = new FlowExecutorFactory();
 
-    private static final Map<Class, FlowExecutor> COMPONENT_FLUX_BUILDER;
+    private static final Map<Class, FlowExecutor> COMPONENT_EXECUTOR;
     static {
         Map<Class, FlowExecutor> tmp = new HashMap<>();
         tmp.put(Stop.class, new StopExecutor());
@@ -26,7 +26,7 @@ public class FlowExecutorFactory {
         tmp.put(RouterWrapper.class, new RouterExecutor());
         tmp.put(ProcessorSync.class, new ProcessorSyncExecutor());
         tmp.put(ProcessorAsync.class, new ProcessorAsyncExecutor());
-        COMPONENT_FLUX_BUILDER = Collections.unmodifiableMap(tmp);
+        COMPONENT_EXECUTOR = Collections.unmodifiableMap(tmp);
     }
 
     private FlowExecutorFactory() {
@@ -42,22 +42,22 @@ public class FlowExecutorFactory {
     }
 
     FlowExecutor executorOf(Component component) {
-        if (COMPONENT_FLUX_BUILDER.containsKey(component.getClass())) {
-            return COMPONENT_FLUX_BUILDER.get(component.getClass());
+        if (COMPONENT_EXECUTOR.containsKey(component.getClass())) {
+            return COMPONENT_EXECUTOR.get(component.getClass());
         }
         // We check if any of the superclasses implement a known
         // type for which a builder has been defined.
         Class<?>[] componentInterfaces = component.getClass().getInterfaces();
         return executorOf(componentInterfaces)
                 .orElseThrow(() ->
-                        new IllegalStateException(format("Could not find flux builder for class [%s]", component.getClass())));
+                        new IllegalStateException(format("Could not find executor for class [%s]", component.getClass())));
     }
 
     private Optional<FlowExecutor> executorOf(Class<?>[] componentInterfaces) {
-        Set<Class> fluxBuilderInterfaceNames = COMPONENT_FLUX_BUILDER.keySet();
+        Set<Class> fluxBuilderInterfaceNames = COMPONENT_EXECUTOR.keySet();
         for (Class interfaceClazz : componentInterfaces) {
             if (fluxBuilderInterfaceNames.contains(interfaceClazz)) {
-                return Optional.of(COMPONENT_FLUX_BUILDER.get(interfaceClazz));
+                return Optional.of(COMPONENT_EXECUTOR.get(interfaceClazz));
             }
         }
         return Optional.empty();

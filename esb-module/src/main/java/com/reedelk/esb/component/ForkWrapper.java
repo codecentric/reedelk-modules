@@ -33,13 +33,9 @@ public class ForkWrapper extends Fork {
         return Collections.unmodifiableList(forkNodes);
     }
 
-    public Scheduler getScheduler() {
+    public synchronized Scheduler getScheduler() {
         if (scheduler == null) {
-            synchronized (this) {
-                if (scheduler == null) {
-                    scheduler = SchedulerProvider.fork(getThreadPoolSize());
-                }
-            }
+            scheduler = SchedulerProvider.fork(getThreadPoolSize());
         }
         return scheduler;
     }

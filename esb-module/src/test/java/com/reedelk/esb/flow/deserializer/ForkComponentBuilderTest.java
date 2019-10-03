@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.component.builder;
+package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.ForkWrapper;
@@ -82,10 +82,10 @@ class ForkComponentBuilderTest {
                         .build())
                 .build();
 
-        ForkComponentBuilder builder = new ForkComponentBuilder(graph, context);
+        ForkComponentDeserializer builder = new ForkComponentDeserializer(graph, context);
 
         // When
-        ExecutionNode lastNode = builder.build(parentExecutionNode, componentDefinition);
+        ExecutionNode lastNode = builder.deserialize(parentExecutionNode, componentDefinition);
 
         // Then
         assertThat(lastNode).isEqualTo(stopExecutionNode);

@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.component.builder;
+package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.RouterWrapper;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RouterComponentBuilderTest {
+class RouterComponentDeserializerTest {
 
     private final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
     private final String COMPONENT_2_NAME = TestComponent.class.getName() + "2";
@@ -86,10 +86,10 @@ class RouterComponentBuilderTest {
                 .with("when", whenArray)
                 .build();
 
-        RouterComponentBuilder builder = new RouterComponentBuilder(graph, context);
+        RouterComponentDeserializer builder = new RouterComponentDeserializer(graph, context);
 
         // When
-        ExecutionNode lastNode = builder.build(parentEn, componentDefinition);
+        ExecutionNode lastNode = builder.deserialize(parentEn, componentDefinition);
 
         // Then
         assertThat(lastNode).isEqualTo(stopEn);

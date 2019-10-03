@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.component.builder;
+package com.reedelk.esb.flow.deserializer;
 
 
 import com.reedelk.esb.component.RouterWrapper;
@@ -13,14 +13,14 @@ import org.json.JSONObject;
 import static com.reedelk.runtime.commons.JsonParser.Implementor;
 import static com.reedelk.runtime.commons.JsonParser.Router;
 
-class RouterComponentBuilder extends AbstractBuilder {
+class RouterComponentDeserializer extends AbstractDeserializer {
 
-    RouterComponentBuilder(ExecutionGraph graph, FlowBuilderContext context) {
+    RouterComponentDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
         super(graph, context);
     }
 
     @Override
-    public ExecutionNode build(ExecutionNode parent, JSONObject componentDefinition) {
+    public ExecutionNode deserialize(ExecutionNode parent, JSONObject componentDefinition) {
         String componentName = Implementor.name(componentDefinition);
 
         ExecutionNode stopComponent = context.instantiateComponent(Stop.class);
@@ -40,12 +40,12 @@ class RouterComponentBuilder extends AbstractBuilder {
 
             for (int j = 0; j < next.length(); j++) {
                 JSONObject currentComponentDef = next.getJSONObject(j);
-                ExecutionNode lastNode = ExecutionNodeBuilder.get()
+                ExecutionNode lastNode = ExecutionNodeDeserializer.get()
                         .componentDefinition(currentComponentDef)
                         .parent(currentNode)
                         .context(context)
                         .graph(graph)
-                        .build();
+                        .deserialize();
 
                 // The first component of A GIVEN router path,
                 // must be added as a router expression pair.

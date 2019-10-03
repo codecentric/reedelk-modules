@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.component.builder;
+package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -21,12 +21,12 @@ import static com.reedelk.runtime.commons.ReflectionUtils.*;
 import static java.lang.String.format;
 
 @SuppressWarnings("unchecked")
-public class GenericComponentDeserializer {
+public class ComponentDefinitionDeserializer {
 
     private final ExecutionNode executionNode;
     private final FlowBuilderContext context;
 
-    public GenericComponentDeserializer(final ExecutionNode executionNode, final FlowBuilderContext context) {
+    ComponentDefinitionDeserializer(final ExecutionNode executionNode, final FlowBuilderContext context) {
         this.executionNode = executionNode;
         this.context = context;
     }
