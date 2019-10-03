@@ -12,6 +12,8 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.util.Optional;
+
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Javascript")
@@ -27,9 +29,12 @@ public class JavascriptComponent implements ProcessorSync {
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
-        Object result = service.evaluate(script, message, flowContext)
-                .orElse(null);
-        return MessageBuilder.get().javaObject(result).build();
+        Optional<Object> evaluated = service.evaluate(script, message, flowContext, Object.class);
+        if (evaluated.isPresent()) {
+            return MessageBuilder.get().javaObject(evaluated.get()).build();
+        } else {
+            return MessageBuilder.get().empty().build();
+        }
     }
 
     public void setScript(Script script) {
