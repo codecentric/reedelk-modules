@@ -7,7 +7,7 @@ public class EvaluateScriptFunctionDefinitionBuilder implements FunctionDefiniti
 
     private static final String EVALUATE_SCRIPT_FUNCTION =
             "var %s = function(message, context) {\n" +
-                    "  return %s\n" +
+                    "%s\n" +
                     "};";
 
     @Override

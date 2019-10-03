@@ -44,7 +44,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyEvaluateScriptAndReturnOptional() {
             // Given
-            Script stringConcatenation = Script.from("#['one' + ' ' + 'two']");
+            Script stringConcatenation = Script.from("#[return 'one' + ' ' + 'two']");
 
             // When
             Optional<String> actual = evaluator.evaluate(stringConcatenation, emptyMessage, context, String.class);
@@ -80,7 +80,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldThrowExceptionWhenScriptIsInvalid() {
             // Given
-            Script invalidScript = Script.from("#['hello]");
+            Script invalidScript = Script.from("#[return 'hello]");
 
             // When
             ESBException exception = Assertions.assertThrows(ESBException.class,
@@ -93,7 +93,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyConvertIntegerResultToString() {
             // Given
-            Script intScript = Script.from("#[2351]");
+            Script intScript = Script.from("#[return 2351]");
 
             // When
             Optional<Integer> actual = evaluator.evaluate(intScript, emptyMessage, context, Integer.class);
@@ -105,7 +105,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyEvaluateMessagePayload() {
             // Given
-            Script payloadScript = Script.from("#[message.payload()]");
+            Script payloadScript = Script.from("#[return message.payload()]");
             Message message = MessageBuilder.get().text("my payload as text").build();
 
             // When
@@ -119,7 +119,7 @@ class ScriptEvaluatorTest {
         void shouldCorrectlyEvaluateContextVariable() {
             // Given
             context.setVariable("messageVar", "my sample");
-            Script contextVariableScript = Script.from("#[context.messageVar]");
+            Script contextVariableScript = Script.from("#[return context.messageVar]");
 
             // When
             Optional<String> actual = evaluator.evaluate(contextVariableScript, emptyMessage, context, String.class);
@@ -136,7 +136,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldReturnByteStreamFromString() {
             // Given
-            Script textValuedScript = Script.from("#['my test']");
+            Script textValuedScript = Script.from("#[return 'my test']");
 
             // When
             Publisher<byte[]> actual = evaluator.evaluateStream(textValuedScript, emptyMessage, context, byte[].class);

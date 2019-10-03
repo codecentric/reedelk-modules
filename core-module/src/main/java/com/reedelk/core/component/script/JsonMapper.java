@@ -10,8 +10,6 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.Optional;
-
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("JSON Mapper")
@@ -36,24 +34,20 @@ public class JsonMapper implements ProcessorSync {
     @Variable(variableName = "output", contextName = "outputContext")
     private Script mappingScript;
 
-    private volatile ScriptEnhancer enhancer;
+    private volatile Script enhancer;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
-        ScriptEnhancer enhancer = enhancer();
-        Optional<String> mappedJson = service.evaluate(enhancer, message, flowContext, String.class);
-        if (!mappedJson.isPresent()) {
-            return MessageBuilder.get().empty().build();
-        } else {
-            return MessageBuilder.get().json(mappedJson.get()).build();
-        }
+        return service.evaluate(enhancer(), message, flowContext, String.class)
+                .map(mappedJson -> MessageBuilder.get().json(mappedJson).build())
+                .orElse(MessageBuilder.get().empty().build());
     }
 
-    private ScriptEnhancer enhancer() {
+    private Script enhancer() {
         if (enhancer == null) {
             synchronized (this) {
                 if (enhancer == null) {
-                    enhancer = new ScriptEnhancer(mappingScript);
+                    enhancer = ScriptEnhancer.enhance(mappingScript);
                 }
             }
         }
