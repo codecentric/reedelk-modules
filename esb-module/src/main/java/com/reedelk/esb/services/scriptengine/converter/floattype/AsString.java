@@ -10,6 +10,6 @@ class AsString extends BaseConverter<Float,String> {
 
     @Override
     public String from(Float value) {
-        return value == null ? null : String.valueOf(value);
+        return String.valueOf(value);
     }
 }

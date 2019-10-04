@@ -10,6 +10,6 @@ class AsInteger extends BaseConverter<Float,Integer> {
 
     @Override
     public Integer from(Float value) {
-        return value == null ? null : value.intValue();
+        return value.intValue();
     }
 }

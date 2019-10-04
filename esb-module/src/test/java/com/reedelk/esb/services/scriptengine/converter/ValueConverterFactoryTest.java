@@ -23,7 +23,7 @@ class ValueConverterFactoryTest {
     class ConvertBoolean {
 
         @Test
-        void shouldConvertBooleanToByteArray() {
+        void shouldConvertBooleanTrueToByteArray() {
             // Given
             Boolean value = true;
 
@@ -35,7 +35,7 @@ class ValueConverterFactoryTest {
         }
 
         @Test
-        void shouldConvertBooleanToByteArrayWhenNull() {
+        void shouldConvertBooleanFalseToByteArray() {
             // Given
             Boolean value = false;
 
@@ -47,7 +47,7 @@ class ValueConverterFactoryTest {
         }
 
         @Test
-        void shouldConvertBooleanToDouble() {
+        void shouldConvertBooleanTrueToDouble() {
             // Given
             Boolean value = true;
 
@@ -59,7 +59,19 @@ class ValueConverterFactoryTest {
         }
 
         @Test
-        void shouldConvertBooleanToFloat() {
+        void shouldConvertBooleanFalseToDouble() {
+            // Given
+            Boolean value = false;
+
+            // When
+            Double actual = ValueConverterFactory.convert(value, Double.class);
+
+            // Then
+            assertThat(actual).isEqualTo(0d);
+        }
+
+        @Test
+        void shouldConvertBooleanTrueToFloat() {
             // Given
             Boolean value = true;
 
@@ -71,7 +83,19 @@ class ValueConverterFactoryTest {
         }
 
         @Test
-        void shouldConvertBooleanToInteger() {
+        void shouldConvertBooleanFalseToFloat() {
+            // Given
+            Boolean value = false;
+
+            // When
+            Float actual = ValueConverterFactory.convert(value, Float.class);
+
+            // Then
+            assertThat(actual).isEqualTo(0f);
+        }
+
+        @Test
+        void shouldConvertBooleanTrueToInteger() {
             // Given
             Boolean value = true;
 
@@ -83,7 +107,19 @@ class ValueConverterFactoryTest {
         }
 
         @Test
-        void shouldConvertBooleanToString() {
+        void shouldConvertBooleanFalseToInteger() {
+            // Given
+            Boolean value = false;
+
+            // When
+            Integer actual = ValueConverterFactory.convert(value, Integer.class);
+
+            // Then
+            assertThat(actual).isEqualTo(0);
+        }
+
+        @Test
+        void shouldConvertBooleanTrueToString() {
             // Given
             Boolean value = true;
 
@@ -92,6 +128,18 @@ class ValueConverterFactoryTest {
 
             // Then
             assertThat(actual).isEqualTo("true");
+        }
+
+        @Test
+        void shouldConvertBooleanFalseToString() {
+            // Given
+            Boolean value = false;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isEqualTo("false");
         }
 
         @Test
@@ -153,7 +201,7 @@ class ValueConverterFactoryTest {
     class ConvertDouble {
 
         @Test
-        void shouldConvertDoubleToBoolean() {
+        void shouldConvertDoubleToBooleanTrue() {
             // Given
             Double value = 1d;
 
@@ -162,6 +210,18 @@ class ValueConverterFactoryTest {
 
             // Then
             assertThat(actual).isTrue();
+        }
+
+        @Test
+        void shouldConvertDoubleToBooleanFalse() {
+            // Given
+            Double value = 0d;
+
+            // When
+            Boolean actual = ValueConverterFactory.convert(value, Boolean.class);
+
+            // Then
+            assertThat(actual).isFalse();
         }
 
         @Test

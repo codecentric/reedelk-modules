@@ -4,7 +4,7 @@ import com.reedelk.esb.services.scriptengine.converter.BaseConverter;
 
 public class AsInteger extends BaseConverter<Boolean, Integer> {
 
-    public AsInteger() {
+    AsInteger() {
         super(Integer.class);
     }
 

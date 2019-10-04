@@ -10,6 +10,6 @@ class AsBoolean extends BaseConverter<Float,Boolean> {
 
     @Override
     public Boolean from(Float value) {
-        return value == null ? Boolean.FALSE : value == 1f;
+        return value == 1f;
     }
 }

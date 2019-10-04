@@ -10,6 +10,6 @@ class AsBoolean extends BaseConverter<Double,Boolean> {
 
     @Override
     public Boolean from(Double value) {
-        return value == null ? Boolean.FALSE : value == 1d;
+        return value == 1d;
     }
 }

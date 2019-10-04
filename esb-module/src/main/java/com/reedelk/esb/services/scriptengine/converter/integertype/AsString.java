@@ -10,6 +10,6 @@ public class AsString extends BaseConverter<Integer,String> {
 
     @Override
     public String from(Integer value) {
-        return value == null ? null : String.valueOf(value);
+        return String.valueOf(value);
     }
 }

@@ -10,6 +10,6 @@ public class AsString extends BaseConverter<Double,String> {
 
     @Override
     public String from(Double value) {
-        return value == null ? null : String.valueOf(value);
+        return String.valueOf(value);
     }
 }

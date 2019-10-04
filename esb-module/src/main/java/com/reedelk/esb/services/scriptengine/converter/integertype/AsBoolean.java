@@ -10,6 +10,6 @@ class AsBoolean extends BaseConverter<Integer,Boolean> {
 
     @Override
     public Boolean from(Integer value) {
-        return value == null ? Boolean.FALSE : value == 1;
+        return value == 1;
     }
 }

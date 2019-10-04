@@ -10,6 +10,6 @@ public class AsFloat extends BaseConverter<Integer,Float> {
 
     @Override
     public Float from(Integer value) {
-        return value == null ? null : value.floatValue();
+        return value.floatValue();
     }
 }

@@ -10,6 +10,6 @@ public class AsByteArray extends BaseConverter<String,byte[]> {
 
     @Override
     public byte[] from(String value) {
-        return value == null ? new byte[0] : value.getBytes();
+        return value.getBytes();
     }
 }

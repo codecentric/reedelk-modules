@@ -10,6 +10,6 @@ public class AsDouble extends BaseConverter<Integer,Double> {
 
     @Override
     public Double from(Integer value) {
-        return value == null ? null : value.doubleValue();
+        return value.doubleValue();
     }
 }
