@@ -1,5 +1,6 @@
 package com.reedelk.rest.client;
 
+import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.configuration.client.*;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -94,6 +95,7 @@ public class DefaultHttpClientService implements HttpClientService {
             configureBasicAuth(
                     configuration.getHost(),
                     configuration.getPort(),
+                    configuration.getProtocol(),
                     configuration.getBasicAuthentication(),
                     credentialsProvider, context);
         }
@@ -101,6 +103,7 @@ public class DefaultHttpClientService implements HttpClientService {
             configureDigestAuth(
                     configuration.getHost(),
                     configuration.getPort(),
+                    configuration.getProtocol(),
                     configuration.getDigestAuthentication(),
                     credentialsProvider, context);
         }
@@ -119,7 +122,7 @@ public class DefaultHttpClientService implements HttpClientService {
         return new HttpClient(client, context);
     }
 
-    private void configureDigestAuth(String host, Integer port, DigestAuthenticationConfiguration digestAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
+    private void configureDigestAuth(String host, Integer port, HttpProtocol protocol, DigestAuthenticationConfiguration digestAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
         credentialsProvider.setCredentials(
                 new AuthScope(
                         AuthScope.ANY_HOST,
@@ -130,13 +133,13 @@ public class DefaultHttpClientService implements HttpClientService {
 
         if (TRUE.equals(digestAuthConfig.getPreemptive())) {
             AuthCache authCache = new BasicAuthCache();
-            HttpHost authHost = new HttpHost(host, port);
+            HttpHost authHost = new HttpHost(host, port, protocol.name());
             authCache.put(authHost, new BasicScheme());
             context.setAuthCache(authCache);
         }
     }
 
-    private void configureBasicAuth(String host, int port, BasicAuthenticationConfiguration basicAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
+    private void configureBasicAuth(String host, int port, HttpProtocol protocol, BasicAuthenticationConfiguration basicAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
         credentialsProvider.setCredentials(
                 new AuthScope(
                         AuthScope.ANY_HOST,
@@ -147,7 +150,7 @@ public class DefaultHttpClientService implements HttpClientService {
 
         if (TRUE.equals(basicAuthConfig.getPreemptive())) {
             AuthCache authCache = new BasicAuthCache();
-            HttpHost authHost = new HttpHost(host, port);
+            HttpHost authHost = new HttpHost(host, port, protocol.name());
             authCache.put(authHost, new BasicScheme());
             context.setAuthCache(authCache);
         }
