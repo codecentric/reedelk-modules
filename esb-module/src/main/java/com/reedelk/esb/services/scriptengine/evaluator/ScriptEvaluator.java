@@ -40,9 +40,8 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
         } else if (script.isEvaluateMessagePayload()) {
             return TypedPublisher.from(evaluateMessagePayload(returnType, message), returnType);
         } else {
-            return TypedPublisher.from(
-                    (Publisher<T>) evaluateScript(script, message, flowContext, returnType, STREAM_PROVIDER),
-                    returnType);
+            Publisher<T> resultPublisher = (Publisher<T>) evaluateScript(script, message, flowContext, returnType, STREAM_PROVIDER);
+            return TypedPublisher.from(resultPublisher, returnType);
         }
     }
 
