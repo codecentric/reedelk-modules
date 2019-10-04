@@ -18,10 +18,376 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ValueConverterFactoryTest {
 
     @Nested
-    @DisplayName("Convert object from input to output class")
-    class ConvertObjectFromInputToOutputClass {
+    @DisplayName("Convert boolean from input to output class")
+    class ConvertBoolean {
 
-        // string
+        @Test
+        void shouldConvertBooleanToByteArray() {
+            // Given
+            Boolean value = true;
+
+            // When
+            byte[] actual = ValueConverterFactory.convert(value, byte[].class);
+
+            // Then
+            assertThat(actual).isEqualTo(new byte[]{1});
+        }
+
+        @Test
+        void shouldConvertBooleanToDouble() {
+            // Given
+            Boolean value = true;
+
+            // When
+            Double actual = ValueConverterFactory.convert(value, Double.class);
+
+            // Then
+            assertThat(actual).isEqualTo(1d);
+        }
+
+        @Test
+        void shouldConvertBooleanToFloat() {
+            // Given
+            Boolean value = true;
+
+            // When
+            Float actual = ValueConverterFactory.convert(value, Float.class);
+
+            // Then
+            assertThat(actual).isEqualTo(1f);
+        }
+
+        @Test
+        void shouldConvertBooleanToInteger() {
+            // Given
+            Boolean value = true;
+
+            // When
+            Integer actual = ValueConverterFactory.convert(value, Integer.class);
+
+            // Then
+            assertThat(actual).isEqualTo(1);
+        }
+
+        @Test
+        void shouldConvertBooleanToString() {
+            // Given
+            Boolean value = true;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isEqualTo("true");
+        }
+
+        @Test
+        void shouldReturnNullWhenInputIsNull() {
+            // Given
+            Boolean value = null;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(value).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("Convert byte array from input to output class")
+    class ConvertByteArray {
+
+        @Test
+        void shouldConvertByteArrayToString() {
+            // Given
+            byte[] value = "my test".getBytes();
+
+            // When
+            String result = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(result).isEqualTo("my test");
+        }
+
+        @Test
+        void shouldReturnNullWhenInputIsNull() {
+            // Given
+            byte[] value = null;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("Convert byte array from input to output class")
+    class ConvertDouble {
+
+        @Test
+        void shouldConvertDoubleToBoolean() {
+            // Given
+            Double value = 1d;
+
+            // When
+            Boolean actual = ValueConverterFactory.convert(value, Boolean.class);
+
+            // Then
+            assertThat(actual).isTrue();
+        }
+
+        @Test
+        void shouldConvertDoubleToByteArray() {
+            // Given
+            Double value = 2342.234d;
+
+            // When
+            byte[] actual = ValueConverterFactory.convert(value, byte[].class);
+
+            // Then
+            assertThat(actual).isEqualTo(new byte[]{value.byteValue()});
+        }
+
+        @Test
+        void shouldConvertDoubleToFloat() {
+            // Given
+            Double value = 234.123d;
+
+            // When
+            Float actual = ValueConverterFactory.convert(value, Float.class);
+
+            // Then
+            assertThat(actual).isEqualTo(value.floatValue());
+        }
+
+        @Test
+        void shouldConvertDoubleToInteger() {
+            // Given
+            Double value = 2812.23d;
+
+            // When
+            Integer actual = ValueConverterFactory.convert(value, Integer.class);
+
+            // Then
+            assertThat(actual).isEqualTo(value.intValue());
+        }
+
+        @Test
+        void shouldConvertDoubleToString() {
+            // Given
+            Double value = 234.1234d;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isEqualTo(String.valueOf(value));
+        }
+
+        @Test
+        void shouldReturnNullWhenInputIsNull() {
+            // Given
+            Double value = null;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("Convert exception from input to output class")
+    class ConvertException {
+
+        @Test
+        void shouldConvertExceptionToString() {
+            // Given
+            ESBException testException = new ESBException("an error");
+
+            // When
+            String result = ValueConverterFactory.convert(testException, ESBException.class, String.class);
+
+            // Then
+            assertThat(result).isEqualTo(StackTraceUtils.asString(testException));
+        }
+
+        @Test
+        void shouldConvertExceptionToByteArray() {
+            // Given
+            ESBException testException = new ESBException("another error");
+
+            // When
+            byte[] result = ValueConverterFactory.convert(testException, ESBException.class, byte[].class);
+
+            // Then
+            assertThat(result).isEqualTo(StackTraceUtils.asByteArray(testException));
+        }
+
+        @Test
+        void shouldThrowExceptionWhenConverterNotPresent() {
+            // Given
+            DummyClazz input = new DummyClazz();
+
+            // When
+            ESBException exception = Assertions.assertThrows(ESBException.class,
+                    () -> ValueConverterFactory.convert(input, DummyClazz.class, Integer.class));
+
+            // Then
+            assertThat(exception).isNotNull();
+            assertThat(exception).hasMessage("Converter for input=[com.reedelk.esb.services.scriptengine.converter.ValueConverterFactoryTest$DummyClazz] to output=[java.lang.Integer] not available");
+        }
+
+        @Test
+        void shouldReturnNullWhenInputIsNull() {
+            // Given
+            Exception value = null;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("Convert float input to output class")
+    class ConvertFloat {
+
+        @Test
+        void shouldConvertFloatToBoolean() {
+            // Given
+            Float value = 1f;
+
+            // When
+            Boolean actual = ValueConverterFactory.convert(value, Boolean.class);
+
+            // Then
+            assertThat(actual).isTrue();
+        }
+
+        @Test
+        void shouldConvertFloatToByteArray() {
+            // Given
+            Float value = 1f;
+
+            // When
+            byte[] actual = ValueConverterFactory.convert(value, byte[].class);
+
+            // Then
+            assertThat(actual).isEqualTo(new byte[]{value.byteValue()});
+        }
+
+        @Test
+        void shouldConvertFloatToDouble() {
+            // Given
+            Float value = 234.234f;
+
+            // When
+            Double actual = ValueConverterFactory.convert(value, Double.class);
+
+            // Then
+            assertThat(actual).isEqualTo(value.doubleValue());
+        }
+
+        @Test
+        void shouldConvertFloatToInteger() {
+            // Given
+            Float value = 212.2348f;
+
+            // When
+            Integer actual = ValueConverterFactory.convert(value, Integer.class);
+
+            // Then
+            assertThat(actual).isEqualTo(value.intValue());
+        }
+
+        @Test
+        void shouldConvertFloatToString() {
+            // Given
+            Float value = 234.12f;
+
+            // When
+            String actual  = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isEqualTo(String.valueOf(value));
+        }
+    }
+
+    @Nested
+    @DisplayName("Convert integer from input to output class")
+    class ConvertInteger {
+
+        @Test
+        void shouldCovertIntegerToBoolean() {
+            // Given
+            Integer value = 1;
+
+            // When
+            Boolean result = ValueConverterFactory.convert(value, Boolean.class);
+
+            // Then
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        void shouldConvertIntegerToByteArray() {
+            // Given
+            Integer value = 234123;
+
+            // When
+            byte[] result = ValueConverterFactory.convert(value, byte[].class);
+
+            // Then
+            assertThat(result).isEqualTo(new byte[]{value.byteValue()});
+        }
+
+        @Test
+        void shouldConvertIntegerToDouble() {
+            // Given
+            Integer value = 234;
+
+            // When
+            Double result = ValueConverterFactory.convert(value, Double.class);
+
+            // Then
+            assertThat(result).isEqualTo(value.doubleValue());
+        }
+
+        @Test
+        void shouldConvertIntegerToFloat() {
+            // Given
+            Integer value = 865;
+
+            // When
+            Float result = ValueConverterFactory.convert(value, Float.class);
+
+            // Then
+            assertThat(result).isEqualTo(value.floatValue());
+        }
+
+        @Test
+        void shouldConvertIntegerToString() {
+            // Given
+            Integer value = 234;
+
+            // When
+            String result = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(result).isEqualTo("234");
+        }
+    }
+
+    @Nested
+    @DisplayName("Convert string from input to output class")
+    class ConvertString {
 
         @Test
         void shouldConvertStringToBoolean() {
@@ -106,164 +472,11 @@ class ValueConverterFactoryTest {
             // Then
             assertThat(result).isNull();
         }
+    }
 
-        // boolean
-
-        @Test
-        void shouldConvertBooleanToString() {
-            // Given
-            boolean value = true;
-
-            // When
-            String result = ValueConverterFactory.convert(value, String.class);
-
-            // Then
-            assertThat(result).isEqualTo("true");
-        }
-
-        @Test
-        void shouldConvertBooleanToInteger() {
-            // Given
-            boolean value = true;
-
-            // When
-            Integer result = ValueConverterFactory.convert(value, Integer.class);
-
-            // Then
-            assertThat(result).isEqualTo(1);
-        }
-
-        // byte array
-
-        @Test
-        void shouldConvertByteArrayToString() {
-            // Given
-            byte[] value = "my test".getBytes();
-
-            // When
-            String result = ValueConverterFactory.convert(value, String.class);
-
-            // Then
-            assertThat(result).isEqualTo("my test");
-        }
-
-        // double
-
-        @Test
-        void shouldConvertDoubleToFloat() {
-            // Given
-            Double value = 234.234d;
-
-            // When
-            Float result = ValueConverterFactory.convert(value,Float.class);
-
-            // Then
-            assertThat(result).isEqualTo(value.floatValue());
-        }
-
-        @Test
-        void shouldConvertDoubleToInteger() {
-            // Given
-            Double value = 234.123;
-
-            // When
-            Integer result = ValueConverterFactory.convert(value, Integer.class);
-
-            // Then
-            assertThat(result).isEqualTo(value.intValue());
-        }
-
-        // exception
-
-        @Test
-        void shouldConvertExceptionToString() {
-            // Given
-            ESBException testException = new ESBException("an error");
-
-            // When
-            String result = ValueConverterFactory.convert(testException, ESBException.class, String.class);
-
-            // Then
-            assertThat(result).isEqualTo(StackTraceUtils.asString(testException));
-        }
-
-        @Test
-        void shouldConvertExceptionToByteArray() {
-            // Given
-            ESBException testException = new ESBException("another error");
-
-            // When
-            byte[] result = ValueConverterFactory.convert(testException, ESBException.class, byte[].class);
-
-            // Then
-            assertThat(result).isEqualTo(StackTraceUtils.asByteArray(testException));
-        }
-
-        @Test
-        void shouldThrowExceptionWhenConverterNotPresent() {
-            // Given
-            DummyClazz input = new DummyClazz();
-
-            // When
-            ESBException exception = Assertions.assertThrows(ESBException.class,
-                    () -> ValueConverterFactory.convert(input, DummyClazz.class, Integer.class));
-
-            // Then
-            assertThat(exception).isNotNull();
-            assertThat(exception).hasMessage("Converter for input=[com.reedelk.esb.services.scriptengine.converter.ValueConverterFactoryTest$DummyClazz] to output=[java.lang.Integer] not available");
-        }
-
-        // integer
-
-        @Test
-        void shouldConvertIntegerToByteArray() {
-            // Given
-            Integer value = 234123;
-
-            // When
-            byte[] result = ValueConverterFactory.convert(value, byte[].class);
-
-            // Then
-            assertThat(result).isEqualTo(new byte[]{value.byteValue()});
-        }
-
-        @Test
-        void shouldConvertIntegerToDouble() {
-            // Given
-            Integer value = 234;
-
-            // When
-            Double result = ValueConverterFactory.convert(value, Double.class);
-
-            // Then
-            assertThat(result).isEqualTo(value.doubleValue());
-        }
-
-        @Test
-        void shouldConvertIntegerToFloat() {
-            // Given
-            Integer value = 865;
-
-            // When
-            Float result = ValueConverterFactory.convert(value, Float.class);
-
-            // Then
-            assertThat(result).isEqualTo(value.floatValue());
-        }
-
-        @Test
-        void shouldConvertIntegerToString() {
-            // Given
-            Integer value = 234;
-
-            // When
-            String result = ValueConverterFactory.convert(value, String.class);
-
-            // Then
-            assertThat(result).isEqualTo("234");
-        }
-
-        // object
+    @Nested
+    @DisplayName("Convert any input to object")
+    class ConvertAnyToObject {
 
         @Test
         void shouldReturnOriginalValueWhenOutputClazzIsObject() {
