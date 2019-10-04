@@ -69,6 +69,6 @@ public class ValueConverterFactory {
     }
 
     private static Supplier<? extends ESBException> converterNotFound(Class<?> inputClazz, Class<?> outputClazz) {
-        return () -> new ESBException(format("Converter for input=[%s] to output=[%s] not available", inputClazz, outputClazz));
+        return () -> new ESBException(format("Converter for input=[%s] to output=[%s] not available", inputClazz.getName(), outputClazz.getName()));
     }
 }
