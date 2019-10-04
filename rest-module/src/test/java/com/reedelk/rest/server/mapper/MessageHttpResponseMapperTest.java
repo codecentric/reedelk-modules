@@ -8,7 +8,7 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.TypedPublisher;
+import com.reedelk.runtime.api.message.type.TypedMono;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
@@ -24,7 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerResponse;
 
 import javax.script.ScriptException;
@@ -62,7 +61,7 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(responseBody);
                 Message message = MessageBuilder.get().text("a discarded body").build();
 
-                doReturn(TypedPublisher.from(Mono.just("test body".getBytes()), byte[].class))
+                doReturn(TypedMono.just("test body".getBytes()))
                         .when(scriptEngine)
                         .evaluateStream(responseBody, message, flowContext);
 
@@ -83,7 +82,7 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(responseBody);
                 Message message = MessageBuilder.get().text(expectedContent).build();
 
-                doReturn(TypedPublisher.from(Mono.just(expectedContent.getBytes()), byte[].class))
+                doReturn(TypedMono.just(expectedContent.getBytes()))
                         .when(scriptEngine)
                         .evaluateStream(responseBody, message, flowContext);
 
@@ -102,7 +101,7 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(emptyResponseBody);
                 Message message = MessageBuilder.get().build();
 
-                doReturn(TypedPublisher.from(Mono.just(EMPTY.getBytes()), byte[].class))
+                doReturn(TypedMono.just(EMPTY.getBytes()))
                         .when(scriptEngine).evaluateStream(emptyResponseBody, message, flowContext);
 
                 // When
@@ -121,7 +120,7 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(nullResponseBody);
                 Message message = MessageBuilder.get().text("something").build();
 
-                doReturn(TypedPublisher.from(Mono.empty(), byte[].class))
+                doReturn(TypedMono.emptyByteArray())
                         .when(scriptEngine).evaluateStream(nullResponseBody, message, flowContext);
 
                 // When
@@ -201,7 +200,7 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().text("my text body").build();
 
-                doReturn(TypedPublisher.from(Mono.just("my text body"), String.class))
+                doReturn(TypedMono.just("my text body"))
                         .when(scriptEngine).evaluateStream(body, message, flowContext);
 
 
@@ -220,7 +219,7 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().build();
 
-                doReturn(TypedPublisher.from(Mono.just("my text body".getBytes()), byte[].class))
+                doReturn(TypedMono.just("my text body".getBytes()))
                         .when(scriptEngine).evaluateStream(body, message, flowContext);
 
                 // When
@@ -270,7 +269,7 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().build();
 
-                doReturn(TypedPublisher.from(Mono.empty(), byte[].class))
+                doReturn(TypedMono.emptyByteArray())
                         .when(scriptEngine).evaluateStream(body, message, flowContext);
 
                 // When
@@ -369,7 +368,7 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedPublisher.from(Mono.just(expectedBody.getBytes()), byte[].class))
+                doReturn(TypedMono.just(expectedBody.getBytes()))
                         .when(scriptEngine).evaluateStream(bodyValue, exception, flowContext);
 
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(bodyValue);
@@ -395,7 +394,7 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedPublisher.from(Mono.just(expectedContent.getBytes()), byte[].class))
+                doReturn(TypedMono.just(expectedContent.getBytes()))
                         .when(scriptEngine).evaluateStream(errorResponseBody, exception, flowContext);
 
                 // When
@@ -417,7 +416,7 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedPublisher.from(Mono.just(StackTraceUtils.asString(exception).getBytes()), byte[].class))
+                doReturn(TypedMono.just(StackTraceUtils.asString(exception).getBytes()))
                         .when(scriptEngine).evaluateStream(errorResponseBody, exception, flowContext);
 
 
@@ -439,7 +438,7 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedPublisher.from(Mono.empty(), byte[].class))
+                doReturn(TypedMono.emptyByteArray())
                         .when(scriptEngine).evaluateStream(emptyErrorResponseBody, exception, flowContext);
 
                 // When
@@ -538,7 +537,7 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedPublisher.from(Mono.just(exception.getMessage()), String.class))
+                doReturn(TypedMono.just(exception.getMessage()))
                         .when(scriptEngine).evaluateStream(eq(errorBody), eq(exception), eq(flowContext));
 
                 // When
@@ -559,7 +558,7 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedPublisher.from(Mono.just("my text body"), String.class))
+                doReturn(TypedMono.just("my text body"))
                         .when(scriptEngine).evaluateStream(eq(errorBody), eq(exception), eq(flowContext));
 
                 // When
@@ -579,7 +578,7 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedPublisher.from(Mono.just(exception.getMessage()), String.class))
+                doReturn(TypedMono.just(exception.getMessage()))
                         .when(scriptEngine).evaluateStream(eq(errorBody), eq(exception), eq(flowContext));
 
                 // When
@@ -600,7 +599,7 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedPublisher.from(Mono.empty(), byte[].class))
+                doReturn(TypedMono.emptyByteArray())
                         .when(scriptEngine).evaluateStream(eq(errorBody), eq(exception), eq(flowContext));
 
                 // When
@@ -620,7 +619,7 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedPublisher.from(Mono.empty(), byte[].class))
+                doReturn(TypedMono.emptyByteArray())
                         .when(scriptEngine).evaluateStream(isNull(), eq(exception), eq(flowContext));
 
                 // When
@@ -734,7 +733,7 @@ class MessageHttpResponseMapperTest {
         response.setBody(value);
         response.setStatus(responseStatus);
 
-        doReturn(TypedPublisher.from(Mono.just(bodyContent.getBytes()), byte[].class))
+        doReturn(TypedMono.just(bodyContent.getBytes()))
                 .when(scriptEngine)
                 .evaluateStream(eq(value), any(Message.class), eq(flowContext));
 
@@ -753,7 +752,7 @@ class MessageHttpResponseMapperTest {
         doReturn(Optional.of(200))
                 .when(scriptEngine).evaluate(eq(statusValue), any(Message.class), any(FlowContext.class));
 
-        doReturn(TypedPublisher.from(Mono.just(bodyContent.getBytes()), byte[].class))
+        doReturn(TypedMono.just(bodyContent.getBytes()))
                 .when(scriptEngine).evaluateStream(eq(bodyValue), any(Message.class), eq(flowContext));
 
         return new MessageHttpResponseMapper(scriptEngine, response, null);

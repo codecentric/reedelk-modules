@@ -12,6 +12,6 @@ public class AsByteArray implements DynamicValueConverter<byte[], byte[]> {
 
     @Override
     public TypedPublisher<byte[]> from(TypedPublisher<byte[]> stream) {
-        return TypedPublisher.from(stream, byte[].class);
+        return stream;
     }
 }

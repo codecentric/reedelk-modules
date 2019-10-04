@@ -8,15 +8,11 @@ public class AsFloat implements DynamicValueConverter<Double,Float> {
 
     @Override
     public Float from(Double value) {
-        if (value == null) {
-            return null;
-        } else {
-            return value.floatValue();
-        }
+        return value == null ? null : value.floatValue();
     }
 
     @Override
     public TypedPublisher<Float> from(TypedPublisher<Double> stream) {
-        return TypedPublisher.from(Flux.from(stream).map(this::from), Float.class);
+        return TypedPublisher.fromFloat(Flux.from(stream).map(this::from));
     }
 }

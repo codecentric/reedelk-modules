@@ -13,6 +13,6 @@ public class AsBoolean implements DynamicValueConverter<String,Boolean> {
 
     @Override
     public TypedPublisher<Boolean> from(TypedPublisher<String> stream) {
-        return TypedPublisher.from(Flux.from(stream).map(this::from), boolean.class);
+        return TypedPublisher.fromBoolean(Flux.from(stream).map(this::from));
     }
 }

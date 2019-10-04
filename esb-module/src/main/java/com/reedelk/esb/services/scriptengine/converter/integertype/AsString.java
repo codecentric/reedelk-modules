@@ -13,6 +13,6 @@ public class AsString implements DynamicValueConverter<Integer,String> {
 
     @Override
     public TypedPublisher<String> from(TypedPublisher<Integer> stream) {
-        return TypedPublisher.from(Flux.from(stream).map(String::valueOf), String.class);
+        return TypedPublisher.fromString(Flux.from(stream).map(String::valueOf));
     }
 }

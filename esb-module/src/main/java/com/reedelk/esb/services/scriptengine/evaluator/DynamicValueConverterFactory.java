@@ -44,6 +44,7 @@ class DynamicValueConverterFactory {
             DynamicValueConverter<I, O> toConverters =
                     (DynamicValueConverter<I, O>) fromExceptionConverters.get(outputClass);
             if (toConverters != null) return toConverters.from((I) input);
+
         }
 
         if (String.class.equals(outputClass)) {
@@ -58,8 +59,7 @@ class DynamicValueConverterFactory {
     static <I, O> Publisher<O> convertStream(TypedPublisher<I> input, Class<I> inputClass, Class<O> outputClass) {
         Map<Class<?>, DynamicValueConverter<?, ?>> fromConverters = CONVERTERS.get(inputClass);
         if (fromConverters != null) {
-            DynamicValueConverter<I, O> toConverters =
-                    (DynamicValueConverter<I, O>) fromConverters.get(outputClass);
+            DynamicValueConverter<I, O> toConverters = (DynamicValueConverter<I, O>) fromConverters.get(outputClass);
             if (toConverters != null) return toConverters.from(input);
         }
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));

@@ -42,8 +42,8 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         if (valueToConvert == null) {
             return provider.empty();
         } else if (valueToConvert instanceof TypedPublisher<?>) {
-            TypedPublisher<?> publisher = (TypedPublisher<?>) valueToConvert;
-            return convert(publisher, publisher.getType(), targetClazz, provider);
+            TypedPublisher<?> typedPublisher = (TypedPublisher<?>) valueToConvert;
+            return convert(valueToConvert, typedPublisher.getType(), targetClazz, provider);
         } else {
             return convert(valueToConvert, valueToConvert.getClass(), targetClazz, provider);
         }

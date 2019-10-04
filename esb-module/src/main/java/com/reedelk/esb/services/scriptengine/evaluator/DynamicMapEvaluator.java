@@ -21,7 +21,7 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
     @SuppressWarnings("unchecked")
     @Override
     public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, Message message, FlowContext context) {
-        if (dynamicMap.isEmpty()) {
+        if (dynamicMap == null || dynamicMap.isEmpty()) {
             // If dynamic map is empty, nothing to do.
             return (Map<String, T>) EMPTY_MAP;
 

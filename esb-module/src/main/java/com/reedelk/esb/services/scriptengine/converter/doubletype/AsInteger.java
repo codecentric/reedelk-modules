@@ -13,6 +13,6 @@ public class AsInteger implements DynamicValueConverter<Double,Integer> {
 
     @Override
     public TypedPublisher<Integer> from(TypedPublisher<Double> stream) {
-        return TypedPublisher.from(Flux.from(stream).map(this::from), Integer.class);
+        return TypedPublisher.fromInteger(Flux.from(stream).map(this::from));
     }
 }

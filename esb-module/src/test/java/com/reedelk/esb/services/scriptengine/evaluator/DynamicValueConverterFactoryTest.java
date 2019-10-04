@@ -11,7 +11,7 @@ class DynamicValueConverterFactoryTest {
     @Test
     void shouldConvertStringStreamToIntStream() {
         // Given
-        TypedPublisher<String> input = TypedPublisher.from(Flux.just("1","2","4"), String.class);
+        TypedPublisher<String> input = TypedPublisher.fromString(Flux.just("1","2","4"));
 
         // When
         Publisher<Integer> converted =
@@ -26,7 +26,7 @@ class DynamicValueConverterFactoryTest {
     @Test
     void shouldStreamPropagateErrorWhenConversionIsFailed() {
         // Given
-        TypedPublisher<String> input = TypedPublisher.from(Flux.just("1", "not a number", "2"), String.class);
+        TypedPublisher<String> input = TypedPublisher.fromString(Flux.just("1", "not a number", "2"));
 
         // When
         Publisher<Integer> converted =

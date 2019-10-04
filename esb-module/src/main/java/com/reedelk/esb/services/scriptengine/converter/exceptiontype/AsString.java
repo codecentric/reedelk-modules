@@ -14,6 +14,6 @@ public class AsString implements DynamicValueConverter<Exception,String> {
 
     @Override
     public TypedPublisher<String> from(TypedPublisher<Exception> stream) {
-        return TypedPublisher.from(Flux.from(stream).map(this::from), String.class);
+        return TypedPublisher.fromString(Flux.from(stream).map(this::from));
     }
 }

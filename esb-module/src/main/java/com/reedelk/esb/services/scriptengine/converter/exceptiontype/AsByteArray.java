@@ -14,6 +14,6 @@ public class AsByteArray implements DynamicValueConverter<Exception,byte[]> {
 
     @Override
     public TypedPublisher<byte[]> from(TypedPublisher<Exception> stream) {
-        return TypedPublisher.from(Flux.from(stream).map(this::from), byte[].class);
+        return TypedPublisher.fromByteArray(Flux.from(stream).map(this::from));
     }
 }
