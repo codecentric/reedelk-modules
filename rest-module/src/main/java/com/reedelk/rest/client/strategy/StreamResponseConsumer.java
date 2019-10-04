@@ -137,7 +137,6 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
     @Override
     protected void onEntityEnclosed(HttpEntity entity, ContentType contentType) throws IOException {
-
     }
 
     @Override

@@ -44,14 +44,19 @@ public class HttpClient {
     private static final FutureCallback<Void> NO_OP_CALLBACK = new FutureCallback<Void>() {
         @Override
         public void completed(Void result) {
+            // this one is already taken care in the response consumer.
         }
 
         @Override
         public void failed(Exception ex) {
+            // TODO: Actually this one gets called when there is an exception fixme!
+            //  this one is triggered when we call github API with http and port 443 (and basic auth)
+            // this must be handled
         }
 
         @Override
         public void cancelled() {
+            // TODO: Same as above here? When is this callback called?
         }
     };
 }
