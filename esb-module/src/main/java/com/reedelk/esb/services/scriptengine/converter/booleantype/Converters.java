@@ -1,4 +1,4 @@
-package com.reedelk.esb.services.scriptengine.converter.integertype;
+package com.reedelk.esb.services.scriptengine.converter.booleantype;
 
 import com.reedelk.esb.services.scriptengine.converter.ValueConverter;
 
@@ -8,11 +8,10 @@ import java.util.Map;
 
 public class Converters {
 
-    public static final Map<Class<?>, ValueConverter<?, ?>> ALL;
+    public static final Map<Class<?>, ValueConverter<?,?>> ALL;
     static {
         Map<Class<?>, ValueConverter<?, ?>> tmp = new HashMap<>();
         tmp.put(String.class, new AsString());
-        tmp.put(Integer.class, new AsInteger());
         ALL = Collections.unmodifiableMap(tmp);
     }
 

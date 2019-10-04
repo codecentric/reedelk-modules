@@ -6,11 +6,11 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 @SuppressWarnings("unchecked")
-public class ValueProviders {
+class ValueProviders {
 
-    public static final ValueProvider OPTIONAL_PROVIDER = new OptionalValueProvider();
+    static final ValueProvider OPTIONAL_PROVIDER = new OptionalValueProvider();
 
-    public static final ValueProvider STREAM_PROVIDER = new StreamValueProvider();
+    static final ValueProvider STREAM_PROVIDER = new StreamValueProvider();
 
     private static class OptionalValueProvider implements ValueProvider {
         @Override

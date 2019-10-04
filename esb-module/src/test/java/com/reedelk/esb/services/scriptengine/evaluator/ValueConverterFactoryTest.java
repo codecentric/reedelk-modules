@@ -1,12 +1,13 @@
     package com.reedelk.esb.services.scriptengine.evaluator;
 
+import com.reedelk.esb.services.scriptengine.converter.ValueConverterFactory;
 import com.reedelk.runtime.api.message.type.TypedPublisher;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
-class DynamicValueConverterFactoryTest {
+class ValueConverterFactoryTest {
 
     @Test
     void shouldConvertStringStreamToIntStream() {
@@ -15,7 +16,7 @@ class DynamicValueConverterFactoryTest {
 
         // When
         Publisher<Integer> converted =
-                DynamicValueConverterFactory.convertStream(input, String.class, Integer.class);
+                ValueConverterFactory.convertStream(input, String.class, Integer.class);
 
         // Then
         StepVerifier.create(converted)
@@ -30,7 +31,7 @@ class DynamicValueConverterFactoryTest {
 
         // When
         Publisher<Integer> converted =
-                DynamicValueConverterFactory.convertStream(input, String.class, Integer.class);
+                ValueConverterFactory.convertStream(input, String.class, Integer.class);
 
         // Then
         StepVerifier.create(converted)

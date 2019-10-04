@@ -1,9 +1,9 @@
 package com.reedelk.esb.services.scriptengine.converter.integertype;
 
-import com.reedelk.esb.services.scriptengine.converter.DynamicValueConverter;
+import com.reedelk.esb.services.scriptengine.converter.ValueConverter;
 import com.reedelk.runtime.api.message.type.TypedPublisher;
 
-public class AsInteger implements DynamicValueConverter<Integer,Integer> {
+public class AsInteger implements ValueConverter<Integer,Integer> {
 
     @Override
     public Integer from(Integer value) {

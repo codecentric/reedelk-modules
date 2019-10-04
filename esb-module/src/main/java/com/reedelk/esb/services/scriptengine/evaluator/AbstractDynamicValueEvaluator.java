@@ -2,6 +2,7 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.commons.FunctionName;
 import com.reedelk.esb.commons.IsSourceAssignableToTarget;
+import com.reedelk.esb.services.scriptengine.converter.ValueConverterFactory;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueErrorFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
@@ -87,7 +88,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     private <S> S convert(Object valueToConvert, Class<?> sourceClass, Class<?> targetClazz, ValueProvider provider) {
         if (valueToConvert instanceof TypedPublisher<?>) {
             // Value is a stream
-            Object converted = DynamicValueConverterFactory.convertStream((TypedPublisher) valueToConvert, sourceClass, targetClazz);
+            Object converted = ValueConverterFactory.convertStream((TypedPublisher) valueToConvert, sourceClass, targetClazz);
             return provider.from(converted);
 
         } else {
@@ -95,7 +96,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             if (IsSourceAssignableToTarget.from(sourceClass, targetClazz)) {
                 return provider.from(valueToConvert);
             } else {
-                Object converted = DynamicValueConverterFactory.convert(valueToConvert, sourceClass, targetClazz);
+                Object converted = ValueConverterFactory.convert(valueToConvert, sourceClass, targetClazz);
                 return provider.from(converted);
             }
         }
