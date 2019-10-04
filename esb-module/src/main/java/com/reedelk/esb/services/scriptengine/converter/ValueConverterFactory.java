@@ -1,11 +1,14 @@
 package com.reedelk.esb.services.scriptengine.converter;
 
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.type.TypedPublisher;
-import org.reactivestreams.Publisher;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import static java.lang.String.format;
 
 @SuppressWarnings("unchecked")
 public class ValueConverterFactory {
@@ -27,38 +30,32 @@ public class ValueConverterFactory {
     }
 
     public static <O> O convert(Object input, Class<O> outputClass) {
-        return input == null ?
-                null :
-                convert(input, input.getClass(), outputClass);
+        return input == null ? null : convert(input, input.getClass(), outputClass);
     }
 
     public static <I, O> O convert(Object input, Class<I> inputClass, Class<O> outputClass) {
-        Map<Class<?>, ValueConverter<?, ?>> fromConverters = CONVERTERS.get(inputClass);
-
-        if (fromConverters != null) {
-            ValueConverter<I, O> toConverters = (ValueConverter<I, O>) fromConverters.get(outputClass);
-            if (toConverters != null) return toConverters.from((I) input);
-
-        } else if (input instanceof Exception) {
-            Map<Class<?>, ValueConverter<?, ?>> fromExceptionConverters = CONVERTERS.get(Exception.class);
-            ValueConverter<I, O> toConverters = (ValueConverter<I, O>) fromExceptionConverters.get(outputClass);
-            if (toConverters != null) return toConverters.from((I) input);
-
-        }
-
-        if (Object.class.equals(outputClass)) {
+        if (inputClass.equals(outputClass)) {
             return (O) input;
+        } else if (Object.class.equals(outputClass)) {
+            return (O) input;
+        } else if (input instanceof Exception) {
+            return convertType(input, Exception.class, outputClass);
+        } else {
+            return convertType(input, inputClass, outputClass);
         }
-
-        throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
     }
 
-    public static <I, O> Publisher<O> convertTypedPublisher(TypedPublisher<I> input, Class<I> inputClass, Class<O> outputClass) {
-        Map<Class<?>, ValueConverter<?, ?>> fromConverters = CONVERTERS.get(inputClass);
-        if (fromConverters != null) {
-            ValueConverter<I, O> typedPublisherConverter = (ValueConverter<I, O>) fromConverters.get(outputClass);
-            if (typedPublisherConverter != null) return typedPublisherConverter.from(input);
-        }
-        throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
+    public static <I, O> TypedPublisher<O> convertTypedPublisher(TypedPublisher<I> input, Class<O> outputClass) {
+        return Optional.ofNullable(CONVERTERS.get(input.getType()))
+                .flatMap(fromConverter -> Optional.ofNullable((ValueConverter<I, O>) fromConverter.get(outputClass)))
+                .map(toConverter -> toConverter.from(input))
+                .orElseThrow(() -> new ESBException(format("Converter for input=[%s] to output=[%s] not available", input.getType(), outputClass)));
+    }
+
+    private static <I, O> O convertType(I input, Class<?> inputClass, Class<O> outputClass) {
+        return Optional.ofNullable(CONVERTERS.get(inputClass))
+                .flatMap(fromConverter -> Optional.ofNullable((ValueConverter<I, O>) fromConverter.get(outputClass)))
+                .map(toConverter -> toConverter.from(input))
+                .orElseThrow(() -> new ESBException(format("Converter for input=[%s] to output=[%s] not available", inputClass, outputClass)));
     }
 }

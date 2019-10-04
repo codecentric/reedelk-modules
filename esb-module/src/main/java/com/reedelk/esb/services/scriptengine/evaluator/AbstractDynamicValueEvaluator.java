@@ -1,7 +1,6 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.commons.FunctionName;
-import com.reedelk.esb.commons.IsSourceAssignableToTarget;
 import com.reedelk.esb.services.scriptengine.converter.ValueConverterFactory;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueErrorFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueFunctionDefinitionBuilder;
@@ -10,6 +9,7 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.TypedPublisher;
 import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
+import org.reactivestreams.Publisher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,11 +42,17 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     <S> S convert(Object valueToConvert, Class<?> targetClazz, ValueProvider provider) {
         if (valueToConvert == null) {
             return provider.empty();
+
         } else if (valueToConvert instanceof TypedPublisher<?>) {
+            // Value is a typed stream
             TypedPublisher<?> typedPublisher = (TypedPublisher<?>) valueToConvert;
-            return convert(valueToConvert, typedPublisher.getType(), targetClazz, provider);
+            Object converted = ValueConverterFactory.convertTypedPublisher(typedPublisher, targetClazz);
+            return provider.from(converted);
+
         } else {
-            return convert(valueToConvert, valueToConvert.getClass(), targetClazz, provider);
+            // Value is NOT a typed stream
+            Object converted = ValueConverterFactory.convert(valueToConvert, valueToConvert.getClass(), targetClazz);
+            return provider.from(converted);
         }
     }
 
@@ -80,25 +86,8 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             TypedPublisher<?> stream = message.getContent().stream();
             return convert(stream, targetType, STREAM_PROVIDER);
         } else {
-            return TypedPublisher.from(convert(message.payload(), targetType, STREAM_PROVIDER), targetType);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <S> S convert(Object valueToConvert, Class<?> sourceClass, Class<?> targetClazz, ValueProvider provider) {
-        if (valueToConvert instanceof TypedPublisher<?>) {
-            // Value is a stream
-            Object converted = ValueConverterFactory.convertTypedPublisher((TypedPublisher) valueToConvert, sourceClass, targetClazz);
-            return provider.from(converted);
-
-        } else {
-            // Value is not a stream
-            if (IsSourceAssignableToTarget.from(sourceClass, targetClazz)) {
-                return provider.from(valueToConvert);
-            } else {
-                Object converted = ValueConverterFactory.convert(valueToConvert, sourceClass, targetClazz);
-                return provider.from(converted);
-            }
+            Publisher<T> converted = convert(message.payload(), targetType, STREAM_PROVIDER);
+            return TypedPublisher.from(converted, targetType);
         }
     }
 }
