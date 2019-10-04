@@ -140,9 +140,10 @@ class ScriptEvaluatorTest {
             Script textValuedScript = Script.from("#[return 'my test']");
 
             // When
-            Publisher<byte[]> actual = evaluator.evaluateStream(textValuedScript, emptyMessage, context, byte[].class);
+            TypedPublisher<byte[]> actual = evaluator.evaluateStream(textValuedScript, emptyMessage, context, byte[].class);
 
             // Then
+            assertThat(actual.getType()).isEqualTo(byte[].class);
             StepVerifier.create(actual)
                     .expectNextMatches(bytes -> Arrays.equals(bytes, "my test".getBytes()))
                     .verifyComplete();

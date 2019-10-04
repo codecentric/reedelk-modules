@@ -65,6 +65,19 @@ class DynamicMapEvaluatorTest {
     }
 
     @Test
+    void shouldCorrectlyEvaluateNullMap() {
+        // Given
+        Message message = MessageBuilder.get().empty().build();
+        DynamicStringMap dynamicStringMap = null;
+
+        // When
+        Map<String,String> evaluated = evaluator.evaluate(dynamicStringMap, message, context);
+
+        // Then
+        assertThat(evaluated).isEmpty();
+    }
+
+    @Test
     void shouldCorrectlyEvaluateMapWithValueContainingQuotes() {
         // Given
         Message message = MessageBuilder.get().text("test").build();
