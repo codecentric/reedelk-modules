@@ -13,7 +13,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = Response.class, scope = PROTOTYPE)
 public class Response implements Implementor {
 
-    @Default("#[payload]")
+    @Default("#[message.payload()]")
     @Hint("content body text")
     @Property("Response body")
     private DynamicByteArray body;
