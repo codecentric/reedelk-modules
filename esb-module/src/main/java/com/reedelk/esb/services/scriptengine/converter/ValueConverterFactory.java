@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 
@@ -49,13 +50,17 @@ public class ValueConverterFactory {
         return Optional.ofNullable(CONVERTERS.get(input.getType()))
                 .flatMap(fromConverter -> Optional.ofNullable((ValueConverter<I, O>) fromConverter.get(outputClass)))
                 .map(toConverter -> toConverter.from(input))
-                .orElseThrow(() -> new ESBException(format("Converter for input=[%s] to output=[%s] not available", input.getType(), outputClass)));
+                .orElseThrow(converterNotFound(input.getType(), outputClass));
     }
 
     private static <I, O> O convertType(I input, Class<?> inputClass, Class<O> outputClass) {
         return Optional.ofNullable(CONVERTERS.get(inputClass))
                 .flatMap(fromConverter -> Optional.ofNullable((ValueConverter<I, O>) fromConverter.get(outputClass)))
                 .map(toConverter -> toConverter.from(input))
-                .orElseThrow(() -> new ESBException(format("Converter for input=[%s] to output=[%s] not available", inputClass, outputClass)));
+                .orElseThrow(converterNotFound(inputClass, outputClass));
+    }
+
+    private static Supplier<? extends ESBException> converterNotFound(Class<?> inputClazz, Class<?> outputClazz) {
+        return () -> new ESBException(format("Converter for input=[%s] to output=[%s] not available", inputClazz, outputClazz));
     }
 }
