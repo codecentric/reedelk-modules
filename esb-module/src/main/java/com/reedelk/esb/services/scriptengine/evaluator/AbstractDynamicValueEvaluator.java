@@ -88,7 +88,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     private <S> S convert(Object valueToConvert, Class<?> sourceClass, Class<?> targetClazz, ValueProvider provider) {
         if (valueToConvert instanceof TypedPublisher<?>) {
             // Value is a stream
-            Object converted = ValueConverterFactory.convertStream((TypedPublisher) valueToConvert, sourceClass, targetClazz);
+            Object converted = ValueConverterFactory.convertTypedPublisher((TypedPublisher) valueToConvert, sourceClass, targetClazz);
             return provider.from(converted);
 
         } else {

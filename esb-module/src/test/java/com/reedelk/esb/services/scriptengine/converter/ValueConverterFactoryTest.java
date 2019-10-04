@@ -1,11 +1,10 @@
-    package com.reedelk.esb.services.scriptengine.evaluator;
+    package com.reedelk.esb.services.scriptengine.converter;
 
-import com.reedelk.esb.services.scriptengine.converter.ValueConverterFactory;
-import com.reedelk.runtime.api.message.type.TypedPublisher;
-import org.junit.jupiter.api.Test;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.test.StepVerifier;
+    import com.reedelk.runtime.api.message.type.TypedPublisher;
+    import org.junit.jupiter.api.Test;
+    import org.reactivestreams.Publisher;
+    import reactor.core.publisher.Flux;
+    import reactor.test.StepVerifier;
 
 class ValueConverterFactoryTest {
 
@@ -16,7 +15,7 @@ class ValueConverterFactoryTest {
 
         // When
         Publisher<Integer> converted =
-                ValueConverterFactory.convertStream(input, String.class, Integer.class);
+                ValueConverterFactory.convertTypedPublisher(input, String.class, Integer.class);
 
         // Then
         StepVerifier.create(converted)
@@ -31,7 +30,7 @@ class ValueConverterFactoryTest {
 
         // When
         Publisher<Integer> converted =
-                ValueConverterFactory.convertStream(input, String.class, Integer.class);
+                ValueConverterFactory.convertTypedPublisher(input, String.class, Integer.class);
 
         // Then
         StepVerifier.create(converted)

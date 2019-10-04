@@ -27,22 +27,21 @@ public class ValueConverterFactory {
     }
 
     public static <O> O convert(Object input, Class<O> outputClass) {
-        return input == null ? null : convert(input, input.getClass(), outputClass);
+        return input == null ?
+                null :
+                convert(input, input.getClass(), outputClass);
     }
 
-    // TODO: This function is ugly!
     public static <I, O> O convert(Object input, Class<I> inputClass, Class<O> outputClass) {
         Map<Class<?>, ValueConverter<?, ?>> fromConverters = CONVERTERS.get(inputClass);
 
         if (fromConverters != null) {
-            ValueConverter<I, O> toConverters =
-                    (ValueConverter<I, O>) fromConverters.get(outputClass);
+            ValueConverter<I, O> toConverters = (ValueConverter<I, O>) fromConverters.get(outputClass);
             if (toConverters != null) return toConverters.from((I) input);
 
         } else if (input instanceof Exception) {
             Map<Class<?>, ValueConverter<?, ?>> fromExceptionConverters = CONVERTERS.get(Exception.class);
-            ValueConverter<I, O> toConverters =
-                    (ValueConverter<I, O>) fromExceptionConverters.get(outputClass);
+            ValueConverter<I, O> toConverters = (ValueConverter<I, O>) fromExceptionConverters.get(outputClass);
             if (toConverters != null) return toConverters.from((I) input);
 
         }
@@ -54,7 +53,7 @@ public class ValueConverterFactory {
         throw new IllegalStateException(String.format("Converter from [%s] to [%s] not available", inputClass, outputClass));
     }
 
-    public static <I, O> Publisher<O> convertStream(TypedPublisher<I> input, Class<I> inputClass, Class<O> outputClass) {
+    public static <I, O> Publisher<O> convertTypedPublisher(TypedPublisher<I> input, Class<I> inputClass, Class<O> outputClass) {
         Map<Class<?>, ValueConverter<?, ?>> fromConverters = CONVERTERS.get(inputClass);
         if (fromConverters != null) {
             ValueConverter<I, O> typedPublisherConverter = (ValueConverter<I, O>) fromConverters.get(outputClass);
