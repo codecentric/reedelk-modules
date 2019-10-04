@@ -193,5 +193,17 @@ class ScriptEvaluatorTest {
             // Then
             StepVerifier.create(actual).verifyComplete();
         }
+
+        @Test
+        void shouldReturnEmptyStreamWhenScriptReturnsNull() {
+            // Given
+            Script scriptReturningNull = Script.from("#[return null]");
+
+            // When
+            Publisher<byte[]> actual = evaluator.evaluateStream(scriptReturningNull, emptyMessage, context, byte[].class);
+
+            // Then
+            StepVerifier.create(actual).verifyComplete();
+        }
     }
 }
