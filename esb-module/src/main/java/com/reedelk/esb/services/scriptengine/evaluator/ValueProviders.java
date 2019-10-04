@@ -12,6 +12,9 @@ class ValueProviders {
 
     static final ValueProvider STREAM_PROVIDER = new StreamValueProvider();
 
+    private ValueProviders(){
+    }
+
     private static class OptionalValueProvider implements ValueProvider {
         @Override
         public Optional<?> empty() {

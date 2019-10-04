@@ -18,6 +18,7 @@ public class ValueConverterFactory {
 
     static {
         Map<Class<?>, Map<Class<?>, ValueConverter<?, ?>>> tmp = new HashMap<>();
+        tmp.put(Float.class, com.reedelk.esb.services.scriptengine.converter.floattype.Converters.ALL);
         tmp.put(Double.class, com.reedelk.esb.services.scriptengine.converter.doubletype.Converters.ALL);
         tmp.put(String.class, com.reedelk.esb.services.scriptengine.converter.stringtype.Converters.ALL);
         tmp.put(Integer.class, com.reedelk.esb.services.scriptengine.converter.integertype.Converters.ALL);
