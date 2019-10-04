@@ -35,6 +35,18 @@ class ValueConverterFactoryTest {
         }
 
         @Test
+        void shouldConvertBooleanToByteArrayWhenNull() {
+            // Given
+            Boolean value = false;
+
+            // When
+            byte[] actual = ValueConverterFactory.convert(value, byte[].class);
+
+            // Then
+            assertThat(actual).isEqualTo(new byte[]{0});
+        }
+
+        @Test
         void shouldConvertBooleanToDouble() {
             // Given
             Boolean value = true;

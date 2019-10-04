@@ -10,6 +10,6 @@ public class AsString extends BaseConverter<Boolean,String> {
 
     @Override
     public String from(Boolean value) {
-        return value == null ? null  : value.toString();
+        return value == null ? null : String.valueOf(value);
     }
 }
