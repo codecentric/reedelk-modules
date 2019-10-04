@@ -24,6 +24,7 @@ public class ValueConverterFactory {
         tmp.put(Integer.class, com.reedelk.esb.services.scriptengine.converter.integertype.Converters.ALL);
         tmp.put(Boolean.class, com.reedelk.esb.services.scriptengine.converter.booleantype.Converters.ALL);
         tmp.put(byte[].class, com.reedelk.esb.services.scriptengine.converter.bytearraytype.Converters.ALL);
+        tmp.put(Byte[].class, com.reedelk.esb.services.scriptengine.converter.bytearraytype.Converters.ALL);
         tmp.put(Exception.class, com.reedelk.esb.services.scriptengine.converter.exceptiontype.Converters.ALL);
         CONVERTERS = Collections.unmodifiableMap(tmp);
     }

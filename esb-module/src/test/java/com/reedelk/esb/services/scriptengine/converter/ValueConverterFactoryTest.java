@@ -12,6 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -91,6 +92,18 @@ class ValueConverterFactoryTest {
 
             // Then
             assertThat(value).isNull();
+        }
+
+        @Test
+        void shouldConvertNotBooleanObjectToString() {
+            // Given
+            boolean value = true;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isEqualTo("true");
         }
     }
 
@@ -197,6 +210,18 @@ class ValueConverterFactoryTest {
 
             // Then
             assertThat(actual).isNull();
+        }
+
+        @Test
+        void shouldConvertNotDoubleObjectToString() {
+            // Given
+            double value = 23.32d;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isEqualTo(String.valueOf(value));
         }
     }
 
@@ -318,6 +343,18 @@ class ValueConverterFactoryTest {
             // Then
             assertThat(actual).isEqualTo(String.valueOf(value));
         }
+
+        @Test
+        void shouldConvertNotFloatObjectToString() {
+            // Given
+            float value = 23.32f;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isEqualTo(String.valueOf(value));
+        }
     }
 
     @Nested
@@ -382,6 +419,18 @@ class ValueConverterFactoryTest {
 
             // Then
             assertThat(result).isEqualTo("234");
+        }
+
+        @Test
+        void shouldConvertNotDoubleObjectToString() {
+            // Given
+            int value = 23;
+
+            // When
+            String actual = ValueConverterFactory.convert(value, String.class);
+
+            // Then
+            assertThat(actual).isEqualTo(String.valueOf(value));
         }
     }
 
@@ -565,6 +614,18 @@ class ValueConverterFactoryTest {
             assertThat(exception).isNotNull();
             assertThat(exception).hasMessage("Converter for input=[com.reedelk.esb.services.scriptengine.converter.ValueConverterFactoryTest$DummyClazz] to output=[java.lang.Integer] not available");
         }
+    }
+
+    @Test
+    void shouldConvertWithInputAndOutputReturnNullWhenInputIsNull() {
+        // Given
+        BigInteger input = null;
+
+        // When
+        Object actual = ValueConverterFactory.convert(input, BigInteger.class, Object.class);
+
+        // Then
+        assertThat(actual).isNull();
     }
 
     private static class DummyClazz{}
