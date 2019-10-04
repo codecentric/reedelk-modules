@@ -35,12 +35,10 @@ class ValueProviders {
 
         @Override
         public Publisher<?> from(Object value) {
-            if (value == null) {
-                return Mono.empty();
-            } else if (value instanceof Publisher<?>) {
+            if (value instanceof Publisher<?>) {
                 return (Publisher<?>) value;
             } else {
-                return Mono.just(value);
+                return Mono.justOrEmpty(value);
             }
         }
     }
