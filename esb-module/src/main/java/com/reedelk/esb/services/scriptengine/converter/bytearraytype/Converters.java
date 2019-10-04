@@ -11,7 +11,7 @@ public class Converters {
     public static final Map<Class<?>, ValueConverter<?,?>> ALL;
     static {
         Map<Class<?>, ValueConverter<?, ?>> tmp = new HashMap<>();
-        tmp.put(byte[].class, new AsByteArray());
+        tmp.put(byte[].class, new AsString());
         ALL = Collections.unmodifiableMap(tmp);
     }
 

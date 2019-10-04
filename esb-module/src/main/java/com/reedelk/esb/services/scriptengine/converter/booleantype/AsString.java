@@ -1,18 +1,15 @@
 package com.reedelk.esb.services.scriptengine.converter.booleantype;
 
-import com.reedelk.esb.services.scriptengine.converter.ValueConverter;
-import com.reedelk.runtime.api.message.type.TypedPublisher;
-import reactor.core.publisher.Flux;
+import com.reedelk.esb.services.scriptengine.converter.BaseConverter;
 
-public class AsString implements ValueConverter<Boolean,String> {
+public class AsString extends BaseConverter<Boolean,String> {
+
+    AsString() {
+        super(String.class);
+    }
 
     @Override
     public String from(Boolean value) {
         return value == null ? null  : value.toString();
-    }
-
-    @Override
-    public TypedPublisher<String> from(TypedPublisher<Boolean> stream) {
-        return TypedPublisher.fromString(Flux.from(stream).map(this::from));
     }
 }

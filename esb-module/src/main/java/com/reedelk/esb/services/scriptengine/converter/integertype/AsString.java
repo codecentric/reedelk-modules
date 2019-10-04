@@ -1,18 +1,15 @@
 package com.reedelk.esb.services.scriptengine.converter.integertype;
 
-import com.reedelk.esb.services.scriptengine.converter.ValueConverter;
-import com.reedelk.runtime.api.message.type.TypedPublisher;
-import reactor.core.publisher.Flux;
+import com.reedelk.esb.services.scriptengine.converter.BaseConverter;
 
-public class AsString implements ValueConverter<Integer,String> {
+public class AsString extends BaseConverter<Integer,String> {
 
-    @Override
-    public String from(Integer value) {
-        return value == null ? null : value.toString();
+    AsString() {
+        super(String.class);
     }
 
     @Override
-    public TypedPublisher<String> from(TypedPublisher<Integer> stream) {
-        return TypedPublisher.fromString(Flux.from(stream).map(String::valueOf));
+    public String from(Integer value) {
+        return value == null ? null : String.valueOf(value);
     }
 }

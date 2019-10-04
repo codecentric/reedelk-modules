@@ -12,7 +12,6 @@ public class Converters {
     static {
         Map<Class<?>, ValueConverter<?, ?>> tmp = new HashMap<>();
         tmp.put(String.class, new AsString());
-        tmp.put(Integer.class, new AsInteger());
         ALL = Collections.unmodifiableMap(tmp);
     }
 

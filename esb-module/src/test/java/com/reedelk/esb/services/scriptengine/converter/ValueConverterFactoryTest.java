@@ -27,6 +27,20 @@ class ValueConverterFactoryTest {
             // Then
             assertThat(result).isEqualTo(myString.getBytes());
         }
+
+        @Test
+        void shouldConvertStringToString() {
+            // Given
+            String myString = "Test text value";
+
+            // When
+            String result = ValueConverterFactory.convert(myString, String.class, String.class);
+
+            // Then
+            assertThat(result).isEqualTo(myString);
+        }
+
+        
     }
 
     @Nested

@@ -35,7 +35,9 @@ public class ValueConverterFactory {
     }
 
     public static <I, O> O convert(Object input, Class<I> inputClass, Class<O> outputClass) {
-        if (inputClass.equals(outputClass)) {
+        if (input == null) {
+            return null;
+        } else if (inputClass.equals(outputClass)) {
             return (O) input;
         } else if (Object.class.equals(outputClass)) {
             return (O) input;
@@ -47,10 +49,16 @@ public class ValueConverterFactory {
     }
 
     public static <I, O> TypedPublisher<O> convertTypedPublisher(TypedPublisher<I> input, Class<O> outputClass) {
-        return Optional.ofNullable(CONVERTERS.get(input.getType()))
-                .flatMap(fromConverter -> Optional.ofNullable((ValueConverter<I, O>) fromConverter.get(outputClass)))
-                .map(toConverter -> toConverter.from(input))
-                .orElseThrow(converterNotFound(input.getType(), outputClass));
+        if (input == null) {
+            return null;
+        } else if (input.getType().equals(outputClass)) {
+            return (TypedPublisher<O>) input;
+        } else {
+            return Optional.ofNullable(CONVERTERS.get(input.getType()))
+                    .flatMap(fromConverter -> Optional.ofNullable((ValueConverter<I, O>) fromConverter.get(outputClass)))
+                    .map(toConverter -> toConverter.from(input))
+                    .orElseThrow(converterNotFound(input.getType(), outputClass));
+        }
     }
 
     private static <I, O> O convertType(I input, Class<?> inputClass, Class<O> outputClass) {
