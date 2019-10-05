@@ -33,6 +33,9 @@ public class DefaultHttpClientService implements HttpClientService {
     @Override
     public HttpClient clientByConfig(ClientConfiguration configuration) {
         String configId = configuration.getId();
+        // TODO: This one does not work when I change the config! Unless I
+        //  stop the curernt and re-create if the configuration has changed.
+        //  I think  you should just re-create an HTTP client for each component using it.
         if (!CONFIG_ID_CLIENT.containsKey(configId)) {
             synchronized (this) {
                 if (!CONFIG_ID_CLIENT.containsKey(configId)) {
