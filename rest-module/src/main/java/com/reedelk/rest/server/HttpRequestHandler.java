@@ -50,11 +50,10 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                 .flatMap(byteStream -> Mono.from(response.sendByteArray(byteStream)));
     }
 
-    // TODO: Fix output streaming here
-    // This pipeline result object must depend on the streaming mode.
-    // If the streaming mode is AUTO it is already good. If it is STREAM only
-    // the result should be a sink and stream the data. If it is NONE,
-    // it should set the content length.
+    // TODO: Fix output streaming here. This pipeline result object must
+    //  depend on the streaming mode. If the streaming mode is AUTO it is
+    //  already good. If it is STREAM only the result should be a sink and
+    //  stream the data. If it is NONE, it should set the content length.
     private class OnPipelineResult implements OnResult {
 
         private final MonoSink<Publisher<byte[]>> sink;

@@ -1,5 +1,8 @@
 package com.reedelk.rest.client;
 
+import com.reedelk.runtime.api.component.OnResult;
+import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.message.FlowContext;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
@@ -7,7 +10,10 @@ import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 
 import java.io.IOException;
+import java.net.URI;
 
+import static com.reedelk.rest.commons.Messages.RestClient;
+import static com.reedelk.rest.commons.Messages.formatMessage;
 import static java.util.Objects.requireNonNull;
 
 public class HttpClient {
@@ -25,11 +31,11 @@ public class HttpClient {
         this.context = context;
     }
 
-    public void execute(HttpAsyncRequestProducer requestProducer, HttpAsyncResponseConsumer<Void> responseConsumer) {
+    public void execute(HttpAsyncRequestProducer requestProducer, HttpAsyncResponseConsumer<Void> responseConsumer, ResultCallback resultCallback) {
         if (context != null) {
-            delegate.execute(requestProducer, responseConsumer, context, NO_OP_CALLBACK);
+            delegate.execute(requestProducer, responseConsumer, context, resultCallback);
         } else {
-            delegate.execute(requestProducer, responseConsumer, NO_OP_CALLBACK);
+            delegate.execute(requestProducer, responseConsumer, resultCallback);
         }
     }
 
@@ -41,22 +47,35 @@ public class HttpClient {
         this.delegate.start();
     }
 
-    private static final FutureCallback<Void> NO_OP_CALLBACK = new FutureCallback<Void>() {
-        @Override
-        public void completed(Void result) {
-            // this one is already taken care in the response consumer.
+    public static class ResultCallback implements FutureCallback<Void> {
+
+        private final URI requestUri;
+        private final OnResult delegate;
+        private final FlowContext flowContext;
+
+        public ResultCallback(OnResult delegate, FlowContext flowContext, URI requestUri) {
+            this.delegate = delegate;
+            this.requestUri =  requestUri;
+            this.flowContext = flowContext;
         }
 
         @Override
-        public void failed(Exception ex) {
-            // TODO: Actually this one gets called when there is an exception fixme!
-            //  this one is triggered when we call github API with http and port 443 (and basic auth)
-            // this must be handled
+        public void completed(Void result) {
+            // nothing to do. Already handled by the ResponseConsumer.
+        }
+
+        @Override
+        public void failed(Exception exception) {
+            delegate.onError(
+                    new ESBException(formatMessage(RestClient.REQUEST_FAILED, requestUri), exception),
+                    flowContext);
         }
 
         @Override
         public void cancelled() {
-            // TODO: Same as above here? When is this callback called?
+            delegate.onError(
+                    new ESBException(formatMessage(RestClient.REQUEST_CANCELLED, requestUri)),
+                    flowContext);
         }
-    };
+    }
 }

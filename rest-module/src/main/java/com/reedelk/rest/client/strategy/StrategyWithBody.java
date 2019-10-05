@@ -33,17 +33,22 @@ public class StrategyWithBody implements Strategy {
                         URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
 
         URI uri = URIProvider.uri();
+
         byte[] body = bodyProvider.asByteArray(input, flowContext);
+
         NByteArrayEntity entity = new NByteArrayEntity(body);
 
         HttpEntityEnclosingRequestBase request = requestFactory.create();
+
         request.setURI(uri);
+
         request.setEntity(entity);
 
         headerProvider.headers().forEach(request::addHeader);
 
         client.execute(
                 HttpAsyncMethods.create(extractHost(uri), request),
-                new StreamResponseConsumer(callback, flowContext, responseBufferSize));
+                new StreamResponseConsumer(callback, flowContext, responseBufferSize),
+                new HttpClient.ResultCallback(callback, flowContext, uri));
     }
 }

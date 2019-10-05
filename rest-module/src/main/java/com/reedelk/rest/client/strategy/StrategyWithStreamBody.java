@@ -35,18 +35,23 @@ public class StrategyWithStreamBody implements Strategy {
                         URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
 
         URI uri = URIProvider.uri();
+
         Publisher<byte[]> body = bodyProvider.asStream(input, flowContext);
+
         BasicHttpEntity entity = new BasicHttpEntity();
 
         HttpEntityEnclosingRequestBase request = requestFactory.create();
+
         request.setURI(uri);
+
         request.setEntity(entity);
 
         headerProvider.headers().forEach(request::addHeader);
 
         client.execute(
                 new StreamRequestProducer(extractHost(uri), request, body, requestBufferSize),
-                new StreamResponseConsumer(callback, flowContext, responseBufferSize));
+                new StreamResponseConsumer(callback, flowContext, responseBufferSize),
+                new HttpClient.ResultCallback(callback, flowContext, uri));
 
     }
 }

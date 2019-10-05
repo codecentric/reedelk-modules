@@ -7,9 +7,11 @@ import com.reedelk.rest.client.uri.URIProvider;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIUtils;
 
-import static org.apache.http.client.utils.URIUtils.extractHost;
+import java.net.URI;
 
 /**
  * Strategy for methods without a body: GET, OPTIONS, HEAD
@@ -26,12 +28,19 @@ public class StrategyWithoutBody implements Strategy {
 
     @Override
     public void execute(HttpClient client, OnResult callback, Message input, FlowContext flowContext, URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
+        URI uri = URIProvider.uri();
+
         HttpRequestBase baseRequest = requestFactory.create();
-        baseRequest.setURI(URIProvider.uri());
+
+        baseRequest.setURI(uri);
+
         headerProvider.headers().forEach(baseRequest::addHeader);
 
+        HttpHost httpHost = URIUtils.extractHost(uri);
+
         client.execute(
-                new EmptyStreamRequestProducer(extractHost(URIProvider.uri()), baseRequest),
-                new StreamResponseConsumer(callback, flowContext, responseBufferSize));
+                new EmptyStreamRequestProducer(httpHost, baseRequest),
+                new StreamResponseConsumer(callback, flowContext, responseBufferSize),
+                new HttpClient.ResultCallback(callback, flowContext, uri));
     }
 }
