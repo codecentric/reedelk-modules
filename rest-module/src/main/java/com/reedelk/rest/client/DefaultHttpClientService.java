@@ -23,6 +23,10 @@ import java.util.Map;
 
 import static java.lang.Boolean.TRUE;
 
+/**
+ * TODO: This service  is wrong. Because I think its best to create
+ *  an http client for each registered component.
+ */
 public class DefaultHttpClientService implements HttpClientService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultHttpClientService.class);
@@ -34,7 +38,7 @@ public class DefaultHttpClientService implements HttpClientService {
     public HttpClient clientByConfig(ClientConfiguration configuration) {
         String configId = configuration.getId();
         // TODO: This one does not work when I change the config! Unless I
-        //  stop the curernt and re-create if the configuration has changed.
+        //  stop the current and re-create if the configuration has changed.
         //  I think  you should just re-create an HTTP client for each component using it.
         if (!CONFIG_ID_CLIENT.containsKey(configId)) {
             synchronized (this) {
