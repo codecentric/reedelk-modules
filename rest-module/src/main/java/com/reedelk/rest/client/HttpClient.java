@@ -12,8 +12,8 @@ import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import java.io.IOException;
 import java.net.URI;
 
-import static com.reedelk.rest.commons.Messages.RestClient;
-import static com.reedelk.rest.commons.Messages.formatMessage;
+import static com.reedelk.rest.commons.Messages.RestClient.REQUEST_CANCELLED;
+import static com.reedelk.rest.commons.Messages.RestClient.REQUEST_FAILED;
 import static java.util.Objects.requireNonNull;
 
 public class HttpClient {
@@ -67,14 +67,14 @@ public class HttpClient {
         @Override
         public void failed(Exception exception) {
             delegate.onError(
-                    new ESBException(formatMessage(RestClient.REQUEST_FAILED, requestUri), exception),
+                    new ESBException(REQUEST_FAILED.format(requestUri, exception.getMessage()), exception),
                     flowContext);
         }
 
         @Override
         public void cancelled() {
             delegate.onError(
-                    new ESBException(formatMessage(RestClient.REQUEST_CANCELLED, requestUri)),
+                    new ESBException(REQUEST_CANCELLED.format(requestUri)),
                     flowContext);
         }
     }

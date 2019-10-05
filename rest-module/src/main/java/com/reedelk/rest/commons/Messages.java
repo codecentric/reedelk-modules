@@ -5,16 +5,28 @@ public class Messages {
     private Messages() {
     }
 
-    public static String formatMessage(String template, Object ...args) {
+    private static String formatMessage(String template, Object ...args) {
         return String.format(template, args);
     }
 
-    public static class RestClient {
+    interface FormattedMessage {
+        String format(Object ...args);
+    }
 
-        private RestClient() {
+    public enum RestClient implements FormattedMessage {
+
+        REQUEST_FAILED("Failed to connect to %s: %s"),
+        REQUEST_CANCELLED("Failed to connect to %s: request has been cancelled");
+
+        private String msg;
+
+        RestClient(String msg) {
+            this.msg = msg;
         }
 
-        public static String REQUEST_FAILED = "RestClient request for URI=[%s] failed";
-        public static String REQUEST_CANCELLED = "RestClient request for URI=[%s] has been cancelled";
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
     }
 }
