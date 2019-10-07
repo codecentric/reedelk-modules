@@ -99,7 +99,7 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
         } else {
 
-            callback.onError(new ErrorResponseException(bytesStream), flowContext);
+            callback.onError(new ErrorResponseException(response, bytesStream), flowContext);
 
         }
     }

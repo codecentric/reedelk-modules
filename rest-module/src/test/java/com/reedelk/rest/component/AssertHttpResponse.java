@@ -169,7 +169,7 @@ class AssertHttpResponse {
             }
 
             if (error != null) {
-                Assertions.assertThat(error).hasMessage(expectedErrorMessage);
+                Assertions.assertThat(error.getMessage()).isEqualTo(expectedErrorMessage);
             } else {
                 fail("Response was successful");
             }

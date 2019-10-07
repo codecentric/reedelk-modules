@@ -2,6 +2,7 @@ package com.reedelk.rest.client;
 
 import com.reedelk.runtime.api.commons.ConsumeByteArrayStream;
 import com.reedelk.runtime.api.exception.ESBException;
+import org.apache.http.HttpResponse;
 import org.reactivestreams.Publisher;
 
 public class ErrorResponseException extends ESBException {
@@ -9,7 +10,7 @@ public class ErrorResponseException extends ESBException {
     private Publisher<byte[]> data;
     private String message;
 
-    public ErrorResponseException(Publisher<byte[]> data) {
+    public ErrorResponseException(HttpResponse response, Publisher<byte[]> data) {
         super();
         this.data = data;
     }

@@ -18,7 +18,7 @@ class RestClientBasicAuthTest extends RestClientAbstractTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
-    void shouldGetExecuteCorrectlyWithAuth(String method) {
+    void shouldCorrectlyPerformBasicAuthentication(String method) {
         // Given
         String username = "test123";
         String password = "pass123";
