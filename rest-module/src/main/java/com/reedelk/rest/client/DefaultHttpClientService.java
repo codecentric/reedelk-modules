@@ -132,9 +132,9 @@ public class DefaultHttpClientService implements HttpClientService {
     }
 
     private void configureDigestAuth(String host, Integer port, HttpProtocol protocol, DigestAuthenticationConfiguration digestAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
-        HttpHost target = new HttpHost(host, port, protocol.name());
+        HttpHost digestAuthHost = new HttpHost(host, port, protocol.name());
         credentialsProvider.setCredentials(
-                new AuthScope(target.getHostName(), target.getPort()),
+                new AuthScope(digestAuthHost.getHostName(), digestAuthHost.getPort()),
                 new UsernamePasswordCredentials(digestAuthConfig.getUsername(), digestAuthConfig.getPassword()));
 
         if (TRUE.equals(digestAuthConfig.getPreemptive())) {
@@ -144,28 +144,26 @@ public class DefaultHttpClientService implements HttpClientService {
             // the Digest auth header when preemptive is expected.
             digestAuth.overrideParamter("realm", digestAuthConfig.getRealm());
             digestAuth.overrideParamter("nonce", digestAuthConfig.getNonce());
-            authCache.put(target, digestAuth);
+            authCache.put(digestAuthHost, digestAuth);
             context.setAuthCache(authCache);
         }
     }
 
     private void configureBasicAuth(String host, int port, HttpProtocol protocol, BasicAuthenticationConfiguration basicAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
+        HttpHost basicAuthHost = new HttpHost(host, port, protocol.name());
         credentialsProvider.setCredentials(
-                new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
+                new AuthScope(basicAuthHost.getHostName(), basicAuthHost.getPort()),
                 new UsernamePasswordCredentials(basicAuthConfig.getUsername(), basicAuthConfig.getPassword()));
 
         if (TRUE.equals(basicAuthConfig.getPreemptive())) {
             AuthCache authCache = new BasicAuthCache();
-            HttpHost authHost = new HttpHost(host, port, protocol.name());
-            authCache.put(authHost, new BasicScheme());
+            authCache.put(basicAuthHost, new BasicScheme());
             context.setAuthCache(authCache);
         }
     }
 
     private void configureProxy(ProxyConfiguration proxyConfig, HttpAsyncClientBuilder builder, CredentialsProvider credentialsProvider) {
-        HttpHost proxyHost = new HttpHost(
-                proxyConfig.getHost(),
-                proxyConfig.getPort());
+        HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort());
         builder.setProxy(proxyHost);
         if (ProxyAuthentication.USER_AND_PASSWORD.equals(proxyConfig.getAuthentication())) {
             ProxyAuthenticationConfiguration authConfig = proxyConfig.getAuthenticationConfiguration();
