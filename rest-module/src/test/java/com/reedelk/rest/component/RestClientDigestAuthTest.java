@@ -59,6 +59,5 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
 
         // Expect
         AssertHttpResponse.isSuccessful(component, payload, flowContext);
-
     }
 }
