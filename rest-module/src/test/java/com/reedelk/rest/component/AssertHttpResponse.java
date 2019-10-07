@@ -76,6 +76,7 @@ class AssertHttpResponse {
         private final MimeType expectedMimeType;
 
         private Message response;
+        private Throwable exception;
 
         SuccessAssertion(RestClient component,
                          Message message,
@@ -106,6 +107,7 @@ class AssertHttpResponse {
 
                 @Override
                 public void onError(Throwable throwable, FlowContext flowContext) {
+                    exception = throwable;
                     latch.countDown();
                 }
             });
@@ -121,7 +123,7 @@ class AssertHttpResponse {
                     assertContent(response, expectedBody, expectedMimeType);
                 }
             } else {
-                fail("Response was not successful");
+                fail("Response was not successful, ", exception);
             }
         }
     }

@@ -1,29 +1,31 @@
 package com.reedelk.rest.component;
 
 import com.reedelk.rest.commons.HttpProtocol;
+import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.Authentication;
 import com.reedelk.rest.configuration.client.BasicAuthenticationConfiguration;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
-import static com.reedelk.rest.commons.RestMethod.GET;
-import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 
 class RestClientBasicAuthTest extends RestClientAbstractTest {
 
-    @Test
-    void shouldGetExecuteCorrectlyWithAuth() {
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
+    void shouldGetExecuteCorrectlyWithAuth(String method) {
         // Given
-        BasicAuthenticationConfiguration basicAuthenticationConfiguration = new BasicAuthenticationConfiguration();
-        basicAuthenticationConfiguration.setPassword("mypass");
-        basicAuthenticationConfiguration.setUsername("myuser");
-        basicAuthenticationConfiguration.setPreemptive(true);
+        String username = "test123";
+        String password = "pass123";
+        BasicAuthenticationConfiguration basicAuth = new BasicAuthenticationConfiguration();
+        basicAuth.setPassword(password);
+        basicAuth.setUsername(username);
+        basicAuth.setPreemptive(true);
 
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
@@ -32,22 +34,19 @@ class RestClientBasicAuthTest extends RestClientAbstractTest {
         configuration.setBasePath(path);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setAuthentication(Authentication.BASIC);
-        configuration.setBasicAuthentication(basicAuthenticationConfiguration);
+        configuration.setBasicAuthentication(basicAuth);
 
-        String responseBody = "{\"Name\":\"John\"}";
-        RestClient component = clientWith(GET, baseURL, path);
+        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
         component.setConfiguration(configuration);
 
-        givenThat(get(urlEqualTo(path)).withBasicAuth("myuser", "mypass")
+        givenThat(any(urlEqualTo(path))
                 .willReturn(aResponse()
-                        .withHeader(CONTENT_TYPE, APPLICATION_JSON.toString())
-                        .withStatus(200)
-                        .withBody(responseBody)));
+                        .withStatus(200)));
 
         Message payload = MessageBuilder.get().build();
 
         // Expect
         AssertHttpResponse
-                .isSuccessful(component, payload, flowContext, responseBody, APPLICATION_JSON);
+                .isSuccessful(component, payload, flowContext);
     }
 }

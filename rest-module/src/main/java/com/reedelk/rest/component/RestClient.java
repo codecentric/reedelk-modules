@@ -3,10 +3,13 @@ package com.reedelk.rest.component;
 import com.reedelk.rest.client.HttpClient;
 import com.reedelk.rest.client.HttpClientService;
 import com.reedelk.rest.client.body.BodyEvaluator;
+import com.reedelk.rest.client.body.BodyProvider;
+import com.reedelk.rest.client.header.HeaderProvider;
 import com.reedelk.rest.client.header.HeadersEvaluator;
 import com.reedelk.rest.client.strategy.ExecutionStrategyBuilder;
 import com.reedelk.rest.client.strategy.Strategy;
 import com.reedelk.rest.client.uri.URIEvaluator;
+import com.reedelk.rest.client.uri.URIProvider;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.StreamingMode;
 import com.reedelk.rest.configuration.client.AdvancedConfiguration;
@@ -88,13 +91,17 @@ public class RestClient implements ProcessorAsync {
 
 
     @Override
-    public void apply(Message input, FlowContext flowContext, OnResult callback) {
+    public void apply(Message message, FlowContext flowContext, OnResult callback) {
         HttpClient client = client();
 
-        execution().execute(client, callback, input, flowContext,
-                uriEvaluator().provider(input, flowContext),
-                headersEvaluator().provider(input, flowContext),
-                bodyEvaluator().provider());
+        BodyProvider bodyProvider = bodyEvaluator().provider();
+
+        URIProvider uriProvider = uriEvaluator().provider(message, flowContext);
+
+        HeaderProvider headerProvider = headersEvaluator().provider(message, flowContext);
+
+        execution().execute(client, callback, message, flowContext,
+                uriProvider, headerProvider, bodyProvider);
     }
 
     @Override
