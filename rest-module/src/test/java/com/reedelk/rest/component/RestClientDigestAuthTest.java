@@ -1,6 +1,6 @@
 package com.reedelk.rest.component;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.Authentication;
@@ -16,9 +16,9 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 class RestClientDigestAuthTest extends RestClientAbstractTest {
-
+// "POST", "PUT", "DELETE", "HEAD", "OPTIONS"
     @ParameterizedTest
-    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
+    @ValueSource(strings = {"GET"})
     void shouldCorrectlyPerformDigestAuthentication() {
         // Given
         String username = "test123";
@@ -26,7 +26,6 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
         DigestAuthenticationConfiguration digestAuth = new DigestAuthenticationConfiguration();
         digestAuth.setPassword(password);
         digestAuth.setUsername(username);
-        digestAuth.setPreemptive(true);
 
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
@@ -41,16 +40,16 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
         component.setConfiguration(configuration);
 
 
-        WireMock.stubFor(any(urlEqualTo(path))
-                .withHeader("Authorization", notMatching("Digest .*"))
+        givenThat(any(urlEqualTo(path))
+                .withHeader("Authorization", StringValuePattern.ABSENT)
                 .willReturn(aResponse()
-                        .withHeader("WWW-Authenticate", "Digest realm=\"testrealm@host.com\",\n" +
-                                "                        qop=\"auth,auth-int\",\n" +
-                                "                        nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\n" +
-                                "                        opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"")
+                        .withHeader("WWW-Authenticate", "Digest realm=\"testrealm@host.com\"," +
+                                "qop=\"auth,auth-int\"," +
+                                "nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\"," +
+                                "opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"")
                         .withStatus(401)));
 
-        WireMock.stubFor(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(path))
                 .withHeader("Authorization", matching("Digest username=\"test123\", realm=\"testrealm@host.com\", nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", uri=\"/v1/resource\", response=.*"))
                 .willReturn(aResponse()
                         .withStatus(200)));

@@ -90,7 +90,7 @@ abstract class RestClientAbstractTest {
             field.setAccessible(true);
             field.set(client, object);
         } catch (NoSuchFieldException e) {
-            fail(String.format("Field '%s' could not be found", fieldName));
+            fail(String.format("Could not find  field '%s'", fieldName));
         } catch (IllegalAccessException e) {
             fail(String.format("Could not access field '%s'", fieldName));
         }

@@ -10,6 +10,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.auth.DigestScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
@@ -92,7 +93,6 @@ public class DefaultHttpClientService implements HttpClientService {
 
         CredentialsProvider credentialsProvider = new SystemDefaultCredentialsProvider();
 
-
         // Request config
         RequestConfig requestConfig = createConfig(configuration);
 
@@ -131,29 +131,22 @@ public class DefaultHttpClientService implements HttpClientService {
 
     private void configureDigestAuth(String host, Integer port, HttpProtocol protocol, DigestAuthenticationConfiguration digestAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
         credentialsProvider.setCredentials(
-                new AuthScope(
-                        AuthScope.ANY_HOST,
-                        AuthScope.ANY_PORT),
-                new UsernamePasswordCredentials(
-                        digestAuthConfig.getUsername(),
-                        digestAuthConfig.getPassword()));
+                new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
+                new UsernamePasswordCredentials(digestAuthConfig.getUsername(), digestAuthConfig.getPassword()));
 
         if (TRUE.equals(digestAuthConfig.getPreemptive())) {
             AuthCache authCache = new BasicAuthCache();
             HttpHost authHost = new HttpHost(host, port, protocol.name());
-            authCache.put(authHost, new BasicScheme());
+            DigestScheme digestScheme = new DigestScheme();
+            authCache.put(authHost, digestScheme);
             context.setAuthCache(authCache);
         }
     }
 
     private void configureBasicAuth(String host, int port, HttpProtocol protocol, BasicAuthenticationConfiguration basicAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
         credentialsProvider.setCredentials(
-                new AuthScope(
-                        AuthScope.ANY_HOST,
-                        AuthScope.ANY_PORT),
-                new UsernamePasswordCredentials(
-                        basicAuthConfig.getUsername(),
-                        basicAuthConfig.getPassword()));
+                new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
+                new UsernamePasswordCredentials(basicAuthConfig.getUsername(), basicAuthConfig.getPassword()));
 
         if (TRUE.equals(basicAuthConfig.getPreemptive())) {
             AuthCache authCache = new BasicAuthCache();
@@ -163,20 +156,16 @@ public class DefaultHttpClientService implements HttpClientService {
         }
     }
 
-    private void configureProxy(ProxyConfiguration proxyConfiguration, HttpAsyncClientBuilder builder, CredentialsProvider credentialsProvider) {
+    private void configureProxy(ProxyConfiguration proxyConfig, HttpAsyncClientBuilder builder, CredentialsProvider credentialsProvider) {
         HttpHost proxyHost = new HttpHost(
-                proxyConfiguration.getHost(),
-                proxyConfiguration.getPort());
+                proxyConfig.getHost(),
+                proxyConfig.getPort());
         builder.setProxy(proxyHost);
-        if (ProxyAuthentication.USER_AND_PASSWORD.equals(proxyConfiguration.getAuthentication())) {
-            ProxyAuthenticationConfiguration authenticationConfig = proxyConfiguration.getAuthenticationConfiguration();
+        if (ProxyAuthentication.USER_AND_PASSWORD.equals(proxyConfig.getAuthentication())) {
+            ProxyAuthenticationConfiguration authConfig = proxyConfig.getAuthenticationConfiguration();
             credentialsProvider.setCredentials(
-                    new AuthScope(
-                            proxyConfiguration.getHost(),
-                            proxyConfiguration.getPort()),
-                    new UsernamePasswordCredentials(
-                            authenticationConfig.getUsername(),
-                            authenticationConfig.getPassword()));
+                    new AuthScope(proxyConfig.getHost(), proxyConfig.getPort()),
+                    new UsernamePasswordCredentials(authConfig.getUsername(), authConfig.getPassword()));
         }
     }
 
