@@ -30,7 +30,6 @@ public class RestModuleActivator {
 
     @Deactivate
     public void deactivate() {
-        if (service != null) service.dispose();
         if (registration != null) registration.unregister();
     }
 }

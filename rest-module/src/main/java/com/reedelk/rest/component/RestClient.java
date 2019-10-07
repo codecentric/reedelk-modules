@@ -84,11 +84,11 @@ public class RestClient implements ProcessorAsync {
     @Property("Advanced configuration")
     private AdvancedConfiguration advancedConfiguration;
 
+    private volatile HttpClient client;
     private volatile Strategy execution;
     private volatile URIEvaluator uriEvaluator;
     private volatile BodyEvaluator bodyEvaluator;
     private volatile HeadersEvaluator headersEvaluator;
-
 
     @Override
     public void apply(Message message, FlowContext flowContext, OnResult callback) {
@@ -106,11 +106,17 @@ public class RestClient implements ProcessorAsync {
 
     @Override
     public void dispose() {
-        this.scriptEngine = null;
-        this.httpClientService = null;
-        this.uriEvaluator = null;
-        this.bodyEvaluator = null;
-        this.headersEvaluator = null;
+        synchronized (this) {
+            if (client != null) {
+                client.close();
+                client = null;
+            }
+            scriptEngine = null;
+            uriEvaluator = null;
+            bodyEvaluator = null;
+            headersEvaluator = null;
+            httpClientService = null;
+        }
     }
 
     public void setMethod(RestMethod method) {
@@ -154,13 +160,21 @@ public class RestClient implements ProcessorAsync {
     }
 
     private HttpClient client() {
-        if (configuration != null) {
-            requireNonNull(configuration.getId(), "configuration id is mandatory");
-            return httpClientService.clientByConfig(configuration);
-        } else {
-            requireNonNull(baseURL, "base URL is mandatory");
-            return httpClientService.clientByBaseURL(baseURL);
+        if (client == null) {
+            synchronized (this) {
+                if (client == null) {
+                    if (configuration != null) {
+                        client = httpClientService.clientByConfig(configuration);
+                        client.start();
+                    } else {
+                        requireNonNull(baseURL, "base URL is mandatory");
+                        client = httpClientService.clientByBaseURL(baseURL);
+                        client.start();
+                    }
+                }
+            }
         }
+        return client;
     }
 
     private Strategy execution() {

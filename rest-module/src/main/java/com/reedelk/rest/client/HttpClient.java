@@ -8,8 +8,9 @@ import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URI;
 
 import static com.reedelk.rest.commons.Messages.RestClient.REQUEST_CANCELLED;
@@ -17,6 +18,8 @@ import static com.reedelk.rest.commons.Messages.RestClient.REQUEST_FAILED;
 import static java.util.Objects.requireNonNull;
 
 public class HttpClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpClient.class);
 
     private final CloseableHttpAsyncClient delegate;
     private final HttpClientContext context;
@@ -39,11 +42,15 @@ public class HttpClient {
         }
     }
 
-    void close() throws IOException {
-        delegate.close();
+    public void close() {
+        try {
+            delegate.close();
+        } catch (Exception e) {
+            logger.warn("Error while closing http client", e);
+        }
     }
 
-    void start() {
+    public void start() {
         this.delegate.start();
     }
 

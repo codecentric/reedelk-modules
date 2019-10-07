@@ -16,77 +16,13 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.lang.Boolean.TRUE;
 
-/**
- * TODO: This service  is wrong. Because I think its best to create
- *  an http client for each registered component.
- */
 public class DefaultHttpClientService implements HttpClientService {
-
-    private static final Logger logger = LoggerFactory.getLogger(DefaultHttpClientService.class);
-
-    private Map<String, HttpClient> CONFIG_ID_CLIENT = new HashMap<>();
-    private Map<String, HttpClient> BASE_URL_CLIENT = new HashMap<>();
 
     @Override
     public HttpClient clientByConfig(ClientConfiguration configuration) {
-        String configId = configuration.getId();
-        // TODO: This one does not work when I change the config! Unless I
-        //  stop the current and re-create if the configuration has changed.
-        //  I think  you should just re-create an HTTP client for each component using it.
-        if (!CONFIG_ID_CLIENT.containsKey(configId)) {
-            synchronized (this) {
-                if (!CONFIG_ID_CLIENT.containsKey(configId)) {
-                    HttpClient client = createClientByConfig(configuration);
-                    client.start();
-                    CONFIG_ID_CLIENT.put(configId, client);
-                }
-            }
-        }
-        return CONFIG_ID_CLIENT.get(configId);
-    }
-
-    @Override
-    public HttpClient clientByBaseURL(String baseURL) {
-        if (!BASE_URL_CLIENT.containsKey(baseURL)) {
-            synchronized (this) {
-                if (!BASE_URL_CLIENT.containsKey(baseURL)) {
-                    HttpClient client = createClientByBaseURL();
-                    client.start();
-                    BASE_URL_CLIENT.put(baseURL, client);
-                }
-            }
-        }
-        return BASE_URL_CLIENT.get(baseURL);
-    }
-
-    @Override
-    public void dispose() {
-        CONFIG_ID_CLIENT.forEach(this::closeClient);
-        BASE_URL_CLIENT.forEach(this::closeClient);
-    }
-
-    private void closeClient(String key, HttpClient client) {
-        try {
-            client.close();
-        } catch (Exception exception) {
-            logger.error(String.format("error closing http client for key=%s", key), exception);
-        }
-    }
-
-    private HttpClient createClientByBaseURL() {
-        return new HttpClient(HttpAsyncClients.createDefault());
-    }
-
-    private HttpClient createClientByConfig(ClientConfiguration configuration) {
-
         HttpAsyncClientBuilder builder = HttpAsyncClients.custom();
 
         HttpClientContext context = HttpClientContext.create();
@@ -129,6 +65,11 @@ public class DefaultHttpClientService implements HttpClientService {
                 .build();
 
         return new HttpClient(client, context);
+    }
+
+    @Override
+    public HttpClient clientByBaseURL(String baseURL) {
+        return new HttpClient(HttpAsyncClients.createDefault());
     }
 
     private void configureDigestAuth(String host, Integer port, HttpProtocol protocol, DigestAuthenticationConfiguration digestAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {

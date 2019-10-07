@@ -8,5 +8,4 @@ public interface HttpClientService {
 
     HttpClient clientByBaseURL(String id);
 
-    void dispose();
 }
