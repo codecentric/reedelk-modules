@@ -42,13 +42,8 @@ class RestClientBasicAuthTest extends RestClientAbstractTest {
         givenThat(any(urlEqualTo(path))
                 .withHeader("Authorization", StringValuePattern.ABSENT)
                 .willReturn(aResponse()
-                        .withHeader("WWW-Authenticate", "Basic dGVzdDEyMzpwYXNzMTIz")
+                        .withHeader("WWW-Authenticate", "Basic realm=\"test-realm\"")
                         .withStatus(401)));
-
-        givenThat(any(urlEqualTo(path))
-                .withHeader("Authorization", matching("Basic .*"))
-                .willReturn(aResponse()
-                        .withStatus(200)));
 
         givenThat(any(urlEqualTo(path))
                 .withBasicAuth(username, password)

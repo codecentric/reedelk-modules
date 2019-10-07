@@ -33,8 +33,8 @@ abstract class RestClientAbstractTest {
     @Mock
     protected FlowContext flowContext;
 
-    protected static final int PORT = 8181;
-    protected static final String HOST = "localhost";
+    static final int PORT = 8181;
+    static final String HOST = "localhost";
 
     private HttpClientService httpClientService = new DefaultHttpClientService();
 
