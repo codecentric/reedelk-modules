@@ -16,10 +16,10 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 class RestClientDigestAuthTest extends RestClientAbstractTest {
-// "POST", "PUT", "DELETE", "HEAD", "OPTIONS"
+
     @ParameterizedTest
-    @ValueSource(strings = {"GET"})
-    void shouldCorrectlyPerformDigestAuthentication() {
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
+    void shouldCorrectlyPerformDigestAuthentication(String method) {
         // Given
         String username = "test123";
         String password = "pass123";
@@ -36,7 +36,7 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
         configuration.setAuthentication(Authentication.DIGEST);
         configuration.setDigestAuthentication(digestAuth);
 
-        RestClient component = clientWith(RestMethod.GET, baseURL, path);
+        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
         component.setConfiguration(configuration);
 
 

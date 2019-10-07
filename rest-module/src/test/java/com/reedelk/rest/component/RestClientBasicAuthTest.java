@@ -1,5 +1,6 @@
 package com.reedelk.rest.component;
 
+import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.Authentication;
@@ -25,6 +26,50 @@ class RestClientBasicAuthTest extends RestClientAbstractTest {
         BasicAuthenticationConfiguration basicAuth = new BasicAuthenticationConfiguration();
         basicAuth.setPassword(password);
         basicAuth.setUsername(username);
+
+        ClientConfiguration configuration = new ClientConfiguration();
+        configuration.setHost(HOST);
+        configuration.setPort(PORT);
+        configuration.setProtocol(HttpProtocol.HTTP);
+        configuration.setBasePath(path);
+        configuration.setId(UUID.randomUUID().toString());
+        configuration.setAuthentication(Authentication.BASIC);
+        configuration.setBasicAuthentication(basicAuth);
+
+        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
+        component.setConfiguration(configuration);
+
+        givenThat(any(urlEqualTo(path))
+                .withHeader("Authorization", StringValuePattern.ABSENT)
+                .willReturn(aResponse()
+                        .withHeader("WWW-Authenticate", "Basic dGVzdDEyMzpwYXNzMTIz")
+                        .withStatus(401)));
+
+        givenThat(any(urlEqualTo(path))
+                .withHeader("Authorization", matching("Basic .*"))
+                .willReturn(aResponse()
+                        .withStatus(200)));
+
+        givenThat(any(urlEqualTo(path))
+                .withBasicAuth(username, password)
+                .willReturn(aResponse().withStatus(200)));
+
+        Message payload = MessageBuilder.get().build();
+
+        // Expect
+        AssertHttpResponse.isSuccessful(component, payload, flowContext);
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
+    void shouldCorrectlyPerformBasicAuthenticationWithPreemptive(String method) {
+        // Given
+        String username = "test123";
+        String password = "pass123";
+        BasicAuthenticationConfiguration basicAuth = new BasicAuthenticationConfiguration();
+        basicAuth.setPassword(password);
+        basicAuth.setUsername(username);
         basicAuth.setPreemptive(true);
 
         ClientConfiguration configuration = new ClientConfiguration();
@@ -40,13 +85,12 @@ class RestClientBasicAuthTest extends RestClientAbstractTest {
         component.setConfiguration(configuration);
 
         givenThat(any(urlEqualTo(path))
-                .willReturn(aResponse()
-                        .withStatus(200)));
+                .withBasicAuth(username, password)
+                .willReturn(aResponse().withStatus(200)));
 
         Message payload = MessageBuilder.get().build();
 
         // Expect
-        AssertHttpResponse
-                .isSuccessful(component, payload, flowContext);
+        AssertHttpResponse.isSuccessful(component, payload, flowContext);
     }
 }
