@@ -12,7 +12,7 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.auth.DigestScheme;
 import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
@@ -91,7 +91,7 @@ public class DefaultHttpClientService implements HttpClientService {
 
         HttpClientContext context = HttpClientContext.create();
 
-        CredentialsProvider credentialsProvider = new SystemDefaultCredentialsProvider();
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
         // Request config
         RequestConfig requestConfig = createConfig(configuration);
@@ -104,7 +104,8 @@ public class DefaultHttpClientService implements HttpClientService {
                     configuration.getPort(),
                     configuration.getProtocol(),
                     configuration.getBasicAuthentication(),
-                    credentialsProvider, context);
+                    credentialsProvider,
+                    context);
         }
         if (Authentication.DIGEST.equals(authentication)) {
             configureDigestAuth(
@@ -112,7 +113,8 @@ public class DefaultHttpClientService implements HttpClientService {
                     configuration.getPort(),
                     configuration.getProtocol(),
                     configuration.getDigestAuthentication(),
-                    credentialsProvider, context);
+                    credentialsProvider,
+                    context);
         }
 
         // Proxy config
@@ -130,15 +132,19 @@ public class DefaultHttpClientService implements HttpClientService {
     }
 
     private void configureDigestAuth(String host, Integer port, HttpProtocol protocol, DigestAuthenticationConfiguration digestAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
+        HttpHost target = new HttpHost(host, port, protocol.name());
         credentialsProvider.setCredentials(
-                new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
+                new AuthScope(target.getHostName(), target.getPort()),
                 new UsernamePasswordCredentials(digestAuthConfig.getUsername(), digestAuthConfig.getPassword()));
 
         if (TRUE.equals(digestAuthConfig.getPreemptive())) {
             AuthCache authCache = new BasicAuthCache();
-            HttpHost authHost = new HttpHost(host, port, protocol.name());
-            DigestScheme digestScheme = new DigestScheme();
-            authCache.put(authHost, digestScheme);
+            DigestScheme digestAuth = new DigestScheme();
+            // Realm and nonce are mandatory in order to compute
+            // the Digest auth header when preemptive is expected.
+            digestAuth.overrideParamter("realm", digestAuthConfig.getRealm());
+            digestAuth.overrideParamter("nonce", digestAuthConfig.getNonce());
+            authCache.put(target, digestAuth);
             context.setAuthCache(authCache);
         }
     }

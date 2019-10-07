@@ -60,4 +60,40 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
         // Expect
         AssertHttpResponse.isSuccessful(component, payload, flowContext);
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
+    void shouldCorrectlyPerformDigestAuthenticationWithPreemptive(String method) {
+        // Given
+        String username = "test123";
+        String password = "pass123";
+        DigestAuthenticationConfiguration digestAuth = new DigestAuthenticationConfiguration();
+        digestAuth.setPassword(password);
+        digestAuth.setUsername(username);
+        digestAuth.setPreemptive(true);
+        digestAuth.setRealm("test.realm@host.com");
+        digestAuth.setNonce("noncetest");
+
+        ClientConfiguration configuration = new ClientConfiguration();
+        configuration.setHost(HOST);
+        configuration.setPort(PORT);
+        configuration.setProtocol(HttpProtocol.HTTP);
+        configuration.setBasePath(path);
+        configuration.setId(UUID.randomUUID().toString());
+        configuration.setAuthentication(Authentication.DIGEST);
+        configuration.setDigestAuthentication(digestAuth);
+
+        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
+        component.setConfiguration(configuration);
+
+        givenThat(any(urlEqualTo(path))
+                .withHeader("Authorization", matching("Digest username=\"test123\", realm=\"test.realm@host.com\", nonce=\"noncetest\", uri=\"/v1/resource\", response=.*"))
+                .willReturn(aResponse().withStatus(200)));
+
+
+        Message payload = MessageBuilder.get().build();
+
+        // Expect
+        AssertHttpResponse.isSuccessful(component, payload, flowContext);
+    }
 }

@@ -1,6 +1,7 @@
 package com.reedelk.rest.configuration.client;
 
 import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.runtime.api.annotation.When;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
 
@@ -17,6 +18,14 @@ public class DigestAuthenticationConfiguration implements Implementor {
 
     @Property("Preemptive")
     private Boolean preemptive;
+
+    @Property("Realm")
+    @When(propertyName = "preemptive", propertyValue = "true")
+    private String realm;
+
+    @Property("Nonce")
+    @When(propertyName = "preemptive", propertyValue = "true")
+    private String nonce;
 
     public String getUsername() {
         return username;
@@ -40,5 +49,21 @@ public class DigestAuthenticationConfiguration implements Implementor {
 
     public void setPreemptive(Boolean preemptive) {
         this.preemptive = preemptive;
+    }
+
+    public String getRealm() {
+        return realm;
+    }
+
+    public void setRealm(String realm) {
+        this.realm = realm;
+    }
+
+    public String getNonce() {
+        return nonce;
+    }
+
+    public void setNonce(String nonce) {
+        this.nonce = nonce;
     }
 }
