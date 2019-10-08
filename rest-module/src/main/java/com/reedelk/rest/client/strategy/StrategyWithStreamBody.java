@@ -32,9 +32,9 @@ public class StrategyWithStreamBody implements Strategy {
 
     @Override
     public void execute(HttpClient client, OnResult callback, Message input, FlowContext flowContext,
-                        URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
+                        URIProvider uriProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
 
-        URI uri = URIProvider.uri();
+        URI uri = uriProvider.uri();
 
         Publisher<byte[]> body = bodyProvider.asStream(input, flowContext);
 

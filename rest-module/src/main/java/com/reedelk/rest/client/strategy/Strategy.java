@@ -11,5 +11,5 @@ import com.reedelk.runtime.api.message.Message;
 public interface Strategy {
 
     void execute(HttpClient client, OnResult callback, Message input, FlowContext flowContext,
-                 URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider);
+                 URIProvider uriProvider, HeaderProvider headerProvider, BodyProvider bodyProvider);
 }

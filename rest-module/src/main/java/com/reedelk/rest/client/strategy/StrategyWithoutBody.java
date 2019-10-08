@@ -27,8 +27,8 @@ public class StrategyWithoutBody implements Strategy {
     }
 
     @Override
-    public void execute(HttpClient client, OnResult callback, Message input, FlowContext flowContext, URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
-        URI uri = URIProvider.uri();
+    public void execute(HttpClient client, OnResult callback, Message input, FlowContext flowContext, URIProvider uriProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
+        URI uri = uriProvider.uri();
 
         HttpRequestBase baseRequest = requestFactory.create();
 

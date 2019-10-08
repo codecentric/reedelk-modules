@@ -30,9 +30,9 @@ public class StrategyWithBody implements Strategy {
 
     @Override
     public void execute(HttpClient client, OnResult callback, Message input, FlowContext flowContext,
-                        URIProvider URIProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
+                        URIProvider uriProvider, HeaderProvider headerProvider, BodyProvider bodyProvider) {
 
-        URI uri = URIProvider.uri();
+        URI uri = uriProvider.uri();
 
         byte[] body = bodyProvider.asByteArray(input, flowContext);
 
