@@ -6,7 +6,8 @@ import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 
@@ -14,7 +15,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 class RestClientFollowRedirectsTest extends RestClientAbstractTest {
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
     void shouldFollowRedirectsByDefault() {
         // Given
         ClientConfiguration configuration = new ClientConfiguration();
@@ -44,7 +46,8 @@ class RestClientFollowRedirectsTest extends RestClientAbstractTest {
         AssertHttpResponse.isSuccessful(component, payload, flowContext, "Redirect success", MimeType.UNKNOWN);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
     void shouldFollowRedirectsTrue() {
         // Given
         ClientConfiguration configuration = new ClientConfiguration();
@@ -75,7 +78,8 @@ class RestClientFollowRedirectsTest extends RestClientAbstractTest {
         AssertHttpResponse.isSuccessful(component, payload, flowContext, "Redirect success", MimeType.UNKNOWN);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
     void shouldNotFollowRedirects() {
         // Given
         ClientConfiguration configuration = new ClientConfiguration();
