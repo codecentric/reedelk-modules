@@ -31,21 +31,21 @@ class RestClientBasicAuthTest extends RestClientAbstractTest {
         configuration.setHost(HOST);
         configuration.setPort(PORT);
         configuration.setProtocol(HttpProtocol.HTTP);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setAuthentication(Authentication.BASIC);
         configuration.setBasicAuthentication(basicAuth);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
+        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
         component.setConfiguration(configuration);
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .withHeader("Authorization", StringValuePattern.ABSENT)
                 .willReturn(aResponse()
                         .withHeader("WWW-Authenticate", "Basic realm=\"test-realm\"")
                         .withStatus(401)));
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .withBasicAuth(username, password)
                 .willReturn(aResponse().withStatus(200)));
 
@@ -71,15 +71,15 @@ class RestClientBasicAuthTest extends RestClientAbstractTest {
         configuration.setHost(HOST);
         configuration.setPort(PORT);
         configuration.setProtocol(HttpProtocol.HTTP);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setAuthentication(Authentication.BASIC);
         configuration.setBasicAuthentication(basicAuth);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
+        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
         component.setConfiguration(configuration);
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .withBasicAuth(username, password)
                 .willReturn(aResponse().withStatus(200)));
 

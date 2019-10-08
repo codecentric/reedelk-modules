@@ -1,6 +1,7 @@
 package com.reedelk.rest.client;
 
 import com.reedelk.rest.commons.HttpProtocol;
+import com.reedelk.rest.commons.Messages;
 import com.reedelk.rest.configuration.client.*;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -19,6 +20,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import java.util.Optional;
 
+import static com.reedelk.rest.commons.ConfigPreconditions.requireNotNull;
 import static java.lang.Boolean.TRUE;
 
 public class DefaultHttpClientFactory implements HttpClientFactory {
@@ -37,22 +39,28 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
         // Basic authentication config
         Authentication authentication = config.getAuthentication();
         if (Authentication.BASIC.equals(authentication)) {
+            BasicAuthenticationConfiguration basicConfig =
+                    requireNotNull(config.getBasicAuthentication(),
+                            Messages.RestClient.BASIC_AUTH_MISSING.format());
             configureBasicAuth(
                     config.getHost(),
                     config.getPort(),
                     config.getProtocol(),
-                    config.getBasicAuthentication(),
+                    basicConfig,
                     credentialsProvider,
                     context);
         }
 
         // Digest authentication config
         if (Authentication.DIGEST.equals(authentication)) {
+            DigestAuthenticationConfiguration digestConfig =
+                    requireNotNull(config.getDigestAuthentication(),
+                            Messages.RestClient.DIGEST_AUTH_MISSING.format());
             configureDigestAuth(
                     config.getHost(),
                     config.getPort(),
                     config.getProtocol(),
-                    config.getDigestAuthentication(),
+                    digestConfig,
                     credentialsProvider,
                     context);
         }

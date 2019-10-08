@@ -22,15 +22,15 @@ class RestClientFollowRedirectsTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
 
-        RestClient component = clientWith(RestMethod.GET, baseURL, path);
+        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
         component.setConfiguration(configuration);
 
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .willReturn(aResponse()
                         .withHeader("Location", "/v2/resource")
                         .withStatus(301)));
@@ -53,16 +53,16 @@ class RestClientFollowRedirectsTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setFollowRedirects(true);
 
-        RestClient component = clientWith(RestMethod.GET, baseURL, path);
+        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
         component.setConfiguration(configuration);
 
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .willReturn(aResponse()
                         .withHeader("Location", "/v2/resource")
                         .withStatus(301)));
@@ -85,16 +85,16 @@ class RestClientFollowRedirectsTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setFollowRedirects(false);
 
-        RestClient component = clientWith(RestMethod.GET, baseURL, path);
+        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
         component.setConfiguration(configuration);
 
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .willReturn(aResponse()
                         .withHeader("Location", "/v2/resource")
                         .withStatus(301)));

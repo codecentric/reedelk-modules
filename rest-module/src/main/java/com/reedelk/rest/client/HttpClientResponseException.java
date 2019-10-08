@@ -5,13 +5,13 @@ import com.reedelk.runtime.api.exception.ESBException;
 import org.apache.http.HttpResponse;
 import org.reactivestreams.Publisher;
 
-public class HttpResponseException extends ESBException {
+public class HttpClientResponseException extends ESBException {
 
     private final HttpResponse response;
     private Publisher<byte[]> data;
     private String message;
 
-    public HttpResponseException(HttpResponse response, Publisher<byte[]> data) {
+    public HttpClientResponseException(HttpResponse response, Publisher<byte[]> data) {
         super();
         this.data = data;
         this.response = response;

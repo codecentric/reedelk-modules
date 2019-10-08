@@ -22,13 +22,13 @@ class RestClientDeleteTest extends RestClientAbstractTest {
         // Given
         String requestBody = "{\"Name\":\"John\"}";
         String expectedResponseBody = "DELETE was successful";
-        RestClient component = clientWith(DELETE, baseURL, path, EVALUATE_PAYLOAD_BODY);
+        RestClient component = clientWith(DELETE, BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
 
         doReturn(Optional.of(requestBody.getBytes()))
                 .when(scriptEngine)
                 .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
 
-        givenThat(delete(urlEqualTo(path))
+        givenThat(delete(urlEqualTo(PATH))
                 .withRequestBody(equalToJson(requestBody))
                 .willReturn(aResponse()
                         .withHeader(CONTENT_TYPE, TEXT.toString())
@@ -46,9 +46,9 @@ class RestClientDeleteTest extends RestClientAbstractTest {
     void shouldDeleteWithEmptyBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String expectedResponseBody = "It works";
-        RestClient component = clientWith(DELETE, baseURL, path);
+        RestClient component = clientWith(DELETE, BASE_URL, PATH);
 
-        givenThat(delete(urlEqualTo(path))
+        givenThat(delete(urlEqualTo(PATH))
                 .withRequestBody(binaryEqualTo(new byte[0]))
                 .willReturn(aResponse()
                         .withHeader(CONTENT_TYPE, TEXT.toString())
@@ -66,9 +66,9 @@ class RestClientDeleteTest extends RestClientAbstractTest {
     void shouldDeleteThrowExceptionWhenResponseNot2xx() {
         // Given
         String expectedErrorMessage = "Error exception caused by XYZ";
-        RestClient component = clientWith(DELETE, baseURL, path);
+        RestClient component = clientWith(DELETE, BASE_URL, PATH);
 
-        givenThat(delete(urlEqualTo(path))
+        givenThat(delete(urlEqualTo(PATH))
                 .willReturn(aResponse()
                         .withStatus(507)
                         .withHeader(CONTENT_TYPE, TEXT.toString())

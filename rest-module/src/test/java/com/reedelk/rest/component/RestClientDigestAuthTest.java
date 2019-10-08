@@ -30,17 +30,17 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-            configuration.setProtocol(HttpProtocol.HTTP);
-        configuration.setBasePath(path);
+        configuration.setProtocol(HttpProtocol.HTTP);
+        configuration.setBasePath(PATH);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setAuthentication(Authentication.DIGEST);
         configuration.setDigestAuthentication(digestAuth);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
+        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
         component.setConfiguration(configuration);
 
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .withHeader("Authorization", StringValuePattern.ABSENT)
                 .willReturn(aResponse()
                         .withHeader("WWW-Authenticate", "Digest realm=\"testrealm@host.com\"," +
@@ -49,7 +49,7 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
                                 "opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"")
                         .withStatus(401)));
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .withHeader("Authorization", matching("Digest username=\"test123\", realm=\"testrealm@host.com\", nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", uri=\"/v1/resource\", response=.*"))
                 .willReturn(aResponse()
                         .withStatus(200)));
@@ -78,15 +78,15 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
         configuration.setHost(HOST);
         configuration.setPort(PORT);
         configuration.setProtocol(HttpProtocol.HTTP);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setAuthentication(Authentication.DIGEST);
         configuration.setDigestAuthentication(digestAuth);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
+        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
         component.setConfiguration(configuration);
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .withHeader("Authorization", matching("Digest username=\"test123\", realm=\"test.realm@host.com\", nonce=\"noncetest\", uri=\"/v1/resource\", response=.*"))
                 .willReturn(aResponse().withStatus(200)));
 

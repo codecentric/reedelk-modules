@@ -1,6 +1,6 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.client.HttpResponseException;
+import com.reedelk.rest.client.HttpClientResponseException;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -151,7 +151,7 @@ class AssertHttpResponse {
         private final int expectedStatus;
         private final String expectedReasonPhrase;
 
-        private HttpResponseException error;
+        private HttpClientResponseException error;
 
         UnSuccessAssertion(RestClient component,
                          Message message,
@@ -189,7 +189,7 @@ class AssertHttpResponse {
 
                 @Override
                 public void onError(Throwable throwable, FlowContext flowContext) {
-                    error = (HttpResponseException) throwable;
+                    error = (HttpClientResponseException) throwable;
                     latch.countDown();
                 }
             });

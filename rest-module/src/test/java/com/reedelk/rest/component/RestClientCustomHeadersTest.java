@@ -23,7 +23,7 @@ class RestClientCustomHeadersTest extends RestClientAbstractTest {
     @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
     void shouldCorrectlyAddCustomHeaders(String method) {
         // Given
-        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path, EVALUATE_PAYLOAD_BODY);
+        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
 
         Map<String,String> additionalHeaders = new HashMap<>();
         additionalHeaders.put("X-Token", "123456789");
@@ -35,7 +35,7 @@ class RestClientCustomHeadersTest extends RestClientAbstractTest {
                 .when(scriptEngine)
                 .evaluate(eq(additionalHeadersMap), any(Message.class), any(FlowContext.class));
 
-        givenThat(WireMock.any(urlEqualTo(path))
+        givenThat(WireMock.any(urlEqualTo(PATH))
                 .withHeader("X-Token", equalTo("123456789"))
                 .withHeader("Source", equalTo("test source"))
                 .willReturn(aResponse().withStatus(200)));

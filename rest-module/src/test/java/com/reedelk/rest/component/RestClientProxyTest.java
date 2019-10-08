@@ -30,16 +30,16 @@ class RestClientProxyTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost("my-test-host.com");
         configuration.setPort(7891);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setProxy(Proxy.PROXY);
         configuration.setProxyConfiguration(proxyConfiguration);
 
-        RestClient component = clientWith(RestMethod.GET, baseURL, path);
+        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
         component.setConfiguration(configuration);
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .withHeader("Host", equalTo("localhost:8181"))
                 .willReturn(aResponse().withStatus(200)));
 
@@ -68,22 +68,22 @@ class RestClientProxyTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost("my-test-host.com");
         configuration.setPort(7891);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setProxy(Proxy.PROXY);
         configuration.setProxyConfiguration(proxyConfiguration);
 
-        RestClient component = clientWith(RestMethod.GET, baseURL, path);
+        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
         component.setConfiguration(configuration);
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .withHeader("Authorization", StringValuePattern.ABSENT)
                 .willReturn(aResponse()
                         .withHeader("WWW-Authenticate", "Basic realm=\"test-realm\"")
                         .withStatus(401)));
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .withHeader("Host", equalTo("localhost:8181"))
                 .withBasicAuth(username, password)
                 .willReturn(aResponse().withStatus(200)));
@@ -114,16 +114,16 @@ class RestClientProxyTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost("my-test-host.com");
         configuration.setPort(7891);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setProxy(Proxy.PROXY);
         configuration.setProxyConfiguration(proxyConfiguration);
 
-        RestClient component = clientWith(RestMethod.GET, baseURL, path);
+        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
         component.setConfiguration(configuration);
 
-        givenThat(any(urlEqualTo(path))
+        givenThat(any(urlEqualTo(PATH))
                 .withHeader("Host", equalTo("localhost:8181"))
                 .withBasicAuth(username, password)
                 .willReturn(aResponse().withStatus(200)));

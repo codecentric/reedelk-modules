@@ -30,11 +30,11 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
 
-        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
+        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
         component.setConfiguration(configuration);
         DynamicByteArray dynamicBody = DynamicByteArray.from("my body");
         component.setBody(dynamicBody);
@@ -44,7 +44,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
                 .evaluate(eq(dynamicBody), any(Message.class), any(FlowContext.class));
 
 
-        givenThat(WireMock.any(urlEqualTo(path))
+        givenThat(WireMock.any(urlEqualTo(PATH))
                 .withRequestBody(equalTo("my body"))
                 .willReturn(aResponse()
                         .withBody("Expect continue success")
@@ -66,12 +66,12 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setExpectContinue(false);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
+        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
         component.setConfiguration(configuration);
         DynamicByteArray dynamicBody = DynamicByteArray.from("my body");
         component.setBody(dynamicBody);
@@ -81,7 +81,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
                 .evaluate(eq(dynamicBody), any(Message.class), any(FlowContext.class));
 
 
-        givenThat(WireMock.any(urlEqualTo(path))
+        givenThat(WireMock.any(urlEqualTo(PATH))
                 .withRequestBody(equalTo("my body"))
                 .willReturn(aResponse()
                         .withBody("Expect continue success")
@@ -104,12 +104,12 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setExpectContinue(true);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
+        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
         component.setConfiguration(configuration);
         DynamicByteArray dynamicBody = DynamicByteArray.from("my body");
         component.setBody(dynamicBody);
@@ -119,7 +119,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
                 .evaluate(eq(dynamicBody), any(Message.class), any(FlowContext.class));
 
 
-        givenThat(WireMock.any(urlEqualTo(path))
+        givenThat(WireMock.any(urlEqualTo(PATH))
                 .withRequestBody(equalTo("my body"))
                 .willReturn(aResponse()
                         .withBody("Expect continue success")
@@ -141,15 +141,15 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(path);
+        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setExpectContinue(true);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path);
+        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
         component.setConfiguration(configuration);
 
-        givenThat(WireMock.any(urlEqualTo(path))
+        givenThat(WireMock.any(urlEqualTo(PATH))
                 .willReturn(aResponse()
                         .withBody("Expect continue success")
                         .withStatus(200)));

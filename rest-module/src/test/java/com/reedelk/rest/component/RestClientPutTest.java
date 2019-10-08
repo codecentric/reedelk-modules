@@ -23,13 +23,13 @@ class RestClientPutTest extends RestClientAbstractTest {
         // Given
         String requestBody = "{\"Name\":\"John\"}";
         String expectedResponseBody = "PUT was successful";
-        RestClient client = clientWith(PUT, baseURL, path, EVALUATE_PAYLOAD_BODY);
+        RestClient client = clientWith(PUT, BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
 
         doReturn(Optional.of(requestBody.getBytes()))
                 .when(scriptEngine)
                 .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
 
-        givenThat(put(urlEqualTo(path))
+        givenThat(put(urlEqualTo(PATH))
                 .withRequestBody(equalToJson(requestBody))
                 .willReturn(aResponse()
                         .withHeader(CONTENT_TYPE, TEXT.toString())
@@ -46,13 +46,13 @@ class RestClientPutTest extends RestClientAbstractTest {
     void shouldWithEmptyBodyExecuteCorrectlyWhenResponse200() {
         // Given
         String expectedResponseBody = "It works";
-        RestClient client = clientWith(PUT, baseURL, path);
+        RestClient client = clientWith(PUT, BASE_URL, PATH);
 
         doReturn(Optional.of(new byte[]{}))
                 .when(scriptEngine)
                 .evaluate(Mockito.isNull(DynamicByteArray.class), any(Message.class), any(FlowContext.class));
 
-        givenThat(put(urlEqualTo(path))
+        givenThat(put(urlEqualTo(PATH))
                 .withRequestBody(binaryEqualTo(new byte[0]))
                 .willReturn(aResponse()
                         .withHeader(CONTENT_TYPE, TEXT.toString())
@@ -69,9 +69,9 @@ class RestClientPutTest extends RestClientAbstractTest {
     void shouldThrowExceptionWhenResponseNot2xx() {
         // Given
         String expectedErrorMessage = "Error exception caused by XYZ";
-        RestClient component = clientWith(PUT, baseURL, path);
+        RestClient component = clientWith(PUT, BASE_URL, PATH);
 
-        givenThat(put(urlEqualTo(path))
+        givenThat(put(urlEqualTo(PATH))
                 .willReturn(aResponse()
                         .withStatus(404)
                         .withHeader(CONTENT_TYPE, TEXT.toString())

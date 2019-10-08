@@ -41,10 +41,10 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             configuration.setHost(HOST);
             configuration.setPort(PORT);
             configuration.setProtocol(HttpProtocol.HTTP);
-            configuration.setBasePath(path);
+            configuration.setBasePath(PATH);
             configuration.setId(UUID.randomUUID().toString());
 
-            RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path, EVALUATE_PAYLOAD_BODY);
+            RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
             component.setConfiguration(configuration);
             component.setStreaming(StreamingMode.NONE);
 
@@ -56,7 +56,7 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             Mockito.verify(scriptEngine, never())
                     .evaluateStream(any(DynamicValue.class), any(Message.class), any(FlowContext.class));
 
-            givenThat(WireMock.any(urlEqualTo(path))
+            givenThat(WireMock.any(urlEqualTo(PATH))
                     .withHeader("Content-Length", equalTo(String.valueOf(requestBody.getBytes().length)))
                     .willReturn(aResponse()
                             .withStatus(200)));
@@ -81,10 +81,10 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             configuration.setHost(HOST);
             configuration.setPort(PORT);
             configuration.setProtocol(HttpProtocol.HTTP);
-            configuration.setBasePath(path);
+            configuration.setBasePath(PATH);
             configuration.setId(UUID.randomUUID().toString());
 
-            RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path, EVALUATE_PAYLOAD_BODY);
+            RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
             component.setConfiguration(configuration);
             component.setStreaming(StreamingMode.ALWAYS);
 
@@ -101,7 +101,7 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             Mockito.verify(scriptEngine, never())
                     .evaluate(any(DynamicValue.class), any(Message.class), any(FlowContext.class));
 
-            givenThat(WireMock.any(urlEqualTo(path))
+            givenThat(WireMock.any(urlEqualTo(PATH))
                     .withHeader("Transfer-Encoding", equalTo("chunked"))
                     .willReturn(aResponse()
                             .withStatus(200)));
@@ -126,10 +126,10 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             configuration.setHost(HOST);
             configuration.setPort(PORT);
             configuration.setProtocol(HttpProtocol.HTTP);
-            configuration.setBasePath(path);
+            configuration.setBasePath(PATH);
             configuration.setId(UUID.randomUUID().toString());
 
-            RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path, EVALUATE_PAYLOAD_BODY);
+            RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
             component.setConfiguration(configuration);
             component.setStreaming(StreamingMode.AUTO);
 
@@ -146,7 +146,7 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             Mockito.verify(scriptEngine, never())
                     .evaluate(any(DynamicValue.class), any(Message.class), any(FlowContext.class));
 
-            givenThat(WireMock.any(urlEqualTo(path))
+            givenThat(WireMock.any(urlEqualTo(PATH))
                     .withHeader("Transfer-Encoding", equalTo("chunked"))
                     .willReturn(aResponse()
                             .withStatus(200)));
@@ -166,10 +166,10 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             configuration.setHost(HOST);
             configuration.setPort(PORT);
             configuration.setProtocol(HttpProtocol.HTTP);
-            configuration.setBasePath(path);
+            configuration.setBasePath(PATH);
             configuration.setId(UUID.randomUUID().toString());
 
-            RestClient component = clientWith(RestMethod.valueOf(method), baseURL, path, EVALUATE_PAYLOAD_BODY);
+            RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
             component.setConfiguration(configuration);
             component.setStreaming(StreamingMode.AUTO);
 
@@ -184,7 +184,7 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             Mockito.verify(scriptEngine, never())
                     .evaluateStream(any(DynamicValue.class), any(Message.class), any(FlowContext.class));
 
-            givenThat(WireMock.any(urlEqualTo(path))
+            givenThat(WireMock.any(urlEqualTo(PATH))
                     .withHeader("Content-Length", equalTo(String.valueOf(requestBody.getBytes().length)))
                     .willReturn(aResponse()
                             .withStatus(200)));

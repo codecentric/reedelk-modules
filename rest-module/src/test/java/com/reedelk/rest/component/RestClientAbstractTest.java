@@ -26,8 +26,6 @@ import static org.junit.Assert.fail;
 @Tag(INTEGRATION)
 abstract class RestClientAbstractTest {
 
-    DynamicByteArray EVALUATE_PAYLOAD_BODY = DynamicByteArray.from(EVALUATE_PAYLOAD);
-
     @Mock
     protected ScriptEngineService scriptEngine;
     @Mock
@@ -36,12 +34,15 @@ abstract class RestClientAbstractTest {
     static final int PORT = 8181;
     static final String HOST = "localhost";
 
+    static final String PATH = "/v1/resource";
+    static final String BASE_URL = "http://" + HOST + ":" + PORT;
+
+    private static WireMockServer mockServer;
+
+    DynamicByteArray EVALUATE_PAYLOAD_BODY = DynamicByteArray.from(EVALUATE_PAYLOAD);
+
     private HttpClientFactory httpClientFactory = new DefaultHttpClientFactory();
 
-    static WireMockServer mockServer;
-
-    static String path = "/v1/resource";
-    static String baseURL = "http://" + HOST + ":" + PORT;
 
     @BeforeAll
     static void setUpBeforeAll(){

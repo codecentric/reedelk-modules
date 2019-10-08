@@ -1,6 +1,6 @@
 package com.reedelk.rest.client.strategy;
 
-import com.reedelk.rest.client.HttpResponseException;
+import com.reedelk.rest.client.HttpClientResponseException;
 import com.reedelk.rest.client.response.HttpResponseMessageMapper;
 import com.reedelk.rest.commons.DataMarker;
 import com.reedelk.rest.commons.IsSuccessfulStatus;
@@ -99,7 +99,7 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
         } else {
 
-            callback.onError(new HttpResponseException(response, bytesStream), flowContext);
+            callback.onError(new HttpClientResponseException(response, bytesStream), flowContext);
 
         }
     }
