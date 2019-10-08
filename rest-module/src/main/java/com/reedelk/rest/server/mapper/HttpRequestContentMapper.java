@@ -16,6 +16,9 @@ class HttpRequestContentMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpRequestContentMapper.class);
 
+    private HttpRequestContentMapper() {
+    }
+
     /**
      * Given an http request, it finds the most suitable TypedContent for the request.
      * For example, it checks the mime type of the request and it converts it a String

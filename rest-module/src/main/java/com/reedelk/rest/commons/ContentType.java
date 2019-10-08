@@ -7,6 +7,9 @@ import java.util.Optional;
 
 public class ContentType {
 
+    private ContentType() {
+    }
+
     public static Optional<String> from(Message message) {
         return Optional.ofNullable(message.getContent())
                 .flatMap(typedContent -> Optional.ofNullable(typedContent.type()))

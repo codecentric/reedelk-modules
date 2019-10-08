@@ -99,7 +99,10 @@ public class Server {
         try {
             executionGroup.shutdownGracefully(0, 3, SECONDS).sync();
         } catch (InterruptedException e) {
+
             logger.warn("Error while shutting down event group", e);
+
+            Thread.currentThread().interrupt();
         }
     }
 

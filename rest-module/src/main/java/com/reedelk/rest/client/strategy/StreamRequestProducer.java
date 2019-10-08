@@ -81,9 +81,9 @@ class StreamRequestProducer extends BasicAsyncRequestProducer {
 
             } catch (InterruptedException e) {
 
-                encoder.complete();
-
                 queue = null;
+
+                Thread.currentThread().interrupt();
 
             }
         }

@@ -1,5 +1,8 @@
 package com.reedelk.rest.client.uri;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -7,6 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 
 class PathEncoder {
+
+    private static final Logger logger = LoggerFactory.getLogger(PathEncoder.class);
+
+    private PathEncoder() {
+    }
 
     /**
      * Encode a path as required by the URL specification (<a href="http://www.ietf.org/rfc/rfc1738.txt">
@@ -29,7 +37,7 @@ class PathEncoder {
         try {
             writer = new OutputStreamWriter(buf, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.warn(String.format("Error while encoding path=[%s]", path), e);
             writer = new OutputStreamWriter(buf);
         }
 

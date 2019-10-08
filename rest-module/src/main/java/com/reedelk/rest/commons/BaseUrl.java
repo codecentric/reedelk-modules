@@ -12,6 +12,9 @@ import static com.reedelk.runtime.api.commons.StringUtils.isNotBlank;
 
 public class BaseUrl {
 
+    private BaseUrl() {
+    }
+
     public static String from(ClientConfiguration configuration) {
         String basePath = configuration.getBasePath();
         String host = requireNotBlank(configuration.getHost(), "'Host' must not be empty");

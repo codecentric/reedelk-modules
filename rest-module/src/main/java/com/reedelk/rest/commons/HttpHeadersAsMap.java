@@ -13,6 +13,9 @@ import static java.util.stream.Collectors.toList;
 
 public class HttpHeadersAsMap {
 
+    private HttpHeadersAsMap() {
+    }
+
     public static HeadersMap of(HttpHeaders headers) {
         HeadersMap headersMap = new HeadersMap();
         if (headers != null) {

@@ -6,6 +6,9 @@ import java.util.zip.GZIPOutputStream;
 
 public class GzipCompress {
 
+    private GzipCompress() {
+    }
+
     public static byte[] data(byte[] uncompressedData) {
         ByteArrayOutputStream bos = null;
         GZIPOutputStream gzipOS = null;

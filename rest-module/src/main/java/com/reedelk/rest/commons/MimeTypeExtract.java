@@ -13,6 +13,9 @@ public class MimeTypeExtract {
 
     private static final Logger logger = LoggerFactory.getLogger(MimeTypeExtract.class);
 
+    private MimeTypeExtract() {
+    }
+
     public static MimeType from(HttpServerRequest request) {
         return from(request.requestHeaders());
     }

@@ -9,6 +9,9 @@ import java.util.Map;
 
 public class QueryParameters {
 
+    private QueryParameters() {
+    }
+
     public static HashMap<String, List<String>> from(String uri) {
         if (StringUtils.isBlank(uri)) return new HashMap<>();
 
