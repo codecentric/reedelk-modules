@@ -22,15 +22,11 @@ public class HttpResponseException extends ESBException {
     // That is why we keep a reference of the read message from the stream
     // in order to use it multiple times if needed.
     @Override
-    public String getMessage() {
+    public synchronized String getMessage() {
         if (message == null) {
-            synchronized (this) {
-                if (message == null) {
-                    byte[] from = ConsumeByteArrayStream.from(data);
-                    message = new String(from);
-                    data = null;
-                }
-            }
+            byte[] from = ConsumeByteArrayStream.from(data);
+            message = new String(from);
+            data = null;
         }
         return message;
     }

@@ -84,11 +84,11 @@ public class RestClient implements ProcessorAsync {
     @Property("Advanced configuration")
     private AdvancedConfiguration advancedConfiguration;
 
-    private volatile HttpClient client;
-    private volatile Strategy execution;
-    private volatile URIEvaluator uriEvaluator;
-    private volatile BodyEvaluator bodyEvaluator;
-    private volatile HeadersEvaluator headersEvaluator;
+    private HttpClient client;
+    private Strategy execution;
+    private URIEvaluator uriEvaluator;
+    private BodyEvaluator bodyEvaluator;
+    private HeadersEvaluator headersEvaluator;
 
     @Override
     public void apply(Message message, FlowContext flowContext, OnResult callback) {
@@ -105,18 +105,16 @@ public class RestClient implements ProcessorAsync {
     }
 
     @Override
-    public void dispose() {
-        synchronized (this) {
-            if (client != null) {
-                client.close();
-                client = null;
-            }
-            scriptEngine = null;
-            uriEvaluator = null;
-            bodyEvaluator = null;
-            headersEvaluator = null;
-            httpClientService = null;
+    public synchronized void dispose() {
+        if (client != null) {
+            client.close();
+            client = null;
         }
+        scriptEngine = null;
+        uriEvaluator = null;
+        bodyEvaluator = null;
+        headersEvaluator = null;
+        httpClientService = null;
     }
 
     public void setMethod(RestMethod method) {
@@ -159,83 +157,63 @@ public class RestClient implements ProcessorAsync {
         this.advancedConfiguration = advancedConfiguration;
     }
 
-    private HttpClient client() {
+    private synchronized HttpClient client() {
         if (client == null) {
-            synchronized (this) {
-                if (client == null) {
-                    if (configuration != null) {
-                        client = httpClientService.clientByConfig(configuration);
-                        client.start();
-                    } else {
-                        requireNonNull(baseURL, "base URL is mandatory");
-                        client = httpClientService.clientByBaseURL(baseURL);
-                        client.start();
-                    }
-                }
+            if (configuration != null) {
+                client = httpClientService.clientByConfig(configuration);
+                client.start();
+            } else {
+                requireNonNull(baseURL, "base URL is mandatory");
+                client = httpClientService.clientByBaseURL(baseURL);
+                client.start();
             }
         }
         return client;
     }
 
-    private Strategy execution() {
+    private synchronized Strategy execution() {
         if (execution == null) {
-            synchronized (this) {
-                if (execution == null) {
-                    execution = ExecutionStrategyBuilder.builder()
-                            .advancedConfig(advancedConfiguration)
-                            .streaming(streaming)
-                            .method(method)
-                            .build();
-                }
-            }
+            execution = ExecutionStrategyBuilder.builder()
+                    .advancedConfig(advancedConfiguration)
+                    .streaming(streaming)
+                    .method(method)
+                    .build();
         }
         return execution;
     }
 
-    private URIEvaluator uriEvaluator() {
+    private synchronized URIEvaluator uriEvaluator() {
         if (uriEvaluator == null) {
-            synchronized (this) {
-                if (uriEvaluator == null) {
-                    uriEvaluator = URIEvaluator.builder()
-                            .queryParameters(queryParameters)
-                            .pathParameters(pathParameters)
-                            .configuration(configuration)
-                            .scriptEngine(scriptEngine)
-                            .baseURL(baseURL)
-                            .path(path)
-                            .build();
-                }
-            }
+            uriEvaluator = URIEvaluator.builder()
+                    .queryParameters(queryParameters)
+                    .pathParameters(pathParameters)
+                    .configuration(configuration)
+                    .scriptEngine(scriptEngine)
+                    .baseURL(baseURL)
+                    .path(path)
+                    .build();
         }
         return uriEvaluator;
     }
 
-    private BodyEvaluator bodyEvaluator() {
+    private synchronized BodyEvaluator bodyEvaluator() {
         if (bodyEvaluator == null) {
-            synchronized (this) {
-                if (bodyEvaluator == null) {
-                    bodyEvaluator = BodyEvaluator.builder()
-                            .scriptEngine(scriptEngine)
-                            .method(method)
-                            .body(body)
-                            .build();
-                }
-            }
+            bodyEvaluator = BodyEvaluator.builder()
+                    .scriptEngine(scriptEngine)
+                    .method(method)
+                    .body(body)
+                    .build();
         }
         return bodyEvaluator;
     }
 
-    private HeadersEvaluator headersEvaluator() {
+    private synchronized HeadersEvaluator headersEvaluator() {
         if (headersEvaluator == null) {
-            synchronized (this) {
-                if (headersEvaluator == null) {
-                    headersEvaluator = HeadersEvaluator.builder()
-                            .scriptEngine(scriptEngine)
-                            .headers(headers)
-                            .body(body)
-                            .build();
-                }
-            }
+            headersEvaluator = HeadersEvaluator.builder()
+                    .scriptEngine(scriptEngine)
+                    .headers(headers)
+                    .body(body)
+                    .build();
         }
         return headersEvaluator;
     }
