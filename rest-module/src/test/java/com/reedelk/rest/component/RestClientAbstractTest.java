@@ -1,8 +1,8 @@
 package com.reedelk.rest.component;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.reedelk.rest.client.DefaultHttpClientService;
-import com.reedelk.rest.client.HttpClientService;
+import com.reedelk.rest.client.DefaultHttpClientFactory;
+import com.reedelk.rest.client.HttpClientFactory;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
@@ -36,7 +36,7 @@ abstract class RestClientAbstractTest {
     static final int PORT = 8181;
     static final String HOST = "localhost";
 
-    private HttpClientService httpClientService = new DefaultHttpClientService();
+    private HttpClientFactory httpClientFactory = new DefaultHttpClientFactory();
 
     static WireMockServer mockServer;
 
@@ -66,7 +66,7 @@ abstract class RestClientAbstractTest {
         restClient.setMethod(method);
         restClient.setPath(path);
         setScriptEngine(restClient);
-        setHttpClientService(restClient);
+        setHttpClientFactory(restClient);
         return restClient;
     }
 
@@ -80,8 +80,8 @@ abstract class RestClientAbstractTest {
         setField(restClient, "scriptEngine", scriptEngine);
     }
 
-    private void setHttpClientService(RestClient restClient) {
-        setField(restClient, "httpClientService", httpClientService);
+    private void setHttpClientFactory(RestClient restClient) {
+        setField(restClient, "clientFactory", httpClientFactory);
     }
 
     private void setField(RestClient client, String fieldName, Object object) {

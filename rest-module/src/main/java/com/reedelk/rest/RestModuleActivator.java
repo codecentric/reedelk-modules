@@ -1,7 +1,7 @@
 package com.reedelk.rest;
 
-import com.reedelk.rest.client.DefaultHttpClientService;
-import com.reedelk.rest.client.HttpClientService;
+import com.reedelk.rest.client.DefaultHttpClientFactory;
+import com.reedelk.rest.client.HttpClientFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceRegistration;
@@ -19,13 +19,13 @@ public class RestModuleActivator {
 
     private static final Dictionary<String, ?> NO_PROPERTIES = new Hashtable<>();
 
-    private ServiceRegistration<HttpClientService> registration;
-    private HttpClientService service;
+    private ServiceRegistration<HttpClientFactory> registration;
+    private HttpClientFactory service;
 
     @Activate
     public void activate(BundleContext context) throws BundleException {
-        this.service = new DefaultHttpClientService();
-        this.registration = context.registerService(HttpClientService.class, service, NO_PROPERTIES);
+        this.service = new DefaultHttpClientFactory();
+        this.registration = context.registerService(HttpClientFactory.class, service, NO_PROPERTIES);
     }
 
     @Deactivate

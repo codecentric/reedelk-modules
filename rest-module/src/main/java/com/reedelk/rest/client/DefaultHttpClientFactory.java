@@ -21,10 +21,10 @@ import java.util.Optional;
 
 import static java.lang.Boolean.TRUE;
 
-public class DefaultHttpClientService implements HttpClientService {
+public class DefaultHttpClientFactory implements HttpClientFactory {
 
     @Override
-    public HttpClient clientByConfig(ClientConfiguration configuration) {
+    public HttpClient from(ClientConfiguration config) {
         HttpAsyncClientBuilder builder = HttpAsyncClients.custom();
 
         HttpClientContext context = HttpClientContext.create();
@@ -32,16 +32,16 @@ public class DefaultHttpClientService implements HttpClientService {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
         // Request config
-        RequestConfig requestConfig = createConfig(configuration);
+        RequestConfig requestConfig = createConfig(config);
 
         // Basic authentication config
-        Authentication authentication = configuration.getAuthentication();
+        Authentication authentication = config.getAuthentication();
         if (Authentication.BASIC.equals(authentication)) {
             configureBasicAuth(
-                    configuration.getHost(),
-                    configuration.getPort(),
-                    configuration.getProtocol(),
-                    configuration.getBasicAuthentication(),
+                    config.getHost(),
+                    config.getPort(),
+                    config.getProtocol(),
+                    config.getBasicAuthentication(),
                     credentialsProvider,
                     context);
         }
@@ -49,19 +49,19 @@ public class DefaultHttpClientService implements HttpClientService {
         // Digest authentication config
         if (Authentication.DIGEST.equals(authentication)) {
             configureDigestAuth(
-                    configuration.getHost(),
-                    configuration.getPort(),
-                    configuration.getProtocol(),
-                    configuration.getDigestAuthentication(),
+                    config.getHost(),
+                    config.getPort(),
+                    config.getProtocol(),
+                    config.getDigestAuthentication(),
                     credentialsProvider,
                     context);
         }
 
         // Proxy config
-        Proxy proxy = configuration.getProxy();
+        Proxy proxy = config.getProxy();
         if (Proxy.PROXY.equals(proxy)) {
             configureProxy(
-                    configuration.getProxyConfiguration(),
+                    config.getProxyConfiguration(),
                     builder,
                     credentialsProvider,
                     context);
@@ -76,7 +76,7 @@ public class DefaultHttpClientService implements HttpClientService {
     }
 
     @Override
-    public HttpClient clientByBaseURL(String baseURL) {
+    public HttpClient from(String baseURL) {
         return new HttpClient(HttpAsyncClients.createDefault());
     }
 

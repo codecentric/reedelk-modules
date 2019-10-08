@@ -1,7 +1,7 @@
 package com.reedelk.rest.component;
 
 import com.reedelk.rest.client.HttpClient;
-import com.reedelk.rest.client.HttpClientService;
+import com.reedelk.rest.client.HttpClientFactory;
 import com.reedelk.rest.client.body.BodyEvaluator;
 import com.reedelk.rest.client.body.BodyProvider;
 import com.reedelk.rest.client.header.HeaderProvider;
@@ -35,7 +35,7 @@ public class RestClient implements ProcessorAsync {
     @Reference
     private ScriptEngineService scriptEngine;
     @Reference
-    private HttpClientService httpClientService;
+    private HttpClientFactory clientFactory;
 
     @Property("Method")
     @Default("GET")
@@ -114,7 +114,7 @@ public class RestClient implements ProcessorAsync {
         uriEvaluator = null;
         bodyEvaluator = null;
         headersEvaluator = null;
-        httpClientService = null;
+        clientFactory = null;
     }
 
     public void setMethod(RestMethod method) {
@@ -160,11 +160,11 @@ public class RestClient implements ProcessorAsync {
     private synchronized HttpClient client() {
         if (client == null) {
             if (configuration != null) {
-                client = httpClientService.clientByConfig(configuration);
+                client = clientFactory.from(configuration);
                 client.start();
             } else {
                 requireNonNull(baseURL, "base URL is mandatory");
-                client = httpClientService.clientByBaseURL(baseURL);
+                client = clientFactory.from(baseURL);
                 client.start();
             }
         }
