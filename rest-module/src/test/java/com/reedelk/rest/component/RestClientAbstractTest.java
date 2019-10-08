@@ -4,7 +4,11 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.reedelk.rest.client.DefaultHttpClientFactory;
 import com.reedelk.rest.client.HttpClientFactory;
 import com.reedelk.rest.commons.RestMethod;
+import com.reedelk.rest.configuration.client.ClientConfiguration;
+import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
+import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.junit.jupiter.api.AfterAll;
@@ -41,7 +45,7 @@ abstract class RestClientAbstractTest {
 
     DynamicByteArray EVALUATE_PAYLOAD_BODY = DynamicByteArray.from(EVALUATE_PAYLOAD);
 
-    private HttpClientFactory httpClientFactory = new DefaultHttpClientFactory();
+    private HttpClientFactory clientFactory = new DefaultHttpClientFactory();
 
 
     @BeforeAll
@@ -67,7 +71,17 @@ abstract class RestClientAbstractTest {
         restClient.setMethod(method);
         restClient.setPath(path);
         setScriptEngine(restClient);
-        setHttpClientFactory(restClient);
+        setClientFactory(restClient);
+        return restClient;
+    }
+
+    RestClient clientWith(RestMethod method, ClientConfiguration configuration, String path) {
+        RestClient restClient = new RestClient();
+        restClient.setConfiguration(configuration);
+        restClient.setMethod(method);
+        restClient.setPath(path);
+        setScriptEngine(restClient);
+        setClientFactory(restClient);
         return restClient;
     }
 
@@ -77,12 +91,23 @@ abstract class RestClientAbstractTest {
         return restClient;
     }
 
+    RestClient clientWith(RestMethod method, ClientConfiguration configuration, String path, DynamicByteArray body) {
+        RestClient restClient = clientWith(method, configuration, path);
+        restClient.setBody(body);
+        return restClient;
+    }
+
+    void invoke(RestClient component) {
+        Message payload = MessageBuilder.get().build();
+        component.apply(payload, flowContext, new OnResult() {});
+    }
+
     private void setScriptEngine(RestClient restClient) {
         setField(restClient, "scriptEngine", scriptEngine);
     }
 
-    private void setHttpClientFactory(RestClient restClient) {
-        setField(restClient, "clientFactory", httpClientFactory);
+    private void setClientFactory(RestClient restClient) {
+        setField(restClient, "clientFactory", clientFactory);
     }
 
     private void setField(RestClient client, String fieldName, Object object) {

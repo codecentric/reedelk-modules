@@ -1,6 +1,7 @@
 package com.reedelk.rest.component;
 
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
+import com.reedelk.rest.commons.ConfigurationException;
 import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.Authentication;
@@ -8,12 +9,16 @@ import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.rest.configuration.client.DigestAuthenticationConfiguration;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.reedelk.rest.commons.RestMethod.GET;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RestClientDigestAuthTest extends RestClientAbstractTest {
 
@@ -31,13 +36,11 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
         configuration.setHost(HOST);
         configuration.setPort(PORT);
         configuration.setProtocol(HttpProtocol.HTTP);
-        configuration.setBasePath(PATH);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setAuthentication(Authentication.DIGEST);
         configuration.setDigestAuthentication(digestAuth);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
 
 
         givenThat(any(urlEqualTo(PATH))
@@ -78,13 +81,11 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
         configuration.setHost(HOST);
         configuration.setPort(PORT);
         configuration.setProtocol(HttpProtocol.HTTP);
-        configuration.setBasePath(PATH);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setAuthentication(Authentication.DIGEST);
         configuration.setDigestAuthentication(digestAuth);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
 
         givenThat(any(urlEqualTo(PATH))
                 .withHeader("Authorization", matching("Digest username=\"test123\", realm=\"test.realm@host.com\", nonce=\"noncetest\", uri=\"/v1/resource\", response=.*"))
@@ -95,5 +96,22 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
 
         // Expect
         AssertHttpResponse.isSuccessful(component, payload, flowContext);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenDigestAuthenticationButNoConfigIsDefined() {
+        // Given
+        ClientConfiguration configuration = new ClientConfiguration();
+        configuration.setHost(HOST);
+        configuration.setPort(PORT);
+        configuration.setProtocol(HttpProtocol.HTTP);
+        configuration.setId(UUID.randomUUID().toString());
+        configuration.setAuthentication(Authentication.DIGEST);
+
+        RestClient component = clientWith(GET, configuration, PATH);
+
+        // Expect
+        ConfigurationException thrown = assertThrows(ConfigurationException.class, () -> invoke(component));
+        assertThat(thrown).hasMessage("Digest Authentication Configuration must be present in the JSON definition when 'authentication' property is 'DIGEST'");
     }
 }

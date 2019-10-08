@@ -210,6 +210,7 @@ public class RestClient implements ProcessorAsync {
     private synchronized HeadersEvaluator headersEvaluator() {
         if (headersEvaluator == null) {
             headersEvaluator = HeadersEvaluator.builder()
+                    .configuration(configuration)
                     .scriptEngine(scriptEngine)
                     .headers(headers)
                     .body(body)

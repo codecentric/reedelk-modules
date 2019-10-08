@@ -22,12 +22,10 @@ class RestClientFollowRedirectsTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
 
-        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.GET, configuration, PATH);
 
 
         givenThat(any(urlEqualTo(PATH))
@@ -53,13 +51,11 @@ class RestClientFollowRedirectsTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setFollowRedirects(true);
 
-        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.GET, configuration, PATH);
 
 
         givenThat(any(urlEqualTo(PATH))
@@ -85,13 +81,11 @@ class RestClientFollowRedirectsTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setFollowRedirects(false);
 
-        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.GET, configuration, PATH);
 
 
         givenThat(any(urlEqualTo(PATH))

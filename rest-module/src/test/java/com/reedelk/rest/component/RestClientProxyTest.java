@@ -1,17 +1,22 @@
 package com.reedelk.rest.component;
 
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
+import com.reedelk.rest.commons.ConfigurationException;
 import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.*;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.reedelk.rest.commons.RestMethod.GET;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RestClientProxyTest extends RestClientAbstractTest {
 
@@ -21,7 +26,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
-    void shouldCorrectlyUseProxy() {
+    void shouldCorrectlyUseProxy(String method) {
         // Given
         ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
         proxyConfiguration.setHost(PROXY_HOST);
@@ -30,17 +35,15 @@ class RestClientProxyTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost("my-test-host.com");
         configuration.setPort(7891);
-        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setProxy(Proxy.PROXY);
         configuration.setProxyConfiguration(proxyConfiguration);
 
-        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
 
         givenThat(any(urlEqualTo(PATH))
-                .withHeader("Host", equalTo("localhost:8181"))
+                .withHeader("Host", equalTo("my-test-host.com:7891"))
                 .willReturn(aResponse().withStatus(200)));
 
         Message payload = MessageBuilder.get().build();
@@ -51,7 +54,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
-    void shouldCorrectlyUseProxyWithAuthentication() {
+    void shouldCorrectlyUseProxyWithAuthentication(String method) {
         // Given
         String username = "squid-user";
         String password = "squid-pass";
@@ -68,24 +71,21 @@ class RestClientProxyTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost("my-test-host.com");
         configuration.setPort(7891);
-        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setProxy(Proxy.PROXY);
         configuration.setProxyConfiguration(proxyConfiguration);
 
-        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
 
         givenThat(any(urlEqualTo(PATH))
-                .withHeader("Authorization", StringValuePattern.ABSENT)
+                .withHeader("Proxy-Authorization", StringValuePattern.ABSENT)
                 .willReturn(aResponse()
-                        .withHeader("WWW-Authenticate", "Basic realm=\"test-realm\"")
-                        .withStatus(401)));
+                        .withHeader("Proxy-Authenticate", "Basic realm=\"Authentication realm\"")
+                        .withStatus(407)));
 
         givenThat(any(urlEqualTo(PATH))
-                .withHeader("Host", equalTo("localhost:8181"))
-                .withBasicAuth(username, password)
+                .withHeader("Proxy-Authorization", equalTo("Basic c3F1aWQtdXNlcjpzcXVpZC1wYXNz"))
                 .willReturn(aResponse().withStatus(200)));
 
         Message payload = MessageBuilder.get().build();
@@ -96,7 +96,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
-    void shouldCorrectlyUseProxyWithPreemptiveAuthentication() {
+    void shouldCorrectlyUseProxyWithPreemptiveAuthentication(String method) {
         // Given
         String username = "squid-user";
         String password = "squid-pass";
@@ -114,23 +114,37 @@ class RestClientProxyTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost("my-test-host.com");
         configuration.setPort(7891);
-        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setProxy(Proxy.PROXY);
         configuration.setProxyConfiguration(proxyConfiguration);
 
-        RestClient component = clientWith(RestMethod.GET, BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
 
         givenThat(any(urlEqualTo(PATH))
-                .withHeader("Host", equalTo("localhost:8181"))
-                .withBasicAuth(username, password)
+                .withHeader("Proxy-Authorization", equalTo("Basic c3F1aWQtdXNlcjpzcXVpZC1wYXNz"))
                 .willReturn(aResponse().withStatus(200)));
 
         Message payload = MessageBuilder.get().build();
 
         // Expect
         AssertHttpResponse.isSuccessful(component, payload, flowContext);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenProxyButNoConfigIsDefined() {
+        // Given
+        ClientConfiguration configuration = new ClientConfiguration();
+        configuration.setHost(HOST);
+        configuration.setPort(PORT);
+        configuration.setProtocol(HttpProtocol.HTTP);
+        configuration.setId(UUID.randomUUID().toString());
+        configuration.setProxy(Proxy.PROXY);
+
+        RestClient component = clientWith(GET, configuration, PATH);
+
+        // Expect
+        ConfigurationException thrown = assertThrows(ConfigurationException.class, () -> invoke(component));
+        assertThat(thrown).hasMessage("Proxy Configuration must be present in the JSON definition when 'proxy' property is 'PROXY'");
     }
 }

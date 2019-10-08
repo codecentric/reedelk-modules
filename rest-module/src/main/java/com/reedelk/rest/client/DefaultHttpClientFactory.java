@@ -68,8 +68,11 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
         // Proxy config
         Proxy proxy = config.getProxy();
         if (Proxy.PROXY.equals(proxy)) {
+            ProxyConfiguration proxyConfig =
+                    requireNotNull(config.getProxyConfiguration(),
+                            Messages.RestClient.PROXY_CONFIG_MISSING.format());
             configureProxy(
-                    config.getProxyConfiguration(),
+                    proxyConfig,
                     builder,
                     credentialsProvider,
                     context);
@@ -128,12 +131,6 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
             credentialsProvider.setCredentials(
                     new AuthScope(proxyConfig.getHost(), proxyConfig.getPort()),
                     new UsernamePasswordCredentials(authConfig.getUsername(), authConfig.getPassword()));
-
-            if (TRUE.equals(authConfig.getPreemptive())) {
-                AuthCache authCache = new BasicAuthCache();
-                authCache.put(proxyHost, new BasicScheme());
-                context.setAuthCache(authCache);
-            }
         }
     }
 

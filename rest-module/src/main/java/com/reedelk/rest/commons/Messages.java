@@ -17,8 +17,9 @@ public class Messages {
 
         REQUEST_FAILED("Failed to connect to %s: %s"),
         REQUEST_CANCELLED("Failed to connect to %s: request has been cancelled"),
-        DIGEST_AUTH_MISSING("Digest Authentication Configuration must be present in the JSON definition when auth type is 'DIGEST'"),
-        BASIC_AUTH_MISSING("Basic Authentication Configuration must be present in the JSON definition when auth type is 'BASIC'");
+        DIGEST_AUTH_MISSING("Digest Authentication Configuration must be present in the JSON definition when 'authentication' property is 'DIGEST'"),
+        BASIC_AUTH_MISSING("Basic Authentication Configuration must be present in the JSON definition when 'authentication' property is 'BASIC'"),
+        PROXY_CONFIG_MISSING("Proxy Configuration must be present in the JSON definition when 'proxy' property is 'PROXY'");
 
         private String msg;
 

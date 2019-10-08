@@ -41,11 +41,9 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             configuration.setHost(HOST);
             configuration.setPort(PORT);
             configuration.setProtocol(HttpProtocol.HTTP);
-            configuration.setBasePath(PATH);
             configuration.setId(UUID.randomUUID().toString());
 
-            RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
-            component.setConfiguration(configuration);
+            RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH, EVALUATE_PAYLOAD_BODY);
             component.setStreaming(StreamingMode.NONE);
 
             String requestBody = "{\"Name\":\"John\"}";
@@ -81,11 +79,9 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             configuration.setHost(HOST);
             configuration.setPort(PORT);
             configuration.setProtocol(HttpProtocol.HTTP);
-            configuration.setBasePath(PATH);
             configuration.setId(UUID.randomUUID().toString());
 
-            RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
-            component.setConfiguration(configuration);
+            RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH, EVALUATE_PAYLOAD_BODY);
             component.setStreaming(StreamingMode.ALWAYS);
 
             String requestBodyChunk1 = "{\"Name\":";
@@ -126,11 +122,9 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             configuration.setHost(HOST);
             configuration.setPort(PORT);
             configuration.setProtocol(HttpProtocol.HTTP);
-            configuration.setBasePath(PATH);
             configuration.setId(UUID.randomUUID().toString());
 
-            RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
-            component.setConfiguration(configuration);
+            RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH, EVALUATE_PAYLOAD_BODY);
             component.setStreaming(StreamingMode.AUTO);
 
             String requestBodyChunk1 = "{\"Name\":";
@@ -166,11 +160,9 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             configuration.setHost(HOST);
             configuration.setPort(PORT);
             configuration.setProtocol(HttpProtocol.HTTP);
-            configuration.setBasePath(PATH);
             configuration.setId(UUID.randomUUID().toString());
 
-            RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
-            component.setConfiguration(configuration);
+            RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH, EVALUATE_PAYLOAD_BODY);
             component.setStreaming(StreamingMode.AUTO);
 
             String requestBody = "{\"Name\":\"John\"}";

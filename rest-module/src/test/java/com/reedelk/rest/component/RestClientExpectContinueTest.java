@@ -30,12 +30,11 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
 
-        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
+
         DynamicByteArray dynamicBody = DynamicByteArray.from("my body");
         component.setBody(dynamicBody);
 
@@ -66,13 +65,12 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setExpectContinue(false);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
+
         DynamicByteArray dynamicBody = DynamicByteArray.from("my body");
         component.setBody(dynamicBody);
 
@@ -104,13 +102,12 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setExpectContinue(true);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
+
         DynamicByteArray dynamicBody = DynamicByteArray.from("my body");
         component.setBody(dynamicBody);
 
@@ -141,13 +138,11 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost(HOST);
         configuration.setPort(PORT);
-        configuration.setBasePath(PATH);
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
         configuration.setExpectContinue(true);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH);
-        component.setConfiguration(configuration);
+        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
 
         givenThat(WireMock.any(urlEqualTo(PATH))
                 .willReturn(aResponse()
