@@ -17,6 +17,8 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 
+import java.util.Optional;
+
 import static java.lang.Boolean.TRUE;
 
 public class DefaultHttpClientService implements HttpClientService {
@@ -128,34 +130,23 @@ public class DefaultHttpClientService implements HttpClientService {
     }
 
     private RequestConfig createConfig(ClientConfiguration configuration) {
-
         RequestConfig.Builder builder = RequestConfig.custom();
 
-        Boolean followRedirects = configuration.getFollowRedirects();
-        if (followRedirects != null) {
-            builder.setRedirectsEnabled(followRedirects);
-            builder.setCircularRedirectsAllowed(followRedirects);
-            builder.setRelativeRedirectsAllowed(followRedirects);
-        }
-        Boolean contentCompression = configuration.getContentCompression();
-        if (contentCompression != null) {
-            builder.setContentCompressionEnabled(contentCompression);
-        }
+        Optional.ofNullable(configuration.getFollowRedirects())
+                .ifPresent(isFollowRedirects -> {
+                    builder.setRedirectsEnabled(isFollowRedirects);
+                    builder.setCircularRedirectsAllowed(isFollowRedirects);
+                    builder.setRelativeRedirectsAllowed(isFollowRedirects);
+                });
 
-        Boolean expectContinue = configuration.getExpectContinue();
-        if (expectContinue != null) {
-            builder.setExpectContinueEnabled(expectContinue);
-        }
+        Optional.ofNullable(configuration.getExpectContinue())
+                .ifPresent(builder::setExpectContinueEnabled);
 
-        Integer connectionRequestTimeout = configuration.getRequestTimeout();
-        if (connectionRequestTimeout != null) {
-            builder.setConnectionRequestTimeout(connectionRequestTimeout);
-        }
+        Optional.ofNullable(configuration.getRequestTimeout())
+                .ifPresent(builder::setConnectionRequestTimeout);
 
-        Integer connectTimeout = configuration.getConnectTimeout();
-        if (connectTimeout != null) {
-            builder.setConnectTimeout(connectTimeout);
-        }
+        Optional.ofNullable(configuration.getConnectTimeout())
+                .ifPresent(builder::setConnectTimeout);
 
         return builder.build();
     }

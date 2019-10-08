@@ -1,5 +1,6 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.rest.client.HttpResponseException;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -35,6 +36,19 @@ class AssertHttpResponse {
         SuccessAssertion successAssertion = new SuccessAssertion(component, message, context);
         try {
             successAssertion.assertThat();
+        } catch (InterruptedException e) {
+            fail(e);
+        }
+    }
+
+    static void isNotSuccessful(RestClient component,
+                                Message message,
+                                FlowContext context,
+                                int status,
+                                String reasonPhrase) {
+        UnSuccessAssertion unSuccessAssertion = new UnSuccessAssertion(component, message, context, status, reasonPhrase);
+        try {
+            unSuccessAssertion.assertThat();
         } catch (InterruptedException e) {
             fail(e);
         }
@@ -134,17 +148,35 @@ class AssertHttpResponse {
         private final FlowContext context;
         private final RestClient component;
         private final String expectedErrorMessage;
+        private final int expectedStatus;
+        private final String expectedReasonPhrase;
 
-        private Throwable error;
+        private HttpResponseException error;
 
         UnSuccessAssertion(RestClient component,
                          Message message,
                          FlowContext context,
                          String expectedErrorMessage) {
-            this.expectedErrorMessage = expectedErrorMessage;
-            this.component = component;
+            this.expectedStatus = -1;
+            this.expectedReasonPhrase = null;
             this.message = message;
             this.context = context;
+            this.component = component;
+            this.expectedErrorMessage = expectedErrorMessage;
+        }
+
+        UnSuccessAssertion(RestClient component,
+                           Message message,
+                           FlowContext context,
+                           int expectedStatus,
+                           String expectedReasonPhrase) {
+            this.expectedErrorMessage = null;
+            this.message = message;
+            this.context = context;
+            this.component = component;
+            this.expectedStatus = expectedStatus;
+            this.expectedReasonPhrase = expectedReasonPhrase;
+
         }
 
         void assertThat() throws InterruptedException {
@@ -157,7 +189,7 @@ class AssertHttpResponse {
 
                 @Override
                 public void onError(Throwable throwable, FlowContext flowContext) {
-                    error = throwable;
+                    error = (HttpResponseException) throwable;
                     latch.countDown();
                 }
             });
@@ -169,7 +201,15 @@ class AssertHttpResponse {
             }
 
             if (error != null) {
-                Assertions.assertThat(error.getMessage()).isEqualTo(expectedErrorMessage);
+                if (expectedErrorMessage != null) {
+                    Assertions.assertThat(error.getMessage()).isEqualTo(expectedErrorMessage);
+                }
+                if (expectedStatus >= 0) {
+                    Assertions.assertThat(error.getStatusCode()).isEqualTo(expectedStatus);
+                }
+                if (expectedReasonPhrase != null) {
+                    Assertions.assertThat(error.getReasonPhrase()).isEqualTo(expectedReasonPhrase);
+                }
             } else {
                 fail("Response was successful");
             }

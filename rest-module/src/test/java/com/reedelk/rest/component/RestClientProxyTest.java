@@ -40,6 +40,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
         component.setConfiguration(configuration);
 
         givenThat(any(urlEqualTo(path))
+                .withHeader("Host", equalTo("localhost:8181"))
                 .willReturn(aResponse().withStatus(200)));
 
         Message payload = MessageBuilder.get().build();
@@ -83,6 +84,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
                         .withStatus(401)));
 
         givenThat(any(urlEqualTo(path))
+                .withHeader("Host", equalTo("localhost:8181"))
                 .withBasicAuth(username, password)
                 .willReturn(aResponse().withStatus(200)));
 
@@ -122,6 +124,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
         component.setConfiguration(configuration);
 
         givenThat(any(urlEqualTo(path))
+                .withHeader("Host", equalTo("localhost:8181"))
                 .withBasicAuth(username, password)
                 .willReturn(aResponse().withStatus(200)));
 

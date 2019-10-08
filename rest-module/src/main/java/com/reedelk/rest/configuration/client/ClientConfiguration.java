@@ -45,9 +45,6 @@ public class ClientConfiguration implements Implementor {
     @Default("true")
     private Boolean followRedirects;
 
-    @Property("Content compression")
-    private Boolean contentCompression;
-
     @Property("Expect continue")
     private Boolean expectContinue;
 
@@ -125,14 +122,6 @@ public class ClientConfiguration implements Implementor {
 
     public void setFollowRedirects(Boolean followRedirects) {
         this.followRedirects = followRedirects;
-    }
-
-    public Boolean getContentCompression() {
-        return contentCompression;
-    }
-
-    public void setContentCompression(Boolean contentCompression) {
-        this.contentCompression = contentCompression;
     }
 
     public Boolean getExpectContinue() {
