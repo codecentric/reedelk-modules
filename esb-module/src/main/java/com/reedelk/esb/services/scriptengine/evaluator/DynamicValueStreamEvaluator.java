@@ -21,9 +21,11 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
             return null;
         } else if (dynamicValue.isScript()) {
             // Script
-            return dynamicValue.isEvaluateMessagePayload() ?
-                    evaluateMessagePayload(dynamicValue.getEvaluatedType(), message) :
-                    TypedPublisher.from(execute(dynamicValue, STREAM_PROVIDER, FUNCTION, message, flowContext), dynamicValue.getEvaluatedType());
+            if (dynamicValue.isEvaluateMessagePayload()) {
+                return evaluateMessagePayload(dynamicValue.getEvaluatedType(), message);
+            } else {
+                return TypedPublisher.from(execute(dynamicValue, STREAM_PROVIDER, FUNCTION, message, flowContext), dynamicValue.getEvaluatedType());
+            }
         } else {
             // Not a script
             return TypedPublisher.from(Mono.justOrEmpty(dynamicValue.getValue()), dynamicValue.getEvaluatedType());
