@@ -1,23 +1,23 @@
 package com.reedelk.rest.client.header;
 
+import com.reedelk.rest.client.authentication.BasicAuthentication;
 import com.reedelk.rest.commons.ContentType;
 import com.reedelk.rest.commons.IsMessagePayload;
-import com.reedelk.rest.commons.Messages;
 import com.reedelk.rest.configuration.client.*;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpHeaders;
 
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.reedelk.rest.commons.ConfigPreconditions.requireNotNull;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
+import static com.reedelk.rest.commons.Messages.RestClient.PROXY_CONFIG_MISSING;
 
 public class HeadersEvaluator {
 
@@ -25,7 +25,7 @@ public class HeadersEvaluator {
     private DynamicStringMap userHeaders;
     private DynamicByteArray body;
 
-    private String authHeader;
+    private String proxyPreemptiveAuthHeaderValue;
 
     private HeadersEvaluator(ScriptEngineService scriptEngine,
                              ClientConfiguration configuration,
@@ -35,23 +35,7 @@ public class HeadersEvaluator {
         this.userHeaders = userHeaders;
         this.body = body;
 
-        if (configuration != null) {
-            Proxy proxy = configuration.getProxy();
-            if (Proxy.PROXY.equals(proxy)) {
-                ProxyConfiguration proxyConfig =
-                        requireNotNull(configuration.getProxyConfiguration(),
-                                Messages.RestClient.PROXY_CONFIG_MISSING.format());
-                ProxyAuthentication proxyAuth = proxyConfig.getAuthentication();
-                if (ProxyAuthentication.USER_AND_PASSWORD.equals(proxyAuth)) {
-                    ProxyAuthenticationConfiguration authConfig = proxyConfig.getAuthenticationConfiguration();
-                    if (Boolean.TRUE.equals(authConfig.getPreemptive())) {
-                        String auth = authConfig.getUsername() + ":" + authConfig.getPassword();
-                        byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
-                        authHeader = "Basic " + new String(encodedAuth);
-                    }
-                }
-            }
-        }
+        configurePreemptiveProxyAuthentication(configuration);
     }
 
     public HeaderProvider provider(Message message, FlowContext flowContext) {
@@ -62,8 +46,8 @@ public class HeadersEvaluator {
                     .ifPresent(contentType -> headers.put(CONTENT_TYPE, contentType));
         }
 
-        if (authHeader != null) {
-            headers.put(HttpHeaders.PROXY_AUTHORIZATION, authHeader);
+        if (proxyPreemptiveAuthHeaderValue != null) {
+            headers.put(HttpHeaders.PROXY_AUTHORIZATION, proxyPreemptiveAuthHeaderValue);
         }
 
         if (!userHeaders.isEmpty()) {
@@ -73,6 +57,25 @@ public class HeadersEvaluator {
         }
 
         return () -> headers;
+    }
+
+    private void configurePreemptiveProxyAuthentication(ClientConfiguration configuration) {
+        Optional.ofNullable(configuration).ifPresent(config -> {
+            Proxy proxy = config.getProxy();
+            if (Proxy.PROXY.equals(proxy)) {
+                ProxyConfiguration proxyConfig =
+                        requireNotNull(config.getProxyConfiguration(), PROXY_CONFIG_MISSING.format());
+                ProxyAuthentication proxyAuth = proxyConfig.getAuthentication();
+                if (ProxyAuthentication.BASIC.equals(proxyAuth)) {
+                    ProxyAuthenticationConfiguration authConfig = proxyConfig.getAuthenticationConfiguration();
+                    if (Boolean.TRUE.equals(authConfig.getPreemptive())) {
+                        BasicAuthentication basicAuthentication =
+                                new BasicAuthentication(authConfig.getUsername(), authConfig.getPassword());
+                        proxyPreemptiveAuthHeaderValue = basicAuthentication.authenticationHeader();
+                    }
+                }
+            }
+        });
     }
 
     public static Builder builder() {

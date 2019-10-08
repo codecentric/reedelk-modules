@@ -126,7 +126,7 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
         HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort());
         builder.setProxy(proxyHost);
 
-        if (ProxyAuthentication.USER_AND_PASSWORD.equals(proxyConfig.getAuthentication())) {
+        if (ProxyAuthentication.BASIC.equals(proxyConfig.getAuthentication())) {
             ProxyAuthenticationConfiguration authConfig = proxyConfig.getAuthenticationConfiguration();
             credentialsProvider.setCredentials(
                     new AuthScope(proxyConfig.getHost(), proxyConfig.getPort()),

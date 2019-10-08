@@ -63,7 +63,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
         proxyAuthConfiguration.setPassword(password);
 
         ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
-        proxyConfiguration.setAuthentication(ProxyAuthentication.USER_AND_PASSWORD);
+        proxyConfiguration.setAuthentication(ProxyAuthentication.BASIC);
         proxyConfiguration.setHost(PROXY_HOST);
         proxyConfiguration.setPort(PROXY_PORT);
         proxyConfiguration.setAuthenticationConfiguration(proxyAuthConfiguration);
@@ -106,7 +106,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
         proxyAuthConfiguration.setPreemptive(true);
 
         ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
-        proxyConfiguration.setAuthentication(ProxyAuthentication.USER_AND_PASSWORD);
+        proxyConfiguration.setAuthentication(ProxyAuthentication.BASIC);
         proxyConfiguration.setHost(PROXY_HOST);
         proxyConfiguration.setPort(PROXY_PORT);
         proxyConfiguration.setAuthenticationConfiguration(proxyAuthConfiguration);
