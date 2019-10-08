@@ -14,8 +14,10 @@ import static java.lang.String.format;
 @SuppressWarnings("unchecked")
 public class ValueConverterFactory {
 
-    private static final Map<Class<?>, Map<Class<?>, ValueConverter<?, ?>>> CONVERTERS;
+    private static final Map<Class<?>, ValueConverter<?,?>> DEFAULT =
+            Collections.unmodifiableMap(com.reedelk.esb.services.scriptengine.converter.defaulttype.Converters.ALL);
 
+    private static final Map<Class<?>, Map<Class<?>, ValueConverter<?, ?>>> CONVERTERS;
     static {
         Map<Class<?>, Map<Class<?>, ValueConverter<?, ?>>> tmp = new HashMap<>();
         tmp.put(Float.class, com.reedelk.esb.services.scriptengine.converter.floattype.Converters.ALL);
@@ -64,7 +66,7 @@ public class ValueConverterFactory {
     }
 
     private static <I, O> O convertType(I input, Class<?> inputClass, Class<O> outputClass) {
-        return Optional.ofNullable(CONVERTERS.get(inputClass))
+        return Optional.ofNullable(CONVERTERS.getOrDefault(inputClass, DEFAULT))
                 .flatMap(fromConverter -> Optional.ofNullable((ValueConverter<I, O>) fromConverter.get(outputClass)))
                 .map(toConverter -> toConverter.from(input))
                 .orElseThrow(converterNotFound(inputClass, outputClass));

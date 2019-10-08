@@ -1,5 +1,6 @@
 package com.reedelk.esb.services.scriptengine.converter;
 
+import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.type.TypedPublisher;
@@ -13,6 +14,9 @@ import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -597,7 +601,7 @@ class ValueConverterFactoryTest {
 
     @Nested
     @DisplayName("Convert any input to object")
-    class ConvertAnyToObject {
+    class ConvertUnknownType {
 
         @Test
         void shouldReturnOriginalValueWhenOutputClazzIsObject() {
@@ -609,6 +613,30 @@ class ValueConverterFactoryTest {
 
             // Then
             assertThat(result).isEqualTo(aBigDecimal);
+        }
+
+        @Test
+        void shouldReturnObjectAsString() {
+            // Given
+            Map<String,String> keysAndValues = ImmutableMap.of("key1", "value1", "key2", "value2");
+
+            // When
+            String result = ValueConverterFactory.convert(keysAndValues, String.class);
+
+            // Then
+            assertThat(result).isEqualTo(keysAndValues.toString());
+        }
+
+        @Test
+        void shouldReturnObjectAsByteArray() {
+            // Given
+            List<String> values = Arrays.asList("one", "two", "three");
+
+            // When
+            byte[] result = ValueConverterFactory.convert(values, byte[].class);
+
+            // Then
+            assertThat(result).isEqualTo(values.toString().getBytes());
         }
     }
 
