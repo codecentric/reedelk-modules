@@ -1,6 +1,5 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import com.reedelk.rest.configuration.listener.Response;
@@ -13,12 +12,16 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.reedelk.rest.commons.RestMethod.GET;
+import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
+import static com.reedelk.runtime.api.message.type.MimeType.UNKNOWN;
 import static org.apache.http.HttpStatus.*;
 import static org.mockito.Mockito.doReturn;
 
@@ -30,6 +33,8 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     private ListenerConfiguration defaultConfiguration;
     private HttpUriRequest defaultRequest;
 
+    private Message inboundMessage;
+
     @BeforeEach
     void setUp() {
         super.setUp();
@@ -40,9 +45,9 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     }
 
     @Test
-    void shouldReturn200OK() throws IOException {
+    void shouldReturn200() throws IOException {
         // Given
-        RestListener listener = listenerWith(RestMethod.GET, "/", defaultConfiguration);
+        RestListener listener = listenerWith(GET, "/", defaultConfiguration);
         listener.addEventListener((message, callback) -> callback.onResult(message, context));
         listener.onStart();
 
@@ -55,9 +60,9 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     }
 
     @Test
-    void shouldReturn500InternalServerErrorWithoutErrorBody() throws IOException {
+    void shouldReturn500() throws IOException {
         // Given
-        RestListener listener = listenerWith(RestMethod.GET, "/", defaultConfiguration);
+        RestListener listener = listenerWith(GET, "/", defaultConfiguration);
         listener.addEventListener((message, callback) -> callback.onError(new IllegalStateException("flow error"), context));
         listener.onStart();
 
@@ -70,7 +75,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     }
 
     @Test
-    void shouldReturn500InternalServerErrorWithErrorBody() throws IOException {
+    void shouldReturn500WithErrorBody() throws IOException {
         // Given
         String errorMessage = "my error";
         DynamicByteArray errorResponseBody = DynamicByteArray.from("#[error]");
@@ -89,7 +94,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setBody(errorResponseBody);
 
-        RestListener listener = listenerWith(RestMethod.GET, "/", defaultConfiguration);
+        RestListener listener = listenerWith(GET, "/", defaultConfiguration);
         listener.addEventListener((message, callback) -> callback.onError(exception, context));
         listener.setErrorResponse(errorResponse);
         listener.onStart();
@@ -103,9 +108,9 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     }
 
     @Test
-    void shouldReturn404NotFound() throws IOException {
+    void shouldReturn404() throws IOException {
         // Given
-        RestListener listener = listenerWith(RestMethod.GET, "/", defaultConfiguration);
+        RestListener listener = listenerWith(GET, "/", defaultConfiguration);
         listener.addEventListener((message, callback) -> callback.onResult(message, context));
         listener.onStart();
 
@@ -129,7 +134,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         Response listenerResponse = new Response();
         listenerResponse.setBody(responseBody);
 
-        RestListener listener = listenerWith(RestMethod.GET, "/", defaultConfiguration);
+        RestListener listener = listenerWith(GET, "/", defaultConfiguration);
         listener.setResponse(listenerResponse);
         listener.addEventListener((message, callback) -> callback.onResult(responseMessage, context));
         listener.onStart();
@@ -138,6 +143,29 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         HttpResponse response = HttpClientBuilder.create().build().execute(defaultRequest);
 
         // Then
-        assertThatContentType(response, MimeType.APPLICATION_JSON.toString());
+        assertThatContentType(response, APPLICATION_JSON.toString());
+    }
+
+    @Test
+    void shouldSetMimeTypeUnknownForInboundMessage() throws IOException {
+        // Given
+        DynamicByteArray responseBody = DynamicByteArray.from("#[message.payload()]");
+        Response listenerResponse = new Response();
+        listenerResponse.setBody(responseBody);
+
+        RestListener listener = listenerWith(GET, "/", defaultConfiguration);
+        listener.setResponse(listenerResponse);
+        listener.addEventListener((message, callback) -> {
+            inboundMessage = message;
+            callback.onResult(message, context);
+        });
+        listener.onStart();
+
+        // Given
+        HttpClientBuilder.create().build().execute(defaultRequest);
+
+        // Then
+        MimeType inboundMessageMimeType = inboundMessage.getContent().type().getMimeType();
+        Assertions.assertThat(inboundMessageMimeType).isEqualTo(UNKNOWN);
     }
 }
