@@ -1,6 +1,6 @@
 package com.reedelk.rest.client.body;
 
-import com.reedelk.rest.commons.IsMessagePayload;
+import com.reedelk.rest.commons.IsEvaluateMessagePayload;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
@@ -9,19 +9,19 @@ import org.reactivestreams.Publisher;
 
 public class DefaultBodyProvider implements BodyProvider {
 
-    private static final byte[] EMPTY = new byte[0];
-
     private final DynamicByteArray body;
     private final ScriptEngineService scriptEngine;
+    private final boolean isEvaluateMessagePayloadBody;
 
     DefaultBodyProvider(ScriptEngineService scriptEngine, DynamicByteArray body) {
         this.body = body;
         this.scriptEngine = scriptEngine;
+        this.isEvaluateMessagePayloadBody = IsEvaluateMessagePayload.from(body);
     }
 
     @Override
     public byte[] asByteArray(Message message, FlowContext flowContext) {
-        return scriptEngine.evaluate(body, message, flowContext).orElse(EMPTY);
+        return scriptEngine.evaluate(body, message, flowContext).orElse(new byte[0]);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class DefaultBodyProvider implements BodyProvider {
 
     @Override
     public boolean streamable(Message message) {
-        if (IsMessagePayload.from(body)) {
+        if (isEvaluateMessagePayloadBody) {
             return message.getContent().isStream() &&
                     !message.getContent().isConsumed();
         }

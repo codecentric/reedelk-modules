@@ -8,7 +8,6 @@ import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.TypedPublisher;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -16,10 +15,9 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.apache.http.HttpStatus.*;
 import static org.mockito.Mockito.doReturn;
@@ -75,15 +73,21 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     void shouldReturn500InternalServerErrorWithErrorBody() throws IOException {
         // Given
         String errorMessage = "my error";
-        DynamicByteArray responseBody = DynamicByteArray.from("#[error]");
+        DynamicByteArray errorResponseBody = DynamicByteArray.from("#[error]");
         IllegalStateException exception = new IllegalStateException(errorMessage);
 
-        doReturn(TypedPublisher.fromByteArray(Flux.just(errorMessage.getBytes())))
+        // Status
+        doReturn(Optional.empty())
                 .when(scriptEngine)
-                .evaluateStream(responseBody, exception, context);
+                .evaluate(null, exception, context);
+
+        // Exception
+        doReturn(Optional.of(errorMessage.getBytes()))
+                .when(scriptEngine)
+                .evaluate(errorResponseBody, exception, context);
 
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setBody(responseBody);
+        errorResponse.setBody(errorResponseBody);
 
         RestListener listener = listenerWith(RestMethod.GET, "/", defaultConfiguration);
         listener.addEventListener((message, callback) -> callback.onError(exception, context));
@@ -128,10 +132,6 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         RestListener listener = listenerWith(RestMethod.GET, "/", defaultConfiguration);
         listener.setResponse(listenerResponse);
         listener.addEventListener((message, callback) -> callback.onResult(responseMessage, context));
-
-        doReturn(TypedPublisher.fromByteArray(Mono.just(json.getBytes())))
-                .when(scriptEngine)
-                .evaluateStream(responseBody, responseMessage, context);
         listener.onStart();
 
         // Given

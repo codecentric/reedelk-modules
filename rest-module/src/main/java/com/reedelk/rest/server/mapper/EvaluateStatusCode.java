@@ -61,13 +61,11 @@ class EvaluateStatusCode {
     HttpResponseStatus evaluate() {
         // If Message is defined, then use message, otherwise the exception.
         if (message != null) {
-            // TODO: Test what happens if status is not present.
             return scriptEngine.evaluate(status, message, flowContext)
                     .flatMap(status -> Optional.of(valueOf(status)))
                     .orElse(defaultCode);
 
         } else if (throwable != null) {
-            // TODO: Test what happens if status is not present.
             return scriptEngine.evaluate(status, throwable, flowContext)
                     .flatMap(status -> Optional.of(valueOf(status)))
                     .orElse(defaultCode);

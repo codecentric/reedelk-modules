@@ -2,13 +2,11 @@ package com.reedelk.rest.server.mapper;
 
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.Response;
-import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.TypedMono;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
@@ -48,89 +46,6 @@ class MessageHttpResponseMapperTest {
     @Nested
     @DisplayName("Map message")
     class MapMessage {
-
-        @Nested
-        @DisplayName("Output stream is correct")
-        class OutputStream {
-
-            @Test
-            void shouldOutputStreamFromGivenResponseBodyText() {
-                // Given
-                DynamicByteArray responseBody = DynamicByteArray.from("test body");
-
-                MessageHttpResponseMapper mapper = newMapperWithBody(responseBody);
-                Message message = MessageBuilder.get().text("a discarded body").build();
-
-                doReturn(TypedMono.just("test body".getBytes()))
-                        .when(scriptEngine)
-                        .evaluateStream(responseBody, message, flowContext);
-
-                // When
-                Publisher<byte[]> actualStream = mapper.map(message, response, flowContext);
-
-                // Then
-                assertThatStreamIs(actualStream, "test body");
-                verifyNoMoreInteractions(scriptEngine);
-            }
-
-            @Test
-            void shouldOutputStreamFromGivenResponseScript() {
-                // Given
-                String expectedContent = "response content";
-                DynamicByteArray responseBody = DynamicByteArray.from("#[myVariable]");
-
-                MessageHttpResponseMapper mapper = newMapperWithBody(responseBody);
-                Message message = MessageBuilder.get().text(expectedContent).build();
-
-                doReturn(TypedMono.just(expectedContent.getBytes()))
-                        .when(scriptEngine)
-                        .evaluateStream(responseBody, message, flowContext);
-
-                // When
-                Publisher<byte[]> actualStream = mapper.map(message, response, flowContext);
-
-                // Then
-                assertThatStreamIs(actualStream, expectedContent);
-            }
-
-            @Test
-            void shouldOutputStreamEmptyForEmptyResponseScript() {
-                // Given
-                DynamicByteArray emptyResponseBody = DynamicByteArray.from(EMPTY);
-
-                MessageHttpResponseMapper mapper = newMapperWithBody(emptyResponseBody);
-                Message message = MessageBuilder.get().build();
-
-                doReturn(TypedMono.just(EMPTY.getBytes()))
-                        .when(scriptEngine).evaluateStream(emptyResponseBody, message, flowContext);
-
-                // When
-                Publisher<byte[]> actualStream = mapper.map(message, response, flowContext);
-
-                // Then
-                assertThatStreamIs(actualStream, EMPTY);
-                verifyNoMoreInteractions(scriptEngine);
-            }
-
-            @Test
-            void shouldOutputStreamEmptyForNullResponseScript() {
-                // Given
-                DynamicByteArray nullResponseBody = null;
-
-                MessageHttpResponseMapper mapper = newMapperWithBody(nullResponseBody);
-                Message message = MessageBuilder.get().text("something").build();
-
-                doReturn(TypedMono.emptyByteArray())
-                        .when(scriptEngine).evaluateStream(nullResponseBody, message, flowContext);
-
-                // When
-                Publisher<byte[]> actualStream = mapper.map(message, response, flowContext);
-
-                // Then
-                assertThatStreamIsEmpty(actualStream);
-                verifyNoMoreInteractions(scriptEngine);
-            }
-        }
 
         @Nested
         @DisplayName("Response status is correct")
@@ -200,10 +115,6 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().text("my text body").build();
 
-                doReturn(TypedMono.just("my text body"))
-                        .when(scriptEngine).evaluateStream(body, message, flowContext);
-
-
                 // When
                 mapper.map(message, response, flowContext);
 
@@ -213,25 +124,7 @@ class MessageHttpResponseMapperTest {
             }
 
             @Test
-            void shouldSetContentTypeHeaderWhenBodyIsText() {
-                // Given
-                DynamicByteArray body = DynamicByteArray.from("my text body");
-                MessageHttpResponseMapper mapper = newMapperWithBody(body);
-                Message message = MessageBuilder.get().build();
-
-                doReturn(TypedMono.just("my text body".getBytes()))
-                        .when(scriptEngine).evaluateStream(body, message, flowContext);
-
-                // When
-                mapper.map(message, response, flowContext);
-
-                // Then
-                verify(response).addHeader(CONTENT_TYPE, MimeType.TEXT.toString());
-                verifyNoMoreInteractions(scriptEngine);
-            }
-
-            @Test
-            void shouldSetContentTypeHeaderWhenBodyIsEmptyText() {
+            void shouldNotSetContentTypeHeaderWhenBodyIsEmptyText() {
                 // Given
                 MessageHttpResponseMapper mapper = newMapperWithBody(DynamicByteArray.from(""));
                 Message message = MessageBuilder.get().build();
@@ -240,7 +133,7 @@ class MessageHttpResponseMapperTest {
                 mapper.map(message, response, flowContext);
 
                 // Then
-                verify(response).addHeader(CONTENT_TYPE, MimeType.TEXT.toString());
+                verify(response, never()).addHeader(anyString(), anyString());
             }
 
             @Test
@@ -250,14 +143,10 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().build();
 
-                doReturn(null)
-                        .when(scriptEngine).evaluateStream(body, message, flowContext);
-
                 // When
-                Publisher<byte[]> mapped = mapper.map(message, response, flowContext);
+                mapper.map(message, response, flowContext);
 
                 // Then
-                assertThatStreamIsEmpty(mapped);
                 verify(response, never()).addHeader(anyString(), anyString());
                 verifyNoMoreInteractions(scriptEngine);
             }
@@ -269,14 +158,10 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().build();
 
-                doReturn(TypedMono.emptyByteArray())
-                        .when(scriptEngine).evaluateStream(body, message, flowContext);
-
                 // When
-                Publisher<byte[]> mapped = mapper.map(message, response, flowContext);
+                mapper.map(message, response, flowContext);
 
                 // Then
-                assertThatStreamIsEmpty(mapped);
                 verify(response, never()).addHeader(anyString(), anyString());
                 verifyNoMoreInteractions(scriptEngine);
             }
@@ -355,123 +240,6 @@ class MessageHttpResponseMapperTest {
     class MapException {
 
         @Nested
-        @DisplayName("Output stream is correct")
-        class OutputStream {
-
-            @Test
-            void shouldOutputStreamFromGivenResponseBodyText() {
-                // Given
-                String expectedBody = "An exception has been thrown";
-                DynamicByteArray bodyValue = DynamicByteArray.from(expectedBody);
-                Throwable exception = new ESBException("Error while processing JSON");
-
-                doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, exception, flowContext);
-
-                doReturn(TypedMono.just(expectedBody.getBytes()))
-                        .when(scriptEngine).evaluateStream(bodyValue, exception, flowContext);
-
-                MessageHttpResponseMapper mapper = newMapperWithErrorBody(bodyValue);
-
-                // When
-                Publisher<byte[]> actualStream = mapper.map(exception, response, flowContext);
-
-                // Then
-                assertThatStreamIs(actualStream, expectedBody);
-                verifyNoMoreInteractions(scriptEngine);
-            }
-
-            @Test
-            void shouldOutputStreamFromGivenResponseScript() {
-                // Given
-                String expectedContent = "Error while processing JSON";
-                DynamicByteArray errorResponseBody = DynamicByteArray.from("#[error.message]");
-
-                Throwable exception = new ESBException(expectedContent);
-
-                MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorResponseBody);
-
-                doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, exception, flowContext);
-
-                doReturn(TypedMono.just(expectedContent.getBytes()))
-                        .when(scriptEngine).evaluateStream(errorResponseBody, exception, flowContext);
-
-                // When
-                Publisher<byte[]> actualStream = mapper.map(exception, response, flowContext);
-
-                // Then
-                assertThatStreamIs(actualStream, expectedContent);
-            }
-
-            @Test
-            void shouldOutputStreamFromExceptionStackTraceWithoutCallingScriptEngine() {
-                // Given
-                DynamicByteArray errorResponseBody = DynamicByteArray.from("#[error]");
-
-                Throwable exception = new ESBException("Error while processing JSON");
-
-                MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorResponseBody);
-
-                doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, exception, flowContext);
-
-                doReturn(TypedMono.just(StackTraceUtils.asString(exception).getBytes()))
-                        .when(scriptEngine).evaluateStream(errorResponseBody, exception, flowContext);
-
-
-                // When
-                Publisher<byte[]> actualStream = mapper.map(exception, response, flowContext);
-
-                // Then
-                assertThatStreamIs(actualStream, StackTraceUtils.asString(exception));
-                verifyNoMoreInteractions(scriptEngine);
-            }
-
-            @Test
-            void shouldOutputStreamEmptyForEmptyErrorResponseScript() {
-                // Given
-                DynamicByteArray emptyErrorResponseBody = DynamicByteArray.from("");
-                Throwable exception = new ESBException("Error while processing JSON");
-                MessageHttpResponseMapper mapper = newMapperWithErrorBody(emptyErrorResponseBody);
-
-                doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, exception, flowContext);
-
-                doReturn(TypedMono.emptyByteArray())
-                        .when(scriptEngine).evaluateStream(emptyErrorResponseBody, exception, flowContext);
-
-                // When
-                Publisher<byte[]> actualStream = mapper.map(exception, response, flowContext);
-
-                // Then
-                assertThatStreamIs(actualStream, EMPTY);
-                verifyNoMoreInteractions(scriptEngine);
-            }
-
-            @Test
-            void shouldOutputStreamEmptyForNullErrorResponseScript() {
-                // Given
-                DynamicByteArray emptyErrorResponseBody = null;
-                Throwable exception = new ESBException("Error while processing JSON");
-                MessageHttpResponseMapper mapper = newMapperWithErrorBody(emptyErrorResponseBody);
-
-                doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, exception, flowContext);
-
-                doReturn(null)
-                        .when(scriptEngine).evaluateStream(null, exception, flowContext);
-
-                // When
-                Publisher<byte[]> actualStream = mapper.map(exception, response, flowContext);
-
-                // Then
-                assertThatStreamIsEmpty(actualStream);
-                verifyNoMoreInteractions(scriptEngine);
-            }
-        }
-
-        @Nested
         @DisplayName("Response status is correct")
         class ResponseStatus {
 
@@ -537,9 +305,6 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedMono.just(exception.getMessage()))
-                        .when(scriptEngine).evaluateStream(eq(errorBody), eq(exception), eq(flowContext));
-
                 // When
                 mapper.map(exception, response, flowContext);
 
@@ -558,9 +323,6 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedMono.just("my text body"))
-                        .when(scriptEngine).evaluateStream(eq(errorBody), eq(exception), eq(flowContext));
-
                 // When
                 mapper.map(exception, response, flowContext);
 
@@ -577,9 +339,6 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
-
-                doReturn(TypedMono.just(exception.getMessage()))
-                        .when(scriptEngine).evaluateStream(eq(errorBody), eq(exception), eq(flowContext));
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -599,9 +358,6 @@ class MessageHttpResponseMapperTest {
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
 
-                doReturn(TypedMono.emptyByteArray())
-                        .when(scriptEngine).evaluateStream(eq(errorBody), eq(exception), eq(flowContext));
-
                 // When
                 mapper.map(exception, response, flowContext);
 
@@ -618,9 +374,6 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(null, exception, flowContext);
-
-                doReturn(TypedMono.emptyByteArray())
-                        .when(scriptEngine).evaluateStream(isNull(), eq(exception), eq(flowContext));
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -732,11 +485,6 @@ class MessageHttpResponseMapperTest {
         Response response = new Response();
         response.setBody(value);
         response.setStatus(responseStatus);
-
-        doReturn(TypedMono.just(bodyContent.getBytes()))
-                .when(scriptEngine)
-                .evaluateStream(eq(value), any(Message.class), eq(flowContext));
-
         return new MessageHttpResponseMapper(scriptEngine, response, null);
     }
 
@@ -751,9 +499,6 @@ class MessageHttpResponseMapperTest {
 
         doReturn(Optional.of(200))
                 .when(scriptEngine).evaluate(eq(statusValue), any(Message.class), any(FlowContext.class));
-
-        doReturn(TypedMono.just(bodyContent.getBytes()))
-                .when(scriptEngine).evaluateStream(eq(bodyValue), any(Message.class), eq(flowContext));
 
         return new MessageHttpResponseMapper(scriptEngine, response, null);
     }

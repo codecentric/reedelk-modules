@@ -3,6 +3,7 @@ package com.reedelk.rest.component;
 import com.reedelk.rest.commons.ConfigurationException;
 import com.reedelk.rest.commons.Messages;
 import com.reedelk.rest.commons.RestMethod;
+import com.reedelk.rest.configuration.StreamingMode;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import com.reedelk.rest.configuration.listener.Response;
@@ -47,6 +48,10 @@ public class RestListener extends AbstractInbound {
     @Default("GET")
     private RestMethod method;
 
+    @Property("Streaming")
+    @Default("AUTO")
+    private StreamingMode streaming = StreamingMode.AUTO;
+
     @Property("Response")
     private Response response;
 
@@ -65,8 +70,9 @@ public class RestListener extends AbstractInbound {
                         .inboundEventListener(RestListener.this)
                         .errorResponse(errorResponse)
                         .scriptEngine(scriptEngine)
-                        .response(response)
+                        .streaming(streaming)
                         .matchingPath(path)
+                        .response(response)
                         .build();
 
         Server server = provider.get(configuration)

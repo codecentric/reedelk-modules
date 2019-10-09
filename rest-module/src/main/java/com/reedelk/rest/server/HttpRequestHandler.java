@@ -1,5 +1,6 @@
 package com.reedelk.rest.server;
 
+import com.reedelk.rest.configuration.StreamingMode;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.Response;
 import com.reedelk.rest.server.mapper.HttpRequestMessageMapper;
@@ -8,6 +9,7 @@ import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
@@ -19,13 +21,16 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
+import static java.lang.String.format;
 
 public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpServerResponse, Publisher<Void>> {
 
     private InboundEventListener inboundEventListener;
     private MessageHttpResponseMapper responseMapper;
     private HttpRequestMessageMapper requestMapper;
+    private BodyProvider bodyProvider;
 
     private HttpRequestHandler() {
     }
@@ -50,10 +55,6 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                 .flatMap(byteStream -> Mono.from(response.sendByteArray(byteStream)));
     }
 
-    // TODO: Fix output streaming here. This pipeline result object must
-    //  depend on the streaming mode. If the streaming mode is AUTO it is
-    //  already good. If it is STREAM only the result should be a sink and
-    //  stream the data. If it is NONE, it should set the content length.
     private class OnPipelineResult implements OnResult {
 
         private final MonoSink<Publisher<byte[]>> sink;
@@ -67,29 +68,45 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         @Override
         public void onResult(Message outMessage, FlowContext flowContext) {
             try {
-                Publisher<byte[]> payload =
-                        responseMapper.map(outMessage, response, flowContext);
-                sink.success(payload);
+                responseMapper.map(outMessage, response, flowContext);
+
+                Publisher<byte[]> body = bodyProvider.from(response, outMessage, flowContext);
+
+                sink.success(body);
 
             } catch (Exception exception) {
-                Publisher<byte[]> payload =
-                        responseMapper.map(exception, response, flowContext);
-                sink.success(payload);
+
+                responseMapper.map(exception, response, flowContext);
+
+                Publisher<byte[]> body = bodyProvider.from(response, exception, flowContext);
+
+                sink.success(body);
             }
         }
 
         @Override
         public void onError(Throwable exception, FlowContext flowContext) {
             if (exception instanceof RejectedExecutionException) {
+
                 // Server is too  busy, there are not enough Threads able to handle the request.
-                response.status(SERVICE_UNAVAILABLE);
+
                 String responseMessage = SERVICE_UNAVAILABLE.code() + " Service Temporarily Unavailable (Server is too busy)";
-                sink.success(Mono.just(responseMessage.getBytes()));
+
+                byte[] bodyBytes = responseMessage.getBytes();
+
+                response.status(SERVICE_UNAVAILABLE);
+
+                response.addHeader(CONTENT_LENGTH, String.valueOf(bodyBytes.length));
+
+                sink.success(Mono.just(bodyBytes));
 
             } else {
-                Publisher<byte[]> payload =
-                        responseMapper.map(exception, response, flowContext);
-                sink.success(payload);
+
+                responseMapper.map(exception, response, flowContext);
+
+                Publisher<byte[]> body = bodyProvider.from(response, exception, flowContext);
+
+                sink.success(body);
             }
         }
     }
@@ -103,6 +120,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         private String matchingPath;
 
         private Response response;
+        private StreamingMode streaming;
         private ErrorResponse errorResponse;
         private ScriptEngineService scriptEngine;
         private InboundEventListener inboundEventListener;
@@ -114,6 +132,11 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
         public Builder response(Response response) {
             this.response = response;
+            return this;
+        }
+
+        public Builder streaming(StreamingMode streaming) {
+            this.streaming = streaming;
             return this;
         }
 
@@ -136,11 +159,23 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
             HttpRequestHandler handler = new HttpRequestHandler();
             handler.inboundEventListener = inboundEventListener;
             handler.requestMapper = new HttpRequestMessageMapper(matchingPath);
-            handler.responseMapper = new MessageHttpResponseMapper(
-                    scriptEngine,
-                    response,
-                    errorResponse);
+            handler.responseMapper = new MessageHttpResponseMapper(scriptEngine, response, errorResponse);
+            handler.bodyProvider = createBodyProvider();
             return handler;
+        }
+
+        private BodyProvider createBodyProvider() {
+            DynamicByteArray bodyResponse = response == null ? null : response.getBody();
+            DynamicByteArray bodyErrorResponse = errorResponse == null ? null : errorResponse.getBody();
+            if (StreamingMode.NONE.equals(streaming)) {
+                return new BodyProviderStreamNone(scriptEngine, bodyResponse, bodyErrorResponse);
+            } else if (StreamingMode.ALWAYS.equals(streaming)) {
+                return new BodyProviderStreamAlways(scriptEngine, bodyResponse, bodyErrorResponse);
+            } else if (StreamingMode.AUTO.equals(streaming)) {
+                return new BodyProviderStreamAuto(scriptEngine, bodyResponse, bodyErrorResponse);
+            } else {
+                throw new IllegalArgumentException(format("Execution strategy not available for streaming mode '%s'", streaming));
+            }
         }
     }
 }
