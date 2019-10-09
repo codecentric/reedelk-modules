@@ -1,6 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
+import com.reedelk.runtime.api.commons.ObjectToBytes;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -23,6 +24,7 @@ import reactor.core.publisher.Flux;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicValueEvaluatorTest {
@@ -378,6 +380,110 @@ class DynamicValueEvaluatorTest {
 
             // Then
             assertThat(evaluated).isPresent().contains(given);
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate dynamic object value with mime type, message and context")
+    class EvaluateDynamicObjectValueWithMimeTypeAndMessageAndContext {
+
+        @Test
+        void shouldCorrectlyConvertObjectToTextMimeType() {
+            // Given
+            Flux<String> content = Flux.just("Hello", ", this", " is", " just", " a");
+            Type type = new Type(MimeType.TEXT, String.class);
+            TypedContent<String> typedContent = new StringContent(content, type);
+
+            Message message = MessageBuilder.get().typedContent(typedContent).build();
+
+            DynamicObject dynamicObject = DynamicObject.from("#[message.content]");
+
+            // When
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.TEXT, message, context);
+
+            // Then
+            assertThat(result).isPresent().contains(typedContent.toString());
+        }
+
+        @Test
+        void shouldCorrectlyConvertObjectToBinaryMimeType() {
+            // Given
+            Type type = new Type(MimeType.TEXT, String.class);
+            TypedContent<String> typedContent = new StringContent("my test", type);
+
+            Message message = MessageBuilder.get().typedContent(typedContent).build();
+
+            DynamicObject dynamicObject = DynamicObject.from("#[message.content.type()]");
+
+            // When
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.BINARY, message, context);
+
+            // Then
+            assertThat(result).isPresent().contains(ObjectToBytes.from(typedContent.type()));
+        }
+
+        @Test
+        void shouldThrowExceptionWhenObjectToBinaryMimeTypeButContentNotSerializable() {
+            // Given
+            Flux<String> content = Flux.just("Hello", ", this", " is", " just", " a");
+            Type type = new Type(MimeType.TEXT, String.class);
+            TypedContent<String> typedContent = new StringContent(content, type);
+
+            Message message = MessageBuilder.get().typedContent(typedContent).build();
+
+            DynamicObject dynamicObject = DynamicObject.from("#[message.content]");
+
+            // When
+            ESBException thrown = assertThrows(ESBException.class,
+                    () -> evaluator.evaluate(dynamicObject, MimeType.BINARY, message, context));
+
+            // Then
+            assertThat(thrown).isNotNull();
+            assertThat(thrown).hasMessage("java.io.NotSerializableException: reactor.core.publisher.FluxArray");
+        }
+
+        @Test
+        void shouldReturnEmptyResultWhenDynamicObjectIsNull() {
+            // Given
+            Message message = MessageBuilder.get().empty().build();
+
+            DynamicObject dynamicObject = null;
+
+            // When
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.BINARY, message, context);
+
+            // Then
+            assertThat(result).isNotPresent();
+        }
+
+        @Test
+        void shouldReturnEmptyResultWhenDynamicObjectHasEmptyScript() {
+            // Given
+            Message message = MessageBuilder.get().empty().build();
+
+            DynamicObject dynamicObject = DynamicObject.from("#[]");
+
+            // When
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.APPLICATION_JSON, message, context);
+
+            // Then
+            assertThat(result).isNotPresent();
+        }
+
+        @Test
+        void shouldReturnConvertedObjectWhenNotScript() {
+            // Given
+            Message message = MessageBuilder.get().empty().build();
+
+            MyTestObject testObject = new MyTestObject(43, 234.23f, "test");
+
+            DynamicObject dynamicObject = DynamicObject.from(testObject);
+
+            // When
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.TEXT, message, context);
+
+            // Then
+            assertThat(result).isPresent().contains(testObject.toString());
         }
     }
 
