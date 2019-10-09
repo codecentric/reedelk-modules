@@ -12,7 +12,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +22,7 @@ import static com.reedelk.rest.commons.RestMethod.GET;
 import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
 import static com.reedelk.runtime.api.message.type.MimeType.UNKNOWN;
 import static org.apache.http.HttpStatus.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 class RestListenerGetTest extends RestListenerAbstractTest {
@@ -166,6 +166,13 @@ class RestListenerGetTest extends RestListenerAbstractTest {
 
         // Then
         MimeType inboundMessageMimeType = inboundMessage.getContent().type().getMimeType();
-        Assertions.assertThat(inboundMessageMimeType).isEqualTo(UNKNOWN);
+        assertThat(inboundMessageMimeType).isEqualTo(UNKNOWN);
     }
+
+    // TODO: Test that matches regexp for path /{subpath:.*}/resource
+    // TODO: Test that root '/' or '' matches for path
+    // TODO: Test base path
+    // TODO: Test POST,PUT,DELETE,OPTIONS, HEAD
+    // TODO: Test gzip compression
+    // TODO: What happens when callback.onResult is never called? There should be a timeout....!??!?
 }
