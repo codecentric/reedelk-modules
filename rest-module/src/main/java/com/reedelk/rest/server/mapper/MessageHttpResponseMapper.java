@@ -71,10 +71,10 @@ public class MessageHttpResponseMapper {
      */
     public void map(Throwable exception, HttpServerResponse serverResponse, FlowContext flowContext) {
         // 1. Status code
-        DynamicInteger responseStatus = ofNullable(errorResponse).map(ErrorResponse::getStatus).orElse(null);
+        DynamicInteger errorResponseStatus = ofNullable(errorResponse).map(ErrorResponse::getStatus).orElse(null);
         HttpResponseStatus status = EvaluateStatusCode.withDefault(INTERNAL_SERVER_ERROR)
                 .withScriptEngine(scriptEngine)
-                .withStatus(responseStatus)
+                .withStatus(errorResponseStatus)
                 .withContext(flowContext)
                 .withThrowable(exception)
                 .evaluate();

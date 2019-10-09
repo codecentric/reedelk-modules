@@ -55,11 +55,12 @@ class EvaluateStatusCode {
     }
 
     /**
-     * If the message is defined, then we use the message, otherwise the exception.
+     * Evaluates the dynamic value defined for the status code.
+     * If the message is defined, then the message is used, otherwise
+     * the exception is used instead.
      * @return the evaluated response status code.
      */
     HttpResponseStatus evaluate() {
-        // If Message is defined, then use message, otherwise the exception.
         if (message != null) {
             return scriptEngine.evaluate(status, message, flowContext)
                     .flatMap(status -> Optional.of(valueOf(status)))
