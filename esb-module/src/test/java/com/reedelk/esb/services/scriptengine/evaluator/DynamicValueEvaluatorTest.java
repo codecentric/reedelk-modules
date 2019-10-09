@@ -7,10 +7,7 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.StringContent;
-import com.reedelk.runtime.api.message.type.Type;
-import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.message.type.*;
 import com.reedelk.runtime.api.script.dynamicvalue.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -478,6 +475,24 @@ class DynamicValueEvaluatorTest {
             MyTestObject testObject = new MyTestObject(43, 234.23f, "test");
 
             DynamicObject dynamicObject = DynamicObject.from(testObject);
+
+            // When
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.TEXT, message, context);
+
+            // Then
+            assertThat(result).isPresent().contains(testObject.toString());
+        }
+
+        @Test
+        void shouldCorrectlyConvertMessagePayload() {
+            // Given
+            MyTestObject testObject = new MyTestObject(2345, 4.223f, "my object");
+            Type type = new Type(MimeType.ANY, MyTestObject.class);
+            TypedContent<?> typedContent = new ObjectContent(testObject, type);
+
+            Message message = MessageBuilder.get().typedContent(typedContent).build();
+
+            DynamicObject dynamicObject = DynamicObject.from("#[message.payload()]");
 
             // When
             Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.TEXT, message, context);

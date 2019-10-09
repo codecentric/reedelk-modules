@@ -62,6 +62,13 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
         } else if (dynamicObject.isScript()) {
             if (dynamicObject.isEmpty()) {
                 return OPTIONAL_PROVIDER.empty();
+                // Script
+            } else if (dynamicObject.isEvaluateMessagePayload()) {
+                // we avoid evaluating the payload with the script engine (optimization)
+                // note that by calling message.payload(), if it is a stream we are
+                // automatically resolving it.
+                Object payload = message.payload();
+                return convert(payload, MimeToJavaType.from(mimeType), OPTIONAL_PROVIDER);
             } else {
                 String functionName = functionNameOf(dynamicObject, FUNCTION);
                 Object evaluationResult = scriptEngine.invokeFunction(functionName, message, flowContext);
