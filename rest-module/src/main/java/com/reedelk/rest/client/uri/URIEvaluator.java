@@ -1,5 +1,6 @@
 package com.reedelk.rest.client.uri;
 
+import com.reedelk.rest.commons.ConfigurationException;
 import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -12,9 +13,9 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.reedelk.rest.commons.ConfigPreconditions.requireNotNull;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static com.reedelk.runtime.api.commons.StringUtils.isNotNull;
-import static java.util.Objects.requireNonNull;
 
 public class URIEvaluator {
 
@@ -70,8 +71,8 @@ public class URIEvaluator {
         private String baseURL;
         private ScriptEngineService scriptEngine;
         private ClientConfiguration configuration;
-        private DynamicStringMap pathParameters;
-        private DynamicStringMap queryParameters;
+        private DynamicStringMap pathParameters = DynamicStringMap.empty();
+        private DynamicStringMap queryParameters = DynamicStringMap.empty();
 
         public Builder baseURL(String baseURL) {
             this.baseURL = baseURL;
@@ -105,7 +106,7 @@ public class URIEvaluator {
 
         public URIEvaluator build() {
             URIEvaluator evaluator = new URIEvaluator();
-            evaluator.scriptEngine = scriptEngine;
+            evaluator.scriptEngine = requireNotNull(scriptEngine, "script engine");;
             evaluator.pathParameters = pathParameters;
             evaluator.queryParameters = queryParameters;
             evaluator.pathComponent = isBlank(path) ?
@@ -118,17 +119,23 @@ public class URIEvaluator {
 
             } else {
                 // Use config
-                requireNonNull(configuration, "Expected configuration or BaseURL");
+                requireNotNull(configuration, "Expected JSON definition with 'configuration' object property OR 'baseURL' property");
 
                 String host = configuration.getHost();
-                Integer port = port(configuration.getPort());
+                int port = port(configuration.getPort());
                 String basePath = configuration.getBasePath();
                 String scheme = scheme(configuration.getProtocol());
                 try {
                     URI uri = new URI(scheme, null, host, port, basePath, null, null);
                     evaluator.baseURL = uri.toString();
                 } catch (URISyntaxException e) {
-                    throw new IllegalArgumentException("Could not build URI", e);
+                    String message = String.format("Could not build request URL with the following parameters " +
+                            "host=[%s], " +
+                            "port=[%s], " +
+                            "basePath=[%s], " +
+                            "scheme=[%s]",
+                            host ,port, basePath, scheme);
+                    throw new ConfigurationException(message, e);
                 }
             }
             return evaluator;
