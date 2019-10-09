@@ -22,11 +22,11 @@ public class ProxyConfiguration implements Implementor {
     @Default("NONE")
     private ProxyAuthentication authentication;
 
-    @Property("Proxy basic authentication")
+    @Property("Basic authentication")
     @When(propertyName = "authentication", propertyValue = "BASIC")
     private ProxyBasicAuthenticationConfiguration basicAuthentication;
 
-    @Property("Proxy digest authentication")
+    @Property("Digest authentication")
     @When(propertyName = "authentication", propertyValue = "DIGEST")
     private ProxyDigestAuthenticationConfiguration digestAuthentication;
 
