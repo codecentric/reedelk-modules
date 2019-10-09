@@ -15,9 +15,6 @@ public class ProxyBasicAuthenticationConfiguration implements Implementor {
     @Property("Password")
     private String password;
 
-    @Property("Preemptive")
-    private Boolean preemptive;
-
     public String getUsername() {
         return username;
     }
@@ -32,13 +29,5 @@ public class ProxyBasicAuthenticationConfiguration implements Implementor {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Boolean getPreemptive() {
-        return preemptive;
-    }
-
-    public void setPreemptive(Boolean preemptive) {
-        this.preemptive = preemptive;
     }
 }

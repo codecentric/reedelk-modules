@@ -163,44 +163,5 @@ class RestClientProxyTest extends RestClientAbstractTest {
             // Expect
             AssertHttpResponse.isSuccessful(component, payload, flowContext);
         }
-
-        @ParameterizedTest
-        @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
-        void shouldCorrectlyUseProxyWithPreemptiveBasicAuthentication(String method) {
-            // Given
-            String username = "squid-user";
-            String password = "squid-pass";
-            ProxyBasicAuthenticationConfiguration proxyAuthConfiguration = new ProxyBasicAuthenticationConfiguration();
-            proxyAuthConfiguration.setUsername(username);
-            proxyAuthConfiguration.setPassword(password);
-            proxyAuthConfiguration.setPreemptive(true);
-
-            ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
-            proxyConfiguration.setAuthentication(ProxyAuthentication.BASIC);
-            proxyConfiguration.setHost(PROXY_HOST);
-            proxyConfiguration.setPort(PROXY_PORT);
-            proxyConfiguration.setBasicAuthentication(proxyAuthConfiguration);
-
-            ClientConfiguration configuration = new ClientConfiguration();
-            configuration.setHost("my-test-host.com");
-            configuration.setPort(7891);
-            configuration.setProtocol(HttpProtocol.HTTP);
-            configuration.setId(UUID.randomUUID().toString());
-            configuration.setProxy(Proxy.PROXY);
-            configuration.setProxyConfiguration(proxyConfiguration);
-
-            RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
-
-            givenThat(any(urlEqualTo(PATH))
-                    .withHeader("Proxy-Authorization", equalTo("Basic c3F1aWQtdXNlcjpzcXVpZC1wYXNz"))
-                    .willReturn(aResponse().withStatus(200)));
-
-            Message payload = MessageBuilder.get().build();
-
-            // Expect
-            AssertHttpResponse.isSuccessful(component, payload, flowContext);
-        }
-
     }
-
 }

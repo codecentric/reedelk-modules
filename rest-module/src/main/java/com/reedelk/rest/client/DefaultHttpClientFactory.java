@@ -132,8 +132,6 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
             ProxyDigestAuthenticationConfiguration digestAuthConfig = proxyConfig.getDigestAuthentication();
             addCredentialsFor(credentialsProvider, proxyHost, digestAuthConfig.getUsername(), digestAuthConfig.getPassword());
         }
-
-        // Preemptive is handled in the RestClient's HeadersEvaluator
     }
 
     private RequestConfig createConfig(ClientConfiguration configuration) {
