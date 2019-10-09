@@ -58,15 +58,13 @@ public class RestListener extends AbstractInbound {
     @Property("Error response")
     private ErrorResponse errorResponse;
 
-
     @Override
     public void onStart() {
         requireNonNull(configuration, "configuration");
         requireNonNull(method, "method");
         requireNonNull(path, "path");
 
-        HttpRequestHandler httpRequestHandler =
-                HttpRequestHandler.builder()
+        HttpRequestHandler httpRequestHandler = HttpRequestHandler.builder()
                         .inboundEventListener(RestListener.this)
                         .errorResponse(errorResponse)
                         .scriptEngine(scriptEngine)
@@ -110,5 +108,9 @@ public class RestListener extends AbstractInbound {
 
     public void setErrorResponse(ErrorResponse errorResponse) {
         this.errorResponse = errorResponse;
+    }
+
+    public void setStreaming(StreamingMode streaming) {
+        this.streaming = streaming;
     }
 }
