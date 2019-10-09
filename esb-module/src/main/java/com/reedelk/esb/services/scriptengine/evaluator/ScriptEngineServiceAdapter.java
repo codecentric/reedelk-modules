@@ -3,9 +3,11 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.TypedPublisher;
 import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicObject;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
@@ -23,6 +25,11 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
 
     @Override
     public <T> Optional<T> evaluate(DynamicValue<T> value, Throwable throwable, FlowContext flowContext) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> Optional<T> evaluate(DynamicObject dynamicObject, MimeType mimeType, Message message, FlowContext flowContext) {
         throw new UnsupportedOperationException();
     }
 

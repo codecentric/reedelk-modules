@@ -1,6 +1,7 @@
 package com.reedelk.esb.services.scriptengine.converter.defaulttype;
 
 import com.reedelk.esb.services.scriptengine.converter.BaseConverter;
+import com.reedelk.runtime.api.commons.ObjectToBytes;
 
 class AsByteArray extends BaseConverter<Object,byte[]> {
 
@@ -10,6 +11,6 @@ class AsByteArray extends BaseConverter<Object,byte[]> {
 
     @Override
     public byte[] from(Object value) {
-        return value == null ? new  byte[0] : value.toString().getBytes();
+        return ObjectToBytes.from(value);
     }
 }

@@ -1,6 +1,7 @@
 package com.reedelk.esb.services.scriptengine.converter;
 
 import com.reedelk.runtime.api.commons.ImmutableMap;
+import com.reedelk.runtime.api.commons.ObjectToBytes;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.type.TypedPublisher;
@@ -14,8 +15,6 @@ import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -630,13 +629,13 @@ class ValueConverterFactoryTest {
         @Test
         void shouldReturnObjectAsByteArray() {
             // Given
-            List<String> values = Arrays.asList("one", "two", "three");
+            MyTestClazz value = new MyTestClazz(23,"test");
 
             // When
-            byte[] result = ValueConverterFactory.convert(values, byte[].class);
+            byte[] result = ValueConverterFactory.convert(value, byte[].class);
 
             // Then
-            assertThat(result).isEqualTo(values.toString().getBytes());
+            assertThat(result).isEqualTo(ObjectToBytes.from(value));
         }
     }
 

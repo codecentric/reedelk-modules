@@ -1,7 +1,10 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
+import com.reedelk.runtime.api.commons.MimeToJavaType;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicObject;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 
 import java.util.Optional;
@@ -48,6 +51,24 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
         } else {
             // Not a script
             return Optional.ofNullable(dynamicValue.getValue());
+        }
+    }
+
+    @Override
+    public <T> Optional<T> evaluate(DynamicObject dynamicObject, MimeType mimeType, Message message, FlowContext flowContext) {
+        if (dynamicObject == null) {
+            // Value is not present
+            return OPTIONAL_PROVIDER.empty();
+        } else if (dynamicObject.isScript()) {
+            if (dynamicObject.isEmpty()) {
+                return OPTIONAL_PROVIDER.empty();
+            } else {
+                String functionName = functionNameOf(dynamicObject, FUNCTION);
+                Object evaluationResult = scriptEngine.invokeFunction(functionName, message, flowContext);
+                return convert(evaluationResult, MimeToJavaType.from(mimeType), OPTIONAL_PROVIDER);
+            }
+        } else {
+            return convert(dynamicObject.getValue(), MimeToJavaType.from(mimeType), OPTIONAL_PROVIDER);
         }
     }
 }

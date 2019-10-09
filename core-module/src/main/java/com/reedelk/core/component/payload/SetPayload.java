@@ -39,15 +39,15 @@ public class SetPayload implements ProcessorSync {
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
+
         MimeType mimeType = MimeType.parse(this.mimeType);
 
-        // It is a script, hence we need to evaluate it.
-        // According to the typed content we must convert to the correct type.
-        // TODO: Example: if I put  message.attributes with content type  text, I must convert
-        // the result to string
-        Object result = scriptEngine.evaluate(payload, message, flowContext).orElse(null);
+        Object result = scriptEngine.evaluate(payload, mimeType, message, flowContext).orElse(null);
+
         Type contentType = new Type(mimeType);
+
         TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
+
         return MessageBuilder.get().typedContent(content).build();
     }
 
@@ -58,6 +58,4 @@ public class SetPayload implements ProcessorSync {
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
-
 }
-

@@ -1,6 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.runtime.api.commons.JavaType;
+import com.reedelk.runtime.api.commons.MimeToJavaType;
 import com.reedelk.runtime.api.message.type.*;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ class HttpRequestContentMapper {
 
         MimeType mimeType = request.mimeType();
 
-        if (String.class == JavaType.from(mimeType)) {
+        if (String.class == MimeToJavaType.from(mimeType)) {
             return mapStringJavaType(byteArrayStream, mimeType);
         } else {
             // Generic byte array stream.
