@@ -100,8 +100,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
             flowBuilder.build(flowGraph, flowDefinition);
             return new Flow(flowId, flowGraph, executionEngine);
         } catch (Exception exception) {
-            String message = format("Error building flow with id [%s]", flowId);
-            logger.error(message, exception);
+            logExceptionInfo(flowDefinition, flowId, exception);
             return new ErrorStateFlow(flowId, flowGraph, executionEngine, exception);
         }
     }
@@ -115,4 +114,14 @@ public class BuildModule extends AbstractStep<Module, Module> {
                 StringUtils.isBlank(JsonParser.Flow.id(flowDefinition));
     }
 
+    private static void logExceptionInfo(JSONObject flowDefinition, String flowId, Exception exception) {
+        if (JsonParser.Flow.hasTitle(flowDefinition)) {
+            String flowTitle = JsonParser.Flow.title(flowDefinition);
+            String message = format("Error building flow with id [%s] and title '%s'", flowId, flowTitle);
+            logger.error(message, exception);
+        } else {
+            String message = format("Error building flow with id [%s]", flowId);
+            logger.error(message, exception);
+        }
+    }
 }

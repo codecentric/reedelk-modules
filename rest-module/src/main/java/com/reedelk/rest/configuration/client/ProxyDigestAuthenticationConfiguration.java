@@ -6,17 +6,14 @@ import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@Component(service = ProxyAuthenticationConfiguration.class, scope = PROTOTYPE)
-public class ProxyAuthenticationConfiguration implements Implementor {
+@Component(service = ProxyDigestAuthenticationConfiguration.class, scope = PROTOTYPE)
+public class ProxyDigestAuthenticationConfiguration implements Implementor {
 
     @Property("Username")
     private String username;
 
     @Property("Password")
     private String password;
-
-    @Property("Preemptive")
-    private Boolean preemptive;
 
     public String getUsername() {
         return username;
@@ -34,11 +31,4 @@ public class ProxyAuthenticationConfiguration implements Implementor {
         this.password = password;
     }
 
-    public Boolean getPreemptive() {
-        return preemptive;
-    }
-
-    public void setPreemptive(Boolean preemptive) {
-        this.preemptive = preemptive;
-    }
 }

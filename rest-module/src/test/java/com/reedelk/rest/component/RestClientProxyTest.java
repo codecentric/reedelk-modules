@@ -58,7 +58,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
         // Given
         String username = "squid-user";
         String password = "squid-pass";
-        ProxyAuthenticationConfiguration proxyAuthConfiguration = new ProxyAuthenticationConfiguration();
+        ProxyBasicAuthenticationConfiguration proxyAuthConfiguration = new ProxyBasicAuthenticationConfiguration();
         proxyAuthConfiguration.setUsername(username);
         proxyAuthConfiguration.setPassword(password);
 
@@ -66,7 +66,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
         proxyConfiguration.setAuthentication(ProxyAuthentication.BASIC);
         proxyConfiguration.setHost(PROXY_HOST);
         proxyConfiguration.setPort(PROXY_PORT);
-        proxyConfiguration.setAuthenticationConfiguration(proxyAuthConfiguration);
+        proxyConfiguration.setBasicAuthentication(proxyAuthConfiguration);
 
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost("my-test-host.com");
@@ -100,7 +100,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
         // Given
         String username = "squid-user";
         String password = "squid-pass";
-        ProxyAuthenticationConfiguration proxyAuthConfiguration = new ProxyAuthenticationConfiguration();
+        ProxyBasicAuthenticationConfiguration proxyAuthConfiguration = new ProxyBasicAuthenticationConfiguration();
         proxyAuthConfiguration.setUsername(username);
         proxyAuthConfiguration.setPassword(password);
         proxyAuthConfiguration.setPreemptive(true);
@@ -109,7 +109,7 @@ class RestClientProxyTest extends RestClientAbstractTest {
         proxyConfiguration.setAuthentication(ProxyAuthentication.BASIC);
         proxyConfiguration.setHost(PROXY_HOST);
         proxyConfiguration.setPort(PROXY_PORT);
-        proxyConfiguration.setAuthenticationConfiguration(proxyAuthConfiguration);
+        proxyConfiguration.setBasicAuthentication(proxyAuthConfiguration);
 
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setHost("my-test-host.com");

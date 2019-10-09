@@ -93,10 +93,9 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
 
     private void configureBasicAuth(String host, int port, HttpProtocol protocol, BasicAuthenticationConfiguration basicAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
         HttpHost basicAuthHost = new HttpHost(host, port, protocol.name());
-        credentialsProvider.setCredentials(
-                new AuthScope(basicAuthHost.getHostName(), basicAuthHost.getPort()),
-                new UsernamePasswordCredentials(basicAuthConfig.getUsername(), basicAuthConfig.getPassword()));
+        addCredentialsFor(credentialsProvider, basicAuthHost, basicAuthConfig.getUsername(), basicAuthConfig.getPassword());
 
+        // Preemptive
         if (TRUE.equals(basicAuthConfig.getPreemptive())) {
             AuthCache authCache = new BasicAuthCache();
             authCache.put(basicAuthHost, new BasicScheme());
@@ -106,10 +105,9 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
 
     private void configureDigestAuth(String host, Integer port, HttpProtocol protocol, DigestAuthenticationConfiguration digestAuthConfig, CredentialsProvider credentialsProvider, HttpClientContext context) {
         HttpHost digestAuthHost = new HttpHost(host, port, protocol.name());
-        credentialsProvider.setCredentials(
-                new AuthScope(digestAuthHost.getHostName(), digestAuthHost.getPort()),
-                new UsernamePasswordCredentials(digestAuthConfig.getUsername(), digestAuthConfig.getPassword()));
+        addCredentialsFor(credentialsProvider, digestAuthHost, digestAuthConfig.getUsername(), digestAuthConfig.getPassword());
 
+        // Preemptive
         if (TRUE.equals(digestAuthConfig.getPreemptive())) {
             AuthCache authCache = new BasicAuthCache();
             DigestScheme digestAuth = new DigestScheme();
@@ -127,11 +125,15 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
         builder.setProxy(proxyHost);
 
         if (ProxyAuthentication.BASIC.equals(proxyConfig.getAuthentication())) {
-            ProxyAuthenticationConfiguration authConfig = proxyConfig.getAuthenticationConfiguration();
-            credentialsProvider.setCredentials(
-                    new AuthScope(proxyConfig.getHost(), proxyConfig.getPort()),
-                    new UsernamePasswordCredentials(authConfig.getUsername(), authConfig.getPassword()));
+            ProxyBasicAuthenticationConfiguration basicAuthConfig = proxyConfig.getBasicAuthentication();
+            addCredentialsFor(credentialsProvider, proxyHost, basicAuthConfig.getUsername(), basicAuthConfig.getPassword());
+
+        } else if (ProxyAuthentication.DIGEST.equals(proxyConfig.getAuthentication())) {
+            ProxyDigestAuthenticationConfiguration digestAuthConfig = proxyConfig.getDigestAuthentication();
+            addCredentialsFor(credentialsProvider, proxyHost, digestAuthConfig.getUsername(), digestAuthConfig.getPassword());
         }
+
+        // Preemptive is handled in the RestClient's HeadersEvaluator
     }
 
     private RequestConfig createConfig(ClientConfiguration configuration) {
@@ -154,5 +156,11 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
                 .ifPresent(builder::setConnectTimeout);
 
         return builder.build();
+    }
+
+    private static void addCredentialsFor(CredentialsProvider provider, HttpHost host, String userName, String password) {
+        provider.setCredentials(
+                new AuthScope(host.getHostName(), host.getPort()),
+                new UsernamePasswordCredentials(userName, password));
     }
 }

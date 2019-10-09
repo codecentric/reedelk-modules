@@ -67,7 +67,7 @@ public class HeadersEvaluator {
                         requireNotNull(config.getProxyConfiguration(), PROXY_CONFIG_MISSING.format());
                 ProxyAuthentication proxyAuth = proxyConfig.getAuthentication();
                 if (ProxyAuthentication.BASIC.equals(proxyAuth)) {
-                    ProxyAuthenticationConfiguration authConfig = proxyConfig.getAuthenticationConfiguration();
+                    ProxyBasicAuthenticationConfiguration authConfig = proxyConfig.getBasicAuthentication();
                     if (Boolean.TRUE.equals(authConfig.getPreemptive())) {
                         BasicAuthentication basicAuthentication =
                                 new BasicAuthentication(authConfig.getUsername(), authConfig.getPassword());

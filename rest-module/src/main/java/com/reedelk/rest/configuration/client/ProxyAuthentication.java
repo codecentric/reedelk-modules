@@ -6,5 +6,7 @@ public enum ProxyAuthentication {
     @DisplayName("None")
     NONE,
     @DisplayName("Basic")
-    BASIC
+    BASIC,
+    @DisplayName("Digest")
+    DIGEST
 }

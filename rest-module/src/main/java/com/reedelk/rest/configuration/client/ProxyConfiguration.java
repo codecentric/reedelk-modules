@@ -22,9 +22,13 @@ public class ProxyConfiguration implements Implementor {
     @Default("NONE")
     private ProxyAuthentication authentication;
 
-    @Property("Proxy authentication")
-    @When(propertyName = "authentication", propertyValue = "USER_AND_PASSWORD")
-    private ProxyAuthenticationConfiguration authenticationConfiguration;
+    @Property("Proxy basic authentication")
+    @When(propertyName = "authentication", propertyValue = "BASIC")
+    private ProxyBasicAuthenticationConfiguration basicAuthentication;
+
+    @Property("Proxy digest authentication")
+    @When(propertyName = "authentication", propertyValue = "DIGEST")
+    private ProxyDigestAuthenticationConfiguration digestAuthentication;
 
     public String getHost() {
         return host;
@@ -50,11 +54,19 @@ public class ProxyConfiguration implements Implementor {
         this.authentication = authentication;
     }
 
-    public ProxyAuthenticationConfiguration getAuthenticationConfiguration() {
-        return authenticationConfiguration;
+    public ProxyBasicAuthenticationConfiguration getBasicAuthentication() {
+        return basicAuthentication;
     }
 
-    public void setAuthenticationConfiguration(ProxyAuthenticationConfiguration authenticationConfiguration) {
-        this.authenticationConfiguration = authenticationConfiguration;
+    public void setBasicAuthentication(ProxyBasicAuthenticationConfiguration basicAuthentication) {
+        this.basicAuthentication = basicAuthentication;
+    }
+
+    public ProxyDigestAuthenticationConfiguration getDigestAuthentication() {
+        return digestAuthentication;
+    }
+
+    public void setDigestAuthentication(ProxyDigestAuthenticationConfiguration digestAuthentication) {
+        this.digestAuthentication = digestAuthentication;
     }
 }
