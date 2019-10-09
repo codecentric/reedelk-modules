@@ -32,4 +32,20 @@ public class Messages {
             return formatMessage(msg, args);
         }
     }
+
+    public enum RestListener implements FormattedMessage {
+
+        LISTENER_CONFIG_MISSING("RestListener 'configuration' property must not be null in the JSON definition");
+
+        private String msg;
+
+        RestListener(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+    }
 }

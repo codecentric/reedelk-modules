@@ -6,6 +6,7 @@ import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
@@ -15,7 +16,9 @@ public class ServerProvider {
 
     private Map<HostNamePortKey, Server> serverMap = new ConcurrentHashMap<>();
 
-    public Server get(ListenerConfiguration configuration) {
+    public Optional<Server> get(ListenerConfiguration configuration) {
+        if (configuration == null) return Optional.empty();
+
         HostNamePortKey key = new HostNamePortKey(configuration.getHost(), configuration.getPort());
         if (!serverMap.containsKey(key)) {
             Server server = new Server(configuration);
@@ -23,7 +26,7 @@ public class ServerProvider {
         }
         Server server = serverMap.get(key);
         checkBasePathIsConsistent(configuration, server);
-        return server;
+        return Optional.of(server);
     }
 
     public void release(Server server) {

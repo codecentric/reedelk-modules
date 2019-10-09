@@ -1,5 +1,7 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.rest.commons.ConfigurationException;
+import com.reedelk.rest.commons.Messages;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
@@ -67,19 +69,21 @@ public class RestListener extends AbstractInbound {
                         .matchingPath(path)
                         .build();
 
-        Server server = provider.get(configuration);
+        Server server = provider.get(configuration)
+                .orElseThrow(() -> new ConfigurationException(Messages.RestListener.LISTENER_CONFIG_MISSING.format()));
         server.addRoute(method, path, httpRequestHandler);
     }
 
     @Override
     public void onShutdown() {
-        Server server = provider.get(configuration);
-        server.removeRoute(method, path);
-        try {
-            provider.release(server);
-        } catch (Exception e) {
-            logger.error("Shutdown RESTListener", e);
-        }
+        provider.get(configuration).ifPresent(server -> {
+            server.removeRoute(method, path);
+            try {
+                provider.release(server);
+            } catch (Exception e) {
+                logger.error("Shutdown RESTListener", e);
+            }
+        });
     }
 
     public void setConfiguration(ListenerConfiguration configuration) {
