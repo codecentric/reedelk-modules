@@ -28,7 +28,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.apache.http.HttpStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.doReturn;
 
 class RestListenerGetTest extends RestListenerAbstractTest {
@@ -295,27 +294,4 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         String remoteAddress = (String) attributes.get(remoteAddress());
         assertThat(remoteAddress).startsWith("/127.0.0.1");
     }
-
-    private void assertStatusCodeIs(HttpUriRequest request, int statusCode) {
-        try {
-            HttpResponse response = HttpClientBuilder.create().build().execute(request);
-            assertStatusCodeIs(response, statusCode);
-        } catch (IOException e) {
-            fail(String.format("Error asserting status code=[%d] for request=[%s]", statusCode, request), e);
-        }
-    }
-
-    private void assertContentIs(HttpUriRequest request, String expected) throws IOException {
-        try {
-            HttpResponse response = HttpClientBuilder.create().build().execute(request);
-            assertContentIs(response, expected);
-        } catch (IOException e) {
-            fail(String.format("Error asserting content=[%s] for request=[%s]", expected, request), e);
-        }
-    }
-
-    // TODO: Test POST,PUT,DELETE,OPTIONS, HEAD
-    // TODO: Test gzip compression
-    // TODO: What happens when callback.onResult is never called? There should be a timeout....!??!?
-    // TODO: Test SSL and SSL Certificate
 }
