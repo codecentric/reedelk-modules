@@ -56,7 +56,7 @@ abstract class AbstractExecutionTest {
 
     Consumer<MessageAndContext> assertMessageContains(String expected) {
         return event -> {
-            String out = event.getMessage().getContent().toString();
+            String out = (String) event.getMessage().getContent().data();
             assertThat(out).isEqualTo(expected);
         };
     }

@@ -222,6 +222,7 @@ class BuildModuleTest {
 
         Flow next = module.flows().iterator().next();
         assertThat(next.getFlowId()).isEqualTo("45a5ce60-5c9d-4075-82ab-d3fa9284f52a");
+        assertThat(next.getFlowTitle()).contains("Flow with components title");
         assertThat(next.isStarted()).isFalse();
     }
 

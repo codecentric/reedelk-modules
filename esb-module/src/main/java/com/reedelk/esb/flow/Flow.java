@@ -22,19 +22,25 @@ public class Flow implements InboundEventListener {
     private static final Logger logger = LoggerFactory.getLogger(Flow.class);
 
     private final String flowId;
+    private final String flowTitle;
     private final ExecutionGraph executionGraph;
     private final FlowExecutorEngine executionEngine;
 
     private boolean started = false;
 
-    public Flow(final String flowId, final ExecutionGraph executionGraph, final FlowExecutorEngine executionEngine) {
+    public Flow(final String flowId, final String flowTitle, final ExecutionGraph executionGraph, final FlowExecutorEngine executionEngine) {
         this.flowId = flowId;
+        this.flowTitle = flowTitle;
         this.executionGraph = executionGraph;
         this.executionEngine = executionEngine;
     }
 
     public String getFlowId() {
         return flowId;
+    }
+
+    public Optional<String> getFlowTitle() {
+        return Optional.ofNullable(flowTitle);
     }
 
     public boolean isUsingComponent(String targetComponentName) {

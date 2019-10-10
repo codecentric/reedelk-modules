@@ -92,16 +92,18 @@ public class BuildModule extends AbstractStep<Module, Module> {
         }
 
         String flowId = JsonParser.Flow.id(flowDefinition);
+        String flowTitle = JsonParser.Flow.hasTitle(flowDefinition) ?
+                JsonParser.Flow.title(flowDefinition) : null;
 
         ModulesManager modulesManager = modulesManager();
         FlowBuilderContext context = new FlowBuilderContext(bundle, modulesManager, deserializedModule);
         FlowBuilder flowBuilder = new FlowBuilder(context);
         try {
             flowBuilder.build(flowGraph, flowDefinition);
-            return new Flow(flowId, flowGraph, executionEngine);
+            return new Flow(flowId, flowTitle, flowGraph, executionEngine);
         } catch (Exception exception) {
             logExceptionInfo(flowDefinition, flowId, exception);
-            return new ErrorStateFlow(flowId, flowGraph, executionEngine, exception);
+            return new ErrorStateFlow(flowId, flowTitle, flowGraph, executionEngine, exception);
         }
     }
 

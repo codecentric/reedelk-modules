@@ -26,6 +26,7 @@ public class StartModule extends AbstractStep<Module, Module> {
         for (Flow flow : flows) {
             try {
                 flow.start();
+                logFlowStarted(flow);
             } catch (Exception exception) {
                 logger.error("Start Flow", exception);
                 exceptions.add(exception);
@@ -58,6 +59,14 @@ public class StartModule extends AbstractStep<Module, Module> {
             flow.forceStop();
         } catch (Exception e) {
             logger.warn("Force stop", e);
+        }
+    }
+
+    private void logFlowStarted(Flow flow) {
+        if (logger.isDebugEnabled()) {
+            String message = flow.getFlowTitle()
+                    .map(flowTitle -> String.format("Flow '%s', id=[%s] started.", flowTitle, flow.getFlowId())).orElse(String.format("Flow id=[%s] started.", flow.getFlowId()));
+            logger.debug(message);
         }
     }
 }
