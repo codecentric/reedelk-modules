@@ -281,6 +281,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         // Then
         MessageAttributes attributes = inboundMessage.getAttributes();
         assertThat(attributes).isNotNull();
+        assertThat(attributes.get(headers())).isNotNull();
         assertThat(attributes.get(matchingPath())).isEqualTo("/group/{groupId}");
         assertThat(attributes.get(method())).isEqualTo("GET");
         assertThat(attributes.get(pathParams())).isEqualTo(ImmutableMap.of("groupId", "managers"));
