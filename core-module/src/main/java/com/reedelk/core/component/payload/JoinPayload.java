@@ -27,7 +27,7 @@ public class JoinPayload implements Join {
                 .map(Message::getContent)
                 .map(typedContent -> {
                     if (typedContent.type().getTypeClass().isAssignableFrom(String.class)) {
-                        return typedContent.asString();
+                        return (String) typedContent.data();
                     } else {
                         return null;
                     }

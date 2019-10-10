@@ -3,7 +3,6 @@ package com.reedelk.rest.commons;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.StringContent;
-import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import org.junit.jupiter.api.Test;
 
@@ -38,25 +37,9 @@ class ContentTypeTest {
     }
 
     @Test
-    void shouldReturnEmptyWhenMessageContentHasNullType() {
-        // Given
-        Type type = null;
-        TypedContent<?> contentWithNullType = new StringContent("test", type);
-        Message message = new Message();
-        message.setContent(contentWithNullType);
-
-        // When
-        Optional<String> maybeContentType = ContentType.from(message);
-
-        // Then
-        assertThat(maybeContentType).isNotPresent();
-    }
-
-    @Test
     void shouldReturnEmptyWhenMessageContentHasNullMimeType() {
         // Given
-        Type typeWithNullMimeType = new Type(null);
-        TypedContent<?> content = new StringContent("test", typeWithNullMimeType);
+        TypedContent<?> content = new StringContent("test", null);
         Message message = new Message();
         message.setContent(content);
 

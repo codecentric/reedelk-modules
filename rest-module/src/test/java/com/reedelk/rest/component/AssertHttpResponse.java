@@ -77,7 +77,7 @@ class AssertHttpResponse {
 
     private static void assertContent(Message message, String expectedContent) {
         TypedContent<?> typedContent = message.getContent();
-        String stringContent = typedContent.asString();
+        Object stringContent = typedContent.data();
         assertThat(stringContent).isEqualTo(expectedContent);
     }
 

@@ -338,8 +338,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateDynamicObject() {
             // Given
             Flux<String> content = Flux.just("Hello", ", this", " is", " just", " a");
-            Type type = new Type(MimeType.TEXT, String.class);
-            TypedContent<String> typedContent = new StringContent(content, type);
+            TypedContent<String> typedContent = new StringContent(content, MimeType.TEXT);
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
@@ -388,8 +387,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyConvertObjectToTextMimeType() {
             // Given
             Flux<String> content = Flux.just("Hello", ", this", " is", " just", " a");
-            Type type = new Type(MimeType.TEXT, String.class);
-            TypedContent<String> typedContent = new StringContent(content, type);
+            TypedContent<String> typedContent = new StringContent(content, MimeType.TEXT);
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
@@ -405,8 +403,7 @@ class DynamicValueEvaluatorTest {
         @Test
         void shouldCorrectlyConvertObjectToBinaryMimeType() {
             // Given
-            Type type = new Type(MimeType.TEXT, String.class);
-            TypedContent<String> typedContent = new StringContent("my test", type);
+            TypedContent<String> typedContent = new StringContent("my test", MimeType.TEXT);
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
@@ -423,8 +420,7 @@ class DynamicValueEvaluatorTest {
         void shouldThrowExceptionWhenObjectToBinaryMimeTypeButContentNotSerializable() {
             // Given
             Flux<String> content = Flux.just("Hello", ", this", " is", " just", " a");
-            Type type = new Type(MimeType.TEXT, String.class);
-            TypedContent<String> typedContent = new StringContent(content, type);
+            TypedContent<String> typedContent = new StringContent(content, MimeType.TEXT);
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 

@@ -34,7 +34,7 @@ class HttpRequestContentMapperTest {
         assertThat(type.getTypeClass()).isEqualTo(String.class);
 
         assertThat(content).isInstanceOf(StringContent.class);
-        assertThat(content.asString()).isEqualTo("test body");
+        assertThat(content.data()).isEqualTo("test body");
     }
 
     @Test
@@ -52,7 +52,7 @@ class HttpRequestContentMapperTest {
         assertThat(type.getTypeClass()).isEqualTo(byte[].class);
 
         assertThat(content).isInstanceOf(ByteArrayContent.class);
-        assertThat(content.asByteArray()).isEqualTo(testPayload);
+        assertThat(content.data()).isEqualTo(testPayload);
     }
 
     @Test
@@ -70,6 +70,6 @@ class HttpRequestContentMapperTest {
         assertThat(type.getTypeClass()).isEqualTo(byte[].class);
 
         assertThat(content).isInstanceOf(ByteArrayContent.class);
-        assertThat(content.asByteArray()).isEqualTo(testPayload);
+        assertThat(content.data()).isEqualTo(testPayload);
     }
 }

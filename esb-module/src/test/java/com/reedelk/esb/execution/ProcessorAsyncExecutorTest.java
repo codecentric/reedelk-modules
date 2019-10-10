@@ -157,7 +157,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
         @Override
         public void apply(Message input, FlowContext flowContext, OnResult callback) {
             new Thread(() -> {
-                String inputString = input.getContent().asString();
+                String inputString = (String) input.getContent().data();
                 String outputString = inputString + postfix;
                 Message out = MessageBuilder.get().text(outputString).build();
                 callback.onResult(out, flowContext);

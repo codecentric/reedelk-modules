@@ -7,7 +7,6 @@ import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.StringContent;
-import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -33,7 +32,7 @@ public class JsonPathComponent implements ProcessorSync {
 
         TypedContent typedContent = message.getContent();
 
-        String inputJson = typedContent.asString();
+        String inputJson = (String) typedContent.data();
 
         Object result = JsonPath.parse(inputJson).read(compiledExpression);
         String jsonResult = "";
@@ -47,9 +46,7 @@ public class JsonPathComponent implements ProcessorSync {
             jsonResult = (String) result;
         }
 
-        Type applicationJsonType = new Type(APPLICATION_JSON);
-
-        TypedContent outputContent = new StringContent(jsonResult, applicationJsonType);
+        TypedContent outputContent = new StringContent(jsonResult, APPLICATION_JSON);
 
         Message outputMessage = new Message();
 

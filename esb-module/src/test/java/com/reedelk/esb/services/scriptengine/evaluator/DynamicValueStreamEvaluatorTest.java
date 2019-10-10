@@ -397,8 +397,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateDynamicObject() {
             // Given
             Flux<String> content = Flux.just("Hello", ", this", " is", " just", " a");
-            Type type = new Type(MimeType.TEXT, String.class);
-            TypedContent<String> typedContent = new StringContent(content, type);
+            TypedContent<String> typedContent = new StringContent(content, MimeType.TEXT);
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
