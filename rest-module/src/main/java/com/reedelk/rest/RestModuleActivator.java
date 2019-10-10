@@ -20,11 +20,10 @@ public class RestModuleActivator {
     private static final Dictionary<String, ?> NO_PROPERTIES = new Hashtable<>();
 
     private ServiceRegistration<HttpClientFactory> registration;
-    private HttpClientFactory service;
 
     @Activate
     public void activate(BundleContext context) throws BundleException {
-        this.service = new DefaultHttpClientFactory();
+        HttpClientFactory service = new DefaultHttpClientFactory();
         this.registration = context.registerService(HttpClientFactory.class, service, NO_PROPERTIES);
     }
 

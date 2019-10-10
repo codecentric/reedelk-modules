@@ -45,7 +45,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
     @Override
     public Publisher<Void> apply(HttpServerRequest request, HttpServerResponse response) {
         // 1. Map the incoming HTTP request to a Message
-        Message inMessage = requestMapper.map(request);
+        Message inMessage = requestMapper.map(request); // TODO: if this one throws  an exception we must handle it
         // 2. Pass down through the processors pipeline the Message
         return Mono.just(inMessage)
                 // 3. Maps back the out Message to the HTTP response

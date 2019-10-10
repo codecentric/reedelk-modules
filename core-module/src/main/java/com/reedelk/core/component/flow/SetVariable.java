@@ -34,8 +34,8 @@ public class SetVariable implements ProcessorSync {
     @Default(ANY)
     @Combo(editable = true, comboValues = {
             ANY, XML, CSS, JSON, HTML, TEXT, RSS, ATOM, BINARY, Literal.UNKNOWN,
-            JAVASCRIPT, APPLICATION_XML, MULTIPART_MIXED, APPLICATION_JSON,
-            APPLICATION_JAVA, MULTIPART_RELATED, MULTIPART_FORM_DATA, MULTIPART_X_MIXED_REPLACE})
+            JAVASCRIPT, APPLICATION_XML, APPLICATION_JSON,
+            APPLICATION_JAVA, APPLICATION_FORM_URL_ENCODED, MULTIPART_FORM_DATA})
     private String mimeType;
 
     @Property("Value")

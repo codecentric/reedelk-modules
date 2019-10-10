@@ -32,9 +32,6 @@ import static org.mockito.Mockito.doReturn;
 
 class RestListenerGetTest extends RestListenerAbstractTest {
 
-    private static final int DEFAULT_PORT = 8881;
-    private static final String DEFAULT_HOST = "localhost";
-
     private ListenerConfiguration defaultConfiguration;
     private HttpUriRequest defaultRequest;
 
@@ -280,18 +277,18 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         // Then
         MessageAttributes attributes = inboundMessage.getAttributes();
         assertThat(attributes).isNotNull();
-        assertThat(attributes.get(headers())).isNotNull();
-        assertThat(attributes.get(matchingPath())).isEqualTo("/group/{groupId}");
-        assertThat(attributes.get(method())).isEqualTo("GET");
-        assertThat(attributes.get(pathParams())).isEqualTo(ImmutableMap.of("groupId", "managers"));
-        assertThat(attributes.get(queryParams())).isEqualTo(ImmutableMap.of("query1", singletonList("value1"), "query2", asList("value2", "value3")));
-        assertThat(attributes.get(queryString())).isEqualTo("query1=value1&query2=value2&query2=value3");
-        assertThat(attributes.get(requestPath())).isEqualTo("/api/internal/group/managers");
-        assertThat(attributes.get(requestUri())).isEqualTo("/api/internal/group/managers?query1=value1&query2=value2&query2=value3");
-        assertThat(attributes.get(scheme())).isEqualTo("http");
-        assertThat(attributes.get(version())).isEqualTo("HTTP/1.1");
+        assertThat(attributes.get(HEADERS)).isNotNull();
+        assertThat(attributes.get(MATCHING_PATH)).isEqualTo("/group/{groupId}");
+        assertThat(attributes.get(METHOD)).isEqualTo("GET");
+        assertThat(attributes.get(PATH_PARAMS)).isEqualTo(ImmutableMap.of("groupId", "managers"));
+        assertThat(attributes.get(QUERY_PARAMS)).isEqualTo(ImmutableMap.of("query1", singletonList("value1"), "query2", asList("value2", "value3")));
+        assertThat(attributes.get(QUERY_STRING)).isEqualTo("query1=value1&query2=value2&query2=value3");
+        assertThat(attributes.get(REQUEST_PATH)).isEqualTo("/api/internal/group/managers");
+        assertThat(attributes.get(REQUEST_URI)).isEqualTo("/api/internal/group/managers?query1=value1&query2=value2&query2=value3");
+        assertThat(attributes.get(SCHEME)).isEqualTo("http");
+        assertThat(attributes.get(VERSION)).isEqualTo("HTTP/1.1");
 
-        String remoteAddress = (String) attributes.get(remoteAddress());
+        String remoteAddress = (String) attributes.get(REMOTE_ADDRESS);
         assertThat(remoteAddress).startsWith("/127.0.0.1");
     }
 }

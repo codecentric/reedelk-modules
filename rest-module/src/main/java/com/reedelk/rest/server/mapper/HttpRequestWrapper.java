@@ -3,6 +3,7 @@ package com.reedelk.rest.server.mapper;
 import com.reedelk.rest.commons.*;
 import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.message.type.MimeType;
+import io.netty.handler.codec.http.HttpHeaders;
 import reactor.netty.ByteBufFlux;
 import reactor.netty.http.server.HttpServerRequest;
 
@@ -73,5 +74,9 @@ class HttpRequestWrapper {
 
     HeadersMap headers() {
         return HttpHeadersAsMap.of(request.requestHeaders());
+    }
+
+    public HttpHeaders requestHeaders() {
+        return request.requestHeaders();
     }
 }

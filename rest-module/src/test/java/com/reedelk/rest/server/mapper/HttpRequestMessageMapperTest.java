@@ -70,17 +70,17 @@ class HttpRequestMessageMapperTest {
         expectedHeaders.put(HttpHeader.CONTENT_TYPE, singletonList("application/json"));
         expectedHeaders.put("X-Correlation-ID", singletonList("aabbccdd1"));
 
-        assertThatContainsAttribute(message, remoteAddress(), "localhost/127.0.0.1:7070");
-        assertThatContainsAttribute(message, matchingPath(), matchingPath);
-        assertThatContainsAttribute(message, queryParams(), expectedQueryParams);
-        assertThatContainsAttribute(message, requestPath(), requestPath);
-        assertThatContainsAttribute(message, requestUri(), requestUri);
-        assertThatContainsAttribute(message, queryString(), queryString);
-        assertThatContainsAttribute(message, pathParams(), params);
-        assertThatContainsAttribute(message, version(), HttpVersion.HTTP_1_0.text());
-        assertThatContainsAttribute(message, headers(), expectedHeaders);
-        assertThatContainsAttribute(message, scheme(), HttpScheme.HTTP.toString());
-        assertThatContainsAttribute(message, method(), PUT.name());
+        assertThatContainsAttribute(message, REMOTE_ADDRESS, "localhost/127.0.0.1:7070");
+        assertThatContainsAttribute(message, MATCHING_PATH, matchingPath);
+        assertThatContainsAttribute(message, QUERY_PARAMS, expectedQueryParams);
+        assertThatContainsAttribute(message, REQUEST_PATH, requestPath);
+        assertThatContainsAttribute(message, REQUEST_URI, requestUri);
+        assertThatContainsAttribute(message, QUERY_STRING, queryString);
+        assertThatContainsAttribute(message, PATH_PARAMS, params);
+        assertThatContainsAttribute(message, VERSION, HttpVersion.HTTP_1_0.text());
+        assertThatContainsAttribute(message, HEADERS, expectedHeaders);
+        assertThatContainsAttribute(message, SCHEME, HttpScheme.HTTP.toString());
+        assertThatContainsAttribute(message, METHOD, PUT.name());
 
         // Check that the content's mime type is correct
         Type contentType = message.getContent().type();

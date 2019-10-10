@@ -25,15 +25,13 @@ class HttpRequestContentMapper {
      * if it is a text based mime type, otherwise it keeps as bytes.
      */
     static TypedContent map(HttpRequestWrapper request) {
-        // The content stream is fed into a byte sink
-        Flux<byte[]> byteArrayStream =
-                // we retain and we release it when we read the bytes in the sink below.
-                request.data().retain().handle(asByteArrayStream());
-
         MimeType mimeType = request.mimeType();
+        // The content stream is fed into a byte sink
+        // We retain and we release it when we read the bytes in the sink below.
+        Flux<byte[]> byteArrayStream = request.data().retain().handle(asByteArrayStream());
 
         if (String.class == MimeToJavaType.from(mimeType)) {
-            return mapStringJavaType(byteArrayStream, mimeType);
+            return asStringContent(byteArrayStream, mimeType);
         } else {
             // Generic byte array stream.
             Type type = new Type(mimeType, byte[].class);
@@ -41,22 +39,19 @@ class HttpRequestContentMapper {
         }
     }
 
-    private static TypedContent mapStringJavaType(Flux<byte[]> byteArrayStream, MimeType mimeType) {
+    private static TypedContent asStringContent(Flux<byte[]> byteArrayStream, MimeType mimeType) {
         // If it  is a String, then we check if the charset is present
         // in the mime type to be used for the string conversion.
         Optional<Charset> charset = mimeType.getCharset();
-
         // Map each byte array of the stream to a string
         Flux<String> streamAsString = byteArrayStream.map(bytes -> {
             Charset conversionCharset = charset.orElseGet(Charset::defaultCharset);
             return new String(bytes, conversionCharset);
         });
-
         // The TypedContent is String stream.
         return new StringContent(streamAsString, mimeType);
     }
 
-    // TODO: What would happen if an exception is thrown before all the byte buffers have been read!??
     private static BiConsumer<ByteBuf, SynchronousSink<byte[]>> asByteArrayStream() {
         return (byteBuffer, sink) -> {
             try {

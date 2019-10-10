@@ -30,6 +30,9 @@ import static org.junit.Assert.fail;
 @Tag(INTEGRATION)
 abstract class RestListenerAbstractTest {
 
+    static final int DEFAULT_PORT = 8881;
+    static final String DEFAULT_HOST = "localhost";
+
     @Mock
     protected FlowContext context;
     @Mock
