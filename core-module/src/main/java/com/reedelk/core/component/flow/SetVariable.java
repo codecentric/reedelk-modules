@@ -7,13 +7,12 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
-import com.reedelk.runtime.api.message.type.TypedContent;
-import com.reedelk.runtime.api.message.type.TypedContentFactory;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicObject;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.io.Serializable;
 
 import static com.reedelk.runtime.api.message.type.MimeType.Literal;
 import static com.reedelk.runtime.api.message.type.MimeType.Literal.*;
@@ -43,7 +42,6 @@ public class SetVariable implements ProcessorSync {
     @Hint("variable text value")
     private DynamicObject value;
 
-
     @Override
     public Message apply(Message message, FlowContext flowContext) {
         if (StringUtils.isBlank(name)) {
@@ -52,17 +50,10 @@ public class SetVariable implements ProcessorSync {
 
         MimeType mimeType = MimeType.parse(this.mimeType);
 
-        // It is a script, hence we need to evaluate it.
-        Object result = scriptEngine.evaluate(value, message, flowContext).orElse(null);
-        // TODO: The result here might be typed content ...
-        //if (result instanceof TypedContent) {
-          //  flowContext.setVariable(name, (TypedContent<?>) result);
-        //} else {
-            // TODO: Nope typed content factory should also take in consideration that result is typed content
-            Type contentType = new Type(mimeType);
-            TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
-            flowContext.setVariable(name, content);
-      //  }
+        Serializable result = (Serializable) scriptEngine.evaluate(value, mimeType, message, flowContext).orElse(null);
+
+        flowContext.setVariable(name, result);
+
         return message;
     }
 
