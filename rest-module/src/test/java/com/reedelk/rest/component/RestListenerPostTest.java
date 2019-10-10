@@ -1,9 +1,12 @@
 package com.reedelk.rest.component;
 
+import com.reedelk.rest.commons.HttpHeader;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.message.type.Part;
+import com.reedelk.runtime.api.message.type.Parts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -117,24 +120,55 @@ class RestListenerPostTest extends RestListenerAbstractTest {
                 APPLICATION_FORM_URL_ENCODED);
     }
 
+    // TODO: Refactor this test. It is just too long and verbose.
     @Test
     void shouldPostMultipartData() throws IOException {
         // Given
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.addTextBody("username", "John");
-        builder.addTextBody("password", "pass");
-        builder.addBinaryBody("file", "my binary text".getBytes(), ContentType.APPLICATION_OCTET_STREAM, "file.ext");
+        builder.addBinaryBody("myfile", "my binary text".getBytes(), ContentType.APPLICATION_OCTET_STREAM, "file.ext");
 
         HttpEntity multipart = builder.build();
         defaultRequest.setEntity(multipart);
 
         RestListener listener = listenerWith(POST, defaultConfiguration);
 
+        // When
+        makeRequest(listener, defaultRequest);
+
         // Expect
-        assertPostedBodyIs(listener, defaultRequest,"username=John&password=pass", APPLICATION_FORM_URL_ENCODED);
+        assertThat(payload).isInstanceOf(Parts.class);
+        Parts parts = (Parts) payload;
+        assertThat(parts).containsKeys("username", "myfile");
+
+        // Username assertions
+        Part usernamePart = parts.get("username");
+        assertThat(usernamePart.getAttributes()).isEmpty();
+        assertThat(usernamePart.getName()).isEqualTo("username");
+        assertThat(usernamePart.getContent().type().getMimeType()).isEqualTo(TEXT);
+        assertThat(usernamePart.getContent().data()).isEqualTo("John");
+
+        // File assertions
+        Part myfilePart = parts.get("myfile");
+        assertThat(myfilePart.getAttributes()).containsEntry(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_OCTET_STREAM.toString());
+        assertThat(myfilePart.getAttributes()).containsEntry(HttpHeader.TRANSFER_ENCODING, "binary");
+        assertThat(myfilePart.getAttributes()).containsEntry("filename", "file.ext");
+        assertThat(myfilePart.getName()).isEqualTo("myfile");
+        assertThat(myfilePart.getContent().type().getMimeType()).isEqualTo(BINARY);
+        assertThat(myfilePart.getContent().data()).isEqualTo("my binary text".getBytes());
+
     }
 
     private void assertPostedBodyIs(RestListener listener, HttpPost request, Object expectedContent, MimeType expectedMimeType) throws IOException {
+        // Execute request
+        makeRequest(listener, request);
+
+        // Assertions
+        assertThat(payload).isEqualTo(expectedContent);
+        assertThat(inboundMessage.getContent().type().getMimeType()).isEqualTo(expectedMimeType);
+    }
+
+    private void makeRequest(RestListener listener, HttpPost request) throws IOException {
         // Setup event listener and start route
         listener.addEventListener((message, callback) ->
                 new Thread(() -> {
@@ -149,9 +183,5 @@ class RestListenerPostTest extends RestListenerAbstractTest {
 
         // Execute http request
         HttpClientBuilder.create().build().execute(request);
-
-        // Assertions
-        assertThat(payload).isEqualTo(expectedContent);
-        assertThat(inboundMessage.getContent().type().getMimeType()).isEqualTo(expectedMimeType);
     }
 }

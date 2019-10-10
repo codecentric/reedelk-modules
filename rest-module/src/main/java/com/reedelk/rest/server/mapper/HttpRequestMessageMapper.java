@@ -36,7 +36,7 @@ public class HttpRequestMessageMapper {
         MimeType mimeType = request.mimeType();
 
         TypedContent content = MULTIPART_FORM_DATA.equals(mimeType) ?
-                HttpMultipartRequestMapper.map(request) :
+                HttpRequestMultipartMapper.map(request) :
                 HttpRequestContentMapper.map(request);
 
         return MessageBuilder.get()

@@ -5,13 +5,14 @@ import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.MimeType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
+import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
 
 class RestClientFollowRedirectsTest extends RestClientAbstractTest {
 
@@ -35,13 +36,14 @@ class RestClientFollowRedirectsTest extends RestClientAbstractTest {
 
         givenThat(any(urlEqualTo("/v2/resource"))
                 .willReturn(aResponse()
+                        .withHeader(CONTENT_TYPE, TEXT.toString())
                         .withBody("Redirect success")
                         .withStatus(200)));
 
         Message payload = MessageBuilder.get().build();
 
         // Expect
-        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Redirect success", MimeType.UNKNOWN);
+        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Redirect success", TEXT);
     }
 
     @ParameterizedTest
@@ -65,13 +67,14 @@ class RestClientFollowRedirectsTest extends RestClientAbstractTest {
 
         givenThat(any(urlEqualTo("/v2/resource"))
                 .willReturn(aResponse()
+                        .withHeader(CONTENT_TYPE, TEXT.toString())
                         .withBody("Redirect success")
                         .withStatus(200)));
 
         Message payload = MessageBuilder.get().build();
 
         // Expect
-        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Redirect success", MimeType.UNKNOWN);
+        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Redirect success", TEXT);
     }
 
     @ParameterizedTest

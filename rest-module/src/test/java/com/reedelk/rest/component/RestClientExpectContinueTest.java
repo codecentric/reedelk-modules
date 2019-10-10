@@ -7,7 +7,6 @@ import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -17,6 +16,8 @@ import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.matching.RequestPatternBuilder.newRequestPattern;
+import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
+import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -46,6 +47,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         givenThat(WireMock.any(urlEqualTo(PATH))
                 .withRequestBody(equalTo("my body"))
                 .willReturn(aResponse()
+                        .withHeader(CONTENT_TYPE, TEXT.toString())
                         .withBody("Expect continue success")
                         .withStatus(200)));
 
@@ -53,7 +55,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
 
 
         // Expect
-        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Expect continue success", MimeType.UNKNOWN);
+        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Expect continue success", TEXT);
 
         WireMock.verify(0, newRequestPattern().withHeader("Expect", equalTo("100-continue")));
     }
@@ -82,6 +84,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         givenThat(WireMock.any(urlEqualTo(PATH))
                 .withRequestBody(equalTo("my body"))
                 .willReturn(aResponse()
+                        .withHeader(CONTENT_TYPE, TEXT.toString())
                         .withBody("Expect continue success")
                         .withStatus(200)));
 
@@ -89,7 +92,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
 
 
         // Expect
-        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Expect continue success", MimeType.UNKNOWN);
+        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Expect continue success", TEXT);
 
         WireMock.verify(0, newRequestPattern().withHeader("Expect", equalTo("100-continue")));
     }
@@ -119,6 +122,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         givenThat(WireMock.any(urlEqualTo(PATH))
                 .withRequestBody(equalTo("my body"))
                 .willReturn(aResponse()
+                        .withHeader(CONTENT_TYPE, TEXT.toString())
                         .withBody("Expect continue success")
                         .withStatus(200)));
 
@@ -126,7 +130,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
 
 
         // Expect
-        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Expect continue success", MimeType.UNKNOWN);
+        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Expect continue success", TEXT);
 
         WireMock.verify(1, newRequestPattern().withHeader("Expect", equalTo("100-continue")));
     }

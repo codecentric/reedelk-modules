@@ -9,13 +9,11 @@ import io.netty.util.CharsetUtil;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
-class HttpMultipartRequestMapper {
+class HttpRequestMultipartMapper {
 
-    private HttpMultipartRequestMapper() {
+    private HttpRequestMultipartMapper() {
     }
 
     /**
@@ -40,7 +38,11 @@ class HttpMultipartRequestMapper {
                     String name = attribute.getName();
                     try {
                         StringContent content = new StringContent(attribute.getValue(), MimeType.TEXT);
-                        parts.put(name, new Part(name, content));
+                        Part part = Part.builder()
+                                .name(name)
+                                .content(content)
+                                .build();
+                        parts.put(name, part);
                     } catch (IOException e) {
                         e.printStackTrace();
                         // TODO:This  exception should be thrown and the request fail!
@@ -54,18 +56,19 @@ class HttpMultipartRequestMapper {
                     String contentType = fileUpload.getContentType();
                     String contentTransferEncoding = fileUpload.getContentTransferEncoding();
                     String filename = fileUpload.getFilename();
-
                     MimeType mimeType = MimeType.parse(contentType);
 
                     try {
                         ByteArrayContent content = new ByteArrayContent(fileUpload.get(), mimeType);
+                        Part part = Part.builder()
+                                .name(name)
+                                .content(content)
+                                .attribute(HttpHeader.CONTENT_TYPE, contentType)
+                                .attribute(HttpHeader.TRANSFER_ENCODING, contentTransferEncoding)
+                                .attribute("filename", filename)
+                                .build();
 
-                        Map<String, String> attrs = new HashMap<>();
-                        attrs.put(HttpHeader.CONTENT_TYPE, contentType);
-                        attrs.put(HttpHeader.TRANSFER_ENCODING, contentTransferEncoding);
-                        attrs.put("filename", filename);
-
-                        parts.put(name, new Part(name, content, attrs));
+                        parts.put(name, part);
                     } catch (IOException e) {
                         e.printStackTrace();
                         // TODO:This  exception should be thrown and the request fail!

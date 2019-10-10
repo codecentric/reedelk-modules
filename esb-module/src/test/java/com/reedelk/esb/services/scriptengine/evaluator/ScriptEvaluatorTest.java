@@ -8,7 +8,6 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.ByteArrayContent;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedPublisher;
 import com.reedelk.runtime.api.script.Script;
 import org.junit.jupiter.api.*;
@@ -153,8 +152,7 @@ class ScriptEvaluatorTest {
         void shouldReturnOriginalStreamFromMessagePayload() {
             // Given
             Flux<byte[]> stream = Flux.just("one".getBytes(), "two".getBytes());
-            Type type = new Type(MimeType.TEXT, byte[].class);
-            ByteArrayContent byteArrayContent = new ByteArrayContent(stream, type);
+            ByteArrayContent byteArrayContent = new ByteArrayContent(stream, MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(byteArrayContent).build();
 
             Script extractStreamScript = Script.from("#[message.payload()]");
