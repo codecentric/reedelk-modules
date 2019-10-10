@@ -62,7 +62,6 @@ public class RestListener extends AbstractInbound {
     public void onStart() {
         requireNonNull(configuration, "configuration");
         requireNonNull(method, "method");
-        requireNonNull(path, "path");
 
         HttpRequestHandler httpRequestHandler = HttpRequestHandler.builder()
                         .inboundEventListener(RestListener.this)

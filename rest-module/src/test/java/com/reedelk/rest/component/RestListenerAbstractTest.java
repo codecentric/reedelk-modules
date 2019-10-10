@@ -55,23 +55,22 @@ abstract class RestListenerAbstractTest {
         }
     }
 
-    RestListener listenerWith(RestMethod method, String path, ListenerConfiguration configuration) {
+    RestListener listenerWith(RestMethod method, ListenerConfiguration configuration) {
         listener.setConfiguration(configuration);
         listener.setMethod(method);
-        listener.setPath(path);
         return listener;
     }
 
-    void assertThatContentIs(HttpResponse response, String expected) throws IOException {
+    void assertContentIs(HttpResponse response, String expected) throws IOException {
         String content = EntityUtils.toString(response.getEntity());
         assertThat(content).isEqualTo(expected);
     }
 
-    void assertThatStatusCodeIs(HttpResponse response, int expected) {
+    void assertStatusCodeIs(HttpResponse response, int expected) {
         assertThat(response.getStatusLine().getStatusCode()).isEqualTo(expected);
     }
 
-    void assertThatContentType(HttpResponse response, String expectedContentType) {
+    void assertContentTypeIs(HttpResponse response, String expectedContentType) {
         ContentType contentType = ContentType.get(response.getEntity());
         String actualContentType = contentType.toString();
         assertThat(actualContentType).isEqualTo(expectedContentType);

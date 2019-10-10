@@ -40,14 +40,9 @@ public class Server {
         this.server = ServerConfigurer.configure(httpServer, configuration).bindNow();
     }
 
-    public String getBasePath() {
-        return configuration.getBasePath();
-    }
-
     public void addRoute(RestMethod method, String path, HttpRequestHandler httpHandler) {
         requireNonNull(httpHandler, "httpHandler");
         requireNonNull(method, "method");
-        requireNonNull(path, "path");
 
         String realPath = getRealPath(path);
 
@@ -56,11 +51,14 @@ public class Server {
 
     public void removeRoute(RestMethod method, String path) {
         requireNonNull(method, "method");
-        requireNonNull(path, "path");
 
         String realPath = getRealPath(path);
 
         routes.remove(HttpMethod.valueOf(method.name()), realPath);
+    }
+
+    String getBasePath() {
+        return configuration.getBasePath();
     }
 
     void stop() {
@@ -124,8 +122,11 @@ public class Server {
      * otherwise the original path is returned.
      */
     private String getRealPath(String path) {
-        return StringUtils.isNotBlank(configuration.getBasePath()) ?
-                configuration.getBasePath() + path :
-                path;
+        String thePath = StringUtils.isBlank(path) ? StringUtils.EMPTY : path;
+        if (StringUtils.isNotBlank(configuration.getBasePath())) {
+            return configuration.getBasePath() + thePath;
+        } else {
+            return StringUtils.isBlank(thePath) ? "/" : thePath;
+        }
     }
 }

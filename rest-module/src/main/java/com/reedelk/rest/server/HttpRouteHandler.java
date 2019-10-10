@@ -18,9 +18,9 @@ public class HttpRouteHandler implements BiFunction<HttpServerRequest, HttpServe
     private final Function<? super String, Map<String, String>> resolver;
     private final BiFunction<? super HttpServerRequest, ? super HttpServerResponse, ? extends Publisher<Void>> handler;
 
-    public HttpRouteHandler(HttpPredicate condition,
-                            BiFunction<? super HttpServerRequest, ? super HttpServerResponse, ? extends Publisher<Void>> handler,
-                            Function<? super String, Map<String, String>> resolver) {
+    HttpRouteHandler(HttpPredicate condition,
+                     BiFunction<? super HttpServerRequest, ? super HttpServerResponse, ? extends Publisher<Void>> handler,
+                     Function<? super String, Map<String, String>> resolver) {
         this.condition = requireNonNull(condition, "condition");
         this.handler = requireNonNull(handler, "handler");
         this.resolver = resolver;
@@ -36,7 +36,7 @@ public class HttpRouteHandler implements BiFunction<HttpServerRequest, HttpServe
         return condition.test(request);
     }
 
-    public boolean matchesExactly(HttpMethod method, String uri) {
+    boolean matchesExactly(HttpMethod method, String uri) {
         requireNonNull(method, "method");
         requireNonNull(uri, "uri");
         return method.equals(condition.method) && uri.equals(condition.uri);
