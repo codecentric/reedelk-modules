@@ -1,5 +1,6 @@
 package com.reedelk.rest.server;
 
+import com.reedelk.rest.commons.Defaults;
 import com.reedelk.rest.commons.HostNamePortKey;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import org.osgi.service.component.annotations.Component;
@@ -19,7 +20,9 @@ public class ServerProvider {
     public Optional<Server> get(ListenerConfiguration configuration) {
         if (configuration == null) return Optional.empty();
 
-        HostNamePortKey key = new HostNamePortKey(configuration.getHost(), configuration.getPort());
+        HostNamePortKey key = new HostNamePortKey(
+                Defaults.RestListener.host(configuration.getHost()),
+                Defaults.RestListener.port(configuration.getPort()));
         if (!serverMap.containsKey(key)) {
             Server server = new Server(configuration);
             serverMap.put(key, server);

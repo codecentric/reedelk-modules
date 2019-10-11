@@ -19,7 +19,7 @@ public class ListenerConfiguration implements Implementor {
     @Property("Port")
     @Default("8080")
     @Hint("8080")
-    private int port;
+    private Integer port;
 
     @Property("Protocol")
     @Default("HTTP")
@@ -64,11 +64,11 @@ public class ListenerConfiguration implements Implementor {
         this.host = host;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 

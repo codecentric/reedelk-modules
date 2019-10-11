@@ -1,6 +1,5 @@
 package com.reedelk.rest.client.strategy;
 
-import com.reedelk.rest.commons.Defaults;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.StreamingMode;
 import com.reedelk.rest.configuration.client.AdvancedConfiguration;
@@ -8,6 +7,8 @@ import org.apache.http.client.methods.*;
 
 import java.util.Optional;
 
+import static com.reedelk.rest.commons.Defaults.RestClient.REQUEST_BUFFER_SIZE;
+import static com.reedelk.rest.commons.Defaults.RestClient.RESPONSE_BUFFER_SIZE;
 import static com.reedelk.rest.commons.RestMethod.*;
 import static com.reedelk.rest.configuration.StreamingMode.*;
 import static java.lang.String.format;
@@ -76,12 +77,12 @@ public class ExecutionStrategyBuilder {
     private int getResponseBufferSize() {
         return Optional.ofNullable(advancedConfiguration)
                 .flatMap(config -> Optional.ofNullable(config.getResponseBufferSize()))
-                .orElse(Defaults.RESPONSE_BUFFER_SIZE);
+                .orElse(RESPONSE_BUFFER_SIZE);
     }
 
     private int getRequestBufferSize() {
         return Optional.ofNullable(advancedConfiguration)
                 .flatMap(advancedConfiguration -> Optional.ofNullable(advancedConfiguration.getRequestBufferSize()))
-                .orElse(Defaults.REQUEST_BUFFER_SIZE);
+                .orElse(REQUEST_BUFFER_SIZE);
     }
 }

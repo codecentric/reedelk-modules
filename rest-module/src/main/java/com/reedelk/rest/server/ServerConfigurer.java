@@ -1,5 +1,6 @@
 package com.reedelk.rest.server;
 
+import com.reedelk.rest.commons.Defaults;
 import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.configuration.listener.*;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -41,28 +42,10 @@ class ServerConfigurer {
     }
 
     static HttpServer configure(HttpServer server, ListenerConfiguration configuration) {
-        server = configureHost(server, configuration);
-        server = configurePort(server, configuration);
-        server = configureCompress(server, configuration);
+        server = server.host(Defaults.RestListener.host(configuration.getHost()));
+        server = server.port(Defaults.RestListener.port(configuration.getPort()));
+        server = server.compress(Defaults.RestListener.compress(configuration.getCompress()));
         return server.httpRequestDecoder(ServerConfigurer.configure(configuration));
-    }
-
-    private static HttpServer configureCompress(HttpServer server, ListenerConfiguration configuration) {
-        if (configuration.getCompress() != null) {
-            return server.compress(configuration.getCompress());
-        }
-        return server;
-    }
-
-    private static HttpServer configureHost(HttpServer server, ListenerConfiguration configuration) {
-        if (configuration.getHost() != null) {
-            return server.host(configuration.getHost());
-        }
-        return server;
-    }
-
-    private static HttpServer configurePort(HttpServer server, ListenerConfiguration configuration) {
-        return server.port(configuration.getPort());
     }
 
     private static <T> void setChannelOption(ServerBootstrap serverBootstrap, ChannelOption<T> channelOption, T value) {
