@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.uri;
 
 import org.junit.jupiter.api.Test;
 

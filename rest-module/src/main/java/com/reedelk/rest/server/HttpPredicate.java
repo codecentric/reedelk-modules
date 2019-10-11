@@ -1,6 +1,7 @@
 package com.reedelk.rest.server;
 
 
+import com.reedelk.rest.server.uri.UriTemplate;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpVersion;
 import reactor.netty.http.server.HttpServerRequest;

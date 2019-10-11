@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.uri;
 
 import com.reedelk.runtime.api.commons.StringUtils;
 

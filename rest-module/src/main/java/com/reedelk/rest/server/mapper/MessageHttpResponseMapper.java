@@ -89,7 +89,7 @@ public class MessageHttpResponseMapper {
             serverResponse.addHeader(CONTENT_TYPE, MimeType.TEXT.toString());
         }
 
-        // 3. User defined response headers (which might override headers above)
+        // 3. Headers (which might override headers above)
         DynamicStringMap responseHeaders = ofNullable(errorResponse)
                 .map(ErrorResponse::getHeaders).orElse(null);
         AdditionalHeader.addAll(serverResponse, responseHeaders);

@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.body;
 
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -15,7 +15,7 @@ public class BodyProviderStreamAlways implements BodyProvider {
     private final DynamicByteArray responseBody;
     private final DynamicByteArray errorResponseBody;
 
-    BodyProviderStreamAlways(ScriptEngineService scriptEngine, DynamicByteArray responseBody, DynamicByteArray errorResponseBody) {
+    public BodyProviderStreamAlways(ScriptEngineService scriptEngine, DynamicByteArray responseBody, DynamicByteArray errorResponseBody) {
         this.responseBody = responseBody;
         this.scriptEngine = scriptEngine;
         this.errorResponseBody = errorResponseBody;

@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.body;
 
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;

@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.body;
 
 import com.reedelk.rest.commons.IsEvaluateMessagePayload;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -16,7 +16,7 @@ public class BodyProviderStreamAuto implements BodyProvider {
     private BodyProviderStreamNone streamNone;
     private BodyProviderStreamAlways streamAlways;
 
-    BodyProviderStreamAuto(ScriptEngineService scriptEngine,
+    public BodyProviderStreamAuto(ScriptEngineService scriptEngine,
                            DynamicByteArray responseBody,
                            DynamicByteArray errorResponseBody) {
         isEvaluateMessagePayload = IsEvaluateMessagePayload.from(responseBody);

@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.configurer;
 
 import com.reedelk.rest.commons.Defaults;
 import com.reedelk.rest.commons.HttpProtocol;
@@ -25,15 +25,15 @@ import java.util.function.Function;
 import static io.netty.channel.ChannelOption.*;
 import static java.util.Objects.requireNonNull;
 
-class ServerConfigurer {
+public class ServerConfigurer {
 
-    static void configure(ServerBootstrap bootstrap, ListenerConfiguration configuration) {
+    public static void configure(ServerBootstrap bootstrap, ListenerConfiguration configuration) {
         setChannelOption(bootstrap, SO_BACKLOG, configuration.getSocketBacklog());
         setChannelOption(bootstrap, CONNECT_TIMEOUT_MILLIS, configuration.getConnectionTimeoutMillis());
         setChannelChildOption(bootstrap, SO_KEEPALIVE, configuration.getKeepAlive());
     }
 
-    static Consumer<Connection> onConnection(ListenerConfiguration configuration) {
+    public static Consumer<Connection> onConnection(ListenerConfiguration configuration) {
         return connection -> {
             if (configuration.getReadTimeoutMillis() != null) {
                 connection.addHandlerLast("readTimeout", new ReadTimeoutHandler(configuration.getReadTimeoutMillis()));
@@ -41,7 +41,7 @@ class ServerConfigurer {
         };
     }
 
-    static HttpServer configure(HttpServer server, ListenerConfiguration configuration) {
+    public static HttpServer configure(HttpServer server, ListenerConfiguration configuration) {
         server = server.host(Defaults.RestListener.host(configuration.getHost()));
         server = server.port(Defaults.RestListener.port(configuration.getPort()));
         server = server.compress(Defaults.RestListener.compress(configuration.getCompress()));
@@ -72,7 +72,7 @@ class ServerConfigurer {
         };
     }
 
-    static TcpServer configureSecurity(TcpServer bootstrap, ListenerConfiguration configuration) {
+    public static TcpServer configureSecurity(TcpServer bootstrap, ListenerConfiguration configuration) {
         // Security is configured if and only if the protocol is HTTPS
         if (!HttpProtocol.HTTPS.equals(configuration.getProtocol())) return bootstrap;
         if (configuration.getSecurityConfiguration() == null) return bootstrap;

@@ -1,4 +1,4 @@
-package com.reedelk.rest.server;
+package com.reedelk.rest.server.uri;
 
 
 import com.reedelk.rest.commons.RemoveQueryParams;
@@ -10,24 +10,24 @@ import java.util.regex.Matcher;
 
 import static java.util.Objects.requireNonNull;
 
-class UriTemplate {
+public class UriTemplate {
 
     private final UriTemplateStructure uriTemplateStructure;
 
-    UriTemplate(String uriTemplate) {
+    public UriTemplate(String uriTemplate) {
         requireNonNull(uriTemplate, "uri template");
         String uriTemplateWithoutQueryParams = RemoveQueryParams.from(uriTemplate);
         this.uriTemplateStructure = UriTemplateStructure.from(uriTemplateWithoutQueryParams);
     }
 
-    boolean matches(String uri) {
+    public boolean matches(String uri) {
         if (uri == null) return false;
         String uriWithoutQueryParams = RemoveQueryParams.from(uri);
         Matcher matcher = uriTemplateStructure.getPattern().matcher(uriWithoutQueryParams);
         return matcher.matches();
     }
 
-    Map<String,String> bind(String uri) {
+    public Map<String,String> bind(String uri) {
         requireNonNull(uri, "uri");
 
         // We must remove the query parameters from the original URI.
