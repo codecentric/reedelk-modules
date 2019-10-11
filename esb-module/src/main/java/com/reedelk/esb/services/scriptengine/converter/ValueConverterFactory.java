@@ -57,6 +57,8 @@ public class ValueConverterFactory {
             return null;
         } else if (input.getType().equals(outputClass)) {
             return (TypedPublisher<O>) input;
+        } else if  (Object.class.equals(outputClass)) {
+            return (TypedPublisher<O>) input;
         } else {
             return Optional.ofNullable(CONVERTERS.get(input.getType()))
                     .flatMap(fromConverter -> Optional.ofNullable((ValueConverter<I, O>) fromConverter.get(outputClass)))

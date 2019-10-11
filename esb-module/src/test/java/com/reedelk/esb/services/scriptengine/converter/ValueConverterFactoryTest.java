@@ -659,6 +659,22 @@ class ValueConverterFactoryTest {
         }
 
         @Test
+        void shouldConvertStringToObject() {
+            // Given
+            TypedPublisher<String> input = TypedPublisher.fromString(Flux.just("1", "2", "4"));
+
+            // When
+            TypedPublisher<Object> converted =
+                    ValueConverterFactory.convertTypedPublisher(input, Object.class);
+
+            // Then
+            StepVerifier.create(converted)
+                    .expectNext("1", "2", "4")
+                    .verifyComplete();
+            assertThat(input).isEqualTo(converted);
+        }
+
+        @Test
         void shouldStreamPropagateErrorWhenConversionIsFailed() {
             // Given
             TypedPublisher<String> input = TypedPublisher.fromString(Flux.just("1", "not a number", "2"));

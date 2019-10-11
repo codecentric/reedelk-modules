@@ -44,10 +44,6 @@ class RestListenerPostTest extends RestListenerAbstractTest {
     private static final String TEST_JSON_BODY = "{\"name\":\"John\"}";
     private static final String TEST_TEXT_BODY = "This is a sample text";
 
-
-    // TODO: What happens when callback.onResult is never called? There should be a timeout....!??!?
-    // TODO: Test SSL and SSL Certificate
-
     private ListenerConfiguration defaultConfiguration;
     private HttpPost defaultRequest;
 
