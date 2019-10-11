@@ -6,9 +6,8 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
-import com.reedelk.runtime.api.message.type.TypedContentFactory;
+import com.reedelk.runtime.api.message.type.factory.TypedContentFactory;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicObject;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
@@ -43,9 +42,7 @@ public class SetPayload implements ProcessorSync {
 
         Object result = scriptEngine.evaluate(payload, mimeType, message, flowContext).orElse(null);
 
-        Type contentType = new Type(mimeType);
-
-        TypedContent<?> content = TypedContentFactory.from(result, contentType);
+        TypedContent<?> content = TypedContentFactory.from(result, mimeType);
 
         return MessageBuilder.get().typedContent(content).build();
     }

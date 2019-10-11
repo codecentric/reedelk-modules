@@ -15,11 +15,11 @@ import java.io.IOException;
 import static com.reedelk.rest.commons.Messages.RestListener.*;
 import static io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 
-class HttpRequestMultipartMapper {
+class HttpRequestMultipartFormDataMapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpRequestMultipartMapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestMultipartFormDataMapper.class);
 
-    private HttpRequestMultipartMapper() {
+    private HttpRequestMultipartFormDataMapper() {
     }
 
     static TypedContent map(HttpRequestWrapper request) {
@@ -62,7 +62,7 @@ class HttpRequestMultipartMapper {
             return Mono.just(parts);
         });
 
-        return new MultipartContent(partsMono);
+        return new MultipartContent(partsMono, MimeType.MULTIPART_FORM_DATA);
     }
 
     private static void handleFileUploadPart(Parts parts, FileUpload fileUpload) {
