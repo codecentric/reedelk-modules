@@ -1,6 +1,7 @@
 package com.reedelk.rest.commons;
 
 import com.reedelk.runtime.api.commons.StringUtils;
+import reactor.netty.http.HttpDecoderSpec;
 
 public class Defaults {
 
@@ -33,8 +34,18 @@ public class Defaults {
             return actual == null ? DEFAULT_COMPRESS : actual;
         }
 
-        private static final int DEFAULT_PORT = 8080;
-        private static final String DEFAULT_HOST = "localhost";
+        public static int maxChunkSize(Integer actual) {
+            return actual == null ? DEFAULT_MAX_CHUNK_SIZE : actual;
+        }
+
+        public static int maxHeaderSize(Integer actual) {
+            return actual == null ? DEFAULT_MAX_HEADER_SIZE : actual;
+        }
+
         private static final boolean DEFAULT_COMPRESS =  false;
+        private static final String DEFAULT_HOST = "localhost";
+        private static final int DEFAULT_PORT = 8080;
+        private static final int DEFAULT_MAX_CHUNK_SIZE = HttpDecoderSpec.DEFAULT_MAX_CHUNK_SIZE;
+        private static final int DEFAULT_MAX_HEADER_SIZE = HttpDecoderSpec.DEFAULT_MAX_HEADER_SIZE;
     }
 }
