@@ -3,7 +3,7 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 import com.reedelk.runtime.api.commons.MimeToJavaType;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicObject;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 

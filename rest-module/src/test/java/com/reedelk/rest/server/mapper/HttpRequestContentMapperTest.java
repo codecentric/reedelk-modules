@@ -1,9 +1,9 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.runtime.api.message.type.ByteArrayContent;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.StringContent;
-import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.message.content.ByteArrayContent;
+import com.reedelk.runtime.api.message.content.MimeType;
+import com.reedelk.runtime.api.message.content.StringContent;
+import com.reedelk.runtime.api.message.content.TypedContent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

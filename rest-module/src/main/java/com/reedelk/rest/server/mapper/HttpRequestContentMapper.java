@@ -1,8 +1,8 @@
 package com.reedelk.rest.server.mapper;
 
 import com.reedelk.runtime.api.commons.TypedContentFromByteArrayStream;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.message.content.MimeType;
+import com.reedelk.runtime.api.message.content.TypedContent;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

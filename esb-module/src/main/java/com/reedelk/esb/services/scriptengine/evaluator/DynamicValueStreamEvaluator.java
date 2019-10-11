@@ -2,7 +2,7 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.TypedPublisher;
+import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import reactor.core.publisher.Mono;
 

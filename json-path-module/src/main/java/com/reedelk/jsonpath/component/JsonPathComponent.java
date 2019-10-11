@@ -6,13 +6,13 @@ import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.StringContent;
-import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.message.content.StringContent;
+import com.reedelk.runtime.api.message.content.TypedContent;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.osgi.service.component.annotations.Component;
 
-import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
+import static com.reedelk.runtime.api.message.content.MimeType.APPLICATION_JSON;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Json Path")

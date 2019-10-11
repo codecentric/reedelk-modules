@@ -17,7 +17,7 @@ import java.io.IOException;
 
 import static com.reedelk.admin.console.dev.HttpMethod.GET;
 import static com.reedelk.admin.console.dev.commons.HttpHeader.CONTENT_TYPE;
-import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
+import static com.reedelk.runtime.api.message.content.MimeType.APPLICATION_JSON;
 
 public class HealthResources implements Fork {
 

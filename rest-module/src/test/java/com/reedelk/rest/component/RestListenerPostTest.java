@@ -1,9 +1,9 @@
 package com.reedelk.rest.component;
 
 import com.reedelk.runtime.api.commons.ImmutableMap;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Part;
-import com.reedelk.runtime.api.message.type.Parts;
+import com.reedelk.runtime.api.message.content.MimeType;
+import com.reedelk.runtime.api.message.content.Part;
+import com.reedelk.runtime.api.message.content.Parts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -31,7 +31,7 @@ import static com.reedelk.rest.commons.HttpHeader.TRANSFER_ENCODING;
 import static com.reedelk.rest.commons.Messages.RestListener.ERROR_MULTIPART_NOT_SUPPORTED;
 import static com.reedelk.rest.commons.RestMethod.POST;
 import static com.reedelk.rest.commons.RestMethod.PUT;
-import static com.reedelk.runtime.api.message.type.MimeType.*;
+import static com.reedelk.runtime.api.message.content.MimeType.*;
 import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;

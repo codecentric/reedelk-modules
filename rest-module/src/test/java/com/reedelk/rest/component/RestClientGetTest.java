@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static com.reedelk.rest.commons.RestMethod.GET;
-import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
-import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
+import static com.reedelk.runtime.api.message.content.MimeType.APPLICATION_JSON;
+import static com.reedelk.runtime.api.message.content.MimeType.TEXT;
 
 class RestClientGetTest extends RestClientAbstractTest {
 

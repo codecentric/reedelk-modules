@@ -4,8 +4,8 @@ import com.reedelk.rest.client.HttpClientResponseException;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.message.content.MimeType;
+import com.reedelk.runtime.api.message.content.TypedContent;
 import org.assertj.core.api.Assertions;
 
 import java.util.concurrent.CountDownLatch;

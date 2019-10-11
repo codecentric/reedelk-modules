@@ -1,7 +1,7 @@
 package com.reedelk.rest.server.mapper;
 
 import com.reedelk.rest.commons.HttpHeader;
-import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.message.content.MimeType;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpScheme;

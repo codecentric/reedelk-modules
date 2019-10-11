@@ -1,6 +1,6 @@
 package com.reedelk.esb.services.scriptengine.converter;
 
-import com.reedelk.runtime.api.message.type.TypedPublisher;
+import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 
 public interface ValueConverter<I, O> {
 

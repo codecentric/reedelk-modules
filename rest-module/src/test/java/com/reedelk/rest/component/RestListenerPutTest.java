@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static com.reedelk.rest.commons.RestMethod.PUT;
-import static com.reedelk.runtime.api.message.type.MimeType.*;
+import static com.reedelk.runtime.api.message.content.MimeType.*;
 import static org.apache.http.HttpStatus.SC_OK;
 
 class RestListenerPutTest extends RestListenerAbstractTest {

@@ -1,7 +1,7 @@
 package com.reedelk.rest.commons;
 
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.message.content.MimeType;
 
 import java.util.Optional;
 

@@ -5,7 +5,7 @@ import org.takes.facets.fork.Fork;
 import org.takes.tk.TkClasspath;
 import org.takes.tk.TkWithType;
 
-import static com.reedelk.runtime.api.message.type.MimeType.CSS;
+import static com.reedelk.runtime.api.message.content.MimeType.CSS;
 
 public class ConsoleCSSResource extends AbstractConsoleResource {
 

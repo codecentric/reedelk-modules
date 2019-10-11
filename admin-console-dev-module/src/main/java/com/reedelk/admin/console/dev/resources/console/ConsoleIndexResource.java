@@ -7,7 +7,7 @@ import org.takes.tk.TkWithType;
 
 import java.io.InputStream;
 
-import static com.reedelk.runtime.api.message.type.MimeType.HTML;
+import static com.reedelk.runtime.api.message.content.MimeType.HTML;
 
 public class ConsoleIndexResource extends AbstractConsoleResource {
 

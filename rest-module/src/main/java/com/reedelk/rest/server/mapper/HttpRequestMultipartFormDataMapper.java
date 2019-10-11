@@ -2,7 +2,7 @@ package com.reedelk.rest.server.mapper;
 
 import com.reedelk.rest.ExecutionException;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.message.type.*;
+import com.reedelk.runtime.api.message.content.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.*;
 import io.netty.util.CharsetUtil;

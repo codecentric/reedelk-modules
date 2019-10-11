@@ -1,6 +1,6 @@
 package com.reedelk.rest.commons;
 
-import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.message.content.MimeType;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.http.Header;
 import org.slf4j.Logger;

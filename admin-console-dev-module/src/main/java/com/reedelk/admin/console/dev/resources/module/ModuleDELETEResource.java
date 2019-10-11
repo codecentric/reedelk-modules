@@ -15,7 +15,7 @@ import org.takes.rs.RsWithStatus;
 import java.io.IOException;
 
 import static com.reedelk.admin.console.dev.commons.HttpHeader.CONTENT_TYPE;
-import static com.reedelk.runtime.api.message.type.MimeType.APPLICATION_JSON;
+import static com.reedelk.runtime.api.message.content.MimeType.APPLICATION_JSON;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 

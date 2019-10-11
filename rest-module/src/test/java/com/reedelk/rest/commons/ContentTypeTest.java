@@ -2,8 +2,8 @@ package com.reedelk.rest.commons;
 
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.StringContent;
-import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.message.content.StringContent;
+import com.reedelk.runtime.api.message.content.TypedContent;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;

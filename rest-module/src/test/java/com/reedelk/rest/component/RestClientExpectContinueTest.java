@@ -17,7 +17,7 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.matching.RequestPatternBuilder.newRequestPattern;
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
-import static com.reedelk.runtime.api.message.type.MimeType.TEXT;
+import static com.reedelk.runtime.api.message.content.MimeType.TEXT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;

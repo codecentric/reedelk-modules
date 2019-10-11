@@ -2,12 +2,12 @@ package com.reedelk.rest.server.mapper;
 
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.TypedContent;
+import com.reedelk.runtime.api.message.content.MimeType;
+import com.reedelk.runtime.api.message.content.TypedContent;
 import reactor.netty.http.server.HttpServerRequest;
 
 import static com.reedelk.rest.server.mapper.HttpRequestAttribute.*;
-import static com.reedelk.runtime.api.message.type.MimeType.MULTIPART_FORM_DATA;
+import static com.reedelk.runtime.api.message.content.MimeType.MULTIPART_FORM_DATA;
 
 public class HttpRequestMessageMapper {
 
