@@ -28,8 +28,7 @@ public class FlowExecutorEngine {
         MessageAndContext event = new MessageAndContext(message, defaultContext);
 
         Publisher<MessageAndContext> publisher =
-                Mono.just(event)
-                        .publishOn(SchedulerProvider.flow());
+                Mono.just(event).publishOn(SchedulerProvider.flow());
 
         ExecutionNode root = graph.getRoot();
 
