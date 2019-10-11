@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
 
 public class ServerSecurityConfigurer {
 
-    public static TcpServer configureSecurity(TcpServer bootstrap, ListenerConfiguration configuration) {
+    public static TcpServer configure(TcpServer bootstrap, ListenerConfiguration configuration) {
         // Security is configured if and only if the protocol is HTTPS
         if (!HttpProtocol.HTTPS.equals(configuration.getProtocol())) return bootstrap;
         if (configuration.getSecurityConfiguration() == null) return bootstrap;

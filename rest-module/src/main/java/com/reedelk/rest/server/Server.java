@@ -83,14 +83,13 @@ public class Server {
 
     private TcpServer createTcpServer(ListenerConfiguration configuration) {
         TcpServer bootstrap = TcpServer.create();
-        bootstrap = ServerSecurityConfigurer.configureSecurity(bootstrap, configuration);
-        bootstrap = bootstrap
-                .bootstrap(serverBootstrap -> {
-                    ServerConfigurer.configure(serverBootstrap, configuration);
-                    return serverBootstrap
-                            .channel(NioServerSocketChannel.class)
-                            .group(bossGroup, workerGroup);
-                })
+        bootstrap = ServerSecurityConfigurer.configure(bootstrap, configuration);
+        bootstrap = bootstrap.bootstrap(serverBootstrap -> {
+            ServerConfigurer.configure(serverBootstrap, configuration);
+            return serverBootstrap
+                    .channel(NioServerSocketChannel.class)
+                    .group(bossGroup, workerGroup);
+        })
                 .doOnConnection(ServerConfigurer.onConnection(configuration));
         return bootstrap;
     }
@@ -119,6 +118,7 @@ public class Server {
     /**
      * Returns the real path, with the base path prefixed to the given
      * path if it is not blank.
+     *
      * @param path the original path.
      * @return the base path + original path if the base path is not blank,
      * otherwise the original path is returned.
