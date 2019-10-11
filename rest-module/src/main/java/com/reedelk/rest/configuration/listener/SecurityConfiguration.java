@@ -24,8 +24,7 @@ public class SecurityConfiguration implements Implementor {
     private KeyStoreConfiguration keyStore;
 
     @Property("Use trust store")
-    @Default("false")
-    private boolean useTrustStore;
+    private Boolean useTrustStore;
 
     @Property("Trust store configuration")
     @When(propertyName = "useTrustStore", propertyValue = "true")
