@@ -4,6 +4,9 @@ import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import com.reedelk.rest.server.ServerProvider;
 import com.reedelk.runtime.api.message.FlowContext;
+import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -30,15 +33,22 @@ import static org.junit.Assert.fail;
 @Tag(INTEGRATION)
 abstract class RestListenerAbstractTest {
 
+    static final String TEST_JSON_BODY = "{\"name\":\"John\"}";
+    static final String TEST_TEXT_BODY = "This is a sample text";
+
     static final int DEFAULT_PORT = 8881;
     static final String DEFAULT_HOST = "localhost";
+
+    private static ServerProvider serverProvider;
 
     @Mock
     protected FlowContext context;
     @Mock
     protected ScriptEngineService scriptEngine;
+    protected Object payload;
 
-    private static ServerProvider serverProvider;
+    Message inboundMessage;
+    ListenerConfiguration defaultConfiguration;
 
     private RestListener listener;
 
@@ -52,6 +62,10 @@ abstract class RestListenerAbstractTest {
         listener = new RestListener();
         setField(listener, "provider", serverProvider);
         setField(listener, "scriptEngine", scriptEngine);
+
+        defaultConfiguration = new ListenerConfiguration();
+        defaultConfiguration.setHost(DEFAULT_HOST);
+        defaultConfiguration.setPort(DEFAULT_PORT);
     }
 
     @AfterEach
@@ -98,6 +112,32 @@ abstract class RestListenerAbstractTest {
         } catch (IOException e) {
             Assertions.fail(String.format("Error asserting content=[%s] for request=[%s]", expected, request), e);
         }
+    }
+
+    void assertBodySent(RestListener listener, HttpUriRequest request, Object expectedContent, MimeType expectedMimeType) throws IOException {
+        // Execute request
+        makeRequest(listener, request);
+
+        // Assertions
+        assertThat(payload).isEqualTo(expectedContent);
+        assertThat(inboundMessage.getContent().type().getMimeType()).isEqualTo(expectedMimeType);
+    }
+
+    void makeRequest(RestListener listener, HttpUriRequest request) throws IOException {
+        // Setup event listener and start route
+        listener.addEventListener((message, callback) ->
+                new Thread(() -> {
+                    // We must consume the payload in this Thread. Because the
+                    // Thread calling the callback is a NIO Thread, hence we would
+                    // not be able to consume the payload because it is a Fast non-blocking Thread.
+                    inboundMessage = message;
+                    payload = message.payload();
+                    callback.onResult(MessageBuilder.get().empty().build(), context);
+                }).start());
+        listener.onStart();
+
+        // Execute http request
+        HttpClientBuilder.create().build().execute(request);
     }
 
     private void setField(RestListener client, String fieldName, Object object) {

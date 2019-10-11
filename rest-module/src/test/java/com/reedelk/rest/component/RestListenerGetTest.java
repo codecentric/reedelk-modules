@@ -32,18 +32,12 @@ import static org.mockito.Mockito.doReturn;
 
 class RestListenerGetTest extends RestListenerAbstractTest {
 
-    private ListenerConfiguration defaultConfiguration;
-    private HttpUriRequest defaultRequest;
-
-    private Message inboundMessage;
+    private HttpGet getRequest;
 
     @BeforeEach
     void setUp() {
         super.setUp();
-        defaultConfiguration = new ListenerConfiguration();
-        defaultConfiguration.setHost(DEFAULT_HOST);
-        defaultConfiguration.setPort(DEFAULT_PORT);
-        defaultRequest = new HttpGet("http://" + DEFAULT_HOST + ":"+ DEFAULT_PORT);
+        getRequest = new HttpGet("http://" + DEFAULT_HOST + ":"+ DEFAULT_PORT);
     }
 
     @Test
@@ -54,7 +48,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         listener.onStart();
 
         // Expect
-        assertStatusCodeIs(defaultRequest, SC_OK);
+        assertStatusCodeIs(getRequest, SC_OK);
     }
 
     @Test
@@ -79,7 +73,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         listener.onStart();
 
         // Expect
-        assertStatusCodeIs(defaultRequest, SC_OK);
+        assertStatusCodeIs(getRequest, SC_OK);
     }
 
     @Test
@@ -168,7 +162,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         listener.onStart();
 
         // Expect
-        assertStatusCodeIs(defaultRequest, SC_INTERNAL_SERVER_ERROR);
+        assertStatusCodeIs(getRequest, SC_INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -181,7 +175,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         listener.onStart();
 
         // Expect
-        assertContentIs(defaultRequest, EMPTY);
+        assertContentIs(getRequest, EMPTY);
     }
 
     @Test
@@ -210,7 +204,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         listener.onStart();
 
         // Expect
-        assertContentIs(defaultRequest, errorMessage);
+        assertContentIs(getRequest, errorMessage);
     }
 
     @Test
@@ -229,7 +223,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         listener.onStart();
 
         // When
-        HttpResponse response = HttpClientBuilder.create().build().execute(defaultRequest);
+        HttpResponse response = HttpClientBuilder.create().build().execute(getRequest);
 
         // Then
         assertContentTypeIs(response, APPLICATION_JSON.toString());
@@ -246,7 +240,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         listener.onStart();
 
         // When
-        HttpClientBuilder.create().build().execute(defaultRequest);
+        HttpClientBuilder.create().build().execute(getRequest);
 
         // Then
         MimeType inboundMessageMimeType = inboundMessage.getContent().type().getMimeType();

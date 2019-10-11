@@ -1,9 +1,6 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import com.reedelk.runtime.api.commons.ImmutableMap;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.type.MimeType;
 import com.reedelk.runtime.api.message.type.Part;
 import com.reedelk.runtime.api.message.type.Parts;
@@ -41,60 +38,50 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RestListenerPostTest extends RestListenerAbstractTest {
 
-    private static final String TEST_JSON_BODY = "{\"name\":\"John\"}";
-    private static final String TEST_TEXT_BODY = "This is a sample text";
-
-    private ListenerConfiguration defaultConfiguration;
-    private HttpPost defaultRequest;
-
-    private Message inboundMessage;
-    private Object payload;
+    private HttpPost postRequest;
 
     @BeforeEach
     void setUp() {
         super.setUp();
-        defaultConfiguration = new ListenerConfiguration();
-        defaultConfiguration.setHost(DEFAULT_HOST);
-        defaultConfiguration.setPort(DEFAULT_PORT);
-        defaultRequest = new HttpPost("http://" + DEFAULT_HOST + ":" + DEFAULT_PORT);
+        postRequest = new HttpPost("http://" + DEFAULT_HOST + ":" + DEFAULT_PORT);
     }
 
     @Test
     void shouldReturn200() {
         // Given
         StringEntity entity = new StringEntity(TEST_JSON_BODY, ContentType.APPLICATION_JSON);
-        defaultRequest.setEntity(entity);
+        postRequest.setEntity(entity);
 
         RestListener listener = listenerWith(POST, defaultConfiguration);
         listener.addEventListener((message, callback) -> callback.onResult(message, context));
         listener.onStart();
 
         // Expect
-        assertStatusCodeIs(defaultRequest, SC_OK);
+        assertStatusCodeIs(postRequest, SC_OK);
     }
 
     @Test
     void shouldPostJsonBody() throws IOException {
         // Given
         StringEntity entity = new StringEntity(TEST_JSON_BODY, ContentType.APPLICATION_JSON);
-        defaultRequest.setEntity(entity);
+        postRequest.setEntity(entity);
 
         RestListener listener = listenerWith(POST, defaultConfiguration);
 
         // Expect
-        assertPostBody(listener, defaultRequest, TEST_JSON_BODY, APPLICATION_JSON);
+        assertBodySent(listener, postRequest, TEST_JSON_BODY, APPLICATION_JSON);
     }
 
     @Test
     void shouldPostTextBody() throws IOException {
         // Given
         StringEntity entity = new StringEntity(TEST_TEXT_BODY, ContentType.TEXT_PLAIN);
-        defaultRequest.setEntity(entity);
+        postRequest.setEntity(entity);
 
         RestListener listener = listenerWith(POST, defaultConfiguration);
 
         // Expect
-        assertPostBody(listener, defaultRequest, TEST_TEXT_BODY, TEXT);
+        assertBodySent(listener, postRequest, TEST_TEXT_BODY, TEXT);
     }
 
     @Test
@@ -102,12 +89,12 @@ class RestListenerPostTest extends RestListenerAbstractTest {
         // Given
         byte[] binaryData = TEST_JSON_BODY.getBytes();
         ByteArrayEntity entity = new ByteArrayEntity(binaryData, ContentType.DEFAULT_BINARY);
-        defaultRequest.setEntity(entity);
+        postRequest.setEntity(entity);
 
         RestListener listener = listenerWith(POST, defaultConfiguration);
 
         // Expect
-        assertPostBody(listener, defaultRequest, binaryData, BINARY);
+        assertBodySent(listener, postRequest, binaryData, BINARY);
     }
 
     @Test
@@ -116,12 +103,12 @@ class RestListenerPostTest extends RestListenerAbstractTest {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("username", "John"));
         params.add(new BasicNameValuePair("password", "pass"));
-        defaultRequest.setEntity(new UrlEncodedFormEntity(params));
+        postRequest.setEntity(new UrlEncodedFormEntity(params));
 
         RestListener listener = listenerWith(POST, defaultConfiguration);
 
         // Expect
-        assertPostBody(listener, defaultRequest,
+        assertBodySent(listener, postRequest,
                 "username=John&password=pass",
                 APPLICATION_FORM_URL_ENCODED);
     }
@@ -136,12 +123,12 @@ class RestListenerPostTest extends RestListenerAbstractTest {
         builder.addBinaryBody("myfile", binaryContent, ContentType.APPLICATION_OCTET_STREAM, "file.ext");
 
         HttpEntity multipart = builder.build();
-        defaultRequest.setEntity(multipart);
+        postRequest.setEntity(multipart);
 
         RestListener listener = listenerWith(POST, defaultConfiguration);
 
         // When
-        makeRequest(listener, defaultRequest);
+        makeRequest(listener, postRequest);
 
         // Then
         Parts parts = (Parts) payload;
@@ -188,31 +175,5 @@ class RestListenerPostTest extends RestListenerAbstractTest {
         assertThat(usernamePart.getContent().type().getMimeType()).isEqualTo(mimeType);
         assertThat(usernamePart.getContent().data()).isEqualTo(data);
         assertThat(usernamePart.getAttributes()).isEqualTo(attributes);
-    }
-
-    private void assertPostBody(RestListener listener, HttpPost request, Object expectedContent, MimeType expectedMimeType) throws IOException {
-        // Execute request
-        makeRequest(listener, request);
-
-        // Assertions
-        assertThat(payload).isEqualTo(expectedContent);
-        assertThat(inboundMessage.getContent().type().getMimeType()).isEqualTo(expectedMimeType);
-    }
-
-    private void makeRequest(RestListener listener, HttpPost request) throws IOException {
-        // Setup event listener and start route
-        listener.addEventListener((message, callback) ->
-                new Thread(() -> {
-                    // We must consume the payload in this Thread. Because the
-                    // Thread calling the callback is a NIO Thread, hence we would
-                    // not be able to consume the payload because it is a Fast non-blocking Thread.
-                    inboundMessage = message;
-                    payload = message.payload();
-                    callback.onResult(MessageBuilder.get().empty().build(), context);
-                }).start());
-        listener.onStart();
-
-        // Execute http request
-        HttpClientBuilder.create().build().execute(request);
     }
 }
