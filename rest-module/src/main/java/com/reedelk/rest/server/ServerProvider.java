@@ -22,7 +22,7 @@ public class ServerProvider {
 
         HostNamePortKey key = new HostNamePortKey(
                 Defaults.RestListener.host(configuration.getHost()),
-                Defaults.RestListener.port(configuration.getPort()));
+                Defaults.RestListener.port(configuration.getPort(), configuration.getProtocol()));
         if (!serverMap.containsKey(key)) {
             Server server = new Server(configuration);
             serverMap.put(key, server);

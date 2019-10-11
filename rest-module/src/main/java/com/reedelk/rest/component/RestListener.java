@@ -61,6 +61,7 @@ public class RestListener extends AbstractInbound {
     @Override
     public void onStart() {
         requireNotNull(configuration, "configuration");
+        requireNotNull(configuration.getProtocol(), "protocol");
         requireNotNull(method, "method");
 
         HttpRequestHandler httpRequestHandler = HttpRequestHandler.builder()

@@ -30,7 +30,7 @@ public class ServerConfigurer {
 
     public static HttpServer configure(HttpServer server, ListenerConfiguration configuration) {
         server = server.host(Defaults.RestListener.host(configuration.getHost()));
-        server = server.port(Defaults.RestListener.port(configuration.getPort()));
+        server = server.port(Defaults.RestListener.port(configuration.getPort(), configuration.getProtocol()));
         server = server.compress(Defaults.RestListener.compress(configuration.getCompress()));
         return server.httpRequestDecoder(decoder -> {
             decoder.maxChunkSize(Defaults.RestListener.maxChunkSize(configuration.getMaxChunkSize()));

@@ -22,8 +22,12 @@ public class Defaults {
         private RestListener() {
         }
 
-        public static int port(Integer actual) {
-            return actual == null ? DEFAULT_PORT : actual;
+        public static int port(Integer actual, HttpProtocol protocol) {
+            if (HttpProtocol.HTTP.equals(protocol)) {
+                return actual == null ? DEFAULT_HTTP_PORT : actual;
+            } else {
+                return actual == null ? DEFAULT_HTTPS_PORT : actual;
+            }
         }
 
         public static String host(String actual) {
@@ -42,9 +46,10 @@ public class Defaults {
             return actual == null ? DEFAULT_MAX_HEADER_SIZE : actual;
         }
 
-        private static final boolean DEFAULT_COMPRESS =  false;
+        private static final boolean DEFAULT_COMPRESS = false;
         private static final String DEFAULT_HOST = "localhost";
-        private static final int DEFAULT_PORT = 8080;
+        private static final int DEFAULT_HTTP_PORT = 8080;
+        private static final int DEFAULT_HTTPS_PORT = 8443;
         private static final int DEFAULT_MAX_CHUNK_SIZE = HttpDecoderSpec.DEFAULT_MAX_CHUNK_SIZE;
         private static final int DEFAULT_MAX_HEADER_SIZE = HttpDecoderSpec.DEFAULT_MAX_HEADER_SIZE;
     }

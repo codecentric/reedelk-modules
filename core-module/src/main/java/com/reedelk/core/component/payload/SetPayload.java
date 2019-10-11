@@ -45,7 +45,7 @@ public class SetPayload implements ProcessorSync {
 
         Type contentType = new Type(mimeType);
 
-        TypedContent<?> content = TypedContentFactory.get().from(result, contentType);
+        TypedContent<?> content = TypedContentFactory.from(result, contentType);
 
         return MessageBuilder.get().typedContent(content).build();
     }
