@@ -1,6 +1,9 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.runtime.api.message.type.*;
+import com.reedelk.runtime.api.message.type.ByteArrayContent;
+import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.message.type.StringContent;
+import com.reedelk.runtime.api.message.type.TypedContent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -26,12 +29,11 @@ class HttpRequestContentMapperTest {
         doReturn(ByteBufFlux.fromInbound(Mono.just(testPayload))).when(mockWrapper).data();
 
         // When
-        TypedContent content = HttpRequestContentMapper.map(mockWrapper);
+        TypedContent<?> content = HttpRequestContentMapper.map(mockWrapper);
 
         // Then
-        Type type = content.type();
-        assertThat(type.getMimeType()).isEqualTo(MimeType.APPLICATION_JSON);
-        assertThat(type.getTypeClass()).isEqualTo(String.class);
+        assertThat(content.mimeType()).isEqualTo(MimeType.APPLICATION_JSON);
+        assertThat(content.type()).isEqualTo(String.class);
 
         assertThat(content).isInstanceOf(StringContent.class);
         assertThat(content.data()).isEqualTo("test body");
@@ -44,12 +46,11 @@ class HttpRequestContentMapperTest {
         doReturn(ByteBufFlux.fromInbound(Mono.just(testPayload))).when(mockWrapper).data();
 
         // When
-        TypedContent content = HttpRequestContentMapper.map(mockWrapper);
+        TypedContent<?> content = HttpRequestContentMapper.map(mockWrapper);
 
         // Then
-        Type type = content.type();
-        assertThat(type.getMimeType()).isEqualTo(MimeType.BINARY);
-        assertThat(type.getTypeClass()).isEqualTo(byte[].class);
+        assertThat(content.mimeType()).isEqualTo(MimeType.BINARY);
+        assertThat(content.type()).isEqualTo(byte[].class);
 
         assertThat(content).isInstanceOf(ByteArrayContent.class);
         assertThat(content.data()).isEqualTo(testPayload);
@@ -62,12 +63,11 @@ class HttpRequestContentMapperTest {
         doReturn(ByteBufFlux.fromInbound(Mono.just(testPayload))).when(mockWrapper).data();
 
         // When
-        TypedContent content = HttpRequestContentMapper.map(mockWrapper);
+        TypedContent<?> content = HttpRequestContentMapper.map(mockWrapper);
 
         // Then
-        Type type = content.type();
-        assertThat(type.getMimeType()).isEqualTo(MimeType.UNKNOWN);
-        assertThat(type.getTypeClass()).isEqualTo(byte[].class);
+        assertThat(content.mimeType()).isEqualTo(MimeType.UNKNOWN);
+        assertThat(content.type()).isEqualTo(byte[].class);
 
         assertThat(content).isInstanceOf(ByteArrayContent.class);
         assertThat(content.data()).isEqualTo(testPayload);

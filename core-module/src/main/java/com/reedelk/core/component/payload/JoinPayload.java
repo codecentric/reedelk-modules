@@ -26,7 +26,7 @@ public class JoinPayload implements Join {
         String combinedPayload = messagesToJoin.stream()
                 .map(Message::getContent)
                 .map(typedContent -> {
-                    if (typedContent.type().getTypeClass().isAssignableFrom(String.class)) {
+                    if (typedContent.type().isAssignableFrom(String.class)) {
                         return (String) typedContent.data();
                     } else {
                         return null;

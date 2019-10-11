@@ -243,7 +243,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         HttpClientBuilder.create().build().execute(getRequest);
 
         // Then
-        MimeType inboundMessageMimeType = inboundMessage.getContent().type().getMimeType();
+        MimeType inboundMessageMimeType = inboundMessage.getContent().mimeType();
         assertThat(inboundMessageMimeType).isEqualTo(UNKNOWN);
     }
 

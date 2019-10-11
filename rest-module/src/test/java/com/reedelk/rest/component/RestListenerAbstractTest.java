@@ -120,7 +120,7 @@ abstract class RestListenerAbstractTest {
 
         // Assertions
         assertThat(payload).isEqualTo(expectedContent);
-        assertThat(inboundMessage.getContent().type().getMimeType()).isEqualTo(expectedMimeType);
+        assertThat(inboundMessage.getContent().mimeType()).isEqualTo(expectedMimeType);
     }
 
     void makeRequest(RestListener listener, HttpUriRequest request) throws IOException {

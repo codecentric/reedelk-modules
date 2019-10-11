@@ -5,7 +5,6 @@ import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
 import com.reedelk.runtime.api.message.type.TypedContent;
 import org.assertj.core.api.Assertions;
 
@@ -68,11 +67,8 @@ class AssertHttpResponse {
 
     private static void assertContent(Message message, String expectedContent, MimeType expectedMimeType) {
         assertContent(message, expectedContent);
-
         TypedContent<?> typedContent = message.getContent();
-        Type type = typedContent.type();
-        MimeType mimeType = type.getMimeType();
-        assertThat(mimeType).isEqualTo(expectedMimeType);
+        assertThat(typedContent.mimeType()).isEqualTo(expectedMimeType);
     }
 
     private static void assertContent(Message message, String expectedContent) {

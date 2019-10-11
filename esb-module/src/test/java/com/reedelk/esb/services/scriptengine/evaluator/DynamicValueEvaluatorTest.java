@@ -7,7 +7,10 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.type.*;
+import com.reedelk.runtime.api.message.type.MimeType;
+import com.reedelk.runtime.api.message.type.ObjectContent;
+import com.reedelk.runtime.api.message.type.StringContent;
+import com.reedelk.runtime.api.message.type.TypedContent;
 import com.reedelk.runtime.api.script.dynamicvalue.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -483,8 +486,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyConvertMessagePayload() {
             // Given
             MyTestObject testObject = new MyTestObject(2345, 4.223f, "my object");
-            Type type = new Type(MimeType.ANY, MyTestObject.class);
-            TypedContent<?> typedContent = new ObjectContent(testObject, type);
+            TypedContent<?> typedContent = new ObjectContent(testObject, MimeType.ANY);
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 

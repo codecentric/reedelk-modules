@@ -172,7 +172,7 @@ class RestListenerPostTest extends RestListenerAbstractTest {
     private void assertExistsPartWith(Parts parts, String name, MimeType mimeType, Object data, Map<String,String> attributes) {
         Part usernamePart = parts.get(name);
         assertThat(usernamePart.getName()).isEqualTo(name);
-        assertThat(usernamePart.getContent().type().getMimeType()).isEqualTo(mimeType);
+        assertThat(usernamePart.getContent().mimeType()).isEqualTo(mimeType);
         assertThat(usernamePart.getContent().data()).isEqualTo(data);
         assertThat(usernamePart.getAttributes()).isEqualTo(attributes);
     }

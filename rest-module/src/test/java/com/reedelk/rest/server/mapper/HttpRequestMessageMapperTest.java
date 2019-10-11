@@ -4,7 +4,7 @@ import com.reedelk.rest.commons.HttpHeader;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageAttributes;
 import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
+import com.reedelk.runtime.api.message.type.TypedContent;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpScheme;
@@ -83,9 +83,8 @@ class HttpRequestMessageMapperTest {
         assertThatContainsAttribute(message, METHOD, PUT.name());
 
         // Check that the content's mime type is correct
-        Type contentType = message.getContent().type();
-        MimeType mimeType = contentType.getMimeType();
-        assertThat(mimeType).isEqualTo(MimeType.APPLICATION_JSON);
+        TypedContent<?> content = message.getContent();
+        assertThat(content.mimeType()).isEqualTo(MimeType.APPLICATION_JSON);
     }
 
     private void assertThatContainsAttribute(Message message, String attributeName, Serializable attributeValue) {

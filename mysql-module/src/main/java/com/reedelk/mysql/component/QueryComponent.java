@@ -6,8 +6,6 @@ import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.type.MimeType;
-import com.reedelk.runtime.api.message.type.Type;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
 
@@ -37,18 +35,8 @@ public class QueryComponent implements ProcessorSync {
         try (Connection conn = DriverManager.getConnection(databaseURL, username, password);
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(query)) {
-
             InternalResultSet map = map(rs);
-
-            Type contentType = new Type(MimeType.APPLICATION_JAVA, InternalResultSet.class);
-
-
-            //TypedContent newContent = new MemoryTypedContent<>(map, contentType);
-
             Message output = new Message();
-
-            // output.setTypedContent(newContent);
-
             return output;
 
         } catch (Exception e) {

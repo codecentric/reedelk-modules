@@ -12,8 +12,7 @@ public class ContentType {
 
     public static Optional<String> from(Message message) {
         return Optional.ofNullable(message.getContent())
-                .flatMap(typedContent -> Optional.ofNullable(typedContent.type()))
-                .flatMap(type -> Optional.ofNullable(type.getMimeType()))
+                .flatMap(typedContent -> Optional.ofNullable(typedContent.mimeType()))
                 .map(MimeType::toString);
     }
 }
