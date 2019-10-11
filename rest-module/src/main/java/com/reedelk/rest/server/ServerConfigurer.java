@@ -82,9 +82,6 @@ class ServerConfigurer {
             if (configuration.getMaxChunkSize() != null) {
                 decoder.maxChunkSize(configuration.getMaxChunkSize());
             }
-            if (configuration.getValidateHeaders() != null) {
-                decoder.validateHeaders(configuration.getValidateHeaders());
-            }
             if (configuration.getMaxLengthOfAllHeaders() != null) {
                 decoder.maxHeaderSize(configuration.getMaxLengthOfAllHeaders());
             }

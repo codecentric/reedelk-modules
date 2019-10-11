@@ -1,7 +1,6 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.commons.ConfigurationException;
-import com.reedelk.rest.commons.Messages;
+import com.reedelk.rest.ConfigurationException;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.StreamingMode;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
@@ -21,7 +20,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Objects.requireNonNull;
+import static com.reedelk.rest.commons.ConfigPreconditions.requireNotNull;
+import static com.reedelk.rest.commons.Messages.RestListener.LISTENER_CONFIG_MISSING;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("REST Listener")
@@ -60,8 +60,8 @@ public class RestListener extends AbstractInbound {
 
     @Override
     public void onStart() {
-        requireNonNull(configuration, "configuration");
-        requireNonNull(method, "method");
+        requireNotNull(configuration, "configuration");
+        requireNotNull(method, "method");
 
         HttpRequestHandler httpRequestHandler = HttpRequestHandler.builder()
                         .inboundEventListener(RestListener.this)
@@ -73,7 +73,7 @@ public class RestListener extends AbstractInbound {
                         .build();
 
         Server server = provider.get(configuration)
-                .orElseThrow(() -> new ConfigurationException(Messages.RestListener.LISTENER_CONFIG_MISSING.format()));
+                .orElseThrow(() -> new ConfigurationException(LISTENER_CONFIG_MISSING.format()));
         server.addRoute(method, path, httpRequestHandler);
     }
 

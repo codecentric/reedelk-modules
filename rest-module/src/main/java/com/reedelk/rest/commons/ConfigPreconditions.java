@@ -1,5 +1,6 @@
 package com.reedelk.rest.commons;
 
+import com.reedelk.rest.ConfigurationException;
 import com.reedelk.runtime.api.commons.StringUtils;
 
 public class ConfigPreconditions {

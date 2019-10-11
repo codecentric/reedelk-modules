@@ -1,4 +1,4 @@
-package com.reedelk.rest.commons;
+package com.reedelk.rest;
 
 import com.reedelk.runtime.api.exception.ESBException;
 

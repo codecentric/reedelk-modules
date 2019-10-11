@@ -34,7 +34,7 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
         // Request config
-        RequestConfig requestConfig = createConfig(config);
+        RequestConfig requestConfig = createRequestConfig(config);
 
         // Basic authentication config
         Authentication authentication = config.getAuthentication();
@@ -134,7 +134,7 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
         }
     }
 
-    private RequestConfig createConfig(ClientConfiguration configuration) {
+    private RequestConfig createRequestConfig(ClientConfiguration configuration) {
         RequestConfig.Builder builder = RequestConfig.custom();
 
         Optional.ofNullable(configuration.getFollowRedirects())

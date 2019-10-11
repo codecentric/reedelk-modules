@@ -33,6 +33,10 @@ public class ListenerConfiguration implements Implementor {
     @Default("true")
     private Boolean keepAlive;
 
+    @Property("Compress response")
+    @Default("true")
+    private Boolean compress;
+
     @Property("Read timeout millis")
     private Integer readTimeoutMillis;
 
@@ -42,20 +46,12 @@ public class ListenerConfiguration implements Implementor {
     @Property("Socket backlog")
     private Integer socketBacklog;
 
-    @Property("Validate headers")
-    private Boolean validateHeaders;
-
-    @Property("Compress response")
-    private Boolean compress;
-
     @Property("Max chunk size")
     private Integer maxChunkSize;
 
     @Property("Max headers length")
     private Integer maxLengthOfAllHeaders;
 
-    // The security configuration is visible and serializable if and
-    // only if the chosen protocol is HTTPS.
     @Property("Security configuration")
     @When(propertyName = "protocol", propertyValue = "HTTPS")
     private SecurityConfiguration securityConfiguration;
@@ -122,14 +118,6 @@ public class ListenerConfiguration implements Implementor {
 
     public void setSocketBacklog(Integer socketBacklog) {
         this.socketBacklog = socketBacklog;
-    }
-
-    public Boolean getValidateHeaders() {
-        return validateHeaders;
-    }
-
-    public void setValidateHeaders(Boolean validateHeaders) {
-        this.validateHeaders = validateHeaders;
     }
 
     public Integer getMaxChunkSize() {

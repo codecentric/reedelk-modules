@@ -1,78 +1,60 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.commons.HttpHeader;
+import com.reedelk.rest.ExecutionException;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.type.*;
-import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.*;
 import io.netty.util.CharsetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.util.function.Function;
+
+import static com.reedelk.rest.commons.Messages.RestListener.*;
+import static io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 
 class HttpRequestMultipartMapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestMultipartMapper.class);
 
     private HttpRequestMultipartMapper() {
     }
 
-    /**
-     * Given an http request, it finds the most suitable TypedContent for the request.
-     * For example, it checks the mime type of the request and it converts it a String
-     * if it is a text based mime type, otherwise it keeps as bytes.
-     */
     static TypedContent map(HttpRequestWrapper request) {
-        Mono<Parts> partsMono = request.data().aggregate().flatMap((Function<ByteBuf, Mono<Parts>>) byteBuf -> {
+        if (HttpMethod.POST != HttpMethod.valueOf(request.method()) ||
+                HttpVersion.HTTP_1_1 != HttpVersion.valueOf(request.version())) {
+            throw new ExecutionException(ERROR_MULTIPART_NOT_SUPPORTED.format());
+        }
 
-            FullHttpRequest fullHttpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, request.requestUri(), byteBuf, request.requestHeaders(), EmptyHttpHeaders.INSTANCE);
+        Mono<Parts> partsMono = request.data().aggregate().flatMap(byteBuffer -> {
 
-            HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(new DefaultHttpDataFactory(false), fullHttpRequest, CharsetUtil.UTF_8);
+            // POST Multipart is only supported on HTTP 1.1 and for POST method.
+            FullHttpRequest fullHttpRequest =
+                    new DefaultFullHttpRequest(
+                            HttpVersion.HTTP_1_1,
+                            HttpMethod.POST,
+                            request.requestUri(),
+                            byteBuffer,
+                            request.requestHeaders(),
+                            EmptyHttpHeaders.INSTANCE);
+
+            HttpPostRequestDecoder postDecoder =
+                    new HttpPostRequestDecoder(
+                            new DefaultHttpDataFactory(false),
+                            fullHttpRequest,
+                            CharsetUtil.UTF_8);
 
             Parts parts = new Parts();
 
-            // Loop parts
+            // Loop attribute/file upload parts
             for (InterfaceHttpData data : postDecoder.getBodyHttpDatas()) {
-                // attribute
-                if (data.getHttpDataType() == InterfaceHttpData.HttpDataType.Attribute) {
-                    Attribute attribute = (Attribute) data;
-                    String name = attribute.getName();
-                    try {
-                        StringContent content = new StringContent(attribute.getValue(), MimeType.TEXT);
-                        Part part = Part.builder()
-                                .name(name)
-                                .content(content)
-                                .build();
-                        parts.put(name, part);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        // TODO:This  exception should be thrown and the request fail!
-                    }
-                }
-                // upload
-                else if (data.getHttpDataType() == InterfaceHttpData.HttpDataType.FileUpload) {
+                if (HttpDataType.Attribute == data.getHttpDataType()) {
+                    handleAttributePart(parts, (Attribute) data);
 
-                    FileUpload fileUpload = (FileUpload) data;
-                    String name = fileUpload.getName();
-                    String contentType = fileUpload.getContentType();
-                    String contentTransferEncoding = fileUpload.getContentTransferEncoding();
-                    String filename = fileUpload.getFilename();
-                    MimeType mimeType = MimeType.parse(contentType);
-
-                    try {
-                        ByteArrayContent content = new ByteArrayContent(fileUpload.get(), mimeType);
-                        Part part = Part.builder()
-                                .name(name)
-                                .content(content)
-                                .attribute(HttpHeader.CONTENT_TYPE, contentType)
-                                .attribute(HttpHeader.TRANSFER_ENCODING, contentTransferEncoding)
-                                .attribute("filename", filename)
-                                .build();
-
-                        parts.put(name, part);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        // TODO:This  exception should be thrown and the request fail!
-                    }
+                } else if (HttpDataType.FileUpload == data.getHttpDataType()) {
+                    handleFileUploadPart(parts, (FileUpload) data);
                 }
             }
             postDecoder.destroy();
@@ -81,5 +63,52 @@ class HttpRequestMultipartMapper {
         });
 
         return new MultipartContent(partsMono);
+    }
+
+    private static void handleFileUploadPart(Parts parts, FileUpload fileUpload) {
+        String name = fileUpload.getName();
+        String filename = fileUpload.getFilename();
+        String contentType = fileUpload.getContentType();
+        String contentTransferEncoding = fileUpload.getContentTransferEncoding();
+
+        MimeType mimeType = MimeType.parse(contentType);
+
+        byte[] fileContentAsBytes;
+        try {
+            fileContentAsBytes = fileUpload.get();
+        } catch (IOException e) {
+            ESBException rethrown = new ESBException(ERROR_MULTIPART_FILE_UPLOAD_VALUE.format(name), e);
+            logger.error("Multipart Mapper error", rethrown);
+            throw rethrown;
+        }
+
+        ByteArrayContent content = new ByteArrayContent(fileContentAsBytes, mimeType);
+        Part part = Part.builder()
+                .content(content)
+                .attribute(MultipartAttribute.TRANSFER_ENCODING, contentTransferEncoding)
+                .attribute(MultipartAttribute.CONTENT_TYPE, contentType)
+                .attribute(MultipartAttribute.FILE_NAME, filename)
+                .name(name)
+                .build();
+        parts.put(name, part);
+    }
+
+    private static void handleAttributePart(Parts parts, Attribute attribute) {
+        String name = attribute.getName();
+        String attributeValue;
+        try {
+            attributeValue = attribute.getValue();
+        } catch (IOException e) {
+            ESBException rethrown = new ESBException(ERROR_MULTIPART_ATTRIBUTE_VALUE.format(name), e);
+            logger.error("Multipart Mapper error", rethrown);
+            throw rethrown;
+        }
+
+        StringContent content = new StringContent(attributeValue, MimeType.TEXT);
+        Part part = Part.builder()
+                .content(content)
+                .name(name)
+                .build();
+        parts.put(name, part);
     }
 }

@@ -22,6 +22,8 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_LENGTH;
+import static com.reedelk.runtime.api.commons.StackTraceUtils.asByteArray;
+import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static java.lang.String.format;
 
@@ -44,17 +46,39 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
      */
     @Override
     public Publisher<Void> apply(HttpServerRequest request, HttpServerResponse response) {
-        // 1. Map the incoming HTTP request to a Message
-        Message inMessage = requestMapper.map(request); // TODO: if this one throws  an exception we must handle it
-        // 2. Pass down through the processors pipeline the Message
-        return Mono.just(inMessage)
-                // 3. Maps back the out Message to the HTTP response
-                .flatMap(message -> Mono.create((Consumer<MonoSink<Publisher<byte[]>>>) sink ->
-                        inboundEventListener.onEvent(message, new OnPipelineResult(sink, response))))
-                // 4. Streams back to the HTTP response channel the response data stream
+
+        Message inputMessage;
+        try {
+            // Map HTTP request to Message object.
+            inputMessage = requestMapper.map(request);
+
+        } catch (Exception exception) {
+
+            byte[] bodyBytes = asByteArray(exception);
+
+            response.status(INTERNAL_SERVER_ERROR);
+
+            response.addHeader(CONTENT_LENGTH, String.valueOf(bodyBytes.length));
+
+            return Mono.from(response.sendByteArray(Mono.just(bodyBytes)));
+        }
+
+        // Propagate the event down to the processors chain by sending an event.
+        return Mono.just(inputMessage)
+
+                // Propagate and map back the out Message as HTTP response.
+                // The sink is used to stream out the bytes to be sent to the client.
+                .flatMap(message -> Mono.create((Consumer<MonoSink<Publisher<byte[]>>>) bytesSink ->
+                        inboundEventListener.onEvent(message, new OnPipelineResult(bytesSink, response))))
+
+                // Streams back to the HTTP response channel the response data stream
                 .flatMap(byteStream -> Mono.from(response.sendByteArray(byteStream)));
     }
 
+    /**
+     * This class maps back the out Message object to the http response to be sent.
+     * It feeds a sink which will be used to stream ta back to the client.
+     */
     private class OnPipelineResult implements OnResult {
 
         private final MonoSink<Publisher<byte[]>> sink;
@@ -68,6 +92,7 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
         @Override
         public void onResult(Message outMessage, FlowContext flowContext) {
             try {
+
                 responseMapper.map(outMessage, response, flowContext);
 
                 Publisher<byte[]> body = bodyProvider.from(response, outMessage, flowContext);
