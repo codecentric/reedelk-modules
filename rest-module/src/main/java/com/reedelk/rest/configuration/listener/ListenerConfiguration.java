@@ -23,7 +23,7 @@ public class ListenerConfiguration implements Implementor {
 
     @Property("Protocol")
     @Default("HTTP")
-    private HttpProtocol protocol;
+    private HttpProtocol protocol = HttpProtocol.HTTP;
 
     @Property("Base path")
     @Hint("/api")
