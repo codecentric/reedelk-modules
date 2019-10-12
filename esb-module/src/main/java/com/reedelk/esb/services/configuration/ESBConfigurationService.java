@@ -35,7 +35,7 @@ public class ESBConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public String getStringConfigProperty(String configPid, String configKey, String defaultValue) {
+    public String getString(String configPid, String configKey, String defaultValue) {
         return Optional
                 .ofNullable(getStringSystemProperty(configKey))
                 .orElseGet(() ->
@@ -43,7 +43,7 @@ public class ESBConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public int getIntConfigProperty(String configPid, String configKey, int defaultValue) {
+    public int getInt(String configPid, String configKey, int defaultValue) {
         return Optional
                 .ofNullable(getIntSystemProperty(configKey))
                 .orElseGet(() ->
@@ -51,7 +51,7 @@ public class ESBConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public long getLongConfigProperty(String configPid, String configKey, long defaultValue) {
+    public long getLong(String configPid, String configKey, long defaultValue) {
         return Optional
                 .ofNullable(getLongSystemProperty(configKey))
                 .orElseGet(() ->
@@ -59,7 +59,7 @@ public class ESBConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public boolean getBooleanConfigProperty(String configPid, String configKey, boolean defaultValue) {
+    public boolean getBoolean(String configPid, String configKey, boolean defaultValue) {
         return Optional
                 .ofNullable(getBooleanSystemProperty(configKey))
                 .orElseGet(() ->
@@ -145,5 +145,4 @@ public class ESBConfigurationService implements ConfigurationService {
             return defaultValue;
         }
     }
-
 }

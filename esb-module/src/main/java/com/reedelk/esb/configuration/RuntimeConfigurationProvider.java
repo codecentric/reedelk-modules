@@ -37,28 +37,28 @@ public class RuntimeConfigurationProvider {
     }
 
     private void loadProperties() {
-        boolean isUnbounded = configService.getBooleanConfigProperty(RUNTIME_CONFIG_FILE_PID,
+        boolean isUnbounded = configService.getBoolean(RUNTIME_CONFIG_FILE_PID,
                 "executor.scheduler.flow.unbounded", true);
 
         SchedulerConfig schedulerConfig;
         if (isUnbounded) {
-            int keepAliveTimeSeconds = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
+            int keepAliveTimeSeconds = configService.getInt(RUNTIME_CONFIG_FILE_PID,
                     "executor.scheduler.flow.unbounded.keep.alive.time", 60);
             schedulerConfig = new UnboundedSchedulerConfig(keepAliveTimeSeconds);
 
         } else {
-            int poolMinSize = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
+            int poolMinSize = configService.getInt(RUNTIME_CONFIG_FILE_PID,
                     "executor.scheduler.flow.bounded.min.pool.size", 1);
-            int poolMaxSize = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
+            int poolMaxSize = configService.getInt(RUNTIME_CONFIG_FILE_PID,
                     "executor.scheduler.flow.bounded.max.pool.size", 30);
-            int keepAliveTimeSeconds = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
+            int keepAliveTimeSeconds = configService.getInt(RUNTIME_CONFIG_FILE_PID,
                     "executor.scheduler.flow.bounded.keep.alive.time", 60);
-            int queueSize = configService.getIntConfigProperty(RUNTIME_CONFIG_FILE_PID,
+            int queueSize = configService.getInt(RUNTIME_CONFIG_FILE_PID,
                     "executor.scheduler.flow.bounded.queue.size", 200);
             schedulerConfig = new BoundedSchedulerConfig(poolMinSize, poolMaxSize, keepAliveTimeSeconds, queueSize);
         }
 
-        long asyncProcessorTimeoutMillis = configService.getLongConfigProperty(RUNTIME_CONFIG_FILE_PID,
+        long asyncProcessorTimeoutMillis = configService.getLong(RUNTIME_CONFIG_FILE_PID,
                 "executor.scheduler.flow.async.processor.timeout", 120000);
 
 

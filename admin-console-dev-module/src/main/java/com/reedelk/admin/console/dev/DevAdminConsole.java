@@ -49,8 +49,8 @@ public class DevAdminConsole {
 
     @Activate
     public void activate() throws BundleException {
-        int listeningPort = configurationService.getIntConfigProperty(CONFIG_PID, CONFIG_KEY_LISTENING_PORT, DEFAULT_LISTENING_PORT);
-        String bindAddress = configurationService.getStringConfigProperty(CONFIG_PID, CONFIG_KEY_LISTENING_ADDRESS, DEFAULT_BIND_ADDRESS);
+        int listeningPort = configurationService.getInt(CONFIG_PID, CONFIG_KEY_LISTENING_PORT, DEFAULT_LISTENING_PORT);
+        String bindAddress = configurationService.getString(CONFIG_PID, CONFIG_KEY_LISTENING_ADDRESS, DEFAULT_BIND_ADDRESS);
 
         service = new DevAdminConsoleService(bindAddress, listeningPort,
                 new HealthResources(systemProperty, "/api/health"),

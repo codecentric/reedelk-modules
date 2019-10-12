@@ -55,7 +55,7 @@ class ESBConfigurationServiceTest {
                 .getStringSystemProperty(TEST_CONFIG_KEY);
 
         // When
-        String actualConfigProperty = service.getStringConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, "DefaultValue");
+        String actualConfigProperty = service.getString(TEST_CONFIG_PID, TEST_CONFIG_KEY, "DefaultValue");
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -75,7 +75,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
 
         // When
-        String actualConfigProperty = service.getStringConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, "DefaultValue");
+        String actualConfigProperty = service.getString(TEST_CONFIG_PID, TEST_CONFIG_KEY, "DefaultValue");
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -90,7 +90,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, null);
 
         // When
-        String actualConfigProperty = service.getStringConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, "MyDefaultValue");
+        String actualConfigProperty = service.getString(TEST_CONFIG_PID, TEST_CONFIG_KEY, "MyDefaultValue");
 
         // Then
         assertThat(actualConfigProperty).isEqualTo("MyDefaultValue");
@@ -108,7 +108,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, dictionaryNotContainingTargetKey);
 
         // When
-        String actualConfigProperty = service.getStringConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, "MyDefaultValue");
+        String actualConfigProperty = service.getString(TEST_CONFIG_PID, TEST_CONFIG_KEY, "MyDefaultValue");
 
         // Then
         assertThat(actualConfigProperty).isEqualTo("MyDefaultValue");
@@ -125,7 +125,7 @@ class ESBConfigurationServiceTest {
                 .getIntSystemProperty(TEST_CONFIG_KEY);
 
         // When
-        int actualConfigProperty = service.getIntConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, 7777);
+        int actualConfigProperty = service.getInt(TEST_CONFIG_PID, TEST_CONFIG_KEY, 7777);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -145,7 +145,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
 
         // When
-        int actualConfigProperty = service.getIntConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, 888);
+        int actualConfigProperty = service.getInt(TEST_CONFIG_PID, TEST_CONFIG_KEY, 888);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -165,7 +165,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
 
         // When
-        int actualConfigProperty = service.getIntConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, 11109);
+        int actualConfigProperty = service.getInt(TEST_CONFIG_PID, TEST_CONFIG_KEY, 11109);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -180,7 +180,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, null);
 
         // When
-        int actualConfigProperty = service.getIntConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, 653333);
+        int actualConfigProperty = service.getInt(TEST_CONFIG_PID, TEST_CONFIG_KEY, 653333);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(653333);
@@ -197,7 +197,7 @@ class ESBConfigurationServiceTest {
                 .getLongSystemProperty(TEST_CONFIG_KEY);
 
         // When
-        long actualConfigProperty = service.getLongConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, 11L);
+        long actualConfigProperty = service.getLong(TEST_CONFIG_PID, TEST_CONFIG_KEY, 11L);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -217,7 +217,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
 
         // When
-        long actualConfigProperty = service.getLongConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, 88L);
+        long actualConfigProperty = service.getLong(TEST_CONFIG_PID, TEST_CONFIG_KEY, 88L);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -237,7 +237,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
 
         // When
-        long actualConfigProperty = service.getLongConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, 11109L);
+        long actualConfigProperty = service.getLong(TEST_CONFIG_PID, TEST_CONFIG_KEY, 11109L);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -252,7 +252,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, null);
 
         // When
-        long actualConfigProperty = service.getLongConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, Long.MIN_VALUE);
+        long actualConfigProperty = service.getLong(TEST_CONFIG_PID, TEST_CONFIG_KEY, Long.MIN_VALUE);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(Long.MIN_VALUE);
@@ -269,7 +269,7 @@ class ESBConfigurationServiceTest {
                 .getBooleanSystemProperty(TEST_CONFIG_KEY);
 
         // When
-        boolean actualConfigProperty = service.getBooleanConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, false);
+        boolean actualConfigProperty = service.getBoolean(TEST_CONFIG_PID, TEST_CONFIG_KEY, false);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -289,7 +289,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
 
         // When
-        boolean actualConfigProperty = service.getBooleanConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, false);
+        boolean actualConfigProperty = service.getBoolean(TEST_CONFIG_PID, TEST_CONFIG_KEY, false);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -309,7 +309,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
 
         // When
-        boolean actualConfigProperty = service.getBooleanConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, false);
+        boolean actualConfigProperty = service.getBoolean(TEST_CONFIG_PID, TEST_CONFIG_KEY, false);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
@@ -324,7 +324,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, null);
 
         // When
-        boolean actualConfigProperty = service.getBooleanConfigProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, true);
+        boolean actualConfigProperty = service.getBoolean(TEST_CONFIG_PID, TEST_CONFIG_KEY, true);
 
         // Then
         assertThat(actualConfigProperty).isEqualTo(true);

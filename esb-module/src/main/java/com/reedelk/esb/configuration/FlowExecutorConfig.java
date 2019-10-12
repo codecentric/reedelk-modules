@@ -5,11 +5,10 @@ public class FlowExecutorConfig {
     private final long asyncProcessorTimeout;
     private final SchedulerConfig schedulerConfig;
 
-    public FlowExecutorConfig(long asyncProcessorTimeout, SchedulerConfig schedulerConfig) {
+    FlowExecutorConfig(long asyncProcessorTimeout, SchedulerConfig schedulerConfig) {
         this.asyncProcessorTimeout = asyncProcessorTimeout;
         this.schedulerConfig = schedulerConfig;
     }
-
 
     public long asyncProcessorTimeout() {
         return asyncProcessorTimeout;
