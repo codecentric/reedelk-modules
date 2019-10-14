@@ -18,7 +18,7 @@ public class ValidateModule extends AbstractStep<Module, Module> {
 
     private static final Logger logger = LoggerFactory.getLogger(ValidateModule.class);
 
-    private List<Validator> VALIDATORS = Arrays.asList(new ValidFlowIdValidator(), new UniqueFlowIdValidator());
+    private static final List<Validator> VALIDATORS = Arrays.asList(new ValidFlowIdValidator(), new UniqueFlowIdValidator());
 
     @Override
     public Module run(Module module) {
@@ -51,7 +51,7 @@ public class ValidateModule extends AbstractStep<Module, Module> {
      * Validates that all the items in the collection contain a property
      * value which is unique across all the elements in it.
      */
-    class UniqueFlowIdValidator implements Validator {
+    static class UniqueFlowIdValidator implements Validator {
         @Override
         public void validate(Set<JSONObject> flowsDefinition) {
             boolean test = flowsDefinition.stream()
@@ -63,7 +63,7 @@ public class ValidateModule extends AbstractStep<Module, Module> {
         }
     }
 
-    class ValidFlowIdValidator implements Validator {
+    static class ValidFlowIdValidator implements Validator {
         @Override
         public void validate(Set<JSONObject> flows) {
             flows.forEach(flowDefinition -> {
