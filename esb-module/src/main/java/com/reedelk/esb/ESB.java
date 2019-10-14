@@ -159,7 +159,6 @@ public class ESB implements EventListener, HotSwapListener {
                         .execute(moduleUsingComponent.id()));
     }
 
-
     @Override
     public synchronized void hotSwap(long moduleId, String resourcesRootDirectory) {
         StepRunner.get(context, modulesManager, componentRegistry, servicesManager.configurationService())
