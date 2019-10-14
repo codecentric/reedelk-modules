@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 public class ConfigPropertyAwareJsonTypeConverter {
 
-    private static final String PID_DEFAULT_CONFIGURATION = "configuration";
+    static final String PID_DEFAULT_CONFIGURATION = "configuration";
 
     private ConfigurationService configurationService;
 
