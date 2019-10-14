@@ -1,6 +1,7 @@
 package com.reedelk.esb.services.configuration;
 
 import com.reedelk.esb.services.configuration.configurer.*;
+import com.reedelk.runtime.api.exception.InvalidConfigPropertyException;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.system.api.SystemProperty;
 import org.osgi.service.cm.Configuration;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -20,9 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 public class DefaultConfigurationService implements ConfigurationService {
 
-    private static final List<Configurer> CONFIGURERS = asList(
-            new LogbackConfigurer(),
-            new PidConfigConfigurer());
+    private static final List<Configurer> CONFIGURERS = asList(new LogbackConfigurer(), new PidConfigConfigurer());
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultConfigurationService.class);
 
@@ -41,9 +41,21 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
+    public String getString(String configPid, String configKey) {
+        return Optional.ofNullable(getStringSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPid, configKey, TO_STRING));
+    }
+
+    @Override
     public int getInt(String configPid, String configKey, int defaultValue) {
         return Optional.ofNullable(getIntSystemProperty(configKey))
                 .orElseGet(() -> getConfigAdminProperty(configPid, configKey, defaultValue, TO_INT));
+    }
+
+    @Override
+    public int getInt(String configPid, String configKey) {
+        return Optional.ofNullable(getIntSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPid, configKey, TO_INT));
     }
 
     @Override
@@ -53,10 +65,22 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
+    public long getLong(String configPid, String configKey) {
+        return Optional.ofNullable(getLongSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPid, configKey, TO_LONG));
+    }
+
+    @Override
     public boolean getBoolean(String configPid, String configKey, boolean defaultValue) {
         return Optional.ofNullable(getBooleanSystemProperty(configKey))
                 .orElseGet(() -> getConfigAdminProperty(configPid, configKey, defaultValue, TO_BOOLEAN));
 
+    }
+
+    @Override
+    public boolean getBoolean(String configPid, String configKey) {
+        return Optional.ofNullable(getBooleanSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPid, configKey, TO_BOOLEAN));
     }
 
     @SuppressWarnings("unchecked")
@@ -108,7 +132,7 @@ public class DefaultConfigurationService implements ConfigurationService {
                 .collect(toList());
     }
 
-    <T> T getConfigAdminProperty(String configPid, String configKey, T defaultValue, DataMapper<T> mapper) {
+    <T> T getConfigAdminProperty(String configPid, String configKey, T defaultValue, Function<Object, T> mapper) {
         try {
             Configuration configuration = configurationAdmin.getConfiguration(configPid);
             Dictionary<String, Object> properties = configuration.getProperties();
@@ -120,38 +144,51 @@ public class DefaultConfigurationService implements ConfigurationService {
         }
     }
 
-    static final DataMapper<String> TO_STRING = input -> (String) input;
-
-    private static final DataMapper<Long> TO_LONG = input -> input instanceof String ? Long.valueOf((String) input) : (Long) input;
-    private static final DataMapper<Integer> TO_INT = input -> input instanceof String ? Integer.valueOf((String) input) : (Integer) input;
-    private static final DataMapper<Boolean> TO_BOOLEAN = input -> input instanceof String ? Boolean.valueOf((String) input) : (Boolean) input;
-
-    private interface DataMapper<O> {
-        O map(Object input);
+    private <T> T getConfigAdminPropertyOrThrow(String configPid, String configKey, Function<Object, T> mapper) {
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(configPid);
+            Dictionary<String, Object> properties = configuration.getProperties();
+            return getPropertyOrThrow(properties, configKey, mapper);
+        } catch (IOException e) {
+            throw new InvalidConfigPropertyException(String.format("Could not find config property with key='%s' for config pid='%s'", configKey, configPid));
+        }
     }
 
-    private <T> T getPropertyOrDefault(Dictionary<String, Object> dictionary, String configKey, T defaultValue, DataMapper<T> mapper) {
-        boolean isKeyPresent = list(dictionary.keys())
-                .stream()
-                .anyMatch(configKey::equals);
-        return isKeyPresent ?
-                mapper.map(dictionary.get(configKey)) : defaultValue;
+    private <T> T getPropertyOrThrow(Dictionary<String, Object> dictionary, String configKey, Function<Object, T> mapper) {
+        if (dictionary != null && list(dictionary.keys()).contains(configKey)) {
+            return mapper.apply(dictionary.get(configKey));
+        } else {
+            throw new InvalidConfigPropertyException(String.format("Could not find config property with key='%s'.", configKey));
+        }
+    }
+
+    private <T> T getPropertyOrDefault(Dictionary<String, Object> dictionary, String configKey, T defaultValue, Function<Object, T> mapper) {
+        if(list(dictionary.keys()).contains(configKey)) {
+            return mapper.apply(dictionary.get(configKey));
+        } else {
+            return defaultValue;
+        }
     }
 
     private static final Map<Class, ConfigConverter> MAP;
     static {
         Map<Class, ConfigConverter> tmp = new HashMap<>();
-        tmp.put(String.class, (ConfigConverter<String>) (configurationService, pid, key) -> configurationService.getString(pid, key, null));
-        tmp.put(int.class, (ConfigConverter<Integer>) (configurationService, pid, key) -> configurationService.getInt(pid, key, 0));
-        tmp.put(Integer.class, (ConfigConverter<Integer>) (configurationService, pid, key) -> configurationService.getInt(pid, key, 0));
-        tmp.put(boolean.class, (ConfigConverter<Boolean>) (configurationService, pid, key) -> configurationService.getBoolean(pid, key, false));
-        tmp.put(Boolean.class, (ConfigConverter<Boolean>) (configurationService, pid, key) -> configurationService.getBoolean(pid, key, false));
-        tmp.put(long.class, (ConfigConverter<Long>) (configurationService, pid, key) -> configurationService.getLong(pid, key, 0L));
-        tmp.put(Long.class, (ConfigConverter<Long>) (configurationService, pid, key) -> configurationService.getLong(pid, key, 0L));
+        tmp.put(String.class, (ConfigConverter<String>) ConfigurationService::getString);
+        tmp.put(int.class, (ConfigConverter<Integer>) ConfigurationService::getInt);
+        tmp.put(Integer.class, (ConfigConverter<Integer>) ConfigurationService::getInt);
+        tmp.put(boolean.class, (ConfigConverter<Boolean>) ConfigurationService::getBoolean);
+        tmp.put(Boolean.class, (ConfigConverter<Boolean>) ConfigurationService::getBoolean);
+        tmp.put(long.class, (ConfigConverter<Long>) ConfigurationService::getLong);
+        tmp.put(Long.class, (ConfigConverter<Long>) ConfigurationService::getLong);
         MAP = tmp;
     }
 
     interface ConfigConverter<T> {
         T convert(ConfigurationService configurationService, String pid, String key);
     }
+
+    private static final Function<Object, String> TO_STRING = input -> (String) input;
+    private static final Function<Object, Long> TO_LONG = input -> input instanceof String ? Long.valueOf((String) input) : (Long) input;
+    private static final Function<Object, Integer> TO_INT = input -> input instanceof String ? Integer.valueOf((String) input) : (Integer) input;
+    private static final Function<Object, Boolean> TO_BOOLEAN = input -> input instanceof String ? Boolean.valueOf((String) input) : (Boolean) input;
 }

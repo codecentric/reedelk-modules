@@ -3,7 +3,7 @@ package com.reedelk.esb.lifecycle;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.runtime.api.commons.StringUtils;
-import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.exception.InvalidFlowException;
 import com.reedelk.runtime.commons.JsonParser;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -72,12 +72,6 @@ public class ValidateModule extends AbstractStep<Module, Module> {
                     throw new InvalidFlowException("\"id\" property must be defined in the flow definition");
                 }
             });
-        }
-    }
-
-    class InvalidFlowException extends ESBException {
-        InvalidFlowException(String message) {
-            super(message);
         }
     }
 }
