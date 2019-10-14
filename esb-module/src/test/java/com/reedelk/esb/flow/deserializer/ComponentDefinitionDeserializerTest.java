@@ -1104,6 +1104,11 @@ class ComponentDefinitionDeserializerTest {
         doReturn(mockExecutionNode).when(context).instantiateComponent(componentClass);
     }
 
+    private void mockImplementor(Class<? extends Implementor> clazz) {
+        Implementor implementor = instantiate(clazz);
+        doReturn(implementor).when(context).instantiateImplementor(mockExecutionNode, clazz.getName());
+    }
+
     @SuppressWarnings("unchecked")
     private <T> T instantiate(Class<? extends Implementor> clazz) {
         try {
@@ -1111,10 +1116,5 @@ class ComponentDefinitionDeserializerTest {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private void mockImplementor(Class<? extends Implementor> clazz) {
-        Implementor implementor = instantiate(clazz);
-        doReturn(implementor).when(context).instantiateImplementor(mockExecutionNode, clazz.getName());
     }
 }
