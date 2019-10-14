@@ -1,6 +1,5 @@
 package com.reedelk.esb.flow.deserializer;
 
-import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.*;
 import com.reedelk.runtime.api.component.Component;
@@ -13,6 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -35,8 +35,8 @@ class ComponentDefinitionDeserializerTest {
 
     @Mock
     private ExecutionNode mockExecutionNode;
-    @Mock
-    private FlowBuilderContext context;
+    @Spy
+    private MockFlowBuilderContext context;
 
     private ComponentDefinitionDeserializer deserializer;
 

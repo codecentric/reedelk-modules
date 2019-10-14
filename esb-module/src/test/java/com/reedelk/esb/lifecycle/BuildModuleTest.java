@@ -1,6 +1,7 @@
 package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.commons.ComponentDisposer;
+import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -9,14 +10,13 @@ import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModuleDeserializer;
 import com.reedelk.esb.module.ModulesManager;
-import com.reedelk.esb.test.utils.AnotherTestComponent;
+import com.reedelk.esb.test.utils.AnotherInboundTestComponent;
 import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.esb.test.utils.TestInboundComponent;
-import com.reedelk.esb.test.utils.TestJson;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.commons.FileUtils;
-import com.reedelk.runtime.commons.JsonParser;
+import com.reedelk.runtime.api.service.ConfigurationService;
+import com.reedelk.runtime.component.Fork;
 import com.reedelk.runtime.component.Router;
 import com.reedelk.runtime.component.Stop;
 import org.json.JSONException;
@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -34,18 +35,19 @@ import org.osgi.framework.ServiceObjects;
 import org.osgi.framework.ServiceReference;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import static com.reedelk.esb.module.state.ModuleState.*;
+import static com.reedelk.esb.test.utils.Assertions.assertModuleErrorStateWith;
+import static com.reedelk.esb.test.utils.TestJson.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -72,18 +74,19 @@ class BuildModuleTest {
     @Mock
     private ModulesManager modulesManager;
     @Mock
-    private ServiceReference<Component> serviceReference;
-    @Mock
     private ModuleDeserializer deserializer;
-
+    @Mock
+    private ConfigurationService configurationService;
+    @Mock
+    private ServiceReference<Component> serviceReference;
+    @Spy
     private BuildModule step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new BuildModule());
-
         doReturn(bundle).when(step).bundle();
         doReturn(modulesManager).when(step).modulesManager();
+        doReturn(configurationService).when(step).configurationService();
         doReturn(bundleContext).when(bundle).getBundleContext();
         doReturn(bundle).when(bundleContext).getBundle(moduleId);
     }
@@ -122,7 +125,7 @@ class BuildModuleTest {
         Module module = step.run(inputModule);
 
         // Then
-        assertThat(module.state()).isEqualTo(ERROR);
+        assertModuleErrorStateWith(module, "Module in error state!");
     }
 
     @Test
@@ -188,7 +191,7 @@ class BuildModuleTest {
     }
 
     @Test
-    void shouldBuildModuleWhenStateIsResolvedAndTransitionToStopped() throws Exception {
+    void shouldBuildModuleWhenStateIsResolvedAndTransitionToStopped() {
         // Given
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
@@ -200,9 +203,8 @@ class BuildModuleTest {
         inputModule.unresolve(unresolvedComponents, resolvedComponents);
         inputModule.resolve(resolvedComponents);
 
-        JSONObject flowDefinition = parseFlow(TestJson.FLOW_WITH_COMPONENTS);
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(flowDefinition);
+        flows.add(FLOW_WITH_COMPONENTS.parse());
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -227,7 +229,7 @@ class BuildModuleTest {
     }
 
     @Test
-    void shouldTransitionToErrorStateWhenJsonIsNotDeserializable() throws Exception {
+    void shouldTransitionToErrorStateWhenJsonIsNotDeserializable() {
         // Given
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
@@ -245,101 +247,33 @@ class BuildModuleTest {
         Module module = step.run(inputModule);
 
         // Then
-        assertThat(module.state()).isEqualTo(ERROR);
-
-        Collection<Exception> errors = module.errors();
-        assertThat(errors).hasSize(1);
-
-        Exception exception = errors.iterator().next();
-        assertThat(exception.getMessage()).isEqualTo("JSON could not be parsed");
+        assertModuleErrorStateWith(module, "JSON could not be parsed");
     }
 
     @Test
-    void shouldTransitionToErrorStateWhenFlowDoesNotContainAnId() throws Exception {
+    void shouldTransitionToErrorStateAndListAllExceptionFromFlowConstruction() {
         // Given
         Module inputModule = newResolvedModule();
 
-        JSONObject flowWithoutId = parseFlow(TestJson.FLOW_WITHOUT_ID);
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(flowWithoutId);
+        flows.add(FLOW_WITH_NOT_WELL_FORMED_FORK.parse());
+        flows.add(FLOW_WITH_NOT_WELL_FORMED_ROUTER.parse());
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
-        // When
-        Module module = step.run(inputModule);
-
-        // Then
-        assertThat(module.state()).isEqualTo(ERROR);
-
-        Collection<Exception> errors = module.errors();
-        assertThat(errors).hasSize(1);
-
-        Exception exception = errors.iterator().next();
-        assertThat(exception.getMessage()).isEqualTo("\"id\" property must be defined in the flow definition");
-    }
-
-    @Test
-    void shouldTransitionToErrorStateAndListAllExceptionFromFlowConstruction() throws Exception {
-        // Given
-        Module inputModule = newResolvedModule();
-
-        JSONObject flowWithoutId = parseFlow(TestJson.FLOW_WITHOUT_ID);
-        JSONObject flowWithNotWellFormedRouter = parseFlow(TestJson.FLOW_WITH_NOT_WELL_FORMED_ROUTER);
-        Set<JSONObject> flows = new HashSet<>();
-        flows.add(flowWithoutId);
-        flows.add(flowWithNotWellFormedRouter);
-
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
-        doReturn(deserializedModule).when(deserializer).deserialize();
-
+        mockComponentWithServiceReference(AnotherInboundTestComponent.class);
         mockComponentWithServiceReference(TestInboundComponent.class);
-        mockComponentWithServiceReference(AnotherTestComponent.class);
         mockComponent(Router.class, RouterWrapper.class);
+        mockComponent(Fork.class, ForkWrapper.class);
         mockComponent(Stop.class);
 
         // When
         Module module = step.run(inputModule);
 
         // Then
-        assertThat(module.state()).isEqualTo(ERROR);
-
-        Collection<Exception> errors = module.errors();
-        assertThat(errors).hasSize(2);
-
-        assertThatExistsExceptionWithMessage(errors, "\"id\" property must be defined in the flow definition");
-        assertThatExistsExceptionWithMessage(errors, "JSONObject[\"when\"] not found.");
-    }
-
-    @Test
-    void shouldTransitionToErrorStateWhenThereAreTwoFlowsWithSameId() throws Exception {
-        // Given
-        Module inputModule = newResolvedModule();
-
-        JSONObject flowWithId = parseFlow(TestJson.FLOW_WITH_COMPONENTS);
-        JSONObject flowWithSameId = parseFlow(TestJson.FLOW_WITH_COMPONENTS);
-        Set<JSONObject> flows = new HashSet<>();
-        flows.add(flowWithId);
-        flows.add(flowWithSameId);
-
-        mockComponentWithServiceReference(TestInboundComponent.class);
-        mockComponentWithServiceReference(TestComponent.class);
-        mockComponent(Stop.class);
-
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
-        doReturn(deserializedModule).when(deserializer).deserialize();
-
-
-        // When
-        Module module = step.run(inputModule);
-
-        // Then
-        assertThat(module.state()).isEqualTo(ERROR);
-
-        Collection<Exception> errors = module.errors();
-        assertThat(errors).hasSize(1);
-
-        assertThatExistsExceptionWithMessage(errors, "There are at least two flows with the same id. Flows Ids must be unique.");
+        assertModuleErrorStateWith(module, "JSONObject[\"threadPoolSize\"] not found.");
+        assertModuleErrorStateWith(module, "JSONObject[\"when\"] not found.");
     }
 
     private <T extends Component> void mockComponentWithServiceReference(Class<T> clazz) {
@@ -349,7 +283,7 @@ class BuildModuleTest {
             ExecutionNode componentExecutionNode = new ExecutionNode(disposer, referencePair);
             mockInstantiateComponent(componentExecutionNode, clazz);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            fail("mockComponentWithServiceReference", e);
+            fail("mock component with service reference", e);
         }
     }
 
@@ -360,7 +294,7 @@ class BuildModuleTest {
             ExecutionNode componentExecutionNode = new ExecutionNode(disposer, referencePair);
             mockInstantiateComponent(componentExecutionNode, clazz);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            fail("mockComponent", e);
+            fail("mock component", e);
         }
     }
 
@@ -371,7 +305,7 @@ class BuildModuleTest {
             ExecutionNode componentExecutionNode = new ExecutionNode(disposer, referencePair);
             mockInstantiateComponent(componentExecutionNode, clazz);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            fail("mockComponent", e);
+            fail("mock component", e);
         }
     }
 
@@ -387,18 +321,6 @@ class BuildModuleTest {
         }
     }
 
-    private void assertThatExistsExceptionWithMessage(Collection<Exception> errors, String expectedMessage) {
-        Iterator<Exception> it = errors.iterator();
-        boolean found = false;
-        while (it.hasNext()) {
-            Exception next = it.next();
-            if (expectedMessage.equals(next.getMessage())) {
-                found = true;
-            }
-        }
-        assertThat(found).isTrue();
-    }
-
     private Module newResolvedModule() {
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
@@ -411,11 +333,4 @@ class BuildModuleTest {
         inputModule.resolve(resolvedComponents);
         return inputModule;
     }
-
-    private JSONObject parseFlow(TestJson testJson) {
-        URL url = testJson.url();
-        String flowAsJson = FileUtils.readFrom(url);
-        return JsonParser.from(flowAsJson);
-    }
-
 }

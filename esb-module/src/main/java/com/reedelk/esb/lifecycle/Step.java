@@ -2,6 +2,7 @@ package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.component.ComponentRegistry;
 import com.reedelk.esb.module.ModulesManager;
+import com.reedelk.runtime.api.service.ConfigurationService;
 import org.osgi.framework.Bundle;
 
 public interface Step<I, O> {
@@ -19,4 +20,8 @@ public interface Step<I, O> {
     ComponentRegistry componentRegistry();
 
     void componentRegistry(ComponentRegistry componentRegistry);
+
+    ConfigurationService configurationService();
+
+    void configurationService(ConfigurationService configurationService);
 }

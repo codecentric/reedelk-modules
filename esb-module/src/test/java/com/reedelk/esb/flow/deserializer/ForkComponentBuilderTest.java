@@ -2,11 +2,11 @@ package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.ForkWrapper;
-import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.esb.test.utils.ComponentsBuilder;
+import com.reedelk.esb.test.utils.MockFlowBuilderContext;
 import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.esb.test.utils.TestJoinComponent;
 import com.reedelk.runtime.component.Stop;
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,8 +37,6 @@ class ForkComponentBuilderTest {
     @Mock
     private ExecutionGraph graph;
     @Mock
-    private FlowBuilderContext context;
-    @Mock
     private ExecutionNode parentExecutionNode;
     @Mock
     private ExecutionNode testComponent1ExecutionNode;
@@ -47,6 +46,8 @@ class ForkComponentBuilderTest {
     private ExecutionNode testComponent5ExecutionNode;
     @Mock
     private ExecutionNode testComponent6ExecutionNode;
+    @Spy
+    private MockFlowBuilderContext context;
 
     private ExecutionNode stopExecutionNode = new ExecutionNode(disposer, new ReferencePair<>(new Stop()));
     private ExecutionNode forkExecutionNode = new ExecutionNode(disposer, new ReferencePair<>(new ForkWrapper()));

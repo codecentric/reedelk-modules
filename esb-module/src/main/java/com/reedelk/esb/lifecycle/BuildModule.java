@@ -1,6 +1,6 @@
 package com.reedelk.esb.lifecycle;
 
-import com.reedelk.esb.commons.UniquePropertyValueValidator;
+import com.reedelk.esb.commons.ConfigPropertyAwareJsonTypeConverter;
 import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.flow.ErrorStateFlow;
 import com.reedelk.esb.flow.Flow;
@@ -11,15 +11,12 @@ import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.module.state.ModuleState;
-import com.reedelk.runtime.api.commons.StringUtils;
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.commons.JsonParser;
 import org.json.JSONObject;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.Set;
 
 import static java.lang.String.format;
@@ -42,7 +39,6 @@ public class BuildModule extends AbstractStep<Module, Module> {
             deserializedModule = module.deserialize();
         } catch (Exception exception) {
             logger.error("Module deserialization", exception);
-
             module.error(exception);
             return module;
         }
@@ -60,7 +56,9 @@ public class BuildModule extends AbstractStep<Module, Module> {
                 .collect(toSet());
 
         if (!flowsWithErrors.isEmpty()) {
-            releaseComponentReferences(bundle, flows);
+            // If there are errors, we MUST release references
+            // for those flows already built.
+            flows.forEach(flow -> flow.releaseReferences(bundle));
 
             module.error(flowsWithErrors.stream()
                     .map(ErrorStateFlow::getException)
@@ -69,61 +67,42 @@ public class BuildModule extends AbstractStep<Module, Module> {
             return module;
         }
 
-        // TODO: Validate somewhere else, like below, validation step or something.
-        if (!UniquePropertyValueValidator.validate(flows, Flow::getFlowId)) {
-            module.error(new ESBException("There are at least two flows with the same id. Flows Ids must be unique."));
-            return module;
-        }
-
         module.stop(flows);
         return module;
     }
 
-
-    // TODO: Extract in its own class
     private Flow buildFlow(Bundle bundle, JSONObject flowDefinition, DeserializedModule deserializedModule) {
         ExecutionGraph flowGraph = ExecutionGraph.build();
         FlowExecutorEngine executionEngine = new FlowExecutorEngine(flowGraph);
 
-        // TODO: This should be part of the validation process of the flow with JSON schema.
-        if (invalidFlowId(flowDefinition)) {
-            return new ErrorStateFlow(flowGraph, executionEngine,
-                    new ESBException("\"id\" property must be defined in the flow definition"));
-        }
-
         String flowId = JsonParser.Flow.id(flowDefinition);
         String flowTitle = JsonParser.Flow.hasTitle(flowDefinition) ?
-                JsonParser.Flow.title(flowDefinition) : null;
+                                JsonParser.Flow.title(flowDefinition) : null;
 
         ModulesManager modulesManager = modulesManager();
-        FlowBuilderContext context = new FlowBuilderContext(bundle, modulesManager, deserializedModule);
-        FlowBuilder flowBuilder = new FlowBuilder(context);
+        ConfigPropertyAwareJsonTypeConverter converter = new ConfigPropertyAwareJsonTypeConverter(configurationService());
+
         try {
+
+            FlowBuilderContext context = new FlowBuilderContext(bundle, modulesManager, deserializedModule, converter);
+            FlowBuilder flowBuilder = new FlowBuilder(context);
             flowBuilder.build(flowGraph, flowDefinition);
             return new Flow(flowId, flowTitle, flowGraph, executionEngine);
+
         } catch (Exception exception) {
-            logExceptionInfo(flowDefinition, flowId, exception);
+            logException(flowDefinition, flowId, exception);
             return new ErrorStateFlow(flowId, flowTitle, flowGraph, executionEngine, exception);
         }
     }
 
-    private void releaseComponentReferences(Bundle bundle, Collection<Flow> moduleFlows) {
-        moduleFlows.forEach(flow -> flow.releaseReferences(bundle));
-    }
-
-    private boolean invalidFlowId(JSONObject flowDefinition) {
-        return !JsonParser.Flow.hasId(flowDefinition) ||
-                StringUtils.isBlank(JsonParser.Flow.id(flowDefinition));
-    }
-
-    private static void logExceptionInfo(JSONObject flowDefinition, String flowId, Exception exception) {
+    private static void logException(JSONObject flowDefinition, String flowId, Exception exception) {
+        String message;
         if (JsonParser.Flow.hasTitle(flowDefinition)) {
             String flowTitle = JsonParser.Flow.title(flowDefinition);
-            String message = format("Error building flow with id [%s] and title '%s'", flowId, flowTitle);
-            logger.error(message, exception);
+            message = format("Error building flow with id [%s] and title '%s'", flowId, flowTitle);
         } else {
-            String message = format("Error building flow with id [%s]", flowId);
-            logger.error(message, exception);
+            message = format("Error building flow with id [%s]", flowId);
         }
+        logger.error(message, exception);
     }
 }

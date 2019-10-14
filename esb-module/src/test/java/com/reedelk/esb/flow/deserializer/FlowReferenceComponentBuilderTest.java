@@ -1,10 +1,10 @@
 package com.reedelk.esb.flow.deserializer;
 
-import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.test.utils.ComponentsBuilder;
+import com.reedelk.esb.test.utils.MockFlowBuilderContext;
 import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.runtime.component.FlowReference;
 import org.json.JSONObject;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
@@ -31,8 +32,6 @@ class FlowReferenceComponentBuilderTest {
     @Mock
     private ExecutionGraph graph;
     @Mock
-    private FlowBuilderContext context;
-    @Mock
     private ExecutionNode parentExecutionNode;
     @Mock
     private ExecutionNode testComponent1ExecutionNode;
@@ -40,6 +39,8 @@ class FlowReferenceComponentBuilderTest {
     private ExecutionNode testComponent2ExecutionNode;
     @Mock
     private ExecutionNode testComponent3ExecutionNode;
+    @Spy
+    private MockFlowBuilderContext context;
 
     @BeforeEach
     void setUp() {
@@ -63,7 +64,7 @@ class FlowReferenceComponentBuilderTest {
 
         DeserializedModule deserializedModule = new DeserializedModule(emptySet(), subflows, emptySet());
 
-        doReturn(deserializedModule).when(context).getDeserializedModule();
+        doReturn(deserializedModule).when(context).getDeSerializedModule();
 
         JSONObject componentDefinition = ComponentsBuilder.forComponent(FlowReference.class)
                 .with("ref", "subflow1")

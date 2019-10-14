@@ -2,11 +2,11 @@ package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.RouterWrapper;
-import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.esb.test.utils.ComponentsBuilder;
+import com.reedelk.esb.test.utils.MockFlowBuilderContext;
 import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.runtime.component.Stop;
 import org.json.JSONArray;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.reedelk.runtime.component.Router.DEFAULT_CONDITION;
@@ -34,8 +35,6 @@ class RouterComponentDeserializerTest {
     @Mock
     private ExecutionGraph graph;
     @Mock
-    private FlowBuilderContext context;
-    @Mock
     private ComponentDisposer disposer;
     @Mock
     private ExecutionNode parentEn;
@@ -51,6 +50,8 @@ class RouterComponentDeserializerTest {
     private ExecutionNode component5En;
     @Mock
     private ExecutionNode component6En;
+    @Spy
+    private MockFlowBuilderContext context;
 
     private ExecutionNode stopEn = new ExecutionNode(disposer, new ReferencePair<>(new Stop()));
     private ExecutionNode routerEn = new ExecutionNode(disposer, new ReferencePair<>(new RouterWrapper()));

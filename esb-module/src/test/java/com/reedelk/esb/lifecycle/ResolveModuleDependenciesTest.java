@@ -4,9 +4,6 @@ import com.reedelk.esb.component.ComponentRegistry;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModuleDeserializer;
-import com.reedelk.esb.test.utils.TestJson;
-import com.reedelk.runtime.commons.FileUtils;
-import com.reedelk.runtime.commons.JsonParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import static com.reedelk.esb.module.state.ModuleState.*;
+import static com.reedelk.esb.test.utils.Assertions.assertModuleErrorStateWith;
+import static com.reedelk.esb.test.utils.TestJson.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,7 +54,7 @@ class ResolveModuleDependenciesTest {
     }
 
     @Test
-    void shouldReturnModuleWithStateInstalledWhenNoFlowsArePresent() throws Exception {
+    void shouldReturnModuleWithStateInstalledWhenNoFlowsArePresent() {
         // Given
         DeserializedModule deserializedModule = new DeserializedModule(emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -70,14 +68,14 @@ class ResolveModuleDependenciesTest {
     }
 
     @Test
-    void shouldReturnModuleWithStateUnresolvedWhenNotAllFlowComponentsArePresent() throws Exception {
+    void shouldReturnModuleWithStateUnresolvedWhenNotAllFlowComponentsArePresent() {
         // Given
         doReturn(singletonList("com.reedelk.esb.not.found.Component"))
                 .when(componentRegistry)
                 .unregisteredComponentsOf(anyCollection());
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseJson(TestJson.FLOW_WITH_ROUTER));
+        flows.add(FLOW_WITH_ROUTER.parse());
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -104,10 +102,10 @@ class ResolveModuleDependenciesTest {
 
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseJson(TestJson.FLOW_WITH_COMPONENTS));
+        flows.add(FLOW_WITH_COMPONENTS.parse());
 
         Set<JSONObject> subFlows = new HashSet<>();
-        subFlows.add(parseJson(TestJson.SUBFLOW_WITH_COMPONENTS));
+        subFlows.add(SUBFLOW_WITH_COMPONENTS.parse());
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, subFlows, emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -133,10 +131,10 @@ class ResolveModuleDependenciesTest {
                 .unregisteredComponentsOf(ArgumentMatchers.anyCollection());
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseJson(TestJson.FLOW_WITH_COMPONENTS));
+        flows.add(FLOW_WITH_COMPONENTS.parse());
 
         Set<JSONObject> config = new HashSet<>();
-        config.add(parseJson(TestJson.CONFIG));
+        config.add(CONFIG.parse());
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), config);
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -150,14 +148,14 @@ class ResolveModuleDependenciesTest {
     }
 
     @Test
-    void shouldReturnModuleWithStateResolvedWhenAllComponentsArePresent() throws Exception {
+    void shouldReturnModuleWithStateResolvedWhenAllComponentsArePresent() {
         // Given
         doReturn(emptyList())
                 .when(componentRegistry)
                 .unregisteredComponentsOf(anyCollection());
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseJson(TestJson.FLOW_WITH_ROUTER));
+        flows.add(FLOW_WITH_ROUTER.parse());
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -179,8 +177,7 @@ class ResolveModuleDependenciesTest {
         Module module = step.run(aModule);
 
         // Then
-        assertThat(module).isNotNull();
-        assertThat(module.state()).isEqualTo(ERROR);
+        assertModuleErrorStateWith(module, "Could not deserialize module");
     }
 
     @Test
@@ -191,7 +188,7 @@ class ResolveModuleDependenciesTest {
                 .unregisteredComponentsOf(anyCollection());
 
         Set<JSONObject> flows = new HashSet<>();
-        flows.add(parseJson(TestJson.FLOW_WITH_ROUTER));
+        flows.add(FLOW_WITH_ROUTER.parse());
 
         DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
@@ -210,11 +207,5 @@ class ResolveModuleDependenciesTest {
 
         assertThat(resolvedComponents).containsExactlyInAnyOrder(
                 "com.reedelk.runtime.component.Router");
-    }
-
-    private JSONObject parseJson(TestJson testJson) {
-        URL url = testJson.url();
-        String flowAsJson = FileUtils.readFrom(url);
-        return JsonParser.from(flowAsJson);
     }
 }

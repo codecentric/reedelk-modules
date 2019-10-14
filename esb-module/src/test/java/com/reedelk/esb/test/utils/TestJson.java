@@ -1,5 +1,9 @@
 package com.reedelk.esb.test.utils;
 
+import com.reedelk.runtime.commons.FileUtils;
+import com.reedelk.runtime.commons.JsonParser;
+import org.json.JSONObject;
+
 import java.net.URL;
 
 public enum TestJson {
@@ -32,6 +36,13 @@ public enum TestJson {
         }
     },
 
+    FLOW_WITH_NOT_WELL_FORMED_FORK {
+        @Override
+        String path() {
+            return "/com/reedelk/esb/lifecycle/flow_with_not_well_formed_fork.flow";
+        }
+    },
+
     SUBFLOW_WITH_COMPONENTS {
         @Override
         String path() {
@@ -52,4 +63,9 @@ public enum TestJson {
 
     abstract String path();
 
+    public JSONObject parse() {
+        URL url = url();
+        String flowAsJson = FileUtils.readFrom(url);
+        return JsonParser.from(flowAsJson);
+    }
 }

@@ -2,6 +2,7 @@ package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.component.ComponentRegistry;
 import com.reedelk.esb.module.ModulesManager;
+import com.reedelk.runtime.api.service.ConfigurationService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.reedelk.esb.commons.Preconditions.checkArgument;
-import static java.util.Optional.ofNullable;
 
 public class StepRunner {
 
@@ -18,11 +18,25 @@ public class StepRunner {
     private final BundleContext context;
     private final ModulesManager modulesManager;
     private final ComponentRegistry componentRegistry;
+    private final ConfigurationService configurationService;
 
-    private StepRunner(BundleContext context, ModulesManager modulesManager, ComponentRegistry componentRegistry) {
+    private StepRunner(BundleContext context, ModulesManager modulesManager, ComponentRegistry componentRegistry, ConfigurationService configurationService) {
         this.context = context;
         this.modulesManager = modulesManager;
         this.componentRegistry = componentRegistry;
+        this.configurationService = configurationService;
+    }
+
+    private StepRunner(BundleContext context, ModulesManager modulesManager, ComponentRegistry componentRegistry) {
+        this(context, modulesManager, componentRegistry, null);
+    }
+
+    public static StepRunner get(BundleContext context, ModulesManager modulesManager, ComponentRegistry componentRegistry, ConfigurationService configurationService) {
+        return new StepRunner(context, modulesManager, componentRegistry, configurationService);
+    }
+
+    public static StepRunner get(BundleContext context, ModulesManager modulesManager, ConfigurationService configurationService) {
+        return new StepRunner(context, modulesManager, null, configurationService);
     }
 
     public static StepRunner get(BundleContext context, ModulesManager modulesManager, ComponentRegistry componentRegistry) {
@@ -56,7 +70,8 @@ public class StepRunner {
         for (Step step : steps) {
             step.bundle(bundle);
             step.modulesManager(modulesManager);
-            ofNullable(componentRegistry).ifPresent(step::componentRegistry);
+            step.componentRegistry(componentRegistry);
+            step.configurationService(configurationService);
 
             output = step.run(output);
         }

@@ -36,35 +36,33 @@ public class ESBConfigurationService implements ConfigurationService {
 
     @Override
     public String getString(String configPid, String configKey, String defaultValue) {
-        return Optional
-                .ofNullable(getStringSystemProperty(configKey))
-                .orElseGet(() ->
-                        getConfigAdminProperty(configPid, configKey, defaultValue, TO_STRING));
+        return Optional.ofNullable(getStringSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminProperty(configPid, configKey, defaultValue, TO_STRING));
     }
 
     @Override
     public int getInt(String configPid, String configKey, int defaultValue) {
-        return Optional
-                .ofNullable(getIntSystemProperty(configKey))
-                .orElseGet(() ->
-                        getConfigAdminProperty(configPid, configKey, defaultValue, TO_INT));
+        return Optional.ofNullable(getIntSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminProperty(configPid, configKey, defaultValue, TO_INT));
     }
 
     @Override
     public long getLong(String configPid, String configKey, long defaultValue) {
-        return Optional
-                .ofNullable(getLongSystemProperty(configKey))
-                .orElseGet(() ->
-                        getConfigAdminProperty(configPid, configKey, defaultValue, TO_LONG));
+        return Optional.ofNullable(getLongSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminProperty(configPid, configKey, defaultValue, TO_LONG));
     }
 
     @Override
     public boolean getBoolean(String configPid, String configKey, boolean defaultValue) {
-        return Optional
-                .ofNullable(getBooleanSystemProperty(configKey))
-                .orElseGet(() ->
-                        getConfigAdminProperty(configPid, configKey, defaultValue, TO_BOOLEAN));
+        return Optional.ofNullable(getBooleanSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminProperty(configPid, configKey, defaultValue, TO_BOOLEAN));
 
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T get(String configPid, String configKey, Class<T> type) {
+        return (T) MAP.get(type).convert(this, configPid, configKey);
     }
 
     /**
@@ -83,20 +81,17 @@ public class ESBConfigurationService implements ConfigurationService {
 
     Integer getIntSystemProperty(String key) {
         return getStringSystemProperty(key) == null ?
-                null :
-                Integer.valueOf(getStringSystemProperty(key));
+                null : Integer.valueOf(getStringSystemProperty(key));
     }
 
     Long getLongSystemProperty(String key) {
         return getStringSystemProperty(key) == null ?
-                null :
-                Long.valueOf(getStringSystemProperty(key));
+                null : Long.valueOf(getStringSystemProperty(key));
     }
 
     Boolean getBooleanSystemProperty(String key) {
         return getStringSystemProperty(key) == null ?
-                null :
-                Boolean.valueOf(getStringSystemProperty(key));
+                null : Boolean.valueOf(getStringSystemProperty(key));
     }
 
     String getStringSystemProperty(String key) {
@@ -126,23 +121,37 @@ public class ESBConfigurationService implements ConfigurationService {
     }
 
     static final DataMapper<String> TO_STRING = input -> (String) input;
+
     private static final DataMapper<Long> TO_LONG = input -> input instanceof String ? Long.valueOf((String) input) : (Long) input;
     private static final DataMapper<Integer> TO_INT = input -> input instanceof String ? Integer.valueOf((String) input) : (Integer) input;
     private static final DataMapper<Boolean> TO_BOOLEAN = input -> input instanceof String ? Boolean.valueOf((String) input) : (Boolean) input;
 
     private interface DataMapper<O> {
         O map(Object input);
-
     }
 
     private <T> T getPropertyOrDefault(Dictionary<String, Object> dictionary, String configKey, T defaultValue, DataMapper<T> mapper) {
         boolean isKeyPresent = list(dictionary.keys())
                 .stream()
                 .anyMatch(configKey::equals);
-        if (isKeyPresent) {
-            return mapper.map(dictionary.get(configKey));
-        } else {
-            return defaultValue;
-        }
+        return isKeyPresent ?
+                mapper.map(dictionary.get(configKey)) : defaultValue;
+    }
+
+    private static final Map<Class, ConfigConverter> MAP;
+    static {
+        Map<Class, ConfigConverter> tmp = new HashMap<>();
+        tmp.put(String.class, (ConfigConverter<String>) (configurationService, pid, key) -> configurationService.getString(pid, key, null));
+        tmp.put(int.class, (ConfigConverter<Integer>) (configurationService, pid, key) -> configurationService.getInt(pid, key, 0));
+        tmp.put(Integer.class, (ConfigConverter<Integer>) (configurationService, pid, key) -> configurationService.getInt(pid, key, 0));
+        tmp.put(boolean.class, (ConfigConverter<Boolean>) (configurationService, pid, key) -> configurationService.getBoolean(pid, key, false));
+        tmp.put(Boolean.class, (ConfigConverter<Boolean>) (configurationService, pid, key) -> configurationService.getBoolean(pid, key, false));
+        tmp.put(long.class, (ConfigConverter<Long>) (configurationService, pid, key) -> configurationService.getLong(pid, key, 0L));
+        tmp.put(Long.class, (ConfigConverter<Long>) (configurationService, pid, key) -> configurationService.getLong(pid, key, 0L));
+        MAP = tmp;
+    }
+
+    interface ConfigConverter<T> {
+        T convert(ConfigurationService configurationService, String pid, String key);
     }
 }
