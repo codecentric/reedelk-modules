@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
@@ -86,7 +87,12 @@ public class DefaultConfigurationService implements ConfigurationService {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(String configPid, String configKey, Class<T> type) {
-        return (T) MAP.get(type).convert(this, configPid, configKey);
+        if (MAP.containsKey(type)) {
+            return (T) MAP.get(type).convert(this, configPid, configKey);
+        }
+        throw new InvalidConfigPropertyException(
+                format("Unsupported conversion. Could not convert config property with key='%s' for config pid='%s' to type='%s'.",
+                        configKey, configPid, type.getName()));
     }
 
     /**
@@ -150,7 +156,7 @@ public class DefaultConfigurationService implements ConfigurationService {
             Dictionary<String, Object> properties = configuration.getProperties();
             return getPropertyOrThrow(properties, configKey, mapper);
         } catch (IOException e) {
-            throw new InvalidConfigPropertyException(String.format("Could not find config property with key='%s' for config pid='%s'", configKey, configPid));
+            throw new InvalidConfigPropertyException(format("Could not find config property with key='%s' for config pid='%s'", configKey, configPid));
         }
     }
 
@@ -158,7 +164,7 @@ public class DefaultConfigurationService implements ConfigurationService {
         if (dictionary != null && list(dictionary.keys()).contains(configKey)) {
             return mapper.apply(dictionary.get(configKey));
         } else {
-            throw new InvalidConfigPropertyException(String.format("Could not find config property with key='%s'.", configKey));
+            throw new InvalidConfigPropertyException(format("Could not find config property with key='%s'.", configKey));
         }
     }
 

@@ -20,6 +20,7 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -471,6 +472,17 @@ class DefaultConfigurationServiceTest {
 
             // Then
             assertThat(thrown).hasMessage("Could not find config property with key='name.endpoint'.");
+        }
+
+        @Test
+        void shouldThrowExceptionWhenPropertyWithTargetClazzUnsupportedIsRetrieved() {
+            // Expect
+            InvalidConfigPropertyException thrown =
+                    assertThrows(InvalidConfigPropertyException.class,
+                            () -> service.get(TEST_CONFIG_PID, TEST_CONFIG_KEY, BigDecimal.class));
+
+            // Then
+            assertThat(thrown).hasMessage("Unsupported conversion. Could not convert config property with key='name.endpoint' for config pid='my.test.config.pid' to type='java.math.BigDecimal'.");
         }
     }
 
