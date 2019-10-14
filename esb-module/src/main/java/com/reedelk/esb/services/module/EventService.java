@@ -11,11 +11,11 @@ import static org.osgi.framework.BundleEvent.*;
 import static org.osgi.framework.ServiceEvent.REGISTERED;
 import static org.osgi.framework.ServiceEvent.UNREGISTERING;
 
-public class ESBEventService implements BundleListener, ServiceListener {
+public class EventService implements BundleListener, ServiceListener {
 
     private final EventListener listener;
 
-    public ESBEventService(EventListener listener) {
+    public EventService(EventListener listener) {
         checkArgument(listener != null, "listener must not be null");
         this.listener = listener;
     }

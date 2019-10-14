@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class ESBConfigurationServiceTest {
+class DefaultConfigurationServiceTest {
 
     private final String TEST_CONFIG_PID = "my.test.config.pid";
     private final String TEST_CONFIG_KEY = "name.endpoint";
@@ -37,11 +37,11 @@ class ESBConfigurationServiceTest {
     @Captor
     private ArgumentCaptor<Dictionary<String, Object>> dictionaryCaptor;
 
-    private ESBConfigurationService service;
+    private DefaultConfigurationService service;
 
     @BeforeEach
     void setUp() {
-        service = spy(new ESBConfigurationService(mockConfigurationAdmin, systemProperty));
+        service = spy(new DefaultConfigurationService(mockConfigurationAdmin, systemProperty));
     }
 
     // String property
@@ -338,7 +338,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
 
         // When
-        String actualProperty = service.getConfigAdminProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, "Default", ESBConfigurationService.TO_STRING);
+        String actualProperty = service.getConfigAdminProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, "Default", DefaultConfigurationService.TO_STRING);
 
         // Then
         assertThat(actualProperty).isEqualTo("Default");
@@ -352,7 +352,7 @@ class ESBConfigurationServiceTest {
         mockConfigurationWithProperties(TEST_CONFIG_PID, properties);
 
         // When
-        String actualProperty = service.getConfigAdminProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, "Default", ESBConfigurationService.TO_STRING);
+        String actualProperty = service.getConfigAdminProperty(TEST_CONFIG_PID, TEST_CONFIG_KEY, "Default", DefaultConfigurationService.TO_STRING);
 
         // Then
         assertThat(actualProperty).isEmpty();

@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ESBHotSwapServiceTest {
+class DefaultHotSwapServiceTest {
 
     @Mock
     private Bundle bundle;
@@ -22,11 +22,11 @@ class ESBHotSwapServiceTest {
     @Mock
     private HotSwapListener listener;
 
-    private ESBHotSwapService service;
+    private DefaultHotSwapService service;
 
     @BeforeEach
     void setUp() {
-        service = new ESBHotSwapService(context, listener);
+        service = new DefaultHotSwapService(context, listener);
     }
 
     @Test

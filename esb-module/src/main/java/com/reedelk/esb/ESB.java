@@ -9,8 +9,8 @@ import com.reedelk.esb.lifecycle.*;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.services.ServicesManager;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
-import com.reedelk.esb.services.module.ESBEventService;
 import com.reedelk.esb.services.module.EventListener;
+import com.reedelk.esb.services.module.EventService;
 import com.reedelk.runtime.system.api.SystemProperty;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -32,7 +32,7 @@ public class ESB implements EventListener, HotSwapListener {
     protected BundleContext context;
     protected ModulesManager modulesManager;
 
-    private ESBEventService eventDispatcher;
+    private EventService eventDispatcher;
     private ServicesManager servicesManager;
     private ComponentRegistry componentRegistry;
 
@@ -44,7 +44,7 @@ public class ESB implements EventListener, HotSwapListener {
         modulesManager = new ModulesManager(disposer);
 
         componentRegistry = new ComponentRegistry(RuntimeComponents.allNames());
-        eventDispatcher = new ESBEventService(this);
+        eventDispatcher = new EventService(this);
 
         context.addBundleListener(eventDispatcher);
         context.addServiceListener(eventDispatcher);

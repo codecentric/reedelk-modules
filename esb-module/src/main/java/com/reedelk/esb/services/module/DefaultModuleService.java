@@ -20,9 +20,9 @@ import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toSet;
 
-public class ESBModuleService implements ModuleService {
+public class DefaultModuleService implements ModuleService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ESBModuleService.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultModuleService.class);
 
     private final ModulesMapper mapper = new ModulesMapper();
 
@@ -30,7 +30,7 @@ public class ESBModuleService implements ModuleService {
     private final BundleContext context;
     private final ModulesManager modulesManager;
 
-    public ESBModuleService(BundleContext context, ModulesManager modulesManager, EventListener listener) {
+    public DefaultModuleService(BundleContext context, ModulesManager modulesManager, EventListener listener) {
         this.modulesManager = modulesManager;
         this.listener = listener;
         this.context = context;

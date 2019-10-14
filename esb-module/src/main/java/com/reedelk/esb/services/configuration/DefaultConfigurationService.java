@@ -18,18 +18,18 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
 import static java.util.stream.Collectors.toList;
 
-public class ESBConfigurationService implements ConfigurationService {
+public class DefaultConfigurationService implements ConfigurationService {
 
     private static final List<Configurer> CONFIGURERS = asList(
             new LogbackConfigurer(),
             new PidConfigConfigurer());
 
-    private static final Logger logger = LoggerFactory.getLogger(ESBConfigurationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultConfigurationService.class);
 
     private final ConfigurationAdmin configurationAdmin;
     private final SystemProperty systemProperty;
 
-    public ESBConfigurationService(ConfigurationAdmin configurationAdmin, SystemProperty systemProperty) {
+    public DefaultConfigurationService(ConfigurationAdmin configurationAdmin, SystemProperty systemProperty) {
         this.configurationAdmin = configurationAdmin;
         this.systemProperty = systemProperty;
     }

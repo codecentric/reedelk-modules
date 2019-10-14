@@ -11,14 +11,14 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 
-public class ESBHotSwapService implements HotSwapService {
+public class DefaultHotSwapService implements HotSwapService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ESBHotSwapService.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultHotSwapService.class);
 
     private final BundleContext context;
     private final HotSwapListener listener;
 
-    public ESBHotSwapService(BundleContext context, HotSwapListener listener) {
+    public DefaultHotSwapService(BundleContext context, HotSwapListener listener) {
         this.context = context;
         this.listener = listener;
     }

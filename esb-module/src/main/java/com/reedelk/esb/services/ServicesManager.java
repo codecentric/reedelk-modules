@@ -1,10 +1,10 @@
 package com.reedelk.esb.services;
 
 import com.reedelk.esb.module.ModulesManager;
-import com.reedelk.esb.services.configuration.ESBConfigurationService;
-import com.reedelk.esb.services.hotswap.ESBHotSwapService;
+import com.reedelk.esb.services.configuration.DefaultConfigurationService;
+import com.reedelk.esb.services.hotswap.DefaultHotSwapService;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
-import com.reedelk.esb.services.module.ESBModuleService;
+import com.reedelk.esb.services.module.DefaultModuleService;
 import com.reedelk.esb.services.module.EventListener;
 import com.reedelk.esb.services.scriptengine.ScriptEngine;
 import com.reedelk.runtime.api.service.ConfigurationService;
@@ -33,7 +33,7 @@ public class ServicesManager {
 
     private List<ServiceRegistration<?>> registeredServices = new ArrayList<>();
 
-    private ESBConfigurationService configurationService;
+    private DefaultConfigurationService configurationService;
     private ScriptEngine scriptEngineService;
 
     public ServicesManager(EventListener eventListener,
@@ -59,7 +59,7 @@ public class ServicesManager {
         registeredServices.forEach(ServiceRegistration::unregister);
     }
 
-    public ESBConfigurationService configurationService() {
+    public DefaultConfigurationService configurationService() {
         return configurationService;
     }
 
@@ -68,21 +68,21 @@ public class ServicesManager {
     }
 
     private void registerHotSwapService(BundleContext context) {
-        ESBHotSwapService service = new ESBHotSwapService(context, hotSwapListener);
+        DefaultHotSwapService service = new DefaultHotSwapService(context, hotSwapListener);
         ServiceRegistration<HotSwapService> registration =
                 context.registerService(HotSwapService.class, service, NO_PROPERTIES);
         registeredServices.add(registration);
     }
 
     private void registerModuleService(BundleContext context) {
-        ESBModuleService service = new ESBModuleService(context, modulesManager, eventListener);
+        DefaultModuleService service = new DefaultModuleService(context, modulesManager, eventListener);
         ServiceRegistration<ModuleService> registration =
                 context.registerService(ModuleService.class, service, NO_PROPERTIES);
         registeredServices.add(registration);
     }
 
     private void registerConfigurationService(BundleContext context) {
-        configurationService = new ESBConfigurationService(configurationAdmin, systemProperty);
+        configurationService = new DefaultConfigurationService(configurationAdmin, systemProperty);
         configurationService.initialize();
         ServiceRegistration<ConfigurationService> registration =
                 context.registerService(ConfigurationService.class, configurationService, NO_PROPERTIES);
