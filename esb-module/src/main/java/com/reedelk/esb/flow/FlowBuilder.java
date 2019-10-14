@@ -40,5 +40,4 @@ public class FlowBuilder {
         ExecutionNode stopNode = context.instantiateComponent(Stop.class);
         flowGraph.putEdge(current, stopNode);
     }
-
 }
