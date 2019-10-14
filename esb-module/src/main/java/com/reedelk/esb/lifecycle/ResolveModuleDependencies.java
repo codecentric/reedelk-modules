@@ -4,11 +4,15 @@ import com.reedelk.esb.commons.JsonPropertyValueCollector;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.runtime.commons.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
 
 public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ResolveModuleDependencies.class);
 
     @Override
     public Module run(Module module) {
@@ -16,6 +20,7 @@ public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
         try {
             deserializedModule = module.deserialize();
         } catch (Exception error) {
+            logger.error("Module deserialization", error);
             module.error(error);
             return module;
         }
@@ -54,5 +59,4 @@ public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
         allComponentsUsedByModule.addAll(configImplementorNames);
         return allComponentsUsedByModule;
     }
-
 }
