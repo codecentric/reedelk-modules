@@ -4,6 +4,7 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.*;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Implementor;
+import com.reedelk.runtime.api.script.dynamicvalue.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -747,39 +748,343 @@ class ComponentDefinitionDeserializerTest {
 
     }
 
-    private TestComponent buildComponentWith(String propertyName, Object propertyValue) {
-        // Given
-        JSONObject definition = componentDefinitionWith(propertyName, propertyValue);
+    @Nested
+    @DisplayName("Dynamic value tests")
+    class DynamicValueTests {
 
-        // When
+        @Test
+        void shouldCorrectlySetDynamicLongProperty() {
+            // Given
+            long expectedValue = 843;
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicLongProperty", expectedValue);
+
+            // Then
+            DynamicLong property = component.getDynamicLongProperty();
+            assertThat(property.isScript()).isFalse();
+            assertThat(property.value()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetScriptedDynamicLongProperty() {
+            // Given
+            String expectedValue = "#[432]";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicLongProperty", expectedValue);
+
+            // Then
+            DynamicLong property = component.getDynamicLongProperty();
+            assertThat(property.isScript()).isTrue();
+            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetDynamicFloatProperty() {
+            // Given
+            float expectedValue= 43.32f;
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicFloatProperty", expectedValue);
+
+            // Then
+            DynamicFloat property = component.getDynamicFloatProperty();
+            assertThat(property.isScript()).isFalse();
+            assertThat(property.value()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetScriptedDynamicFloatProperty() {
+            // Given
+            String expectedValue = "#[43.2]";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicFloatProperty", expectedValue);
+
+            // Then
+            DynamicFloat property = component.getDynamicFloatProperty();
+            assertThat(property.isScript()).isTrue();
+            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetDynamicDoubleProperty() {
+            // Given
+            double expectedValue = 43.234;
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicDoubleProperty", expectedValue);
+
+            // Then
+            DynamicDouble property = component.getDynamicDoubleProperty();
+            assertThat(property.isScript()).isFalse();
+            assertThat(property.value()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetScriptedDynamicDoubleProperty() {
+            // Given
+            String expectedValue = "#[49.432]";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicDoubleProperty", expectedValue);
+
+            // Then
+            DynamicDouble property = component.getDynamicDoubleProperty();
+            assertThat(property.isScript()).isTrue();
+            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetStringDynamicProperty() {
+            // Given
+            String expectedValue = "test value";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicStringProperty", expectedValue);
+
+            // Then
+            DynamicString property = component.getDynamicStringProperty();
+            assertThat(property.isScript()).isFalse();
+            assertThat(property.value()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetScriptedStringDynamicProperty() {
+            // Given
+            String expectedValue = "#['my test']";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicStringProperty", expectedValue);
+
+            // Then
+            DynamicString property = component.getDynamicStringProperty();
+            assertThat(property.isScript()).isTrue();
+            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetObjectDynamicProperty() {
+            // Given
+            BigDecimal bigDecimal = new BigDecimal(432);
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicObjectProperty", bigDecimal);
+
+            // Then
+            DynamicObject property = component.getDynamicObjectProperty();
+            assertThat(property.isScript()).isFalse();
+            assertThat(property.value()).isEqualTo(bigDecimal);
+        }
+
+        @Test
+        void shouldCorrectlySetScriptedObjectDynamicProperty() {
+            // Given
+            String expectedValue = "#['my test']";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicObjectProperty", expectedValue);
+
+            // Then
+            DynamicObject property = component.getDynamicObjectProperty();
+            assertThat(property.isScript()).isTrue();
+            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetBooleanDynamicProperty() {
+            // Given
+            boolean expectedValue = true;
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicBooleanProperty", expectedValue);
+
+            // Then
+            DynamicBoolean property = component.getDynamicBooleanProperty();
+            assertThat(property.isScript()).isFalse();
+            assertThat(property.value()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetScriptedBooleanDynamicProperty() {
+            // Given
+            String expectedValue= "#[1 == 1]";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicBooleanProperty", expectedValue);
+
+            // Then
+            DynamicBoolean property = component.getDynamicBooleanProperty();
+            assertThat(property.isScript()).isTrue();
+            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetIntegerDynamicProperty() {
+            // Given
+            int expectedValue = 43;
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicIntegerProperty", expectedValue);
+
+            // Then
+            DynamicInteger property = component.getDynamicIntegerProperty();
+            assertThat(property.isScript()).isFalse();
+            assertThat(property.value()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetScriptedIntegerDynamicProperty() {
+            // Given
+            String expectedValue = "#[4832]";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicIntegerProperty", expectedValue);
+
+            // Then
+            DynamicInteger property = component.getDynamicIntegerProperty();
+            assertThat(property.isScript()).isTrue();
+            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetByteArrayDynamicProperty() {
+            // Given
+            String expectedValue = "my byte array string";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicByteArrayProperty", expectedValue);
+
+            // Then
+            DynamicByteArray property = component.getDynamicByteArrayProperty();
+            assertThat(property.isScript()).isFalse();
+            assertThat(property.value()).isEqualTo(expectedValue.getBytes());
+        }
+
+        @Test
+        void shouldCorrectlySetScriptedByteArrayDynamicProperty() {
+            // Given
+            String expectedValue = "#['byte array body']";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicByteArrayProperty", expectedValue);
+
+            // Then
+            DynamicByteArray property = component.getDynamicByteArrayProperty();
+            assertThat(property.isScript()).isTrue();
+            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetBigDecimalDynamicProperty() {
+            // Given
+            double expectedValue = 2345342.234;
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicBigDecimalProperty", expectedValue);
+
+            // Then
+            DynamicBigDecimal property = component.getDynamicBigDecimalProperty();
+            assertThat(property.isScript()).isFalse();
+            assertThat(property.value()).isEqualTo(new BigDecimal(String.valueOf(expectedValue)));
+        }
+
+        @Test
+        void shouldCorrectlySetScriptedBigDecimalDynamicProperty() {
+            // Given
+            String expectedValue = "#[342]";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicBigDecimalProperty", expectedValue);
+
+            // Then
+            DynamicBigDecimal property = component.getDynamicBigDecimalProperty();
+            assertThat(property.isScript()).isTrue();
+            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+        }
+
+        @Test
+        void shouldCorrectlySetBigIntegerDynamicProperty() {
+            // Given
+            int expectedValue = 234534;
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicBigIntegerProperty", expectedValue);
+
+            // Then
+            DynamicBigInteger property = component.getDynamicBigIntegerProperty();
+            assertThat(property.isScript()).isFalse();
+            assertThat(property.value()).isEqualTo(new BigInteger(String.valueOf(expectedValue)));
+        }
+
+        @Test
+        void shouldCorrectlySetScriptedBigIntegerDynamicProperty() {
+            // Given
+            String expectedValue = "#[43]";
+
+            // When
+            TestComponentWithDynamicValueProperty component =
+                    buildDynamicValueComponentWith("dynamicBigIntegerProperty", expectedValue);
+
+            // Then
+            DynamicBigInteger property = component.getDynamicBigIntegerProperty();
+            assertThat(property.isScript()).isTrue();
+            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+        }
+    }
+
+    @Nested
+    @DisplayName("Dynamic map tests")
+    class DynamicMapTests {
+
+    }
+
+    private TestComponent buildComponentWith(String propertyName, Object propertyValue) {
+        JSONObject definition = componentDefinitionWith(propertyName, propertyValue, TestComponent.class);
         TestComponent implementor = new TestComponent();
         deserializer.deserialize(definition, implementor);
         return implementor;
     }
 
-    private TestComponentWithCollectionProperties buildCollectionComponentWith(String propertyName, Object propertyValue) {
-        // Given
-        JSONObject definition = componentCollectionDefinitionWith(propertyName, propertyValue);
+    private TestComponentWithDynamicValueProperty buildDynamicValueComponentWith(String propertyName, Object propertyValue) {
+        JSONObject definition = componentDefinitionWith(propertyName, propertyValue, TestComponentWithDynamicValueProperty.class);
+        TestComponentWithDynamicValueProperty implementor = new TestComponentWithDynamicValueProperty();
+        deserializer.deserialize(definition, implementor);
+        return implementor;
+    }
 
-        // When
+    private TestComponentWithCollectionProperties buildCollectionComponentWith(String propertyName, Object propertyValue) {
+        JSONObject definition = componentDefinitionWith(propertyName, propertyValue, TestComponentWithCollectionProperties.class);
         TestComponentWithCollectionProperties implementor = new TestComponentWithCollectionProperties();
         deserializer.deserialize(definition, implementor);
         return implementor;
     }
 
-    private JSONObject componentDefinitionWith(String propertyName, Object propertyValue) {
-        JSONObject componentDefinition = ComponentsBuilder.forComponent(TestComponent.class)
+    private JSONObject componentDefinitionWith(String propertyName, Object propertyValue, Class<? extends Component> componentClazz) {
+        JSONObject componentDefinition = ComponentsBuilder.forComponent(componentClazz)
                 .with(propertyName, propertyValue)
                 .build();
-        mockComponent(TestComponent.class);
-        return componentDefinition;
-    }
-
-    private JSONObject componentCollectionDefinitionWith(String propertyName, Object propertyValue) {
-        JSONObject componentDefinition = ComponentsBuilder.forComponent(TestComponentWithCollectionProperties.class)
-                .with(propertyName, propertyValue)
-                .build();
-        mockComponent(TestComponentWithCollectionProperties.class);
+        mockComponent(componentClazz);
         return componentDefinition;
     }
 

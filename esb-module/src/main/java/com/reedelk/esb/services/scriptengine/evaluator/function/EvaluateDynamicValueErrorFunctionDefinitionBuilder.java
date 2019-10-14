@@ -12,7 +12,7 @@ public class EvaluateDynamicValueErrorFunctionDefinitionBuilder implements Funct
 
     @Override
     public String from(String functionName, DynamicValue dynamicValue) {
-        String functionBody = ScriptUtils.unwrap(dynamicValue.body());
+        String functionBody = ScriptUtils.unwrap(dynamicValue.scriptBody());
         return String.format(EVALUATE_ERROR_FUNCTION, functionName, functionBody);
     }
 }

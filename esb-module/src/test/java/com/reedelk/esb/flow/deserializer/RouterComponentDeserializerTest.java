@@ -81,7 +81,7 @@ class RouterComponentDeserializerTest {
         JSONArray whenArray = new JSONArray();
         whenArray.put(conditionalBranch("#[1 == 1]", COMPONENT_3_NAME, COMPONENT_1_NAME));
         whenArray.put(conditionalBranch("#['hello' == 'hello1']", COMPONENT_2_NAME, COMPONENT_4_NAME));
-        whenArray.put(conditionalBranch(DEFAULT_CONDITION.getValue(), COMPONENT_6_NAME, COMPONENT_5_NAME));
+        whenArray.put(conditionalBranch(DEFAULT_CONDITION.value(), COMPONENT_6_NAME, COMPONENT_5_NAME));
 
         JSONObject componentDefinition = ComponentsBuilder.forComponent(RouterWrapper.class)
                 .with("when", whenArray)

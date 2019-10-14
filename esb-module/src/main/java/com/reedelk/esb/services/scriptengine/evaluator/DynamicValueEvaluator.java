@@ -36,7 +36,7 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
 
         } else {
             // Not a script
-            return Optional.ofNullable(dynamicValue.getValue());
+            return Optional.ofNullable(dynamicValue.value());
         }
     }
 
@@ -50,7 +50,7 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
             return execute(dynamicValue, OPTIONAL_PROVIDER, ERROR_FUNCTION, exception, flowContext);
         } else {
             // Not a script
-            return Optional.ofNullable(dynamicValue.getValue());
+            return Optional.ofNullable(dynamicValue.value());
         }
     }
 
@@ -75,7 +75,7 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
                 return convert(evaluationResult, JavaType.from(mimeType), OPTIONAL_PROVIDER);
             }
         } else {
-            return convert(dynamicObject.getValue(), JavaType.from(mimeType), OPTIONAL_PROVIDER);
+            return convert(dynamicObject.value(), JavaType.from(mimeType), OPTIONAL_PROVIDER);
         }
     }
 }

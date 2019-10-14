@@ -16,7 +16,7 @@ public class RouterWrapper extends Router {
     private ExecutionNode endOfRouterStopNode;
 
     /**
-     * Returns all paths excluding the default.
+     * Returns all paths without the default one.
      */
     public List<PathExpressionPair> getPathExpressionPairs() {
         return pathExpressionPairs.stream()
@@ -30,7 +30,7 @@ public class RouterWrapper extends Router {
 
     public PathExpressionPair getDefaultPathOrThrow() {
         return pathExpressionPairs.stream()
-                .filter(pathExpressionPair -> DEFAULT_CONDITION.getValue().equals(pathExpressionPair.expression.getValue()))
+                .filter(pathExpressionPair -> DEFAULT_CONDITION.value().equals(pathExpressionPair.expression.value()))
                 .findFirst()
                 .orElseThrow(() -> new ESBException("Default router condition could not be found"));
     }

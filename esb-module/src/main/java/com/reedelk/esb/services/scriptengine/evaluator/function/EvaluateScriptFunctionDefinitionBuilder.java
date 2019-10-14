@@ -12,7 +12,7 @@ public class EvaluateScriptFunctionDefinitionBuilder implements FunctionDefiniti
 
     @Override
     public String from(String functionName, Script script) {
-        String functionBody = ScriptUtils.unwrap(script.body());
+        String functionBody = ScriptUtils.unwrap(script.scriptBody());
         return String.format(EVALUATE_SCRIPT_FUNCTION, functionName, functionBody);
     }
 }

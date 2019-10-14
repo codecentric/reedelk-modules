@@ -28,7 +28,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
             }
         } else {
             // Not a script
-            return TypedPublisher.from(Mono.justOrEmpty(dynamicValue.getValue()), dynamicValue.getEvaluatedType());
+            return TypedPublisher.from(Mono.justOrEmpty(dynamicValue.value()), dynamicValue.getEvaluatedType());
         }
     }
 
@@ -44,7 +44,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
                     dynamicValue.getEvaluatedType());
         } else {
             // Not a script
-            return TypedPublisher.from(Mono.justOrEmpty(dynamicValue.getValue()), dynamicValue.getEvaluatedType());
+            return TypedPublisher.from(Mono.justOrEmpty(dynamicValue.value()), dynamicValue.getEvaluatedType());
         }
     }
 }

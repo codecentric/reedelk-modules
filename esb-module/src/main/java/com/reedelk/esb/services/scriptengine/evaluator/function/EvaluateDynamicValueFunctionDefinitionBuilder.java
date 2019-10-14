@@ -12,7 +12,7 @@ public class EvaluateDynamicValueFunctionDefinitionBuilder implements FunctionDe
 
     @Override
     public String from(String functionName, DynamicValue dynamicValue) {
-        String functionBody = ScriptUtils.unwrap(dynamicValue.body());
+        String functionBody = ScriptUtils.unwrap(dynamicValue.scriptBody());
         return String.format(EVALUATE_FUNCTION, functionName, functionBody);
     }
 }

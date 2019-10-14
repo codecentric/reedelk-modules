@@ -16,9 +16,8 @@ class ScriptEnhancer extends Script {
     }
 
     static Script enhance(Script original) {
-        String userDefined = ScriptUtils.unwrap(original.body());
+        String userDefined = ScriptUtils.unwrap(original.scriptBody());
         String realBody = String.format(EXECUTION_SCRIPT_TEMPLATE, userDefined);
         return new ScriptEnhancer(original, realBody);
-
     }
 }
