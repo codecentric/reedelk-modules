@@ -4,6 +4,7 @@ import com.reedelk.esb.component.ComponentRegistry;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModuleDeserializer;
+import com.reedelk.runtime.api.exception.ESBException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -169,7 +170,7 @@ class ResolveModuleDependenciesTest {
     }
 
     @Test
-    void shouldReturnModuleWithStateErrorWhenDeserializationThrowsException() throws Exception {
+    void shouldReturnModuleWithStateErrorWhenDeserializationThrowsException() {
         // Given
         doThrow(new JSONException("Could not deserialize module")).when(deserializer).deserialize();
 
@@ -181,7 +182,7 @@ class ResolveModuleDependenciesTest {
     }
 
     @Test
-    void shouldReturnModuleWithStateUnresolvedWithCorrectResolvedAndUnresolvedSets() throws Exception {
+    void shouldReturnModuleWithStateUnresolvedWithCorrectResolvedAndUnresolvedSets() {
         // Given
         doReturn(asList("com.reedelk.esb.test.utils.AnotherTestComponent", "com.reedelk.esb.test.utils.TestInboundComponent"))
                 .when(componentRegistry)
@@ -207,5 +208,18 @@ class ResolveModuleDependenciesTest {
 
         assertThat(resolvedComponents).containsExactlyInAnyOrder(
                 "com.reedelk.runtime.component.Router");
+    }
+
+    @Test
+    void shouldNotResolveDependenciesWhenModuleWithStateError() {
+        // Given
+        aModule.error(new ESBException("Module in error state!"));
+
+        // When
+        Module module = step.run(aModule);
+
+        // Then
+        assertModuleErrorStateWith(module, "Module in error state!");
+        verifyNoMoreInteractions(componentRegistry, deserializer);
     }
 }

@@ -4,6 +4,7 @@ import com.reedelk.esb.commons.JsonPropertyValueCollector;
 import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
+import com.reedelk.esb.module.state.ModuleState;
 import com.reedelk.runtime.commons.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,9 @@ public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
 
     @Override
     public Module run(Module module) {
+
+        if (module.state() != ModuleState.INSTALLED) return module;
+
         DeserializedModule deserializedModule;
         try {
             deserializedModule = module.deserialize();
