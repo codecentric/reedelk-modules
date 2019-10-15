@@ -1,5 +1,6 @@
 package com.reedelk.rest.configuration.listener;
 
+import com.reedelk.runtime.api.annotation.Password;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
@@ -11,6 +12,7 @@ public class TrustStoreConfiguration implements Implementor {
 
     @Property("Path")
     private String path;
+    @Password
     @Property("Password")
     private String password;
     @Property("Type")

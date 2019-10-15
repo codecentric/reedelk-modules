@@ -1,5 +1,6 @@
 package com.reedelk.rest.configuration.client;
 
+import com.reedelk.runtime.api.annotation.Password;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.annotation.When;
 import com.reedelk.runtime.api.component.Implementor;
@@ -13,6 +14,7 @@ public class DigestAuthenticationConfiguration implements Implementor {
     @Property("Username")
     private String username;
 
+    @Password
     @Property("Password")
     private String password;
 

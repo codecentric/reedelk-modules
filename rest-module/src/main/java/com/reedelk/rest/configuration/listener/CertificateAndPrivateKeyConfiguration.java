@@ -1,6 +1,5 @@
 package com.reedelk.rest.configuration.listener;
 
-import com.reedelk.runtime.api.annotation.File;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
@@ -10,10 +9,8 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = CertificateAndPrivateKeyConfiguration.class, scope = PROTOTYPE)
 public class CertificateAndPrivateKeyConfiguration implements Implementor {
 
-    @File
     @Property("Certificate")
     private String certificateFile;
-    @File
     @Property("Private key")
     private String privateKeyFile;
 

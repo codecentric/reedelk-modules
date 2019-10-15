@@ -1,5 +1,6 @@
 package com.reedelk.rest.configuration.client;
 
+import com.reedelk.runtime.api.annotation.Password;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
@@ -12,6 +13,7 @@ public class BasicAuthenticationConfiguration implements Implementor {
     @Property("Username")
     private String username;
 
+    @Password
     @Property("Password")
     private String password;
 
