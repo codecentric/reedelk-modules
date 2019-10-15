@@ -49,7 +49,7 @@ class CreateModuleTest {
         assertThat(created.state()).isEqualTo(INSTALLED);
         assertThat(created.version()).isEqualTo("1.0.0");
         assertThat(created.name()).isEqualTo("test-bundle");
-        assertThat(created.moduleFilePath()).isEqualTo("file:/usr/local/desktop/my-bundle-1.0.0.jar");
+        assertThat(created.filePath()).isEqualTo("file:/usr/local/desktop/my-bundle-1.0.0.jar");
 
         ModuleDeserializer deserializer = EXTRACTION.fieldValue("deserializer", ModuleDeserializer.class, created);
         assertThat(deserializer).isInstanceOf(BundleDeserializer.class);

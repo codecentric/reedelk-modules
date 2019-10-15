@@ -12,7 +12,9 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;
+import java.util.Optional;
 
+import static com.reedelk.rest.commons.ConfigPreconditions.requireNotBlank;
 import static java.util.Objects.requireNonNull;
 
 public class ServerSecurityConfigurer {
@@ -62,11 +64,11 @@ public class ServerSecurityConfigurer {
 
     private static TrustManagerFactory getTrustManagerFactory(TrustStoreConfiguration config) {
         String type = config.getType();
-        String location = config.getPath();
-        String password = config.getPassword();
         String algorithm = config.getAlgorithm();
+        String location = requireNotBlank(config.getPath(), "Trust store location must not be empty");
+        String password = requireNotBlank(config.getPassword(), "Trust store password must not be empty");
         try {
-            String alg = algorithm == null ? TrustManagerFactory.getDefaultAlgorithm() : algorithm;
+            String alg = Optional.ofNullable(algorithm).orElse(TrustManagerFactory.getDefaultAlgorithm());
             TrustManagerFactory factory = TrustManagerFactory.getInstance(alg);
             KeyStore keyStore = type == null ? KeyStore.getInstance(KeyStore.getDefaultType()) : KeyStore.getInstance(type);
             try (FileInputStream fileInputStream = new FileInputStream(location)) {
@@ -80,14 +82,14 @@ public class ServerSecurityConfigurer {
     }
 
     private static KeyManagerFactory getKeyManagerFactory(KeyStoreConfiguration config) {
+        String type = config.getType();
+        String algorithm = config.getAlgorithm();
+        String location = requireNotBlank(config.getPath(), "Key store location must not be empty");
+        String password = requireNotBlank(config.getPassword(), "Key store password must not be empty");
         try {
-            String type = config.getType();
-            String location = config.getPath();
-            String password = config.getPassword();
-            String algorithm = config.getAlgorithm();
-            String alg = algorithm == null ? KeyManagerFactory.getDefaultAlgorithm() : algorithm;
-            KeyManagerFactory factory = KeyManagerFactory.getInstance(alg);
+            String alg = Optional.ofNullable(algorithm).orElse(KeyManagerFactory.getDefaultAlgorithm());
             KeyStore keyStore = type == null ? KeyStore.getInstance(KeyStore.getDefaultType()) : KeyStore.getInstance(type);
+            KeyManagerFactory factory = KeyManagerFactory.getInstance(alg);
             try (FileInputStream fileInputStream = new FileInputStream(location)) {
                 keyStore.load(fileInputStream, password.toCharArray());
             }

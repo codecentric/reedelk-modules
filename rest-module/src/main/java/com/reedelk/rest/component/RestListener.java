@@ -14,6 +14,7 @@ import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Hint;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.AbstractInbound;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -73,7 +74,7 @@ public class RestListener extends AbstractInbound {
                         .response(response)
                         .build();
 
-        Server server = provider.get(configuration)
+        Server server = provider.getOrCreate(configuration)
                 .orElseThrow(() -> new ConfigurationException(LISTENER_CONFIG_MISSING.format()));
         server.addRoute(method, path, httpRequestHandler);
     }
@@ -85,7 +86,7 @@ public class RestListener extends AbstractInbound {
             try {
                 provider.release(server);
             } catch (Exception e) {
-                logger.error("Shutdown RESTListener", e);
+                throw new ESBException(e);
             }
         });
     }

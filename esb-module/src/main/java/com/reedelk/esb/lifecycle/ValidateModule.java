@@ -1,5 +1,6 @@
 package com.reedelk.esb.lifecycle;
 
+import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.runtime.api.commons.StringUtils;
@@ -26,18 +27,18 @@ public class ValidateModule extends AbstractStep<Module, Module> {
         DeserializedModule deserializedModule;
         try {
             deserializedModule = module.deserialize();
-        } catch (Exception deserializationException) {
-            logger.error("Module deserialization", deserializationException);
-            module.error(deserializationException);
+        } catch (Exception exception) {
+            Log.deserializationException(logger, module, exception);
+            module.error(exception);
             return module;
         }
 
         Set<JSONObject> flows = deserializedModule.getFlows();
         try {
             VALIDATORS.forEach(validator -> validator.validate(flows));
-        } catch (Exception validationException) {
-            logger.error("Module validation", validationException);
-            module.error(validationException);
+        } catch (Exception exception) {
+            Log.validationException(logger, module, exception);
+            module.error(exception);
             return module;
         }
         return module;

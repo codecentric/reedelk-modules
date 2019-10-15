@@ -1,6 +1,7 @@
 package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.commons.JsonPropertyValueCollector;
+import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.runtime.commons.JsonParser;
@@ -19,9 +20,9 @@ public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
         DeserializedModule deserializedModule;
         try {
             deserializedModule = module.deserialize();
-        } catch (Exception error) {
-            logger.error("Module deserialization", error);
-            module.error(error);
+        } catch (Exception exception) {
+            Log.deserializationException(logger, module, exception);
+            module.error(exception);
             return module;
         }
 

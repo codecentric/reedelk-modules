@@ -1,6 +1,7 @@
 package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.commons.ConfigPropertyAwareJsonTypeConverter;
+import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.flow.ErrorStateFlow;
 import com.reedelk.esb.flow.Flow;
@@ -19,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -38,7 +38,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
         try {
             deserializedModule = module.deserialize();
         } catch (Exception exception) {
-            logger.error("Module deserialization", exception);
+            Log.deserializationException(logger, module, exception);
             module.error(exception);
             return module;
         }
@@ -83,26 +83,13 @@ public class BuildModule extends AbstractStep<Module, Module> {
         ConfigPropertyAwareJsonTypeConverter converter = new ConfigPropertyAwareJsonTypeConverter(configurationService());
 
         try {
-
             FlowBuilderContext context = new FlowBuilderContext(bundle, modulesManager, deserializedModule, converter);
             FlowBuilder flowBuilder = new FlowBuilder(context);
             flowBuilder.build(flowGraph, flowDefinition);
             return new Flow(flowId, flowTitle, flowGraph, executionEngine);
-
         } catch (Exception exception) {
-            logException(flowDefinition, flowId, exception);
+            Log.buildException(logger, flowDefinition, flowId, exception);
             return new ErrorStateFlow(flowId, flowTitle, flowGraph, executionEngine, exception);
         }
-    }
-
-    private static void logException(JSONObject flowDefinition, String flowId, Exception exception) {
-        String message;
-        if (JsonParser.Flow.hasTitle(flowDefinition)) {
-            String flowTitle = JsonParser.Flow.title(flowDefinition);
-            message = format("Error building flow with id [%s] and title '%s'", flowId, flowTitle);
-        } else {
-            message = format("Error building flow with id [%s]", flowId);
-        }
-        logger.error(message, exception);
     }
 }

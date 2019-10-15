@@ -200,6 +200,9 @@ class StopModuleAndReleaseReferencesTest {
         verify(flow2).getFlowId();
         verify(flow3).getFlowId();
 
+        verify(flow2).getFlowTitle();
+        verify(flow3).getFlowTitle();
+
         verify(flow1).releaseReferences(bundle);
         verify(flow2).releaseReferences(bundle);
         verify(flow3).releaseReferences(bundle);

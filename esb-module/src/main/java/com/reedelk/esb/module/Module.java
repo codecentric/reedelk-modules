@@ -37,14 +37,14 @@ public class Module implements State {
     private final long moduleId;
     private final String name;
     private final String version;
-    private final String moduleFilePath;
+    private final String filePath;
 
-    private Module(final long moduleId, final String name, final String version, final String moduleFilePath, final ModuleDeserializer deserializer) {
+    private Module(final long moduleId, final String name, final String version, final String filePath, final ModuleDeserializer deserializer) {
         this.name = name;
         this.version = version;
         this.moduleId = moduleId;
         this.deserializer = deserializer;
-        this.moduleFilePath = moduleFilePath;
+        this.filePath = filePath;
         setState(new Installed());
     }
 
@@ -64,8 +64,8 @@ public class Module implements State {
         return version;
     }
 
-    public String moduleFilePath() {
-        return moduleFilePath;
+    public String filePath() {
+        return filePath;
     }
 
     public void unresolve(Collection<String> unresolvedComponents, Collection<String> resolvedComponents) {

@@ -19,7 +19,7 @@ public class ModulesMapper {
         moduleDto.setName(module.name());
         moduleDto.setModuleId(module.id());
         moduleDto.setVersion(module.version());
-        moduleDto.setModuleFilePath(module.moduleFilePath());
+        moduleDto.setModuleFilePath(module.filePath());
 
         if (STARTED == state || STOPPED == state || RESOLVED == state) {
             moduleDto.setResolvedComponents(module.resolvedComponents());

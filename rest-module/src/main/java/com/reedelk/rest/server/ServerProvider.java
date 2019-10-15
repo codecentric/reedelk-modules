@@ -17,9 +17,7 @@ public class ServerProvider {
 
     private Map<HostNamePortKey, Server> serverMap = new ConcurrentHashMap<>();
 
-    public Optional<Server> get(ListenerConfiguration configuration) {
-        if (configuration == null) return Optional.empty();
-
+    public Optional<Server> getOrCreate(ListenerConfiguration configuration) {
         HostNamePortKey key = new HostNamePortKey(
                 Defaults.RestListener.host(configuration.getHost()),
                 Defaults.RestListener.port(configuration.getPort(), configuration.getProtocol()));
@@ -30,6 +28,14 @@ public class ServerProvider {
         Server server = serverMap.get(key);
         checkBasePathIsConsistent(configuration, server);
         return Optional.of(server);
+    }
+
+    public Optional<Server> get(ListenerConfiguration configuration) {
+        if (configuration == null) return Optional.empty();
+        HostNamePortKey key = new HostNamePortKey(
+                Defaults.RestListener.host(configuration.getHost()),
+                Defaults.RestListener.port(configuration.getPort(), configuration.getProtocol()));
+        return Optional.ofNullable(serverMap.get(key));
     }
 
     public void release(Server server) {

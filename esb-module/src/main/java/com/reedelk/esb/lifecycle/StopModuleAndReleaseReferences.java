@@ -1,5 +1,6 @@
 package com.reedelk.esb.lifecycle;
 
+import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.module.Module;
 import org.osgi.framework.Bundle;
@@ -10,7 +11,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import static com.reedelk.esb.module.state.ModuleState.STARTED;
-import static java.lang.String.format;
 
 public class StopModuleAndReleaseReferences extends AbstractStep<Module, Module> {
 
@@ -28,8 +28,8 @@ public class StopModuleAndReleaseReferences extends AbstractStep<Module, Module>
             try {
                 flow.stopIfStarted();
             } catch (Exception exception) {
+                Log.flowStopException(logger, flow, exception);
                 exceptions.add(exception);
-                logger.error(format("Error Stopping Flow with id=%s", flow.getFlowId()), exception);
             }
         }
 

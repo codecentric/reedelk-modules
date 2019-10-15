@@ -1,6 +1,7 @@
 package com.reedelk.esb.lifecycle;
 
 
+import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.state.ModuleState;
@@ -26,9 +27,9 @@ public class StartModule extends AbstractStep<Module, Module> {
         for (Flow flow : flows) {
             try {
                 flow.start();
-                logFlowStarted(flow);
+                Log.flowStarted(logger, flow);
             } catch (Exception exception) {
-                logger.error("Start Flow", exception);
+                Log.flowStartException(logger, flow, exception);
                 exceptions.add(exception);
             }
         }
@@ -57,16 +58,8 @@ public class StartModule extends AbstractStep<Module, Module> {
     private void forceStop(Flow flow) {
         try {
             flow.forceStop();
-        } catch (Exception e) {
-            logger.warn("Force stop", e);
-        }
-    }
-
-    private void logFlowStarted(Flow flow) {
-        if (logger.isDebugEnabled()) {
-            String message = flow.getFlowTitle()
-                    .map(flowTitle -> String.format("Flow '%s', id=[%s] started.", flowTitle, flow.getFlowId())).orElse(String.format("Flow id=[%s] started.", flow.getFlowId()));
-            logger.debug(message);
+        } catch (Exception exception) {
+            Log.flowForceStopException(logger, flow, exception);
         }
     }
 }

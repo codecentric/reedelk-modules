@@ -50,7 +50,7 @@ class HotSwapModuleTest {
         assertThat(created.state()).isEqualTo(INSTALLED);
         assertThat(created.version()).isEqualTo("1.1.0");
         assertThat(created.name()).isEqualTo("hotswap-bundle");
-        assertThat(created.moduleFilePath()).isEqualTo("file:/usr/local/desktop/my-hotswap-1.1.0-SNAPSHOT.jar");
+        assertThat(created.filePath()).isEqualTo("file:/usr/local/desktop/my-hotswap-1.1.0-SNAPSHOT.jar");
 
         ModuleDeserializer deserializer = EXTRACTION.fieldValue("deserializer", ModuleDeserializer.class, created);
         assertThat(deserializer).isInstanceOf(FileSystemDeserializer.class);
