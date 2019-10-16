@@ -26,7 +26,7 @@ public class SetVariable implements ProcessorSync {
     private ScriptEngineService scriptEngine;
 
     @Property("Name")
-    @Hint("myVariableName")
+    @Hint("myVariable")
     private String name;
 
     @Property("Mime type")

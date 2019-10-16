@@ -41,7 +41,6 @@ public class RestListener extends AbstractInbound {
     private ListenerConfiguration configuration;
 
     @Property("Path")
-    @Default("/resource")
     @Hint("/resource/{id}")
     private String path;
 
