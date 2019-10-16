@@ -24,7 +24,7 @@ class FlowReferenceComponentDeserializer extends AbstractDeserializer {
         String flowReference = FlowReference.ref(componentDefinition);
 
         checkState(flowReference != null,
-                "configRef property inside a FlowReference component cannot be null");
+                "ref property inside a FlowReference component cannot be null");
 
         Set<JSONObject> subflows = context.getDeSerializedModule().getSubflows();
 
