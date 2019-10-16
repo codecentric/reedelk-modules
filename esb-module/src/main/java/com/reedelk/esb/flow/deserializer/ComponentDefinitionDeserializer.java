@@ -119,9 +119,9 @@ public class ComponentDefinitionDeserializer {
     private Optional<String> isReference(JSONObject componentDefinition, String propertyName) {
         Object propertyValue = componentDefinition.get(propertyName);
         if (propertyValue instanceof JSONObject) {
-            JSONObject possibleConfigRef = (JSONObject) propertyValue;
-            if (possibleConfigRef.has(Component.configRef())) {
-                return Optional.ofNullable(Component.configRef(possibleConfigRef));
+            JSONObject possibleReference = (JSONObject) propertyValue;
+            if (possibleReference.has(Component.ref())) {
+                return Optional.ofNullable(Component.ref(possibleReference));
             }
         }
         return Optional.empty();
