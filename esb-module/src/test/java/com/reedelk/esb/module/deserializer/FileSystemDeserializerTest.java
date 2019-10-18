@@ -50,7 +50,7 @@ class FileSystemDeserializerTest {
         FileSystemDeserializer deserializer = new FileSystemDeserializer(tmpDir);
 
         // When
-        List<URL> folderResources = deserializer.getResources(File.separator + "something", "flow");
+        List<URL> folderResources = deserializer.getResources("something", "flow");
 
         // Then
         assertFound(folderResources, flow1);
