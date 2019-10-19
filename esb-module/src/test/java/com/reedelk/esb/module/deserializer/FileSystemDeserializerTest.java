@@ -70,11 +70,11 @@ class FileSystemDeserializerTest {
     }
 
     private URL createFile(String baseDir, String fileName) throws IOException {
-        File file = Paths.get(baseDir, fileName).toFile();
-        try (FileOutputStream os = new FileOutputStream(file)) {
+        Path file = Paths.get(baseDir, fileName);
+        try (FileOutputStream os = new FileOutputStream(file.toFile())) {
             os.write("{}".getBytes());
         }
-        return file.toURI().toURL();
+        return file.toFile().toURI().toURL();
     }
 
     private String getTmpDir() {
