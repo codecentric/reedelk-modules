@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,11 +40,11 @@ class FileSystemDeserializerTest {
         Path nestedDirectory = Paths.get(somethingDir.toString(), "nested");
         nestedDirectory.toFile().mkdirs();
 
-        String flow1 = createFile(somethingDir.toString(), "flow1.flow");
-        String flow2 = createFile(somethingDir.toString(), "flow2.flow");
-        String flow3 = createFile(somethingDir.toString(), "flow3.txt");
-        String flow4 = createFile(somethingDir.toString(), "flow4.flow");
-        String flow5 = createFile(nestedDirectory.toString(), "flow5.json");
+        URL flow1 = createFile(somethingDir.toString(), "flow1.flow");
+        URL flow2 = createFile(somethingDir.toString(), "flow2.flow");
+        URL flow3 = createFile(somethingDir.toString(), "flow3.txt");
+        URL flow4 = createFile(somethingDir.toString(), "flow4.flow");
+        URL flow5 = createFile(nestedDirectory.toString(), "flow5.json");
 
 
         FileSystemDeserializer deserializer = new FileSystemDeserializer(tmpDir);
@@ -61,22 +60,21 @@ class FileSystemDeserializerTest {
         assertThat(folderResources).hasSize(3);
     }
 
-    private void assertFound(Collection<URL> folderResources, String resourcePath) {
+    private void assertFound(Collection<URL> folderResources, URL resourcePath) {
         assertThat(folderResources
                 .stream()
-                .anyMatch(url -> url.getFile().equals(resourcePath)))
-                .withFailMessage("Path [%s] not found in resources [%s]", resourcePath, folderResources.stream()
-                        .map(URL::getPath).collect(Collectors.toList()))
+                .anyMatch(url -> url.equals(resourcePath)))
+                .withFailMessage("Path [%s] not found in resources [%s]", resourcePath, folderResources)
                 .isTrue();
 
     }
 
-    private String createFile(String baseDir, String fileName) throws IOException {
+    private URL createFile(String baseDir, String fileName) throws IOException {
         File file = Paths.get(baseDir, fileName).toFile();
         try (FileOutputStream os = new FileOutputStream(file)) {
             os.write("{}".getBytes());
         }
-        return file.toString();
+        return file.toURI().toURL();
     }
 
     private String getTmpDir() {
