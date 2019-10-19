@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,7 +65,8 @@ class FileSystemDeserializerTest {
         assertThat(folderResources
                 .stream()
                 .anyMatch(url -> url.getFile().equals(resourcePath)))
-                .withFailMessage("Path [%s] not found in resources [%s]", resourcePath, folderResources)
+                .withFailMessage("Path [%s] not found in resources [%s]", resourcePath, folderResources.stream()
+                        .map(URL::getFile).collect(Collectors.toList()))
                 .isTrue();
 
     }
