@@ -64,7 +64,7 @@ class FileSystemDeserializerTest {
         assertThat(folderResources
                 .stream()
                 .anyMatch(url -> url.getFile().equals(resourcePath)))
-                .withFailMessage("Path [%s] not found in resources", resourcePath)
+                .withFailMessage("Path [%s] not found in resources [%s]", resourcePath, folderResources)
                 .isTrue();
 
     }
