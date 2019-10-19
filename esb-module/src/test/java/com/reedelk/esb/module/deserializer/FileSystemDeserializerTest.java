@@ -66,7 +66,7 @@ class FileSystemDeserializerTest {
                 .stream()
                 .anyMatch(url -> url.getFile().equals(resourcePath)))
                 .withFailMessage("Path [%s] not found in resources [%s]", resourcePath, folderResources.stream()
-                        .map(URL::getFile).collect(Collectors.toList()))
+                        .map(URL::getPath).collect(Collectors.toList()))
                 .isTrue();
 
     }
