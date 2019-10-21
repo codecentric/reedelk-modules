@@ -272,7 +272,7 @@ class BuildModuleTest {
         Module module = step.run(inputModule);
 
         // Then
-        assertModuleErrorStateWith(module, "JSONObject[\"threadPoolSize\"] not found.");
+        assertModuleErrorStateWith(module, "JSONObject[\"fork\"] not found.");
         assertModuleErrorStateWith(module, "JSONObject[\"when\"] not found.");
     }
 

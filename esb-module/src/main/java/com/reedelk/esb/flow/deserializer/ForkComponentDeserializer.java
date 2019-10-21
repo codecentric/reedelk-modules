@@ -26,8 +26,10 @@ class ForkComponentDeserializer extends AbstractDeserializer {
 
         ForkWrapper forkWrapper = (ForkWrapper) forkExecutionNode.getComponent();
 
-        int threadPoolSize = Fork.threadPoolSize(componentDefinition);
-        forkWrapper.setThreadPoolSize(threadPoolSize);
+        if (componentDefinition.has(Fork.threadPoolSize())) {
+            Integer threadPoolSize = Fork.threadPoolSize(componentDefinition);
+            forkWrapper.setThreadPoolSize(threadPoolSize);
+        }
 
         graph.putEdge(parent, forkExecutionNode);
 
@@ -62,5 +64,4 @@ class ForkComponentDeserializer extends AbstractDeserializer {
 
         return stopComponent;
     }
-
 }

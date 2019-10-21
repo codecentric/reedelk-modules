@@ -7,7 +7,7 @@
     },
     {
       "implementor": "com.reedelk.runtime.component.Fork",
-      "threadPoolSizeUnknown": 3
+      "threadPoolSize": 3
     }
   ]
 }
