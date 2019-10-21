@@ -40,7 +40,8 @@ public class Messages {
     public enum Module implements FormattedMessage {
 
         DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s], version=[%s], module file path=[%s]."),
-        VALIDATION_ERROR("Error validating module with id=[%d], name=[%s], version=[%s], module file path=[%s].");
+        VALIDATION_ERROR("Error validating module with id=[%d], name=[%s], version=[%s], module file path=[%s]."),
+        UNRESOLVED_ERROR("Error resolving components for module with id=[%d], name=[%s], version=[%s], module file path=[%s]. Unresolved components are %s.");
 
         private String msg;
 

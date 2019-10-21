@@ -6,9 +6,10 @@ import com.reedelk.runtime.commons.JsonParser;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 
+import java.util.Collection;
+
 import static com.reedelk.esb.commons.Messages.Flow.*;
-import static com.reedelk.esb.commons.Messages.Module.DESERIALIZATION_ERROR;
-import static com.reedelk.esb.commons.Messages.Module.VALIDATION_ERROR;
+import static com.reedelk.esb.commons.Messages.Module.*;
 
 public class Log {
 
@@ -33,6 +34,18 @@ public class Log {
                     module.version(),
                     module.filePath());
             logger.error(message, exception);
+        }
+    }
+
+    public static void unresolvedDependenciesError(Logger logger, Module module, Collection<String> unresolvedComponents) {
+        if (logger.isErrorEnabled()) {
+            String message = UNRESOLVED_ERROR.format(
+                    module.id(),
+                    module.name(),
+                    module.version(),
+                    module.filePath(),
+                    unresolvedComponents);
+            logger.error(message, unresolvedComponents);
         }
     }
 
