@@ -32,11 +32,13 @@ public class ModuleRemove implements ProcessorSync {
     }
 
     private String delete(String json) {
+
         ModuleDELETEReq deleteRequest = InternalAPI.Module.V1.DELETE.Req.deserialize(json);
 
         long moduleId = service.uninstall(deleteRequest.getModuleFilePath());
 
         ModuleDELETERes dto = new ModuleDELETERes();
+
         dto.setModuleId(moduleId);
 
         return InternalAPI.Module.V1.DELETE.Res.serialize(dto);

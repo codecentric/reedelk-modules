@@ -46,8 +46,6 @@ public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
 
         if (unresolvedComponents.isEmpty()) {
             module.resolve(resolvedComponents);
-        } else {
-            Log.unresolvedDependenciesError(logger, module, unresolvedComponents);
         }
 
         return module;

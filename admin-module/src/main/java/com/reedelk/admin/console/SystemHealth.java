@@ -27,14 +27,17 @@ public class SystemHealth implements ProcessorSync {
 
         String resultJson = healthStatus();
 
-
         return MessageBuilder.get().json(resultJson).build();
     }
 
     private String healthStatus() {
+
         HealthGETRes health = new HealthGETRes();
+
         health.setStatus(UP_STATUS);
-        health.setVersion("1.0.0-SNAPSHOT");
+
+        health.setVersion(systemProperty.version());
+
         return InternalAPI.Health.V1.GET.Res.serialize(health);
     }
 }

@@ -13,8 +13,6 @@ import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.system.api.ModuleService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,8 +25,6 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @ESBComponent("Load static page")
 @Component(service = StaticPage.class, scope = PROTOTYPE)
 public class StaticPage implements ProcessorSync {
-
-    private static final Logger logger = LoggerFactory.getLogger(StaticPage.class);
 
     @Reference
     private ModuleService moduleService;
@@ -45,8 +41,6 @@ public class StaticPage implements ProcessorSync {
             theRequestedPage = "index.html";
         }
 
-        logger.info(theRequestedPage);
-
         MimeType resultMimeType;
         if (theRequestedPage.endsWith(".css")) {
             resultMimeType = MimeType.CSS;
@@ -59,8 +53,6 @@ public class StaticPage implements ProcessorSync {
         }
 
         String file = "/assets/" + theRequestedPage;
-
-        logger.info(file);
 
         InputStream input = this.getClass().getResourceAsStream(file);
 
@@ -83,5 +75,4 @@ public class StaticPage implements ProcessorSync {
         }
         return resultStringBuilder.toString();
     }
-
 }

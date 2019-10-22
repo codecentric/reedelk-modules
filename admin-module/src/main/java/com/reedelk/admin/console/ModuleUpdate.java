@@ -11,17 +11,12 @@ import com.reedelk.runtime.rest.api.module.v1.ModulePUTRes;
 import com.reedelk.runtime.system.api.ModuleService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
-
 
 @ESBComponent("Update module")
 @Component(service = ModuleUpdate.class, scope = PROTOTYPE)
 public class ModuleUpdate implements ProcessorSync {
-
-    private static final Logger logger = LoggerFactory.getLogger(ModuleUpdate.class);
 
     @Reference
     private ModuleService service;
@@ -30,8 +25,6 @@ public class ModuleUpdate implements ProcessorSync {
     public Message apply(Message message, FlowContext flowContext) {
 
         String payload = message.payload();
-
-        logger.info("Payload: " + payload);
 
         String resultJson = update(payload);
 

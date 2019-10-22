@@ -28,7 +28,9 @@ public class ModuleList implements ProcessorSync {
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
+
         String modulesAsJson = modules();
+
         return MessageBuilder.get().json(modulesAsJson).build();
     }
 
@@ -53,5 +55,4 @@ public class ModuleList implements ProcessorSync {
         response.setModules(modulesDTOs);
         return InternalAPI.Module.V1.GET.Res.serialize(response);
     }
-
 }
