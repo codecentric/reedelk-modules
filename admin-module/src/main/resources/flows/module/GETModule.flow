@@ -1,0 +1,27 @@
+{
+  "id": "1913058d-6c6d-4089-b93f-d139d8d6da95",
+  "title": "Returns all installed OSGi modules",
+  "description": "GET Modules Flow",
+  "flow": [
+    {
+      "implementor": "com.reedelk.rest.component.RestListener",
+      "description": "REST Listener",
+      "configuration": {"ref": "8d689312-0cc5-4e0b-aec6-f17025627aa1"},
+      "path": "/api/module",
+      "method": "GET",
+      "streaming": "AUTO",
+      "response": {
+        "body": "#[message.payload()]",
+        "status": 200
+      },
+      "errorResponse": {
+        "body": "#[error]",
+        "status": 500
+      }
+    },
+    {
+      "implementor": "com.reedelk.admin.console.ModuleList",
+      "description": "List modules"
+    }
+  ]
+}

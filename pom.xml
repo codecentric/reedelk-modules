@@ -30,7 +30,7 @@
     </properties>
 
     <modules>
-        <module>admin-console-dev-module</module>
+        <module>admin-module</module>
         <module>esb-module</module>
         <module>rest-module</module>
         <module>core-module</module>

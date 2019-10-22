@@ -1,0 +1,27 @@
+{
+  "id": "7cd28521-0f3d-4940-9f66-b99b0e89a9c6",
+  "title": "Hotswap",
+  "description": "Hotswap Flow",
+  "flow": [
+    {
+      "implementor": "com.reedelk.rest.component.RestListener",
+      "description": "REST Listener",
+      "configuration": {"ref": "8d689312-0cc5-4e0b-aec6-f17025627aa1"},
+      "path": "/api/hotswap",
+      "method": "GET",
+      "streaming": "AUTO",
+      "response": {
+        "body": "#[message.payload()]",
+        "status": 200
+      },
+      "errorResponse": {
+        "body": "#[error]",
+        "status": 500
+      }
+    },
+    {
+      "implementor": "com.reedelk.admin.console.ModuleHotSwap",
+      "description": "Module hot swap"
+    }
+  ]
+}
