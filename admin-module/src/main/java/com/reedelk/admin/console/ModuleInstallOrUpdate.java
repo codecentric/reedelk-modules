@@ -32,11 +32,13 @@ public class ModuleInstallOrUpdate implements ProcessorSync {
     }
 
     private String installOrUpdate(String json) {
+
         ModulePOSTReq postRequest = InternalAPI.Module.V1.POST.Req.deserialize(json);
 
         long moduleId = service.installOrUpdate(postRequest.getModuleFilePath());
 
         ModulePOSTRes dto = new ModulePOSTRes();
+
         dto.setModuleId(moduleId);
 
         return InternalAPI.Module.V1.POST.Res.serialize(dto);

@@ -6,84 +6,83 @@
     <meta name="description" content="Reedelk ESB console UI">
     <meta name="author" content="">
 
-    <title>ESB</title>
+    <title>Reedelk ESB admin console</title>
 
     <link href="/console/css/bootstrap.min.css" rel="stylesheet">
     <link href="/console/css/console-style.css" rel="stylesheet">
     <link href="/console/css/toastr.min.css" rel="stylesheet"/>
 
-
-    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
           integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="/console/img/favicon/favicon-16x16.png"/>
 </head>
 
 <body>
 
 <!-- Fixed navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">ESB Console</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="navbar navbar-expand-sm navbar-dark bg-secondary">
+    
+    <a class="navbar-brand" href="/">
+        <img src="/console/img/reedelk_logo.png" alt="Reedelk logo">
+        &nbsp;Reedelk ESB admin console
+    </a>
 </nav>
 
-<div class="container">
+<div class="container-fluid">
 
-    <div class="row deployed-modules">
-        <h5><i class="fas fa-cubes"></i>&nbsp;&nbsp;Install Module</h5>
-    </div>
+        <!-- Install Module -->
+        <div class="row">
+            <div class="col">
+                <h5><i class="fas fa-upload section-title"></i>&nbsp;&nbsp;Install Module</h5>
+            </div>
+        </div>
 
-    <div class="row deployed-modules form-inline">
-        <label for="modulePath" class="col-md-2">Module path: </label>&nbsp;&nbsp;
-        <input type="text" class="form-control col-md-7 text-input" id="modulePath" placeholder="Path">&nbsp;
-        <button id="installModule" class="btn btn-primary col-md-1">Install</button>
-    </div>
+        <!-- Deployed Modules -->
+        <div class="row">
+            <div class="col">
+                <h5><i class="fas fa-th-list section-title"></i>&nbsp;&nbsp;Deployed Modules</h5>
+            </div>
+        </div>
 
-    <div class="row deployed-modules">
-        <h5><i class="fas fa-cubes"></i>&nbsp;&nbsp;Deployed Modules</h5>
-    </div>
-
-    <div class="row deployed-modules">
-        <table class="table table-striped deployed-modules" id="deployed-modules" data-sort-name="moduleId">
-            <thead>
-            <tr>
-                <th data-field="moduleId" scope="col">#</th>
-                <th data-field="name" scope="col">Name</th>
-                <th data-field="version" scope="col">Version</th>
-                <th data-field="moduleFilePath" scope="col">Path</th>
-                <th data-field="state" scope="col">State</th>
-                <th data-field="unresolvedComponents" scope="col">Unresolved Components</th>
-            </tr>
-            </thead>
-        </table>
-    </div>
-</div>
-
+        <div class="row">
+            <div class="col">
+                <div class="accordion" id="modulesTableContainer">
+                    <table class="table table-hover" id="deployed-modules" style="border-collapse:collapse;">
+                        <col width="40">
+                        <thead class="bg-primary text-primary">
+                            <tr>
+                                <th></th>
+                                <th class="align-center">Status</th>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Version</th>
+                                <th>Path</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="/console/js/bootstrap.min.js"></script>
+<script src="/console/js/bootstrap-collapse.js"></script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="/console/js/ie10-viewport-bug-workaround.js"></script>
-<script src="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.js"></script>
+<script src="/console/js/modules-table-renderer.js"></script>
+<script src="/console/js/utilities.js"></script>
+<script src="/console/js/constants.js"></script>
+<script src="/console/js/html-templates.js"></script>
 <script src="/console/js/deployment-controller.js"></script>
 <script src="/console/js/toastr.min.js"></script>
 
 <script>
-    $('#deployed-modules').bootstrapTable({
-        onClickRow: function (row) {
-            updateModule(row.name, row.moduleFilePath);
-        }
-    });
-
-    listModules();
-
-    $('#installModule').on('click', function () {
-        var modulePath = $('#modulePath').val();
-        updateModule('', modulePath);
-    });
+listModules();
 </script>
 
 </body>

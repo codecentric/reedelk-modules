@@ -28,12 +28,12 @@ public class ModuleHotSwap implements ProcessorSync {
 
         String payload = message.payload();
 
-        String resultJson = hotSwap(payload);
+        String resultJson = hotSwap(payload, flowContext);
 
         return MessageBuilder.get().json(resultJson).build();
     }
 
-    private String hotSwap(String json) {
+    private String hotSwap(String json, FlowContext flowContext) {
         HotSwapPOSTReq hotSwapReq = InternalAPI.HotSwap.V1.POST.Req.deserialize(json);
 
         long hotSwappedModuleId;
@@ -43,8 +43,8 @@ public class ModuleHotSwap implements ProcessorSync {
             // If we  tried to Hot swap a module which was
             // not installed in the runtime, we return
             // status code 'Not Found' - 404.
-            //return new RsWithStatus(HTTP_NOT_FOUND);
-            throw new ESBException("Could not find");
+           // flowContext.setVariable("errorResponseCode", 404);
+            throw new ESBException(e);
         }
 
         HotSwapPOSTRes dto = new HotSwapPOSTRes();

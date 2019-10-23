@@ -37,7 +37,7 @@ public class ModuleList implements ProcessorSync {
     private String modules() {
         Modules modules = service.modules();
 
-        List<ModuleGETRes> modulesDTOs = modules.getModules()
+        List<ModuleGETRes> modulesDTOs = modules.getModuleDtos()
                 .stream().map(module -> {
                     ModuleGETRes dto = new ModuleGETRes();
                     dto.setName(module.getName());

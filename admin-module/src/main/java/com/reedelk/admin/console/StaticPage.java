@@ -7,17 +7,16 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageAttributes;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
-import com.reedelk.runtime.api.message.content.StringContent;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.system.api.ModuleService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -46,8 +45,10 @@ public class StaticPage implements ProcessorSync {
             resultMimeType = MimeType.CSS;
         } else if (theRequestedPage.endsWith(".js")) {
             resultMimeType = MimeType.JAVASCRIPT;
-        } else if (theRequestedPage.endsWith(".html") || theRequestedPage.endsWith(".htm")){
+        } else if (theRequestedPage.endsWith(".html") || theRequestedPage.endsWith(".htm")) {
             resultMimeType = MimeType.HTML;
+        } else if (theRequestedPage.endsWith(".png")) {
+            resultMimeType = MimeType.IMAGE_PNG;
         } else {
             resultMimeType = MimeType.UNKNOWN;
         }
@@ -57,22 +58,20 @@ public class StaticPage implements ProcessorSync {
         InputStream input = this.getClass().getResourceAsStream(file);
 
         try {
-            String data = readFromInputStream(input);
-            TypedContent<String> content =new StringContent(data, resultMimeType);
+            byte[] data = readFromInputStream(input);
+            TypedContent<byte[]> content = new ByteArrayContent(data, resultMimeType);
             return MessageBuilder.get().typedContent(content).build();
         } catch (IOException e) {
             throw new ESBException(e);
         }
     }
 
-    private String readFromInputStream(InputStream inputStream) throws IOException {
-        StringBuilder resultStringBuilder = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                resultStringBuilder.append(line).append("\n");
-            }
+    private byte[] readFromInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        byte[] buffer = new byte[0xFFFF];
+        for (int len = inputStream.read(buffer); len != -1; len = inputStream.read(buffer)) {
+            os.write(buffer, 0, len);
         }
-        return resultStringBuilder.toString();
+        return os.toByteArray();
     }
 }

@@ -16,3 +16,61 @@
     font-size: 13px;
     line-height: 1.428;
 }
+
+.section-title {
+	padding-top:20px;
+	padding-bottom:5px;
+}
+
+.bg-secondary {
+    background-color: #102131 !important;
+}
+
+.bg-primary {
+    background-color: #2086e8 !important;
+}
+
+.text-primary {
+	color: #ffffff !important;
+}
+
+.bg-tertiary {
+    background-color: #eb5e55;
+}
+
+.hiddenRow {
+    padding: 0 !important;
+}
+
+.success-color {
+    color: green;
+}
+
+.warn-color {
+    color: orange;
+}
+
+.error-color {
+    color: red;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.no_top_bottom_border {
+  border-top: 1pt !important;
+}
+
+.module-details-container {
+    padding: 10px;
+}
+
+.module-details-row-item-title {
+    text-align:left; 
+    padding-top:10px;
+}
+.module-details-row-item-content {
+    word-break: break-word;
+    padding-top:10px;"
+}
