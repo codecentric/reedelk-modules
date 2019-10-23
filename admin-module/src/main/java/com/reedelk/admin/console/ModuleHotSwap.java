@@ -43,7 +43,7 @@ public class ModuleHotSwap implements ProcessorSync {
             // If we  tried to Hot swap a module which was
             // not installed in the runtime, we return
             // status code 'Not Found' - 404.
-           // flowContext.setVariable("errorResponseCode", 404);
+            flowContext.setVariable("errorResponseCode", 404);
             throw new ESBException(e);
         }
 

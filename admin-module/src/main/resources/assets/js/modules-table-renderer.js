@@ -36,6 +36,20 @@ var ModulesTableRenderer = (function() {
     	if (state) {
     	    detailsContent += [{ title: 'State:', content: state}].map(DetailsRowItem).join('');
     	}
+    	var flows = module.flows;
+    	if (flows) {
+    		Utilities.SortByFlowTitle(flows);
+    		var flowsContent = flows.map(function(flow) {
+    			if (flow.title) {
+    				return '<b>' + flow.title + '</b> (id: ' + flow.id + ')';
+    			} else {
+					return '<b>ID:</b> ' + flow.id;
+    			}
+    		}).join('<br>');
+    		if (flowsContent) {
+				detailsContent += [{ title: 'Flows:', content: flowsContent}].map(DetailsRowItem).join('');
+    		}
+    	}
     	var resolved = module.resolvedComponents.join('<br>');
     	if (resolved) {
     	    detailsContent += [{ title: 'Resolved components:', content: resolved}].map(DetailsRowItem).join('');

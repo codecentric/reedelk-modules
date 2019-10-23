@@ -6,10 +6,11 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.rest.api.InternalAPI;
+import com.reedelk.runtime.rest.api.module.v1.FlowGETRes;
 import com.reedelk.runtime.rest.api.module.v1.ModuleGETRes;
 import com.reedelk.runtime.rest.api.module.v1.ModulesGETRes;
 import com.reedelk.runtime.system.api.ModuleService;
-import com.reedelk.runtime.system.api.Modules;
+import com.reedelk.runtime.system.api.ModulesDto;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -35,9 +36,9 @@ public class ModuleList implements ProcessorSync {
     }
 
     private String modules() {
-        Modules modules = service.modules();
+        ModulesDto modulesDto = service.modules();
 
-        List<ModuleGETRes> modulesDTOs = modules.getModuleDtos()
+        List<ModuleGETRes> modulesDTOs = modulesDto.getModuleDtos()
                 .stream().map(module -> {
                     ModuleGETRes dto = new ModuleGETRes();
                     dto.setName(module.getName());
@@ -48,6 +49,12 @@ public class ModuleList implements ProcessorSync {
                     dto.setModuleFilePath(module.getModuleFilePath());
                     dto.setResolvedComponents(module.getResolvedComponents());
                     dto.setUnresolvedComponents(module.getUnresolvedComponents());
+                    dto.setFlows(module.getFlows().stream().map(flowDto -> {
+                        FlowGETRes flow = new FlowGETRes();
+                        flow.setId(flowDto.getId());
+                        flow.setTitle(flowDto.getTitle());
+                        return flow;
+                    }).collect(toList()));
                     return dto;
                 }).collect(toList());
 
