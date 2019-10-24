@@ -23,7 +23,9 @@ public class Messages {
         STOP_ERROR("Error stopping flow with id=[%s]."),
         STOP_ERROR_WITH_TITLE("Error stopping flow with id=[%s] and title '%s'."),
         BUILD_ERROR("Error building flow with id=[%s]."),
-        BUILD_ERROR_WITH_TITLE("Error building flow with id=[%s] and title '%s'.");
+        BUILD_ERROR_WITH_TITLE("Error building flow with id=[%s] and title '%s'."),
+        VALIDATION_ID_NOT_UNIQUE("Error validating module with name=[%s]: There are at least two flows with the same ID. Flow IDs must be unique."),
+        VALIDATION_ID_NOT_VALID("Error validating module with name=[%s]: The 'id' property must be defined and not empty in any JSON flow definition.");
 
         private String msg;
 
@@ -37,11 +39,43 @@ public class Messages {
         }
     }
 
+    public enum Subflow implements FormattedMessage {
+
+        VALIDATION_ID_NOT_UNIQUE("Error validating module with name=[%s]: There are at least two subflows with the same ID. Subflow IDs must be unique."),
+        VALIDATION_ID_NOT_VALID("Error validating module with name=[%s]: The 'id' property must be defined and not empty in any JSON subflow definition.");
+
+        private String msg;
+
+        Subflow(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+    }
+
+    public enum Config implements FormattedMessage {
+
+        VALIDATION_ID_NOT_UNIQUE("Error validating module with name=[%s]: There are at least two configurations with the same ID. Configuration IDs must be unique."),
+        VALIDATION_ID_NOT_VALID("Error validating module with name=[%s]: The 'id' property must be defined and not empty in any JSON configuration definition.");
+
+        private String msg;
+
+        Config(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+    }
+
     public enum Module implements FormattedMessage {
 
-        DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s], version=[%s], module file path=[%s]."),
-        VALIDATION_ERROR("Error validating module with id=[%d], name=[%s], version=[%s], module file path=[%s]."),
-        UNRESOLVED_ERROR("Error resolving components for module with id=[%d], name=[%s], version=[%s], module file path=[%s]. Unresolved components are %s.");
+        DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s], version=[%s], module file path=[%s].");
 
         private String msg;
 

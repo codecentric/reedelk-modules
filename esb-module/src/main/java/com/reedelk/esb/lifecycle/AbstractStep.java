@@ -1,11 +1,23 @@
 package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.component.ComponentRegistry;
+import com.reedelk.esb.module.DeserializedModule;
+import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
+import com.reedelk.runtime.api.commons.StringUtils;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
+
+import static com.reedelk.esb.commons.Messages.Module.DESERIALIZATION_ERROR;
 
 public abstract class AbstractStep<I, O> implements Step<I, O> {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractStep.class);
 
     static final Void NOTHING = null;
 
@@ -52,5 +64,29 @@ public abstract class AbstractStep<I, O> implements Step<I, O> {
     @Override
     public void configurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    /**
+     * De-serializes a given module. Note that this function has a side effect
+     * on the provided Module! It sets its state to ERROR if a deserialization error
+     * occurred.
+     * @param module the module to be de-serialized.
+     * @return an object containing the de-serialized flows, subflows and configurations.
+     */
+    protected Optional<DeserializedModule> deserialize(Module module) {
+        try {
+            return Optional.of(module.deserialize());
+        } catch (Exception exception) {
+            String message = DESERIALIZATION_ERROR.format(
+                    module.id(),
+                    module.name(),
+                    module.version(),
+                    module.filePath());
+            ESBException deserializationException = new ESBException(message, exception);
+            logger.error(StringUtils.EMPTY, deserializationException);
+
+            module.error(deserializationException);
+            return Optional.empty();
+        }
     }
 }

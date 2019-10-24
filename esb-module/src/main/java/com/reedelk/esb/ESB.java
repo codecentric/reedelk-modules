@@ -106,6 +106,7 @@ public class ESB implements EventListener, HotSwapListener {
         StepRunner.get(context, modulesManager)
                 .next(new CheckModuleNotNull())
                 .next(new StopModuleAndReleaseReferences())
+                .next(new TransitionToInstalled())
                 .execute(moduleId);
     }
 
@@ -121,6 +122,7 @@ public class ESB implements EventListener, HotSwapListener {
             StepRunner.get(context, modulesManager)
                     .next(new CheckModuleNotNull())
                     .next(new StopModuleAndReleaseReferences())
+                    .next(new TransitionToInstalled())
                     .execute(moduleId);
         }
     }

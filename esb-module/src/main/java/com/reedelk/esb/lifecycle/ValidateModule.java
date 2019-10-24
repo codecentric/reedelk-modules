@@ -1,78 +1,121 @@
 package com.reedelk.esb.lifecycle;
 
-import com.reedelk.esb.commons.Log;
-import com.reedelk.esb.module.DeserializedModule;
+import com.reedelk.esb.commons.Messages;
 import com.reedelk.esb.module.Module;
 import com.reedelk.runtime.api.commons.StringUtils;
-import com.reedelk.runtime.api.exception.InvalidFlowException;
-import com.reedelk.runtime.commons.JsonParser;
+import com.reedelk.runtime.api.exception.ValidationException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
+import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
+import static com.reedelk.runtime.commons.JsonParser.*;
 
 public class ValidateModule extends AbstractStep<Module, Module> {
 
     private static final Logger logger = LoggerFactory.getLogger(ValidateModule.class);
 
-    private static final List<Validator> VALIDATORS = Arrays.asList(new ValidFlowIdValidator(), new UniqueFlowIdValidator());
-
     @Override
     public Module run(Module module) {
 
-        DeserializedModule deserializedModule;
-        try {
-            deserializedModule = module.deserialize();
-        } catch (Exception exception) {
-            Log.deserializationException(logger, module, exception);
-            module.error(exception);
-            return module;
-        }
+        deserialize(module).ifPresent(deSerializedModule -> {
 
-        Set<JSONObject> flows = deserializedModule.getFlows();
-        try {
-            VALIDATORS.forEach(validator -> validator.validate(flows));
-        } catch (Exception exception) {
-            Log.validationException(logger, module, exception);
-            module.error(exception);
-            return module;
-        }
+            // Validate Flows
+            Set<JSONObject> flows = deSerializedModule.getFlows();
+            Collection<Exception> flowErrors = validateFlows(flows, module);
+
+            // Validate Subflows
+            Set<JSONObject> subflows = deSerializedModule.getSubflows();
+            Collection<Exception> subflowErrors = validateSubFlows(subflows, module);
+
+            // Validate Configurations
+            Collection<JSONObject> configurations = deSerializedModule.getConfigurations();
+            Collection<Exception> configurationErrors = validateConfigurations(configurations, module);
+
+            Collection<Exception> errors = new ArrayList<>();
+            errors.addAll(flowErrors);
+            errors.addAll(subflowErrors);
+            errors.addAll(configurationErrors);
+
+            // If there is any error, the module transition to ERROR state.
+            if (!errors.isEmpty()) {
+                errors.forEach(exception -> logger.error(StringUtils.EMPTY, exception));
+                module.error(errors);
+            }
+
+        });
+
         return module;
     }
 
-    interface Validator {
-        void validate(Set<JSONObject> flowsDefinition);
+    private Collection<Exception> validateFlows(Collection<JSONObject> flows, Module module) {
+        Collection<Exception> exceptions = new ArrayList<>(UniquePropertyValidator.from(Flow.id())
+                        .validate(flows, Messages.Flow.VALIDATION_ID_NOT_UNIQUE.format(module.name())));
+        flows.forEach(definition -> {
+            if (!Flow.hasId(definition) || isBlank(Flow.id(definition))) {
+                String message = Messages.Flow.VALIDATION_ID_NOT_VALID.format(module.name());
+                ValidationException exception = new ValidationException(message);
+                exceptions.add(exception);
+            }
+        });
+        return exceptions;
+    }
+
+    private Collection<Exception> validateSubFlows(Collection<JSONObject> subflows, Module module) {
+        Collection<Exception> exceptions = new ArrayList<>(UniquePropertyValidator.from(Subflow.id())
+                        .validate(subflows, Messages.Subflow.VALIDATION_ID_NOT_UNIQUE.format(module.name())));
+        subflows.forEach(definition -> {
+            if (!Subflow.hasId(definition) || isBlank(Subflow.id(definition))) {
+                String message = Messages.Subflow.VALIDATION_ID_NOT_VALID.format(module.name());
+                ValidationException exception = new ValidationException(message);
+                exceptions.add(exception);
+            }
+        });
+        return exceptions;
+    }
+
+    private Collection<Exception> validateConfigurations(Collection<JSONObject> configurations, Module module) {
+        Collection<Exception> exceptions = new ArrayList<>(UniquePropertyValidator.from(Config.id())
+                        .validate(configurations, Messages.Config.VALIDATION_ID_NOT_UNIQUE.format(module.name())));
+        configurations.forEach(definition -> {
+            if (!Config.hasId(definition) || isBlank(Config.id(definition))) {
+                String message = Messages.Config.VALIDATION_ID_NOT_VALID.format(module.name());
+                ValidationException exception = new ValidationException(message);
+                exceptions.add(exception);
+            }
+        });
+        return exceptions;
     }
 
     /**
      * Validates that all the items in the collection contain a property
      * value which is unique across all the elements in it.
      */
-    static class UniqueFlowIdValidator implements Validator {
-        @Override
-        public void validate(Set<JSONObject> flowsDefinition) {
-            boolean test = flowsDefinition.stream()
-                    .map(JsonParser.Flow::id)
-                    .allMatch(new HashSet<>()::add);
-            if (!test) {
-                throw new InvalidFlowException("There are at least two flows with the same ID. Flows IDs must be unique.");
-            }
-        }
-    }
+    static class UniquePropertyValidator {
 
-    static class ValidFlowIdValidator implements Validator {
-        @Override
-        public void validate(Set<JSONObject> flows) {
-            flows.forEach(flowDefinition -> {
-                if (!JsonParser.Flow.hasId(flowDefinition) ||
-                        StringUtils.isBlank(JsonParser.Flow.id(flowDefinition))) {
-                    throw new InvalidFlowException("\"id\" property must be defined in the flow definition");
-                }
-            });
+        static UniquePropertyValidator from(String propertyName) {
+            return new UniquePropertyValidator(propertyName);
+        }
+
+        private final String propertyName;
+
+        UniquePropertyValidator(String propertyName) {
+            this.propertyName = propertyName;
+        }
+
+        Collection<Exception> validate(Collection<JSONObject> flowsDefinition, String message) {
+            Collection<Exception> errors = new ArrayList<>();
+            boolean test = flowsDefinition.stream()
+                    .filter(definition -> definition.has(propertyName))
+                    .map(definition -> definition.get(propertyName))
+                    .allMatch(new HashSet<>()::add);
+            if (!test) errors.add(new ValidationException(message));
+            return errors;
         }
     }
 }

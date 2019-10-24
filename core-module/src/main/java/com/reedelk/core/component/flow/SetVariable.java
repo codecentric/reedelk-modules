@@ -32,7 +32,7 @@ public class SetVariable implements ProcessorSync {
     @Property("Mime type")
     @Default(ANY)
     @Combo(editable = true, comboValues = {
-            ANY, XML, CSS, JSON, HTML, TEXT, RSS, ATOM, BINARY, Literal.UNKNOWN,
+            ANY, XML, CSS, JSON, HTML, TEXT, IMAGE_PNG, RSS, ATOM, BINARY, Literal.UNKNOWN,
             JAVASCRIPT, APPLICATION_XML, APPLICATION_JSON,
             APPLICATION_JAVA, APPLICATION_FORM_URL_ENCODED, MULTIPART_FORM_DATA})
     private String mimeType;

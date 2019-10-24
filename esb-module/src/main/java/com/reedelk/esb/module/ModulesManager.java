@@ -89,7 +89,7 @@ public class ModulesManager {
         return implementorReferencePair.getImplementor();
     }
 
-    public <T extends Implementor> ReferencePair<T> instantiateImplementor(final BundleContext context, final String componentName) {
+    private <T extends Implementor> ReferencePair<T> instantiateImplementor(final BundleContext context, final String componentName) {
         Optional<ServiceReference<T>> optionalServiceReference = getImplementorReferenceByName(context, componentName);
         if (!optionalServiceReference.isPresent()) {
             throw new IllegalStateException(format("Expected Component %s was not found", componentName));

@@ -26,7 +26,7 @@ public class SetPayload implements ProcessorSync {
     @Property("Mime type")
     @Default(ANY)
     @Combo(editable = true, comboValues = {
-            ANY, XML, CSS, JSON, HTML, TEXT, RSS, ATOM, BINARY, MimeType.Literal.UNKNOWN,
+            ANY, XML, CSS, JSON, HTML, TEXT, IMAGE_PNG, RSS, ATOM, BINARY, MimeType.Literal.UNKNOWN,
             JAVASCRIPT, APPLICATION_XML, APPLICATION_JSON, APPLICATION_JAVA, MULTIPART_FORM_DATA})
     private String mimeType;
 

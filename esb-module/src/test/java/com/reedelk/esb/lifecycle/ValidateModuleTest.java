@@ -66,7 +66,7 @@ class ValidateModuleTest {
         Module module = step.run(inputModule);
 
         // Then
-        assertModuleErrorStateWith(module, "There are at least two flows with the same ID. Flows IDs must be unique.");
+        assertModuleErrorStateWith(module, "Error validating module with name=[TestModule]: There are at least two flows with the same ID. Flow IDs must be unique.");
     }
 
     @Test
@@ -83,7 +83,7 @@ class ValidateModuleTest {
         Module module = step.run(inputModule);
 
         // Then
-        assertModuleErrorStateWith(module, "\"id\" property must be defined in the flow definition");
+        assertModuleErrorStateWith(module, "Error validating module with name=[TestModule]: The 'id' property must be defined and not empty in any JSON flow definition.");
     }
 
     @Test

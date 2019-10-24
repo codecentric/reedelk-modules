@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.reedelk.esb.commons.ConfigPropertyAwareJsonTypeConverter.PID_DEFAULT_CONFIGURATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -33,7 +32,7 @@ class ConfigPropertyAwareJsonTypeConverterTest {
 
         doReturn(expectedValue)
                 .when(configurationService)
-                .get(PID_DEFAULT_CONFIGURATION, "listener.port", int.class);
+                .get("listener.port", int.class);
         JSONObject componentDefinition = new JSONObject();
         componentDefinition.put(configKey, "${listener.port}");
 
@@ -42,7 +41,7 @@ class ConfigPropertyAwareJsonTypeConverterTest {
 
         // Then
         assertThat(converted).isEqualTo(expectedValue);
-        verify(configurationService).get(PID_DEFAULT_CONFIGURATION, "listener.port", int.class);
+        verify(configurationService).get("listener.port", int.class);
         verifyNoMoreInteractions(configurationService);
     }
 

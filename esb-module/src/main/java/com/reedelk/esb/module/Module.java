@@ -22,11 +22,11 @@ public class Module implements State {
 
     static {
         Map<Class, Collection<Class>> tmp = new HashMap<>();
-        tmp.put(Error.class, singletonList(Unresolved.class)); // when a dependency component is uninstalled, the state goes from error to unresolved.
+        tmp.put(Error.class, asList(Unresolved.class, Installed.class)); // when a dependency component is uninstalled, the state goes from error to unresolved.
         tmp.put(Started.class, singletonList(Stopped.class));
         tmp.put(Installed.class, asList(Error.class, Unresolved.class));
-        tmp.put(Resolved.class, asList(Unresolved.class, Stopped.class, Error.class));
-        tmp.put(Unresolved.class, asList(Resolved.class, Unresolved.class));
+        tmp.put(Resolved.class, asList(Unresolved.class, Stopped.class, Error.class, Installed.class));
+        tmp.put(Unresolved.class, asList(Resolved.class, Unresolved.class, Installed.class));
         tmp.put(Stopped.class, asList(Started.class, Resolved.class, Unresolved.class, Error.class));
         ALLOWED_TRANSITIONS = tmp;
     }
@@ -88,6 +88,11 @@ public class Module implements State {
         isAllowedTransition(Stopped.class);
         Collection<String> resolvedComponents = state.resolvedComponents();
         setState(new Stopped(flows, resolvedComponents));
+    }
+
+    public void installed() {
+        isAllowedTransition(Installed.class);
+        setState(new Installed());
     }
 
     /**

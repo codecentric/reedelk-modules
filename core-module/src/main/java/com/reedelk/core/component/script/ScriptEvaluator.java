@@ -29,8 +29,9 @@ public class ScriptEvaluator implements ProcessorSync {
     @Property("Mime type")
     @Default(ANY)
     @Combo(editable = true, comboValues = {
-            ANY, XML, CSS, JSON, HTML, TEXT, RSS, ATOM, BINARY, MimeType.Literal.UNKNOWN,
-            JAVASCRIPT, APPLICATION_XML, APPLICATION_JSON, APPLICATION_JAVA, MULTIPART_FORM_DATA})
+            ANY, XML, CSS, JSON, HTML, TEXT, IMAGE_PNG, RSS, ATOM, BINARY, MimeType.Literal.UNKNOWN,
+            JAVASCRIPT, APPLICATION_XML, APPLICATION_JSON, APPLICATION_JAVA, MULTIPART_FORM_DATA
+    })
     private String mimeType;
 
     @Property("Script")
@@ -41,7 +42,7 @@ public class ScriptEvaluator implements ProcessorSync {
 
         MimeType mimeType = MimeType.parse(this.mimeType);
 
-        Object evaluated = service.evaluate(script, message, flowContext, Object.class).orElse(null);;
+        Object evaluated = service.evaluate(script, message, flowContext, Object.class).orElse(null);
 
         TypedContent<?> content = TypedContentFactory.from(evaluated, mimeType);
 

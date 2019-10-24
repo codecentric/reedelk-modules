@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.configuration;
 
 import com.reedelk.esb.services.configuration.configurer.*;
-import com.reedelk.runtime.api.exception.InvalidConfigPropertyException;
+import com.reedelk.runtime.api.exception.ConfigPropertyException;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.system.api.SystemProperty;
 import org.osgi.service.cm.Configuration;
@@ -23,9 +23,9 @@ import static java.util.stream.Collectors.toList;
 
 public class DefaultConfigurationService implements ConfigurationService {
 
-    private static final List<Configurer> CONFIGURERS = asList(new LogbackConfigurer(), new PidConfigConfigurer());
-
     private static final Logger logger = LoggerFactory.getLogger(DefaultConfigurationService.class);
+    private static final List<Configurer> CONFIGURERS = asList(new LogbackConfigurer(), new PidConfigConfigurer());
+    private static final String DEFAULT_CONFIG_FILE_PID = "configuration";
 
     private final ConfigurationAdmin configurationAdmin;
     private final SystemProperty systemProperty;
@@ -35,64 +35,132 @@ public class DefaultConfigurationService implements ConfigurationService {
         this.systemProperty = systemProperty;
     }
 
+    // String
+
     @Override
-    public String getString(String configPid, String configKey, String defaultValue) {
+    public String getStringFrom(String configPID, String configKey, String defaultValue) {
         return Optional.ofNullable(getStringSystemProperty(configKey))
-                .orElseGet(() -> getConfigAdminProperty(configPid, configKey, defaultValue, TO_STRING));
+                .orElseGet(() -> getConfigAdminProperty(configPID, configKey, defaultValue, TO_STRING));
     }
 
     @Override
-    public String getString(String configPid, String configKey) {
+    public String getStringFrom(String configPID, String configKey) throws ConfigPropertyException {
         return Optional.ofNullable(getStringSystemProperty(configKey))
-                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPid, configKey, TO_STRING));
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_STRING));
     }
 
     @Override
-    public int getInt(String configPid, String configKey, int defaultValue) {
+    public String getString(String configKey, String defaultValue) {
+        return getStringFrom(DEFAULT_CONFIG_FILE_PID, configKey, defaultValue);
+    }
+
+    @Override
+    public String getString(String configKey) throws ConfigPropertyException {
+        return getStringFrom(DEFAULT_CONFIG_FILE_PID, configKey);
+    }
+
+    // Integer
+
+    @Override
+    public int getIntFrom(String configPID, String configKey, int defaultValue) {
         return Optional.ofNullable(getIntSystemProperty(configKey))
-                .orElseGet(() -> getConfigAdminProperty(configPid, configKey, defaultValue, TO_INT));
+                .orElseGet(() -> getConfigAdminProperty(configPID, configKey, defaultValue, TO_INT));
     }
 
     @Override
-    public int getInt(String configPid, String configKey) {
+    public int getIntFrom(String configPID, String configKey) throws ConfigPropertyException {
         return Optional.ofNullable(getIntSystemProperty(configKey))
-                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPid, configKey, TO_INT));
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_INT));
     }
 
     @Override
-    public long getLong(String configPid, String configKey, long defaultValue) {
+    public int getInt(String configKey, int defaultValue) {
+        return getIntFrom(DEFAULT_CONFIG_FILE_PID, configKey, defaultValue);
+    }
+
+    @Override
+    public int getInt(String configKey) throws ConfigPropertyException {
+        return getIntFrom(DEFAULT_CONFIG_FILE_PID,configKey);
+    }
+
+    // Long
+
+    @Override
+    public long getLongFrom(String configPID, String configKey, long defaultValue) {
         return Optional.ofNullable(getLongSystemProperty(configKey))
-                .orElseGet(() -> getConfigAdminProperty(configPid, configKey, defaultValue, TO_LONG));
+                .orElseGet(() -> getConfigAdminProperty(configPID, configKey, defaultValue, TO_LONG));
     }
 
     @Override
-    public long getLong(String configPid, String configKey) {
+    public long getLongFrom(String configPID, String configKey) throws ConfigPropertyException {
         return Optional.ofNullable(getLongSystemProperty(configKey))
-                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPid, configKey, TO_LONG));
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_LONG));
     }
 
     @Override
-    public boolean getBoolean(String configPid, String configKey, boolean defaultValue) {
-        return Optional.ofNullable(getBooleanSystemProperty(configKey))
-                .orElseGet(() -> getConfigAdminProperty(configPid, configKey, defaultValue, TO_BOOLEAN));
-
+    public long getLong(String configKey, long defaultValue) {
+        return getLongFrom(DEFAULT_CONFIG_FILE_PID, configKey, defaultValue);
     }
 
     @Override
-    public boolean getBoolean(String configPid, String configKey) {
-        return Optional.ofNullable(getBooleanSystemProperty(configKey))
-                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPid, configKey, TO_BOOLEAN));
+    public long getLong(String configKey) throws ConfigPropertyException {
+        return getLongFrom(DEFAULT_CONFIG_FILE_PID, configKey);
     }
 
+    // Boolean
+
+    @Override
+    public boolean getBooleanFrom(String configPID, String configKey, boolean defaultValue) {
+        return Optional.ofNullable(getBooleanSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminProperty(configPID, configKey, defaultValue, TO_BOOLEAN));
+    }
+
+    @Override
+    public boolean getBooleanFrom(String configPID, String configKey) throws ConfigPropertyException {
+        return Optional.ofNullable(getBooleanSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_BOOLEAN));
+    }
+
+    @Override
+    public boolean getBoolean(String configKey, boolean defaultValue) {
+        return getBooleanFrom(DEFAULT_CONFIG_FILE_PID, configKey, defaultValue);
+    }
+
+    @Override
+    public boolean getBoolean(String configKey) throws ConfigPropertyException {
+        return getBooleanFrom(DEFAULT_CONFIG_FILE_PID, configKey);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
-    @Override
-    public <T> T get(String configPid, String configKey, Class<T> type) {
+    public <T> T getFrom(String configPID, String configKey, T defaultValue, Class<T> type) {
         if (MAP.containsKey(type)) {
-            return (T) MAP.get(type).convert(this, configPid, configKey);
+            return (T) MAP.get(type).convert(this, configPID, configKey, defaultValue);
         }
-        throw new InvalidConfigPropertyException(
+        throw new ConfigPropertyException(
                 format("Unsupported conversion. Could not convert config property with key='%s' for config pid='%s' to type='%s'.",
-                        configKey, configPid, type.getName()));
+                        configKey, configPID, type.getName()));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getFrom(String configPID, String configKey, Class<T> type) throws ConfigPropertyException {
+        if (MAP.containsKey(type)) {
+            return (T) MAP.get(type).convert(this, configPID, configKey);
+        }
+        throw new ConfigPropertyException(
+                format("Unsupported conversion. Could not convert config property with key='%s' for config pid='%s' to type='%s'.",
+                        configKey, configPID, type.getName()));
+    }
+
+    @Override
+    public <T> T get(String configKey, T defaultValue, Class<T> type) {
+        return getFrom(DEFAULT_CONFIG_FILE_PID, configKey, defaultValue, type);
+    }
+
+    @Override
+    public <T> T get(String configKey, Class<T> type) throws ConfigPropertyException {
+        return getFrom(DEFAULT_CONFIG_FILE_PID, configKey, type);
     }
 
     /**
@@ -150,13 +218,13 @@ public class DefaultConfigurationService implements ConfigurationService {
         }
     }
 
-    private <T> T getConfigAdminPropertyOrThrow(String configPid, String configKey, Function<Object, T> mapper) {
+    <T> T getConfigAdminPropertyOrThrow(String configPid, String configKey, Function<Object, T> mapper) {
         try {
             Configuration configuration = configurationAdmin.getConfiguration(configPid);
             Dictionary<String, Object> properties = configuration.getProperties();
             return getPropertyOrThrow(properties, configKey, mapper);
         } catch (IOException e) {
-            throw new InvalidConfigPropertyException(format("Could not find config property with key='%s' for config pid='%s'", configKey, configPid));
+            throw new ConfigPropertyException(format("Could not find config property with key='%s' for config pid='%s'", configKey, configPid));
         }
     }
 
@@ -164,7 +232,7 @@ public class DefaultConfigurationService implements ConfigurationService {
         if (dictionary != null && list(dictionary.keys()).contains(configKey)) {
             return mapper.apply(dictionary.get(configKey));
         } else {
-            throw new InvalidConfigPropertyException(format("Could not find config property with key='%s'.", configKey));
+            throw new ConfigPropertyException(format("Could not find config property with key='%s'.", configKey));
         }
     }
 
@@ -179,22 +247,74 @@ public class DefaultConfigurationService implements ConfigurationService {
     private static final Map<Class, ConfigConverter> MAP;
     static {
         Map<Class, ConfigConverter> tmp = new HashMap<>();
-        tmp.put(String.class, (ConfigConverter<String>) ConfigurationService::getString);
-        tmp.put(int.class, (ConfigConverter<Integer>) ConfigurationService::getInt);
-        tmp.put(Integer.class, (ConfigConverter<Integer>) ConfigurationService::getInt);
-        tmp.put(boolean.class, (ConfigConverter<Boolean>) ConfigurationService::getBoolean);
-        tmp.put(Boolean.class, (ConfigConverter<Boolean>) ConfigurationService::getBoolean);
-        tmp.put(long.class, (ConfigConverter<Long>) ConfigurationService::getLong);
-        tmp.put(Long.class, (ConfigConverter<Long>) ConfigurationService::getLong);
+        tmp.put(String.class, new StringConfigConverter());
+        tmp.put(int.class, new IntegerConfigConverter());
+        tmp.put(Integer.class, new IntegerConfigConverter());
+        tmp.put(boolean.class, new BooleanConfigConverter());
+        tmp.put(Boolean.class, new BooleanConfigConverter());
+        tmp.put(long.class, new LongConfigConverter());
+        tmp.put(Long.class, new LongConfigConverter());
         MAP = tmp;
-    }
-
-    interface ConfigConverter<T> {
-        T convert(ConfigurationService configurationService, String pid, String key);
     }
 
     private static final Function<Object, String> TO_STRING = input -> (String) input;
     private static final Function<Object, Long> TO_LONG = input -> input instanceof String ? Long.valueOf((String) input) : (Long) input;
     private static final Function<Object, Integer> TO_INT = input -> input instanceof String ? Integer.valueOf((String) input) : (Integer) input;
     private static final Function<Object, Boolean> TO_BOOLEAN = input -> input instanceof String ? Boolean.valueOf((String) input) : (Boolean) input;
+
+    private interface ConfigConverter<T> {
+
+        T convert(ConfigurationService configurationService, String pid, String key, T defaultValue);
+
+        T convert(ConfigurationService configurationService, String pid, String key);
+
+    }
+
+    private static class StringConfigConverter implements ConfigConverter<String> {
+        @Override
+        public String convert(ConfigurationService configurationService, String pid, String key, String defaultValue) {
+            return configurationService.getStringFrom(pid, key, defaultValue);
+        }
+
+        @Override
+        public String convert(ConfigurationService configurationService, String pid, String key) {
+            return configurationService.getStringFrom(pid, key);
+        }
+    }
+
+    private static class BooleanConfigConverter implements ConfigConverter<Boolean> {
+        @Override
+        public Boolean convert(ConfigurationService configurationService, String pid, String key, Boolean defaultValue) {
+            return configurationService.getBooleanFrom(pid, key, defaultValue);
+        }
+
+        @Override
+        public Boolean convert(ConfigurationService configurationService, String pid, String key) {
+            return configurationService.getBooleanFrom(pid, key);
+        }
+    }
+
+    private static class LongConfigConverter implements ConfigConverter<Long> {
+        @Override
+        public Long convert(ConfigurationService configurationService, String pid, String key, Long defaultValue) {
+            return configurationService.getLongFrom(pid, key, defaultValue);
+        }
+
+        @Override
+        public Long convert(ConfigurationService configurationService, String pid, String key) {
+            return configurationService.getLongFrom(pid, key);
+        }
+    }
+
+    private static class IntegerConfigConverter implements ConfigConverter<Integer> {
+        @Override
+        public Integer convert(ConfigurationService configurationService, String pid, String key, Integer defaultValue) {
+            return configurationService.getIntFrom(pid, key, defaultValue);
+        }
+
+        @Override
+        public Integer convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
+            return configurationService.getIntFrom(pid, key);
+        }
+    }
 }

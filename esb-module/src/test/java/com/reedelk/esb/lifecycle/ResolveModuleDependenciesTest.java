@@ -89,6 +89,7 @@ class ResolveModuleDependenciesTest {
         assertThat(module.state()).isEqualTo(UNRESOLVED);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void shouldReturnModuleWithStateUnresolvedWhenNotAllSubFlowComponentsArePresent() {
         // Given
@@ -119,6 +120,7 @@ class ResolveModuleDependenciesTest {
         assertThat(module.state()).isEqualTo(UNRESOLVED);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void shouldReturnModuleWithStateUnresolvedWhenNotAllConfigComponentsArePresent() {
         // Given
@@ -178,7 +180,7 @@ class ResolveModuleDependenciesTest {
         Module module = step.run(aModule);
 
         // Then
-        assertModuleErrorStateWith(module, "Could not deserialize module");
+        assertModuleErrorStateWith(module, "Error de-serializing module with id=[23], name=[test], version=[1.0.0-SNAPSHOT], module file path=[file:/module/path].");
     }
 
     @Test

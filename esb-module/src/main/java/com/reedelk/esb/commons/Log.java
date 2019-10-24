@@ -1,53 +1,13 @@
 package com.reedelk.esb.commons;
 
 import com.reedelk.esb.flow.Flow;
-import com.reedelk.esb.module.Module;
 import com.reedelk.runtime.commons.JsonParser;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 
-import java.util.Collection;
-
 import static com.reedelk.esb.commons.Messages.Flow.*;
-import static com.reedelk.esb.commons.Messages.Module.*;
 
 public class Log {
-
-    // Module
-
-    public static void deserializationException(Logger logger, Module module, Exception exception) {
-        if (logger.isErrorEnabled()) {
-            String message = DESERIALIZATION_ERROR.format(
-                    module.id(),
-                    module.name(),
-                    module.version(),
-                    module.filePath());
-            logger.error(message, exception);
-        }
-    }
-
-    public static void validationException(Logger logger, Module module, Exception exception) {
-        if (logger.isErrorEnabled()) {
-            String message = VALIDATION_ERROR.format(
-                    module.id(),
-                    module.name(),
-                    module.version(),
-                    module.filePath());
-            logger.error(message, exception);
-        }
-    }
-
-    public static void unresolvedDependenciesError(Logger logger, Module module, Collection<String> unresolvedComponents) {
-        if (logger.isErrorEnabled()) {
-            String message = UNRESOLVED_ERROR.format(
-                    module.id(),
-                    module.name(),
-                    module.version(),
-                    module.filePath(),
-                    unresolvedComponents);
-            logger.error(message, unresolvedComponents);
-        }
-    }
 
     // Flow JSON definition
 

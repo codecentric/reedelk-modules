@@ -2,9 +2,9 @@ package com.reedelk.esb.services.module;
 
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.system.api.Module;
+import com.reedelk.runtime.system.api.ModuleDto;
 import com.reedelk.runtime.system.api.ModuleService;
-import com.reedelk.runtime.system.api.Modules;
+import com.reedelk.runtime.system.api.ModulesDto;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -93,14 +93,14 @@ public class DefaultModuleService implements ModuleService {
     }
 
     @Override
-    public Modules modules() {
-        Set<Module> mappedModules = modulesManager.allModules()
+    public ModulesDto modules() {
+        Set<ModuleDto> mappedModuleDtos = modulesManager.allModules()
                 .stream()
                 .map(mapper::map)
                 .collect(toSet());
-        Modules modules = new Modules();
-        modules.setModules(mappedModules);
-        return modules;
+        ModulesDto modulesDto = new ModulesDto();
+        modulesDto.setModuleDtos(mappedModuleDtos);
+        return modulesDto;
     }
 
     private long start(Bundle installedBundle) {

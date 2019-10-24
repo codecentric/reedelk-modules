@@ -32,42 +32,35 @@ public class BuildModule extends AbstractStep<Module, Module> {
 
         if (module.state() != ModuleState.RESOLVED) return module;
 
-        Bundle bundle = bundle();
+        deserialize(module).ifPresent(deSerializedModule -> {
 
-        DeserializedModule deserializedModule;
-        try {
-            deserializedModule = module.deserialize();
-        } catch (Exception exception) {
-            Log.deserializationException(logger, module, exception);
-            module.error(exception);
-            return module;
-        }
+            Bundle bundle = bundle();
 
-        Set<Flow> flows = deserializedModule.getFlows().stream()
-                .map(flowDefinition -> buildFlow(bundle, flowDefinition, deserializedModule))
-                .collect(toSet());
+            Set<Flow> flows = deSerializedModule.getFlows().stream()
+                    .map(flowDefinition -> buildFlow(bundle, flowDefinition, deSerializedModule))
+                    .collect(toSet());
 
-        // If exists at least one flow in error state,
-        // then we release component references for each flow built
-        // belonging to this Module.
-        Set<ErrorStateFlow> flowsWithErrors = flows.stream()
-                .filter(flow -> flow instanceof ErrorStateFlow)
-                .map(flow -> (ErrorStateFlow) flow)
-                .collect(toSet());
+            // If exists at least one flow in error state,
+            // then we release component references for each flow built
+            // belonging to this Module.
+            Set<ErrorStateFlow> flowsWithErrors = flows.stream()
+                    .filter(flow -> flow instanceof ErrorStateFlow)
+                    .map(flow -> (ErrorStateFlow) flow)
+                    .collect(toSet());
 
-        if (!flowsWithErrors.isEmpty()) {
-            // If there are errors, we MUST release references
-            // for those flows already built.
-            flows.forEach(flow -> flow.releaseReferences(bundle));
+            if (flowsWithErrors.isEmpty()) {
+                module.stop(flows);
+            } else {
+                // If there are errors, we MUST release references
+                // for the flows we have already built.
+                flows.forEach(flow -> flow.releaseReferences(bundle));
 
-            module.error(flowsWithErrors.stream()
-                    .map(ErrorStateFlow::getException)
-                    .collect(toList()));
+                module.error(flowsWithErrors.stream()
+                        .map(ErrorStateFlow::getException)
+                        .collect(toList()));
+            }
+        });
 
-            return module;
-        }
-
-        module.stop(flows);
         return module;
     }
 
@@ -77,7 +70,7 @@ public class BuildModule extends AbstractStep<Module, Module> {
 
         String flowId = JsonParser.Flow.id(flowDefinition);
         String flowTitle = JsonParser.Flow.hasTitle(flowDefinition) ?
-                                JsonParser.Flow.title(flowDefinition) : null;
+                JsonParser.Flow.title(flowDefinition) : null;
 
         ModulesManager modulesManager = modulesManager();
         ConfigPropertyAwareJsonTypeConverter converter = new ConfigPropertyAwareJsonTypeConverter(configurationService());

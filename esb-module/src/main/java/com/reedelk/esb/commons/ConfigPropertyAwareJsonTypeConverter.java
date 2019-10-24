@@ -8,8 +8,6 @@ import org.json.JSONObject;
 
 public class ConfigPropertyAwareJsonTypeConverter {
 
-    static final String PID_DEFAULT_CONFIGURATION = "configuration";
-
     private ConfigurationService configurationService;
 
     public ConfigPropertyAwareJsonTypeConverter(ConfigurationService configurationService) {
@@ -22,7 +20,7 @@ public class ConfigPropertyAwareJsonTypeConverter {
         Object propertyValue = componentDefinition.get(propertyName);
         if (ConfigurationPropertyUtils.isConfigProperty(propertyValue)) {
             String propertyKey = ConfigurationPropertyUtils.unwrap((String) propertyValue);
-            return configurationService.get(PID_DEFAULT_CONFIGURATION, propertyKey, clazz);
+            return configurationService.get(propertyKey, clazz);
         } else {
             return JsonTypeConverter.convert(clazz, componentDefinition, propertyName);
         }

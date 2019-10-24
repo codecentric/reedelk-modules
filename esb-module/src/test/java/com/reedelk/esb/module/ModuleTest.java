@@ -2,6 +2,7 @@ package com.reedelk.esb.module;
 
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.module.state.ModuleState;
+import com.reedelk.runtime.api.exception.ESBException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static com.reedelk.esb.module.state.ModuleState.*;
 import static java.util.Arrays.asList;
@@ -22,15 +24,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class ModuleTest {
 
-    @Mock
-    private Flow flow;
-    private final Collection<String> unresolvedComponents = asList("com.reedelk.esb.Unresolved1", "com.reedelk.esb.Unresolved2");
-
     private final long TEST_MODULE_ID = 12;
     private final String TEST_MODULE_NAME = "ModuleNameTest";
     private final String TEST_VERSION = "1.0.0-SNAPSHOT";
     private final String TEST_LOCATION = "file://location/test";
+
+    private final Collection<String> unresolvedComponents = asList("com.reedelk.esb.Unresolved1", "com.reedelk.esb.Unresolved2");
     private final Collection<String> resolvedComponents = asList("com.reedelk.esb.Resolved1", "com.reedelk.esb.Resolved2");
+
+    @Mock
+    private Flow flow;
     @Mock
     private ModuleDeserializer deserializer;
     private Module module;
@@ -110,7 +113,7 @@ class ModuleTest {
     @DisplayName("Unresolved state tests")
     class Unresolved {
 
-        // Unresolved -> Resolved | Error | Unresolved
+        // Unresolved -> Resolved | Error | Unresolved | Installed
         @Test
         void shouldUnresolvedTransitionToResolved() {
             // Given
@@ -153,9 +156,19 @@ class ModuleTest {
             module.unresolve(unresolvedComponents, resolvedComponents);
 
             // Expect
-            assertThrows(IllegalStateException.class, () -> {
-                module.start(emptyList());
-            });
+            assertThrows(IllegalStateException.class, () -> module.start(emptyList()));
+        }
+
+        @Test
+        void shouldUnresolvedTransitionToInstalled() {
+            // Given
+            module.unresolve(unresolvedComponents, resolvedComponents);
+
+            // When
+            module.installed();
+
+            // Then
+            assertStateIs(INSTALLED);
         }
     }
 
@@ -163,7 +176,7 @@ class ModuleTest {
     @DisplayName("Resolved state tests")
     class Resolved {
 
-        // Resolved -> Unresolved | Stopped | Error
+        // Resolved -> Unresolved | Stopped | Error | Installed
         @Test
         void shouldResolvedTransitionToUnresolved() {
             // Given
@@ -211,9 +224,20 @@ class ModuleTest {
 
             // Expect
             // Expect
-            assertThrows(IllegalStateException.class, () -> {
-                module.start(emptyList());
-            });
+            assertThrows(IllegalStateException.class, () -> module.start(emptyList()));
+        }
+
+        @Test
+        void shouldResolvedTransitionToInstalled() {
+            // Given
+            module.unresolve(unresolvedComponents, resolvedComponents);
+            module.resolve(resolvedComponents);
+
+            // When
+            module.installed();
+
+            // Then
+            assertStateIs(INSTALLED);
         }
     }
 
@@ -300,6 +324,37 @@ class ModuleTest {
             assertStateIs(STOPPED);
         }
 
+    }
+
+    @Nested
+    @DisplayName("Error state tests")
+    class Error {
+
+        // Error -> Unresolved | Installed
+
+        @Test
+        void shouldErrorTransitionToUnresolved() {
+            // Given
+            module.error(new ESBException("Deserialization error"));
+
+            // When
+            module.unresolve(unresolvedComponents, Collections.emptyList());
+
+            // Then
+            assertStateIs(UNRESOLVED);
+        }
+
+        @Test
+        void shouldErrorTransitionToInstalled() {
+            // Given
+            module.error(new ESBException("Deserialization error"));
+
+            // When
+            module.installed();
+
+            // Then
+            assertStateIs(INSTALLED);
+        }
     }
 
     @Nested
