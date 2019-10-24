@@ -1,6 +1,6 @@
 {
   "id": "1913058d-6c6d-4089-b93f-d139d8d6da95",
-  "title": "Returns all installed OSGi modules",
+  "title": "Module GET",
   "description": "GET Modules Flow",
   "flow": [
     {

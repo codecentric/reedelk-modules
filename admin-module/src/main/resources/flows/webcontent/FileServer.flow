@@ -1,6 +1,6 @@
 {
   "id": "4bca3bc7-94aa-4c8d-8882-e4d6d47f67e5",
-  "title": "Load pages",
+  "title": "Load static page",
   "description": "File Server Flow",
   "flow": [
     {

@@ -1,7 +1,7 @@
 {
   "id": "7cd28521-0f3d-4940-9f66-b99b0e89a9c6",
-  "title": "Hotswap",
-  "description": "Hotswap Flow",
+  "title": "Module Hot Swap",
+  "description": "Hot Swap Flow",
   "flow": [
     {
       "implementor": "com.reedelk.rest.component.RestListener",

@@ -16,15 +16,18 @@ public class StartListener extends AbstractInbound {
 
     private static final Logger logger = LoggerFactory.getLogger(StartListener.class);
 
+    private static final String PROPERTY_ADMIN_CONSOLE_ADDRESS = "admin.console.address";
+    private static final String PROPERTY_ADMIN_CONSOLE_PORT = "admin.console.port";
+
     @Reference
     private ConfigurationService configurationService;
 
     @Override
     public void onStart() {
 
-        String bindAddress = configurationService.getString("configuration", "admin.console.bind.address");
+        String bindAddress = configurationService.getString(PROPERTY_ADMIN_CONSOLE_ADDRESS);
 
-        int bindPort = configurationService.getInt("configuration", "admin.console.bind.port");
+        int bindPort = configurationService.getInt( PROPERTY_ADMIN_CONSOLE_PORT);
 
         logger.info(String.format("Admin console listening on http://%s:%d/console", bindAddress, bindPort));
     }

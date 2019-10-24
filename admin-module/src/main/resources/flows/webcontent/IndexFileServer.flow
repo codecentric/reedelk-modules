@@ -1,6 +1,6 @@
 {
   "id": "ee532407-a3f1-41ae-8e5c-0d3bd56eafd2",
-  "title": "Load index page",
+  "title": "Load static index page",
   "description": "Index File Server Flow",
   "flow": [
     {
