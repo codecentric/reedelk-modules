@@ -1,8 +1,8 @@
 package com.reedelk.core.component.script;
 
-import com.reedelk.runtime.api.annotation.Combo;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
+import com.reedelk.runtime.api.annotation.MimeTypeCombo;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -16,7 +16,6 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import static com.reedelk.runtime.api.message.content.MimeType.Literal.*;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Script")
@@ -27,11 +26,8 @@ public class ScriptEvaluator implements ProcessorSync {
     private ScriptEngineService service;
 
     @Property("Mime type")
-    @Default(ANY)
-    @Combo(editable = true, comboValues = {
-            ANY, XML, CSS, JSON, HTML, TEXT, IMAGE_PNG, RSS, ATOM, BINARY, MimeType.Literal.UNKNOWN,
-            JAVASCRIPT, APPLICATION_XML, APPLICATION_JSON, APPLICATION_JAVA, MULTIPART_FORM_DATA
-    })
+    @Default(MimeType.ANY_MIME_TYPE)
+    @MimeTypeCombo
     private String mimeType;
 
     @Property("Script")

@@ -13,7 +13,6 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import static com.reedelk.runtime.api.message.content.MimeType.Literal.*;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Set Payload")
@@ -24,10 +23,8 @@ public class SetPayload implements ProcessorSync {
     private ScriptEngineService scriptEngine;
 
     @Property("Mime type")
-    @Default(ANY)
-    @Combo(editable = true, comboValues = {
-            ANY, XML, CSS, JSON, HTML, TEXT, IMAGE_PNG, RSS, ATOM, BINARY, MimeType.Literal.UNKNOWN,
-            JAVASCRIPT, APPLICATION_XML, APPLICATION_JSON, APPLICATION_JAVA, MULTIPART_FORM_DATA})
+    @Default(MimeType.ANY_MIME_TYPE)
+    @MimeTypeCombo
     private String mimeType;
 
     @Property("Message Payload")

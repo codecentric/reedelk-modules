@@ -28,7 +28,7 @@ class MimeTypeExtractTest {
             // Given
             HttpServerRequest request = mock(HttpServerRequest.class);
             HttpHeaders headers = new DefaultHttpHeaders();
-            headers.set("content-type", MimeType.BINARY.toString());
+            headers.set("content-type", MimeType.APPLICATION_BINARY.toString());
 
             doReturn(headers).when(request).requestHeaders();
 
@@ -36,7 +36,7 @@ class MimeTypeExtractTest {
             MimeType actual = MimeTypeExtract.from(request);
 
             // Then
-            assertThat(actual).isEqualTo(MimeType.BINARY);
+            assertThat(actual).isEqualTo(MimeType.APPLICATION_BINARY);
         }
 
         @Test

@@ -413,7 +413,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[message.content.type()]");
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.BINARY, message, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.APPLICATION_BINARY, message, context);
 
             // Then
             assertThat(result).isPresent().contains(ObjectToBytes.from(typedContent.type()));
@@ -431,7 +431,7 @@ class DynamicValueEvaluatorTest {
 
             // When
             ESBException thrown = assertThrows(ESBException.class,
-                    () -> evaluator.evaluate(dynamicObject, MimeType.BINARY, message, context));
+                    () -> evaluator.evaluate(dynamicObject, MimeType.APPLICATION_BINARY, message, context));
 
             // Then
             assertThat(thrown).isNotNull();
@@ -446,7 +446,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = null;
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.BINARY, message, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.APPLICATION_BINARY, message, context);
 
             // Then
             assertThat(result).isNotPresent();

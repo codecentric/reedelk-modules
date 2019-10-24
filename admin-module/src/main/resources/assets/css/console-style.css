@@ -68,9 +68,9 @@
 
 .module-details-row-item-title {
     text-align:left; 
-    padding-top:10px;
+    padding-top:0px;
 }
 .module-details-row-item-content {
     word-break: break-word;
-    padding-top:10px;"
+    padding-bottom:10px;"
 }

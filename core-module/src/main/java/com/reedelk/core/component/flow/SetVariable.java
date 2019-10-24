@@ -14,8 +14,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import java.io.Serializable;
 
-import static com.reedelk.runtime.api.message.content.MimeType.Literal;
-import static com.reedelk.runtime.api.message.content.MimeType.Literal.*;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Set Variable")
@@ -30,11 +28,8 @@ public class SetVariable implements ProcessorSync {
     private String name;
 
     @Property("Mime type")
-    @Default(ANY)
-    @Combo(editable = true, comboValues = {
-            ANY, XML, CSS, JSON, HTML, TEXT, IMAGE_PNG, RSS, ATOM, BINARY, Literal.UNKNOWN,
-            JAVASCRIPT, APPLICATION_XML, APPLICATION_JSON,
-            APPLICATION_JAVA, APPLICATION_FORM_URL_ENCODED, MULTIPART_FORM_DATA})
+    @Default(MimeType.ANY_MIME_TYPE)
+    @MimeTypeCombo
     private String mimeType;
 
     @Property("Value")

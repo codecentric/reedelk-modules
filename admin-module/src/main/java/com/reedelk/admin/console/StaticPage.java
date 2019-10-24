@@ -42,11 +42,11 @@ public class StaticPage implements ProcessorSync {
 
         MimeType resultMimeType;
         if (theRequestedPage.endsWith(".css")) {
-            resultMimeType = MimeType.CSS;
+            resultMimeType = MimeType.TEXT_CSS;
         } else if (theRequestedPage.endsWith(".js")) {
-            resultMimeType = MimeType.JAVASCRIPT;
+            resultMimeType = MimeType.TEXT_JAVASCRIPT;
         } else if (theRequestedPage.endsWith(".html") || theRequestedPage.endsWith(".htm")) {
-            resultMimeType = MimeType.HTML;
+            resultMimeType = MimeType.TEXT_HTML;
         } else if (theRequestedPage.endsWith(".png")) {
             resultMimeType = MimeType.IMAGE_PNG;
         } else {

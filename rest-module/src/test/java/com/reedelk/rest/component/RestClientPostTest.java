@@ -91,7 +91,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             givenThat(post(urlEqualTo(PATH))
                     .withRequestBody(binaryEqualTo(requestBody))
-                    .withHeader(CONTENT_TYPE, equalTo(BINARY.toString()))
+                    .withHeader(CONTENT_TYPE, equalTo(APPLICATION_BINARY.toString()))
                     .willReturn(aResponse()
                             .withStatus(200)
                             .withBody(expectedResponseBody)

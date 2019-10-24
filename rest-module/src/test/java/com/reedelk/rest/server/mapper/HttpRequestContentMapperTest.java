@@ -42,14 +42,14 @@ class HttpRequestContentMapperTest {
     @Test
     void shouldCorrectlyMapBinaryContentType() {
         // Given
-        doReturn(MimeType.BINARY).when(mockWrapper).mimeType();
+        doReturn(MimeType.APPLICATION_BINARY).when(mockWrapper).mimeType();
         doReturn(ByteBufFlux.fromInbound(Mono.just(testPayload))).when(mockWrapper).data();
 
         // When
         TypedContent<?> content = HttpRequestContentMapper.map(mockWrapper);
 
         // Then
-        assertThat(content.mimeType()).isEqualTo(MimeType.BINARY);
+        assertThat(content.mimeType()).isEqualTo(MimeType.APPLICATION_BINARY);
         assertThat(content.type()).isEqualTo(byte[].class);
 
         assertThat(content).isInstanceOf(ByteArrayContent.class);
