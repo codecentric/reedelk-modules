@@ -38,7 +38,7 @@ public class Log {
             String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
             String message = flow.getFlowTitle()
                     .map(flowTitle -> FORCE_STOP_WITH_TITLE.format(flow.getFlowId(), flowTitle, rootCauseMessage))
-                    .orElse(FORCE_STOP.format(flow.getFlowId()));
+                    .orElse(FORCE_STOP.format(flow.getFlowId(), rootCauseMessage));
             logger.warn(message, exception);
         }
     }
