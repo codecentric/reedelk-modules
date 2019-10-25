@@ -23,7 +23,7 @@
 
 <!-- Fixed navbar -->
 <nav class="navbar navbar-expand-sm navbar-dark bg-secondary">
-    
+
     <a class="navbar-brand" href="/">
         <img src="/console/img/reedelk_logo.png" alt="Reedelk logo">
         &nbsp;Reedelk ESB admin console
@@ -32,41 +32,61 @@
 
 <div class="container-fluid">
 
-        <!-- Install Module -->
+    <!-- Install Module -->
+    <div class="row">
+        <div class="col">
+            <h5><i class="fas fa-upload section-title"></i>&nbsp;&nbsp;Install Module</h5>
+            <p>Deploy or upldate a module by selecting the module jar file</p>
+        </div>
+    </div>
+    <form id="deployModuleForm">
         <div class="row">
-            <div class="col">
-                <h5><i class="fas fa-upload section-title"></i>&nbsp;&nbsp;Install Module</h5>
+            <div class="col-5 form-group">
+                <input type="file"
+                       class="form-control-file"
+                       id="inputModule"
+                       aria-describedby="inputModuleHelp"
+                       placeholder="Select module to install"
+                       name="moduleFilePath">
+            </div>
+            <div class="col-7 form-group">
+                <label for="submitModule">&nbsp;</label>
+                <button type="submit" id="submitModule" class="btn btn-secondary">Deploy Module</button>
             </div>
         </div>
+    </form>
 
-        <!-- Deployed Modules -->
-        <div class="row">
-            <div class="col">
-                <h5><i class="fas fa-th-list section-title"></i>&nbsp;&nbsp;Deployed Modules</h5>
-            </div>
+    <!-- Deployed Modules -->
+    <div class="row">
+        <div class="col">
+            <h5><i class="fas fa-th-list section-title"></i>&nbsp;&nbsp;Deployed Modules</h5>
         </div>
+    </div>
 
-        <div class="row">
-            <div class="col">
-                <div class="accordion" id="modulesTableContainer">
-                    <table class="table table-hover" id="deployed-modules" style="border-collapse:collapse;">
-                        <col width="40">
-                        <thead class="bg-primary text-primary">
-                            <tr>
-                                <th></th>
-                                <th class="align-center">Status</th>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Version</th>
-                                <th>Path</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="row">
+        <div class="col">
+            <div class="accordion" id="modulesTableContainer">
+                <table class="table table-hover" id="deployed-modules" style="border-collapse:collapse;">
+                    <col width="40">
+                    <thead class="bg-secondary text-primary">
+                    <tr>
+                        <th class="align-center">Status</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Version</th>
+                        <th>Path</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
+</div>
 
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -74,6 +94,7 @@
 <script src="/console/js/bootstrap-collapse.js"></script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="/console/js/ie10-viewport-bug-workaround.js"></script>
+<script src="/console/js/module-details-renderer.js"></script>
 <script src="/console/js/modules-table-renderer.js"></script>
 <script src="/console/js/utilities.js"></script>
 <script src="/console/js/constants.js"></script>
@@ -82,7 +103,24 @@
 <script src="/console/js/toastr.min.js"></script>
 
 <script>
-listModules();
+
+    listModules();
+
+    function onUpdate(moduleName, moduleFilePath) {
+        updateModule(moduleName, moduleFilePath);
+    }
+
+    function onRemove(moduleName, moduleFilePath) {
+        removeModule(moduleName, moduleFilePath);
+    }
+
+    var formElem = document.getElementById('deployModuleForm');
+    formElem.onsubmit = function (e) {
+        e.preventDefault();
+        var formData = new FormData(formElem);
+        deployModule(formData);
+    };
+
 </script>
 
 </body>

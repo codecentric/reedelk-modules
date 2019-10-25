@@ -9,8 +9,12 @@ import com.reedelk.runtime.rest.api.InternalAPI;
 import com.reedelk.runtime.rest.api.module.v1.ModuleDELETEReq;
 import com.reedelk.runtime.rest.api.module.v1.ModuleDELETERes;
 import com.reedelk.runtime.system.api.ModuleService;
+import com.reedelk.runtime.system.api.SystemProperty;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.io.File;
+import java.net.URI;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -18,6 +22,8 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = ModuleRemove.class, scope = PROTOTYPE)
 public class ModuleRemove implements ProcessorSync {
 
+    @Reference
+    private SystemProperty systemProperty;
     @Reference
     private ModuleService service;
 
@@ -35,7 +41,19 @@ public class ModuleRemove implements ProcessorSync {
 
         ModuleDELETEReq deleteRequest = InternalAPI.Module.V1.DELETE.Req.deserialize(json);
 
-        long moduleId = service.uninstall(deleteRequest.getModuleFilePath());
+        String moduleFilePath = deleteRequest.getModuleFilePath();
+
+        long moduleId = service.uninstall(moduleFilePath);
+
+        // If module file path belongs to system modules
+        String modulesDirectory = systemProperty.modulesDirectory();
+        if (moduleFilePath.contains(modulesDirectory)) {
+            // If the module was deployed in the modules directory, then we need to remove the file.
+            File fileToBeDeleted = new File(URI.create(moduleFilePath));
+            if (fileToBeDeleted.exists()) {
+                fileToBeDeleted.delete();
+            }
+        }
 
         ModuleDELETERes dto = new ModuleDELETERes();
 
