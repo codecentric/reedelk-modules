@@ -22,7 +22,7 @@ var Template = (function() {
 
 	const ActionButton = ({ text, icon, action, type }) => 
 		`<button type="button" class="btn btn-sm btn-labeled ${type}" onclick=${action}>
-			<span class="btn-label"><i class="fas ${icon}"></i></span>
+			<span class="btn-label"><i class="${icon}"></i></span>
 			${text}
 		</button>`;
 
@@ -30,7 +30,7 @@ var Template = (function() {
 		`<button type="button" class="btn btn-sm btn-labeled btn-secondary" 
 	  		data-toggle="collapse" data-target="${dataTarget}" 
 	  		aria-expanded="false" aria-controls="${ariaControl}">
-	  		<span class="btn-label"><i class="fas ${icon}"></i></span>
+	  		<span class="btn-label"><i class="${icon}"></i></span>
 	  		${text}
   		</button>`;
 

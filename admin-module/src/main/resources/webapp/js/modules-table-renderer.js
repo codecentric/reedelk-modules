@@ -13,9 +13,9 @@ var ModulesTableRenderer = (function() {
         	var path = module.moduleFilePath;
             var status = Utilities.IconByModuleStatus(module.state);
 
-            var infoBtn = Template.CollapseButton('Info', 'fa-folder', '#' + module.moduleId, 'collapseExample');
-            var updateBtn = Template.ActionButton('Update', 'fa-sync-alt', 'onUpdate(\'' + name + '\',\'' + path + '\')', "btn-secondary");
-            var removeBtn = Template.ActionButton('Remove', 'fa-trash-alt', 'onRemove(\'' + name + '\',\'' + path + '\')', "btn-danger");
+            var infoBtn = Template.CollapseButton('Info', 'icon-folder-open', '#' + module.moduleId, 'collapseExample');
+            var updateBtn = Template.ActionButton('Update', 'icon-redo2', 'onUpdate(\'' + name + '\',\'' + path + '\')', "btn-secondary");
+            var removeBtn = Template.ActionButton('Remove', 'icon-bin', 'onRemove(\'' + name + '\',\'' + path + '\')', "btn-danger");
 
             var allColumns = 
                 Template.Column(status, 'align-center') +

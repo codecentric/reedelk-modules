@@ -16,15 +16,15 @@ var Utilities = {
 
     IconByModuleStatus: function (moduleStatus) {
         if (moduleStatus === "INSTALLED" || moduleStatus === "STARTED") {
-            return '<i class="fas fa-lg fa-check-circle success-color"></i>';
+            return '<i class="icon-checkmark success-color"></i>';
         } else if (moduleStatus === 'UNRESOLVED') {
-            return '<i class="fas fa-lg fa-exclamation-circle warn-color"></i>';
+            return '<i class="icon-blocked warn-color"></i>';
         } else if (moduleStatus === 'RESOLVED') {
-            return '<i class="fas fa-lg fa-check-circle success-color"></i>';
+            return '<i class="icon-checkmark success-color"></i>';
         } else if (moduleStatus === 'STOPPED') {
-            return '<i class="fas fa-lg fa-check-circle success-color"></i>';
+            return '<i class="icon-checkmark success-color"></i>';
         } else if (moduleStatus === 'ERROR') {
-            return '<i class="fas fa-lg fa-exclamation-circle error-color"></i>';
+            return '<i class="icon-cross error-color"></i>';
         } else {
             return moduleStatus;
         }

@@ -1,4 +1,8 @@
 
+.admin-section-row-padding {
+    padding-top: 20px;
+}
+
 .table tr {
     cursor: pointer;
 }
@@ -15,11 +19,6 @@
 .text-input {
     font-size: 13px;
     line-height: 1.428;
-}
-
-.section-title {
-	padding-top:20px;
-	padding-bottom:5px;
 }
 
 .bg-secondary {
