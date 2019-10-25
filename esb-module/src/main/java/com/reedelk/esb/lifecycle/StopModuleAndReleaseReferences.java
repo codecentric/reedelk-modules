@@ -1,6 +1,6 @@
 package com.reedelk.esb.lifecycle;
 
-import com.reedelk.esb.commons.Log;
+import com.reedelk.esb.exception.FlowStopException;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.module.Module;
 import org.osgi.framework.Bundle;
@@ -10,7 +10,10 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static com.reedelk.esb.commons.Messages.Flow.STOP_ERROR;
+import static com.reedelk.esb.commons.Messages.Flow.STOP_ERROR_WITH_TITLE;
 import static com.reedelk.esb.module.state.ModuleState.STARTED;
+import static com.reedelk.runtime.api.commons.StringUtils.EMPTY;
 
 public class StopModuleAndReleaseReferences extends AbstractStep<Module, Module> {
 
@@ -28,8 +31,13 @@ public class StopModuleAndReleaseReferences extends AbstractStep<Module, Module>
             try {
                 flow.stopIfStarted();
             } catch (Exception exception) {
-                Log.flowStopException(logger, flow, exception);
-                exceptions.add(exception);
+                String message = flow.getFlowTitle()
+                        .map(flowTitle -> STOP_ERROR_WITH_TITLE.format(flow.getFlowId(), flowTitle))
+                        .orElse(STOP_ERROR.format(flow.getFlowId()));
+                FlowStopException stopException = new FlowStopException(message, exception);
+                logger.error(EMPTY, stopException);
+
+                exceptions.add(stopException);
             }
         }
 

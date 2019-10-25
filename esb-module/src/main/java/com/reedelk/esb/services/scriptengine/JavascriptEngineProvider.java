@@ -8,6 +8,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+// TODO: IN CASE OF EXCEPTION WE MUST LOG THE WHOLE SCRIPT!
+//  SO THAT IT IS CLEAR WHAT WENT WRONG!
 public class JavascriptEngineProvider implements ScriptEngineProvider {
 
     public static final ScriptEngineProvider INSTANCE = new JavascriptEngineProvider();

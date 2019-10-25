@@ -6,7 +6,7 @@
     <meta name="description" content="Reedelk ESB console UI">
     <meta name="author" content="">
 
-    <title>Reedelk ESB admin console</title>
+    <title>Reedelk ESB Administration</title>
 
     <link href="/console/css/bootstrap.min.css" rel="stylesheet">
     <link href="/console/css/console-style.css" rel="stylesheet">
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand" href="/">
         <img src="/console/img/reedelk_logo.png" alt="Reedelk logo">
-        &nbsp;Reedelk ESB admin console
+        &nbsp;&nbsp;Reedelk ESB Administration
     </a>
 </nav>
 
@@ -36,18 +36,14 @@
     <div class="row">
         <div class="col">
             <h5><i class="fas fa-upload section-title"></i>&nbsp;&nbsp;Install Module</h5>
-            <p>Deploy or upldate a module by selecting the module jar file</p>
+            <p>Deploy or update a module by selecting the module jar file</p>
         </div>
     </div>
     <form id="deployModuleForm">
         <div class="row">
             <div class="col-5 form-group">
-                <input type="file"
-                       class="form-control-file"
-                       id="inputModule"
-                       aria-describedby="inputModuleHelp"
-                       placeholder="Select module to install"
-                       name="moduleFilePath">
+                <input id="inputModule" type="file" class="form-control-file" aria-describedby="inputModuleHelp"
+                       placeholder="Select module to install" name="moduleFilePath">
             </div>
             <div class="col-7 form-group">
                 <label for="submitModule">&nbsp;</label>
@@ -66,7 +62,7 @@
     <div class="row">
         <div class="col">
             <div class="accordion" id="modulesTableContainer">
-                <table class="table table-hover" id="deployed-modules" style="border-collapse:collapse;">
+                <table class="table table-hover" id="deployed-modules">
                     <col width="40">
                     <thead class="bg-secondary text-primary">
                     <tr>

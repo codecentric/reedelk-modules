@@ -43,22 +43,4 @@ public class Log {
             logger.warn(message, exception);
         }
     }
-
-    public static void flowStartException(Logger logger, Flow flow, Exception exception) {
-        if (logger.isErrorEnabled()) {
-            String message = flow.getFlowTitle()
-                    .map(flowTitle -> START_ERROR_WITH_TITLE.format(flow.getFlowId(), flowTitle))
-                    .orElse(START_ERROR.format(flow.getFlowId()));
-            logger.error(message, exception);
-        }
-    }
-
-    public static void flowStopException(Logger logger, Flow flow, Exception exception) {
-        if (logger.isErrorEnabled()) {
-            String message = flow.getFlowTitle()
-                    .map(flowTitle -> STOP_ERROR_WITH_TITLE.format(flow.getFlowId(), flowTitle))
-                    .orElse(STOP_ERROR.format(flow.getFlowId()));
-            logger.error(message, exception);
-        }
-    }
 }

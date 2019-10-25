@@ -60,9 +60,9 @@ public class RestListener extends AbstractInbound {
 
     @Override
     public void onStart() {
-        requireNotNull(configuration, "configuration");
-        requireNotNull(configuration.getProtocol(), "protocol");
-        requireNotNull(method, "method");
+        requireNotNull(configuration, "RestListener configuration must be defined");
+        requireNotNull(configuration.getProtocol(), "RestListener configuration protocol must be defined");
+        requireNotNull(method, "RestListener method must be defined");
 
         HttpRequestHandler httpRequestHandler = HttpRequestHandler.builder()
                         .inboundEventListener(RestListener.this)

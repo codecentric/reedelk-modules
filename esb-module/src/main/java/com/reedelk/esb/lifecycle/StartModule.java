@@ -2,6 +2,7 @@ package com.reedelk.esb.lifecycle;
 
 
 import com.reedelk.esb.commons.Log;
+import com.reedelk.esb.exception.FlowStartException;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.state.ModuleState;
@@ -11,6 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
+
+import static com.reedelk.esb.commons.Messages.Flow.START_ERROR;
+import static com.reedelk.esb.commons.Messages.Flow.START_ERROR_WITH_TITLE;
+import static com.reedelk.runtime.api.commons.StringUtils.EMPTY;
 
 public class StartModule extends AbstractStep<Module, Module> {
 
@@ -29,8 +34,13 @@ public class StartModule extends AbstractStep<Module, Module> {
                 flow.start();
                 Log.flowStarted(logger, flow);
             } catch (Exception exception) {
-                Log.flowStartException(logger, flow, exception);
-                exceptions.add(exception);
+                String message = flow.getFlowTitle()
+                        .map(flowTitle -> START_ERROR_WITH_TITLE.format(flow.getFlowId(), flowTitle))
+                        .orElse(START_ERROR.format(flow.getFlowId()));
+                FlowStartException startException = new FlowStartException(message, exception);
+                logger.error(EMPTY, startException);
+
+                exceptions.add(startException);
             }
         }
 

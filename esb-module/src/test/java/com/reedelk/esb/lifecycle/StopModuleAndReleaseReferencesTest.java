@@ -165,8 +165,8 @@ class StopModuleAndReleaseReferencesTest {
     @Test
     void shouldTransitionToErrorStateWhenFlowIsStoppedAndExceptionThrown() {
         // Given
-        String expectedMessage1 = "Error while stopping flow 2";
-        String expectedMessage2 = "Error while stopping flow 3";
+        String expectedMessage1 = "Error stopping flow with id=[aabbccddee].";
+        String expectedMessage2 = "Error stopping flow with id=[ffghhiillmm].";
 
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
@@ -183,10 +183,16 @@ class StopModuleAndReleaseReferencesTest {
         doThrow(new ESBException(expectedMessage1))
                 .when(flow2)
                 .stopIfStarted();
+        doReturn("aabbccddee")
+                .when(flow2)
+                .getFlowId();
 
         doThrow(new ESBException(expectedMessage2))
                 .when(flow3)
                 .stopIfStarted();
+        doReturn("ffghhiillmm")
+                .when(flow3)
+                .getFlowId();
 
         // When
         Module actualModule = step.run(inputModule);

@@ -172,6 +172,9 @@ class StartModuleTest {
         doThrow(new RuntimeException("error x.y.z while starting flow"))
                 .when(flow2)
                 .start();
+        doReturn("aabbccddee")
+                .when(flow2)
+                .getFlowId();
 
         // When
         Module outModule = step.run(module);
@@ -197,6 +200,6 @@ class StartModuleTest {
         Collection<Exception> errors = errorsCaptor.getValue();
         assertThat(errors).hasSize(1);
 
-        assertThat(errors.iterator().next().getMessage()).isEqualTo("error x.y.z while starting flow");
+        assertThat(errors.iterator().next().getMessage()).isEqualTo("Error starting flow with id=[aabbccddee].");
     }
 }

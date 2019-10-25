@@ -164,7 +164,7 @@ public class RestClient implements ProcessorAsync {
                 client = clientFactory.from(configuration);
                 client.start();
             } else {
-                requireNonNull(baseURL, "base URL is mandatory");
+                requireNonNull(baseURL, "RestClient base URL must be defined");
                 client = clientFactory.from(baseURL);
                 client.start();
             }

@@ -1,9 +1,9 @@
 package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.commons.Messages;
+import com.reedelk.esb.exception.FlowValidationException;
 import com.reedelk.esb.module.Module;
 import com.reedelk.runtime.api.commons.StringUtils;
-import com.reedelk.runtime.api.exception.ValidationException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +59,7 @@ public class ValidateModule extends AbstractStep<Module, Module> {
         flows.forEach(definition -> {
             if (!Flow.hasId(definition) || isBlank(Flow.id(definition))) {
                 String message = Messages.Flow.VALIDATION_ID_NOT_VALID.format(module.name());
-                ValidationException exception = new ValidationException(message);
+                FlowValidationException exception = new FlowValidationException(message);
                 exceptions.add(exception);
             }
         });
@@ -72,7 +72,7 @@ public class ValidateModule extends AbstractStep<Module, Module> {
         subflows.forEach(definition -> {
             if (!Subflow.hasId(definition) || isBlank(Subflow.id(definition))) {
                 String message = Messages.Subflow.VALIDATION_ID_NOT_VALID.format(module.name());
-                ValidationException exception = new ValidationException(message);
+                FlowValidationException exception = new FlowValidationException(message);
                 exceptions.add(exception);
             }
         });
@@ -85,7 +85,7 @@ public class ValidateModule extends AbstractStep<Module, Module> {
         configurations.forEach(definition -> {
             if (!Config.hasId(definition) || isBlank(Config.id(definition))) {
                 String message = Messages.Config.VALIDATION_ID_NOT_VALID.format(module.name());
-                ValidationException exception = new ValidationException(message);
+                FlowValidationException exception = new FlowValidationException(message);
                 exceptions.add(exception);
             }
         });
@@ -114,7 +114,7 @@ public class ValidateModule extends AbstractStep<Module, Module> {
                     .filter(definition -> definition.has(propertyName))
                     .map(definition -> definition.get(propertyName))
                     .allMatch(new HashSet<>()::add);
-            if (!test) errors.add(new ValidationException(message));
+            if (!test) errors.add(new FlowValidationException(message));
             return errors;
         }
     }
