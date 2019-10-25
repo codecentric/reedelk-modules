@@ -5,6 +5,7 @@ import com.reedelk.esb.exception.ModuleDeserializationException;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
+import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
@@ -77,11 +78,13 @@ public abstract class AbstractStep<I, O> implements Step<I, O> {
         try {
             return Optional.of(module.deserialize());
         } catch (Exception exception) {
+            String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
             String message = DESERIALIZATION_ERROR.format(
                     module.id(),
                     module.name(),
                     module.version(),
-                    module.filePath());
+                    module.filePath(),
+                    rootCauseMessage);
 
             ModuleDeserializationException moduleDeserializationException = new ModuleDeserializationException(message, exception);
             logger.error(EMPTY, moduleDeserializationException);

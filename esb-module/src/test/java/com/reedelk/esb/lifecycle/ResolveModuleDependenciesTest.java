@@ -180,7 +180,8 @@ class ResolveModuleDependenciesTest {
         Module module = step.run(aModule);
 
         // Then
-        assertModuleErrorStateWith(module, "Error de-serializing module with id=[23], name=[test], version=[1.0.0-SNAPSHOT], module file path=[file:/module/path].");
+        String expectedMessage = "Error de-serializing module with id=[23], name=[test], version=[1.0.0-SNAPSHOT], module file path=[file:/module/path]: Could not deserialize module";
+        assertModuleErrorStateWith(module, expectedMessage);
     }
 
     @Test

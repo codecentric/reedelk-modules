@@ -247,7 +247,8 @@ class BuildModuleTest {
         Module module = step.run(inputModule);
 
         // Then
-        assertModuleErrorStateWith(module, "Error de-serializing module with id=[232], name=[TestModule], version=[1.0.0-SNAPSHOT], module file path=[file://location/test].");
+        String expectedMessage = "Error de-serializing module with id=[232], name=[TestModule], version=[1.0.0-SNAPSHOT], module file path=[file://location/test]: JSON could not be parsed";
+        assertModuleErrorStateWith(module, expectedMessage);
     }
 
     @Test

@@ -165,9 +165,6 @@ class StopModuleAndReleaseReferencesTest {
     @Test
     void shouldTransitionToErrorStateWhenFlowIsStoppedAndExceptionThrown() {
         // Given
-        String expectedMessage1 = "Error stopping flow with id=[aabbccddee].";
-        String expectedMessage2 = "Error stopping flow with id=[ffghhiillmm].";
-
         Module inputModule = Module.builder()
                 .moduleId(moduleId)
                 .name(testModuleName)
@@ -180,14 +177,14 @@ class StopModuleAndReleaseReferencesTest {
         inputModule.stop(asList(flow1, flow2, flow3));
         inputModule.start(asList(flow1, flow2, flow3));
 
-        doThrow(new ESBException(expectedMessage1))
+        doThrow(new ESBException("Listener configuration is missing"))
                 .when(flow2)
                 .stopIfStarted();
         doReturn("aabbccddee")
                 .when(flow2)
                 .getFlowId();
 
-        doThrow(new ESBException(expectedMessage2))
+        doThrow(new ESBException("Client configuration was not provided"))
                 .when(flow3)
                 .stopIfStarted();
         doReturn("ffghhiillmm")
@@ -217,6 +214,9 @@ class StopModuleAndReleaseReferencesTest {
 
         Collection<Exception> errors = actualModule.errors();
         assertThat(errors).hasSize(2);
+
+        String expectedMessage1 = "Error stopping flow with id=[aabbccddee]: Listener configuration is missing";
+        String expectedMessage2 = "Error stopping flow with id=[ffghhiillmm]: Client configuration was not provided";
 
         assertThatExistExceptionWithMessage(errors, expectedMessage1);
         assertThatExistExceptionWithMessage(errors, expectedMessage2);

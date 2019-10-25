@@ -1,6 +1,7 @@
 package com.reedelk.esb.commons;
 
 import com.reedelk.esb.flow.Flow;
+import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.commons.JsonParser;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -13,13 +14,10 @@ public class Log {
 
     public static void buildException(Logger logger, JSONObject flowDefinition, String flowId, Exception exception) {
         if (logger.isErrorEnabled()) {
-            String message;
-            if (JsonParser.Flow.hasTitle(flowDefinition)) {
-                String flowTitle = JsonParser.Flow.title(flowDefinition);
-                message = BUILD_ERROR_WITH_TITLE.format(flowId, flowTitle);
-            } else {
-                message = BUILD_ERROR.format(flowId);
-            }
+            String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
+            String message = JsonParser.Flow.hasTitle(flowDefinition) ?
+                    BUILD_ERROR_WITH_TITLE.format(flowId, JsonParser.Flow.title(flowDefinition), rootCauseMessage) :
+                    BUILD_ERROR.format(flowId, rootCauseMessage);
             logger.error(message, exception);
         }
     }
@@ -37,8 +35,9 @@ public class Log {
 
     public static void flowForceStopException(Logger logger, Flow flow, Exception exception) {
         if (logger.isWarnEnabled()) {
+            String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
             String message = flow.getFlowTitle()
-                    .map(flowTitle -> FORCE_STOP_WITH_TITLE.format(flow.getFlowId(), flowTitle))
+                    .map(flowTitle -> FORCE_STOP_WITH_TITLE.format(flow.getFlowId(), flowTitle, rootCauseMessage))
                     .orElse(FORCE_STOP.format(flow.getFlowId()));
             logger.warn(message, exception);
         }

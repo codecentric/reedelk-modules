@@ -3,7 +3,6 @@ package com.reedelk.esb.lifecycle;
 import com.reedelk.esb.commons.Messages;
 import com.reedelk.esb.exception.FlowValidationException;
 import com.reedelk.esb.module.Module;
-import com.reedelk.runtime.api.commons.StringUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.reedelk.runtime.api.commons.StringUtils.EMPTY;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static com.reedelk.runtime.commons.JsonParser.*;
 
@@ -44,7 +44,7 @@ public class ValidateModule extends AbstractStep<Module, Module> {
 
             // If there is any error, the module transition to ERROR state.
             if (!errors.isEmpty()) {
-                errors.forEach(exception -> logger.error(StringUtils.EMPTY, exception));
+                errors.forEach(exception -> logger.error(EMPTY, exception));
                 module.error(errors);
             }
 

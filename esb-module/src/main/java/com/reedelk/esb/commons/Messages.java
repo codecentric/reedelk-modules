@@ -14,16 +14,16 @@ public class Messages {
     }
 
     public enum Flow implements FormattedMessage {
-        FORCE_STOP("Error forcing stop flow with id=[%s]."),
-        FORCE_STOP_WITH_TITLE("Error forcing stop flow with id=[%s] and title '%s'."),
+        FORCE_STOP("Error forcing stop flow with id=[%s]: %s"),
+        FORCE_STOP_WITH_TITLE("Error forcing stop flow with id=[%s] and title '%s': %s"),
         START("Flow with id=[%s] started."),
         START_WITH_TITLE("Flow with id=[%s] and title '%s' started."),
-        START_ERROR("Error starting flow with id=[%s]."),
-        START_ERROR_WITH_TITLE("Error starting flow with id=[%s] and title '%s'."),
-        STOP_ERROR("Error stopping flow with id=[%s]."),
-        STOP_ERROR_WITH_TITLE("Error stopping flow with id=[%s] and title '%s'."),
-        BUILD_ERROR("Error building flow with id=[%s]."),
-        BUILD_ERROR_WITH_TITLE("Error building flow with id=[%s] and title '%s'."),
+        START_ERROR("Error starting flow with id=[%s]: %s"),
+        START_ERROR_WITH_TITLE("Error starting flow with id=[%s] and title '%s': %s"),
+        STOP_ERROR("Error stopping flow with id=[%s]: %s"),
+        STOP_ERROR_WITH_TITLE("Error stopping flow with id=[%s] and title '%s': %s"),
+        BUILD_ERROR("Error building flow with id=[%s]: %s"),
+        BUILD_ERROR_WITH_TITLE("Error building flow with id=[%s] and title '%s': %s"),
         VALIDATION_ID_NOT_UNIQUE("Error validating module with name=[%s]: There are at least two flows with the same ID. Flow IDs must be unique."),
         VALIDATION_ID_NOT_VALID("Error validating module with name=[%s]: The 'id' property must be defined and not empty in any JSON flow definition.");
 
@@ -75,7 +75,7 @@ public class Messages {
 
     public enum Module implements FormattedMessage {
 
-        DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s], version=[%s], module file path=[%s].");
+        DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s], version=[%s], module file path=[%s]: %s");
 
         private String msg;
 

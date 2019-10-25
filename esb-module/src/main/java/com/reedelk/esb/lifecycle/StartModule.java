@@ -6,6 +6,7 @@ import com.reedelk.esb.exception.FlowStartException;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.state.ModuleState;
+import com.reedelk.runtime.api.commons.StackTraceUtils;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +35,11 @@ public class StartModule extends AbstractStep<Module, Module> {
                 flow.start();
                 Log.flowStarted(logger, flow);
             } catch (Exception exception) {
+                String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
                 String message = flow.getFlowTitle()
-                        .map(flowTitle -> START_ERROR_WITH_TITLE.format(flow.getFlowId(), flowTitle))
-                        .orElse(START_ERROR.format(flow.getFlowId()));
+                        .map(flowTitle -> START_ERROR_WITH_TITLE.format(flow.getFlowId(), flowTitle, rootCauseMessage))
+                        .orElse(START_ERROR.format(flow.getFlowId(), rootCauseMessage));
+
                 FlowStartException startException = new FlowStartException(message, exception);
                 logger.error(EMPTY, startException);
 

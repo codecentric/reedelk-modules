@@ -200,6 +200,7 @@ class StartModuleTest {
         Collection<Exception> errors = errorsCaptor.getValue();
         assertThat(errors).hasSize(1);
 
-        assertThat(errors.iterator().next().getMessage()).isEqualTo("Error starting flow with id=[aabbccddee].");
+        String expectedErrorMessage = "Error starting flow with id=[aabbccddee]: error x.y.z while starting flow";
+        assertThat(errors.iterator().next().getMessage()).isEqualTo(expectedErrorMessage);
     }
 }
