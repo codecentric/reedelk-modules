@@ -18,14 +18,14 @@ var ModulesTableRenderer = (function() {
             var removeBtn = Template.ActionButton('Remove', 'fa-trash-alt', 'onRemove(\'' + name + '\',\'' + path + '\')', "btn-danger");
 
             var allColumns = 
-                Template.Column(status) + 
+                Template.Column(status, 'align-center') +
                 Template.Column(id) + 
                 Template.Column(name) + 
                 Template.Column(version) + 
                 Template.Column(path) + 
-                Template.Column(infoBtn) + 
-                Template.Column(updateBtn) + 
-                Template.Column(removeBtn);
+                Template.Column(infoBtn, 'align-right') +
+                Template.Column(updateBtn, 'align-center') +
+                Template.Column(removeBtn, 'align-left');
 
             var tableBody = $(table).find('tbody');
             tableBody.append(Template.Row(allColumns));
