@@ -89,6 +89,7 @@ class HttpRequestMessageMapperTest {
 
     private void assertThatContainsAttribute(Message message, String attributeName, Serializable attributeValue) {
         MessageAttributes attributes = message.getAttributes();
-        assertThat(attributes).containsEntry(attributeName, attributeValue);
+        Object actualAttributeValue = attributes.get(attributeName);
+        assertThat(actualAttributeValue).isEqualTo(attributeValue);
     }
 }

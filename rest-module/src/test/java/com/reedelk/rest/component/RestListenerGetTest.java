@@ -3,7 +3,6 @@ package com.reedelk.rest.component;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import com.reedelk.rest.configuration.listener.Response;
-import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageAttributes;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -17,10 +16,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static com.reedelk.rest.commons.RestMethod.GET;
 import static com.reedelk.rest.server.mapper.HttpRequestAttribute.*;
+import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static com.reedelk.runtime.api.commons.StringUtils.EMPTY;
 import static com.reedelk.runtime.api.message.content.MimeType.APPLICATION_JSON;
 import static com.reedelk.runtime.api.message.content.MimeType.UNKNOWN;
@@ -247,6 +249,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         assertThat(inboundMessageMimeType).isEqualTo(UNKNOWN);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void shouldCorrectlyMapHttpRequestToInboundMessageAttributes() throws IOException {
         // Given
@@ -271,18 +274,34 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         // Then
         MessageAttributes attributes = inboundMessage.getAttributes();
         assertThat(attributes).isNotNull();
-        assertThat(attributes.get(HEADERS)).isNotNull();
-        assertThat(attributes.get(MATCHING_PATH)).isEqualTo("/group/{groupId}");
-        assertThat(attributes.get(METHOD)).isEqualTo("GET");
-        assertThat(attributes.get(PATH_PARAMS)).isEqualTo(ImmutableMap.of("groupId", "managers"));
-        assertThat(attributes.get(QUERY_PARAMS)).isEqualTo(ImmutableMap.of("query1", singletonList("value1"), "query2", asList("value2", "value3")));
-        assertThat(attributes.get(QUERY_STRING)).isEqualTo("query1=value1&query2=value2&query2=value3");
-        assertThat(attributes.get(REQUEST_PATH)).isEqualTo("/api/internal/group/managers");
-        assertThat(attributes.get(REQUEST_URI)).isEqualTo("/api/internal/group/managers?query1=value1&query2=value2&query2=value3");
-        assertThat(attributes.get(SCHEME)).isEqualTo("http");
-        assertThat(attributes.get(VERSION)).isEqualTo("HTTP/1.1");
 
-        String remoteAddress = (String) attributes.get(REMOTE_ADDRESS);
+        assertThatAttributeIsEqualTo(attributes, HEADERS, headers -> {
+            Map<String, List<String>> headersMap = (Map<String, List<String>>) headers;
+            assertThat(headersMap).containsEntry("Accept-Encoding", Arrays.asList("gzip", "deflate"));
+            assertThat(headersMap).containsEntry("Connection", singletonList("Keep-Alive"));
+            assertThat(headersMap).containsEntry("Host", singletonList("localhost:8881"));
+        });
+        assertThatAttributeIsEqualTo(attributes, MATCHING_PATH, "/group/{groupId}");
+        assertThatAttributeIsEqualTo(attributes, METHOD, "GET");
+        assertThatAttributeIsEqualTo(attributes, PATH_PARAMS, new TreeMap<>(of("groupId", "managers")));
+        assertThatAttributeIsEqualTo(attributes, QUERY_PARAMS, new TreeMap<>(of("query1", singletonList("value1"), "query2", asList("value2", "value3"))));
+        assertThatAttributeIsEqualTo(attributes, QUERY_STRING, "query1=value1&query2=value2&query2=value3");
+        assertThatAttributeIsEqualTo(attributes, REQUEST_PATH, "/api/internal/group/managers");
+        assertThatAttributeIsEqualTo(attributes, REQUEST_URI, "/api/internal/group/managers?query1=value1&query2=value2&query2=value3");
+        assertThatAttributeIsEqualTo(attributes, SCHEME, "http");
+        assertThatAttributeIsEqualTo(attributes, VERSION, "HTTP/1.1");
+
+        String remoteAddress = attributes.get(REMOTE_ADDRESS);
         assertThat(remoteAddress).startsWith("/127.0.0.1");
+    }
+
+    private void assertThatAttributeIsEqualTo(MessageAttributes attributes, String attributeKey, Serializable expectedValue) {
+        assertThatAttributeIsEqualTo(attributes, attributeKey, attributeValue ->
+                assertThat(attributeValue).isEqualTo(expectedValue));
+    }
+
+    private void assertThatAttributeIsEqualTo(MessageAttributes attributes, String attributeKey, Consumer<Serializable> matcher) {
+        Serializable attributeValue = attributes.get(attributeKey);
+        matcher.accept(attributeValue);
     }
 }

@@ -25,7 +25,7 @@ public class ModuleRemove implements ProcessorSync {
     @Reference
     private SystemProperty systemProperty;
     @Reference
-    private ModuleService service;
+    private ModuleService moduleService;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -43,7 +43,7 @@ public class ModuleRemove implements ProcessorSync {
 
         String moduleFilePath = deleteRequest.getModuleFilePath();
 
-        long moduleId = service.uninstall(moduleFilePath);
+        long moduleId = moduleService.uninstall(moduleFilePath);
 
         // If module file path belongs to system modules
         String modulesDirectory = systemProperty.modulesDirectory();

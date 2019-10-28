@@ -13,6 +13,9 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -64,8 +67,11 @@ public class Scheduler extends AbstractInbound {
 
     private Runnable command() {
         return () -> {
-            SchedulerAttributes attributes = new SchedulerAttributes();
-            attributes.put(SchedulerAttribute.firedAt(), System.currentTimeMillis());
+
+            Map<String, Serializable> attributesMap = new HashMap<>();
+            attributesMap.put(SchedulerAttribute.firedAt(), System.currentTimeMillis());
+            SchedulerAttributes attributes = new SchedulerAttributes(attributesMap);
+
             Message emptyMessage = MessageBuilder.get()
                     .attributes(attributes)
                     .empty()

@@ -32,7 +32,7 @@ public class ModuleDeploy implements ProcessorSync {
     @Reference
     private SystemProperty systemProperty;
     @Reference
-    private ModuleService service;
+    private ModuleService moduleService;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -66,7 +66,7 @@ public class ModuleDeploy implements ProcessorSync {
             throw new ESBException(format("Could not build URL from file name '%s'", uploadFinalFileName), e);
         }
 
-        service.installOrUpdate(pathAsUri);
+        moduleService.installOrUpdate(pathAsUri);
 
         return MessageBuilder.get().build();
     }

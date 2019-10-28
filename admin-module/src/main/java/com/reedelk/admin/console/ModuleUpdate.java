@@ -19,7 +19,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class ModuleUpdate implements ProcessorSync {
 
     @Reference
-    private ModuleService service;
+    private ModuleService moduleService;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -35,7 +35,7 @@ public class ModuleUpdate implements ProcessorSync {
 
         ModulePUTReq putRequest = InternalAPI.Module.V1.PUT.Req.deserialize(json);
 
-        long moduleId = service.update(putRequest.getModuleFilePath());
+        long moduleId = moduleService.update(putRequest.getModuleFilePath());
 
         ModulePUTRes dto = new ModulePUTRes();
 

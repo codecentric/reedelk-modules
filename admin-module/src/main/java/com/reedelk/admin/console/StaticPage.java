@@ -33,7 +33,7 @@ public class StaticPage implements ProcessorSync {
 
         MessageAttributes messageAttributes = message.attributes();
 
-        Map<String, String> pathParams = (Map<String, String>) messageAttributes.get(MESSAGE_ATTRIBUTE_PATH_PARAMS);
+        Map<String, String> pathParams = messageAttributes.get(MESSAGE_ATTRIBUTE_PATH_PARAMS);
 
         String theRequestedPage = pathParams.get(PATH_PARAM_PAGE);
 

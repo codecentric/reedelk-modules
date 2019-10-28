@@ -25,7 +25,7 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class ModuleList implements ProcessorSync {
 
     @Reference
-    private ModuleService service;
+    private ModuleService moduleService;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -36,7 +36,7 @@ public class ModuleList implements ProcessorSync {
     }
 
     private String modules() {
-        ModulesDto modulesDto = service.modules();
+        ModulesDto modulesDto = moduleService.modules();
 
         List<ModuleGETRes> modulesDTOs = modulesDto.getModuleDtos()
                 .stream().map(module -> {

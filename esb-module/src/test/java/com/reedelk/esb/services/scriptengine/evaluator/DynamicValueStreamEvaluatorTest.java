@@ -1,11 +1,10 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
+import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.StringContent;
@@ -46,9 +45,9 @@ class DynamicValueStreamEvaluatorTest {
         @Test
         void shouldCorrectlyEvaluateMessageAttributeProperty() {
             // Given
-            Message message = MessageBuilder.get().text("this is a test").build();
-            message.getAttributes().put("property1", "test1");
-            DynamicString dynamicString = DynamicString.from("#[message.attributes.property1]");
+            MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of("property1", "test1"));
+            Message message = MessageBuilder.get().text("this is a test").attributes(attributes).build();
+            DynamicString dynamicString = DynamicString.from("#[message.attributes.pRoperty1]");
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, message, context);

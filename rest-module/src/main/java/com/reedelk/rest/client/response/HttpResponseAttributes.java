@@ -1,6 +1,12 @@
 package com.reedelk.rest.client.response;
 
-import com.reedelk.runtime.api.message.AbstractMessageAttributes;
+import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 
-public class HttpResponseAttributes extends AbstractMessageAttributes {
+import java.io.Serializable;
+import java.util.Map;
+
+public class HttpResponseAttributes extends DefaultMessageAttributes {
+    public HttpResponseAttributes(Map<String, Serializable> attributes) {
+        super(attributes);
+    }
 }

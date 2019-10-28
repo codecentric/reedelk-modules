@@ -1,6 +1,12 @@
 package com.reedelk.scheduler.component;
 
-import com.reedelk.runtime.api.message.AbstractMessageAttributes;
+import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 
-public class SchedulerAttributes extends AbstractMessageAttributes {
+import java.io.Serializable;
+import java.util.Map;
+
+public class SchedulerAttributes extends DefaultMessageAttributes {
+    public SchedulerAttributes(Map<String, Serializable> attributes) {
+        super(attributes);
+    }
 }

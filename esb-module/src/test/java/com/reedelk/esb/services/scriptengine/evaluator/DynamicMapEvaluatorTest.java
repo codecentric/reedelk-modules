@@ -1,9 +1,8 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
-import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.commons.ImmutableMap;
+import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicFloatMap;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicIntegerMap;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
@@ -35,11 +34,11 @@ class DynamicMapEvaluatorTest {
     @Test
     void shouldCorrectlyEvaluateMapWithScriptAndTextAndNumericValues() {
         // Given
-        Message message = MessageBuilder.get().text("test").build();
-        message.getAttributes().put("property1", "test");
+        MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of("property1", "test1"));
+        Message message = MessageBuilder.get().text("test").attributes(attributes).build();
 
         DynamicStringMap dynamicMap = DynamicStringMap.from(of(
-                "script", "#[message.attributes.property1]",
+                "script", "#[message.attributes.propErty1]",
                 "text", "This is a text",
                 "numeric", "23532"));
 
@@ -47,7 +46,7 @@ class DynamicMapEvaluatorTest {
         Map<String, String> evaluated = evaluator.evaluate(dynamicMap, message, context);
 
         // Then
-        assertThat(evaluated.get("script")).isEqualTo("test");
+        assertThat(evaluated.get("script")).isEqualTo("test1");
         assertThat(evaluated.get("text")).isEqualTo("This is a text");
         assertThat(evaluated.get("numeric")).isEqualTo("23532");
     }
