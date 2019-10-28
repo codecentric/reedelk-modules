@@ -10,6 +10,7 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import static com.reedelk.runtime.api.annotation.AutocompleteType.JSON_SCHEMA;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("JSON Mapper")
@@ -21,12 +22,12 @@ public class JsonMapper implements ProcessorSync {
 
     @File
     @Property("Input JSON schema")
-    @AutocompleteContext(name = "inputContext", type = AutocompleteType.JSON_SCHEMA)
+    @AutocompleteContext(name = "inputContext", type = JSON_SCHEMA)
     private String inputJsonSchema;
 
     @File
     @Property("Output JSON schema")
-    @AutocompleteContext(name = "outputContext", type = AutocompleteType.JSON_SCHEMA)
+    @AutocompleteContext(name = "outputContext", type = JSON_SCHEMA)
     private String outputJsonSchema;
 
     @Property("Mapping Script")
