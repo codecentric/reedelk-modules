@@ -12,22 +12,22 @@ import com.reedelk.runtime.system.api.ModuleService;
 import com.reedelk.runtime.system.api.SystemProperty;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.reedelk.runtime.commons.Preconditions.checkState;
+import static java.lang.String.format;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Module Deploy")
 @Component(service = ModuleDeploy.class, scope = PROTOTYPE)
 public class ModuleDeploy implements ProcessorSync {
 
-    private static final Logger logger = LoggerFactory.getLogger(ModuleDeploy.class);
+    // must match the name in the input type file in the 'deploy module form'
+    private static final String UPLOADED_MODULE_PART_NAME = "moduleFilePath";
+    private static final String ATTRIBUTE_FILE_NAME = "filename";
 
     @Reference
     private SystemProperty systemProperty;
@@ -37,33 +37,37 @@ public class ModuleDeploy implements ProcessorSync {
     @Override
     public Message apply(Message message, FlowContext flowContext) {
 
-        String modulesDirectory = systemProperty.modulesDirectory();
-
-        logger.info("Modules directory: " + modulesDirectory);
-
         Parts parts = message.payload();
-        Part part = parts.get("moduleFilePath");
 
-        // TODO: Check that part is not null
-        String jarFileName = part.getAttributes().get("filename");
+        checkState(parts.containsKey(UPLOADED_MODULE_PART_NAME), "Expected form upload part missing");
+
+        Part part = parts.get(UPLOADED_MODULE_PART_NAME);
+
+        checkState(part.getAttributes().containsKey(ATTRIBUTE_FILE_NAME),
+                "Attribute file name missing");
+
+        String jarFileName = part.getAttributes().get(ATTRIBUTE_FILE_NAME);
+
+        // We upload the file into the ESB 'modules' directory.
+        String uploadDirectory = systemProperty.modulesDirectory();
+
+        Path uploadFinalFileName = Paths.get(uploadDirectory, jarFileName);
+
         byte[] jarArchiveBytes = (byte[]) part.getContent().data();
 
-        Path finalName = Paths.get(modulesDirectory, jarFileName);
+        ByteArrayUtils.writeTo(uploadFinalFileName.toString(), jarArchiveBytes);
 
-        logger.info("Module file final name: " + finalName);
-
-        try (FileOutputStream fos = new FileOutputStream(finalName.toString())) {
-            fos.write(jarArchiveBytes);
-        } catch (IOException e) {
-            throw new ESBException(e);
-        }
-
+        String pathAsUri;
         try {
-            String pathAsUri = finalName.toUri().toURL().toString();
-            service.installOrUpdate(pathAsUri);
-            return MessageBuilder.get().build();
+
+            pathAsUri = uploadFinalFileName.toUri().toURL().toString();
+
         } catch (MalformedURLException e) {
-            throw new ESBException(e);
+            throw new ESBException(format("Could not build URL from file name '%s'", uploadFinalFileName), e);
         }
+
+        service.installOrUpdate(pathAsUri);
+
+        return MessageBuilder.get().build();
     }
 }

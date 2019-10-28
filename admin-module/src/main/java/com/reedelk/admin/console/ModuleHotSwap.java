@@ -20,6 +20,9 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = ModuleHotSwap.class, scope = PROTOTYPE)
 public class ModuleHotSwap implements ProcessorSync {
 
+    private static final int STATUS_NOT_FOUND = 404;
+    private static final String VAR_ERROR_RESPONSE_CODE_NAME = "errorResponseCode";
+
     @Reference
     private HotSwapService hotSwapService;
 
@@ -43,7 +46,7 @@ public class ModuleHotSwap implements ProcessorSync {
             // If we  tried to Hot swap a module which was
             // not installed in the runtime, we return
             // status code 'Not Found' - 404.
-            flowContext.setVariable("errorResponseCode", 404);
+            flowContext.setVariable(VAR_ERROR_RESPONSE_CODE_NAME, STATUS_NOT_FOUND);
             throw new ESBException(e);
         }
 
