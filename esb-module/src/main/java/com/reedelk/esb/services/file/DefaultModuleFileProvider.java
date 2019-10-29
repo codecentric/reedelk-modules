@@ -12,6 +12,7 @@ import com.reedelk.runtime.commons.FileUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
@@ -50,7 +51,7 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
 
             return FileUtils.ReadFromURL.asBytes(resources.nextElement());
 
-        } catch (Exception exception) {
+        } catch (IOException exception) {
             String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
             String message = Messages.Module.FILE_FIND_ERROR.format(
                     path,
