@@ -4,6 +4,7 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.*;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Implementor;
+import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.script.dynamicmap.*;
 import com.reedelk.runtime.api.script.dynamicvalue.*;
 import org.json.JSONArray;
@@ -1239,6 +1240,25 @@ class ComponentDefinitionDeserializerTest {
         }
     }
 
+    @Nested
+    @DisplayName("Module ID object tests")
+    class ModuleIdTests {
+
+        @Test
+        void shouldCorrectlySetModuleIdProperty() {
+            // Given
+            doReturn((ModuleId) () -> 234L).when(context).instantiateModuleId();
+
+            // When
+            TestComponentWithModuleIdProperty component =
+                    buildModuleIdComponent("stringProperty", "my test string");
+
+            // Then
+            assertThat(component.getModuleId().get()).isEqualTo(234L);
+            assertThat(component.getStringProperty()).isEqualTo("my test string");
+        }
+    }
+
     private TestComponent buildComponentWith(String propertyName, Object propertyValue) {
         JSONObject definition = componentDefinitionWith(propertyName, propertyValue, TestComponent.class);
         TestComponent implementor = new TestComponent();
@@ -1263,6 +1283,13 @@ class ComponentDefinitionDeserializerTest {
     private TestComponentWithCollectionProperties buildCollectionComponentWith(String propertyName, Object propertyValue) {
         JSONObject definition = componentDefinitionWith(propertyName, propertyValue, TestComponentWithCollectionProperties.class);
         TestComponentWithCollectionProperties implementor = new TestComponentWithCollectionProperties();
+        deserializer.deserialize(definition, implementor);
+        return implementor;
+    }
+
+    private TestComponentWithModuleIdProperty buildModuleIdComponent(String propertyName, Object propertyValue) {
+        JSONObject definition = componentDefinitionWith(propertyName, propertyValue, TestComponentWithModuleIdProperty.class);
+        TestComponentWithModuleIdProperty implementor = new TestComponentWithModuleIdProperty();
         deserializer.deserialize(definition, implementor);
         return implementor;
     }

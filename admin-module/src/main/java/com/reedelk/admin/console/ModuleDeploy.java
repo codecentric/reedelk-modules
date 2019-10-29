@@ -1,6 +1,7 @@
 package com.reedelk.admin.console;
 
 import com.reedelk.runtime.api.annotation.ESBComponent;
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -17,6 +18,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.reedelk.runtime.commons.Preconditions.checkArgument;
 import static com.reedelk.runtime.commons.Preconditions.checkState;
 import static java.lang.String.format;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -47,6 +49,8 @@ public class ModuleDeploy implements ProcessorSync {
                 "Attribute file name missing");
 
         String jarFileName = part.getAttributes().get(ATTRIBUTE_FILE_NAME);
+
+        checkArgument(StringUtils.isNotBlank(jarFileName), "Please specify a not empty Module file path.");
 
         // We upload the file into the ESB 'modules' directory.
         String uploadDirectory = systemProperty.modulesDirectory();

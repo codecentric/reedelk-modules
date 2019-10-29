@@ -1,77 +1,113 @@
+let IndexController = (function () {
 
-function deployModule(formData) {
-    $.ajax({
-        url: Constants.ModuleDeployApiPath,
-        data: formData,
-        processData: false,
-        contentType: false,
-        type: 'POST',
-        success: function (data) {
-            console.log('successss');
-            toastr.success('Module deployed');
+    const REFRESH_WAIT = 1000; // ms
 
-            setTimeout(function() {
-                $("#deployed-modules tbody tr").remove();
-                listModules();
-            }, 1000);
+    let listModules = function () {
+        $.get(Constants.ModuleApiPath, function (data) {
+            Utilities.SortByModuleName(data.modules);
+            ModulesTableRenderer.Render(data.modules);
+        });
+    };
 
-        },
-        error: function (data) {
-            toastr.error('Module could not be deployed');
-        },
-        complete: function () {
-            console.log('complete');
-        }
-    });
-}
+    let deployModule = function (formData) {
+        $.ajax({
+            url: Constants.ModuleDeployApiPath,
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (response) {
 
-function listModules() {
-    $.get(Constants.ModuleApiPath, function (data) {
-        Utilities.SortByModuleName(data.modules);
-        ModulesTableRenderer.Render(data.modules);
-    });
-}
+                Messages.Success('Module deployed');
 
-function updateModule(moduleName, moduleFilePath) {
-    var body = JSON.stringify({ moduleFilePath: moduleFilePath});
-    $.ajax({
-        url: Constants.ModuleApiPath,
-        type: 'PUT',
-        contentType: "application/json",
-        data: body,
-        success: function(result) {
-            toastr.success('Module "' + moduleName + '" updated');
+                clearTableBody();
+                showSpinner();
 
-            setTimeout(function() {
-                $("#deployed-modules tbody tr").remove();
-                listModules();
-            }, 1000);
+                setTimeout(function () {
+                    clearTableBody();
+                    listModules();
+                }, REFRESH_WAIT);
 
-        },
-        error: function(result) {
-            toastr.error('Module "' + moduleName + '" could not be updated');
-        }
-    });
-}
+            },
+            error: function (error) {
+                Messages.Error('Module could not be deployed: ' + error.responseText);
+            }
+        });
+    };
 
-function removeModule(moduleName, moduleFilePath) {
-    var body = JSON.stringify({ moduleFilePath: moduleFilePath});
-    $.ajax({
-        url: Constants.ModuleApiPath,
-        type: 'DELETE',
-        contentType: "application/json",
-        data: body,
-        success: function(result) {
-            toastr.success('Module "' + moduleName + '" removed');
+    let updateModule = function (moduleName, moduleFilePath) {
+        let body = JSON.stringify({moduleFilePath: moduleFilePath});
+        $.ajax({
+            url: Constants.ModuleApiPath,
+            type: 'PUT',
+            contentType: "application/json",
+            data: body,
+            success: function (result) {
 
-            setTimeout(function() {
-                $("#deployed-modules tbody tr").remove();
-                listModules();
-            }, 1000);
+                Messages.Success('Module "' + moduleName + '" updated');
 
-        },
-        error: function(result) {
-            toastr.error('Module "' + moduleName + '" could not be removed');
-        }
-    });
-}
+                clearTableBody();
+                showSpinner();
+
+                setTimeout(function () {
+                    clearTableBody();
+                    listModules();
+                }, REFRESH_WAIT);
+
+            },
+            error: function (error) {
+                Messages.Error('Module "' + moduleName + '" could not be updated: ' + error.responseText);
+            }
+        });
+    };
+
+    let removeModule = function (moduleName, moduleFilePath) {
+        let body = JSON.stringify({moduleFilePath: moduleFilePath});
+        $.ajax({
+            url: Constants.ModuleApiPath,
+            type: 'DELETE',
+            contentType: "application/json",
+            data: body,
+            success: function (result) {
+
+                Messages.Success('Module "' + moduleName + '" removed');
+
+                clearTableBody();
+                showSpinner();
+
+                setTimeout(function () {
+                    clearTableBody();
+                    listModules();
+                }, REFRESH_WAIT);
+
+            },
+            error: function (error) {
+                Messages.Error('Module "' + moduleName + '" could not be removed: ' + error.responseText);
+            }
+        });
+    };
+
+    let clearTableBody = function () {
+        $("#deployed-modules tbody tr").remove();
+    };
+
+    let showSpinner = function () {
+        let table = document.getElementById("deployed-modules");
+        let tableBody = $(table).find('tbody');
+        let content = Template.Row(Template.Column('<p class="refreshing-list">' + Template.Bold('Updating modules &hellip;') + '</p>', '', 8));
+        tableBody.append(content);
+    };
+
+    return {
+
+        ListModules: listModules,
+
+        DeployModule: deployModule,
+
+        UpdateModule: updateModule,
+
+        RemoveModule: removeModule
+
+    }
+
+})();

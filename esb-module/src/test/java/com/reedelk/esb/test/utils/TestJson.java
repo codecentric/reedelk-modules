@@ -65,7 +65,7 @@ public enum TestJson {
 
     public JSONObject parse() {
         URL url = url();
-        String flowAsJson = FileUtils.readFrom(url);
+        String flowAsJson = FileUtils.ReadFromURL.asString(url);
         return JsonParser.from(flowAsJson);
     }
 }

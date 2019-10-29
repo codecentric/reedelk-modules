@@ -38,7 +38,7 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
 
     private Set<JSONObject> objectsWithRoot(List<URL> resourcesURL, String rootPropertyName) {
         return resourcesURL.stream()
-                .map(FileUtils::readFrom)
+                .map(FileUtils.ReadFromURL::asString)
                 .map(JsonParser::from)
                 .filter(object -> object.has(rootPropertyName))
                 .collect(toSet());
@@ -47,7 +47,7 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
     private Collection<JSONObject> getConfigurations() {
         List<URL> resourcesURL = getResources(Config.RESOURCE_DIRECTORY, FLOW_CONFIG.value());
         return resourcesURL.stream()
-                .map(FileUtils::readFrom)
+                .map(FileUtils.ReadFromURL::asString)
                 .map(JsonParser::from)
                 .collect(toSet());
     }

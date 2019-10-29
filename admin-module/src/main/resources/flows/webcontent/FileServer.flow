@@ -20,8 +20,16 @@
       }
     },
     {
-      "implementor": "com.reedelk.admin.console.StaticPage",
-      "description": "Load static page"
+      "implementor": "com.reedelk.core.component.flow.SetVariable",
+      "description": "Set 'targetPage' equal to the path param of the request URI",
+      "name": "targetPage",
+      "mimeType": "text/plain",
+      "value": "#['/webapp/' + message.attributes.pathParams.page]"
+    },
+    {
+      "implementor": "com.reedelk.runtime.component.FlowReference",
+      "description": "Flow Reference",
+      "ref": "9463ee4a-cf94-47f5-bc33-ae22c112f8e7"
     }
   ]
 }

@@ -1,0 +1,11 @@
+{
+  "id": "9463ee4a-cf94-47f5-bc33-ae22c112f8e7",
+  "title": "Read Local File",
+  "description": "Read Local File Subflow",
+  "subflow": [{
+    "implementor": "com.reedelk.core.component.filesystem.LocalFileReadComponent",
+    "description": "Local file read",
+    "fileName": "#[context.getVariable('targetPage')]",
+    "autoMimeType": true
+  }]
+}

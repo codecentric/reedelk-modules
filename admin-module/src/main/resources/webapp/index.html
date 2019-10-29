@@ -93,26 +93,27 @@
 <script src="/console/js/utilities.js"></script>
 <script src="/console/js/constants.js"></script>
 <script src="/console/js/html-templates.js"></script>
+<script src="/console/js/messages.js"></script>
 <script src="/console/js/deployment-controller.js"></script>
 <script src="/console/js/toastr.min.js"></script>
 
 <script>
 
-    listModules();
+    IndexController.ListModules();
 
     function onUpdate(moduleName, moduleFilePath) {
-        updateModule(moduleName, moduleFilePath);
+        IndexController.UpdateModule(moduleName, moduleFilePath);
     }
 
     function onRemove(moduleName, moduleFilePath) {
-        removeModule(moduleName, moduleFilePath);
+        IndexController.RemoveModule(moduleName, moduleFilePath);
     }
 
-    var formElem = document.getElementById('deployModuleForm');
+    let formElem = document.getElementById('deployModuleForm');
     formElem.onsubmit = function (e) {
         e.preventDefault();
-        var formData = new FormData(formElem);
-        deployModule(formData);
+        let formData = new FormData(formElem);
+        IndexController.DeployModule(formData);
     };
 
 </script>

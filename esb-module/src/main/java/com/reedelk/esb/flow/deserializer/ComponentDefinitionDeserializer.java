@@ -4,8 +4,10 @@ import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.commons.CollectionFactory;
 import com.reedelk.runtime.commons.JsonParser;
+import com.reedelk.runtime.commons.ReflectionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,11 +15,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 
+import static com.reedelk.esb.commons.Messages.Deserializer.CONFIGURATION_NOT_FOUND;
+import static com.reedelk.esb.commons.Messages.Deserializer.UNSUPPORTED_COLLECTION_TYPE;
 import static com.reedelk.esb.commons.Preconditions.checkArgument;
 import static com.reedelk.runtime.commons.JsonParser.Component;
 import static com.reedelk.runtime.commons.JsonParser.Config;
 import static com.reedelk.runtime.commons.ReflectionUtils.*;
-import static java.lang.String.format;
 
 public class ComponentDefinitionDeserializer {
 
@@ -41,6 +44,16 @@ public class ComponentDefinitionDeserializer {
                 setProperty(implementor, setter, deSerializedObject);
             });
         }
+
+        // If the implementor object has a setter of type ModuleId,
+        // we set an object containing the ModuleId of this module. This is needed
+        // because some services require the ID of the bundle to get some data such
+        // as the  ModuleFileProvider  in order to discover the files within the
+        // Module/resources folder.
+        getSetterByArgumentType(implementor, ModuleId.class).ifPresent(method -> {
+            ModuleId moduleId = context.instantiateModuleId();
+            ReflectionUtils.setProperty(implementor, method, moduleId);
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -55,7 +68,7 @@ public class ComponentDefinitionDeserializer {
             // Collection
         } else if (propertyValue instanceof JSONArray) {
             checkArgument(CollectionFactory.isSupported(setterArgument.getClazz()),
-                    format("Could not map property %s: not a supported collection type", propertyName));
+                    UNSUPPORTED_COLLECTION_TYPE.format(propertyName));
             return deserializeArray(componentDefinition, propertyName, setterArgument);
 
             // Enum
@@ -142,6 +155,6 @@ public class ComponentDefinitionDeserializer {
                 .stream()
                 .filter(referenceJsonObject -> reference.equals(Config.id(referenceJsonObject)))
                 .findFirst()
-                .orElseThrow(() -> new ESBException("Could not find configuration with id=[" + reference + "]"));
+                .orElseThrow(() -> new ESBException(CONFIGURATION_NOT_FOUND.format(reference)));
     }
 }

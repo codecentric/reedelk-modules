@@ -59,19 +59,20 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     <T extends ScriptBlock> String functionNameOf(T scriptBlock, FunctionDefinitionBuilder<T> functionDefinitionBuilder) {
         String valueUUID = scriptBlock.uuid();
         String functionName = uuidFunctionNameMap.get(valueUUID);
-        if (functionName == null) {
-            synchronized (this) {
-                if (!uuidFunctionNameMap.containsKey(valueUUID)) {
-                    functionName = FunctionName.from(valueUUID);
-                    String functionDefinition = functionDefinitionBuilder.from(functionName, scriptBlock);
+        if (functionName != null) return functionName;
 
-                    // pre-compile the function definition.
-                    scriptEngine.eval(functionDefinition);
-                    uuidFunctionNameMap.put(valueUUID, functionName);
-                }
-            }
+        synchronized (this) {
+            String currentFunctionName = uuidFunctionNameMap.get(valueUUID);
+            if (currentFunctionName != null) return currentFunctionName;
+
+            String computedFunctionName = FunctionName.from(valueUUID);
+            String functionDefinition = functionDefinitionBuilder.from(computedFunctionName, scriptBlock);
+
+            // pre-compile the function definition.
+            scriptEngine.eval(functionDefinition);
+            uuidFunctionNameMap.put(valueUUID, computedFunctionName);
+            return computedFunctionName;
         }
-        return functionName;
     }
 
     /**

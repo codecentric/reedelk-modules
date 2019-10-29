@@ -1,5 +1,8 @@
 var Template = (function() {
 
+	const Bold = ({text}) =>
+		`<b>${text}</b>`;
+
 	const Row = ({content}) => 
 		`<tr>${content}</tr>`;
 
@@ -70,7 +73,10 @@ var Template = (function() {
 
 		CollapseButton: function(text, icon, dataTarget, ariaControl) {
         	return [{ text:text, icon:icon, dataTarget:dataTarget, ariaControl:ariaControl }].map(CollapseButton).join('');
-    	}
+    	},
 
+		Bold: function(text) {
+  			return [{text:text}].map(Bold).join('');
+		}
 	}
 })();

@@ -110,3 +110,8 @@
 .btn { 
     margin-bottom:10px; 
 }
+
+.refreshing-list {
+    text-align: center;
+    font-size: 1.3em;
+}

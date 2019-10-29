@@ -75,11 +75,30 @@ public class Messages {
 
     public enum Module implements FormattedMessage {
 
-        DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s], version=[%s], module file path=[%s]: %s");
+        DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s], version=[%s], module file path=[%s]: %s"),
+        FILE_NOT_FOUND_ERROR("Error, could not find file=[%s] in module with id=[%d], name=[%s], version=[%s], module file path=[%s]."),
+        FILE_FIND_ERROR("Error, an error occurred while looking for file=[%s] in module with id=[%d], name=[%s], version=[%s], module file path=[%s]: %s");
 
         private String msg;
 
         Module(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+    }
+
+    public enum Deserializer implements FormattedMessage {
+
+        UNSUPPORTED_COLLECTION_TYPE("Error while mapping property=[%s]: not a supported collection type."),
+        CONFIGURATION_NOT_FOUND("Could not find configuration with id=[%s]");
+
+        private String msg;
+
+        Deserializer(String msg) {
             this.msg = msg;
         }
 

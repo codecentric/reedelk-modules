@@ -2,11 +2,13 @@ package com.reedelk.esb.services;
 
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.services.configuration.DefaultConfigurationService;
+import com.reedelk.esb.services.file.DefaultModuleFileProvider;
 import com.reedelk.esb.services.hotswap.DefaultHotSwapService;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
 import com.reedelk.esb.services.module.DefaultModuleService;
 import com.reedelk.esb.services.module.EventListener;
 import com.reedelk.esb.services.scriptengine.ScriptEngine;
+import com.reedelk.runtime.api.file.ModuleFileProvider;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import com.reedelk.runtime.system.api.HotSwapService;
@@ -53,6 +55,7 @@ public class ServicesManager {
         registerHotSwapService(context);
         registerConfigurationService(context);
         registerScriptEngineService(context);
+        registerModuleFileProviderService(context);
     }
 
     public void unregisterServices() {
@@ -65,6 +68,21 @@ public class ServicesManager {
 
     public ScriptEngine scriptEngineService() {
         return scriptEngineService;
+    }
+
+    private void registerConfigurationService(BundleContext context) {
+        configurationService = new DefaultConfigurationService(configurationAdmin, systemProperty);
+        configurationService.initialize();
+        ServiceRegistration<ConfigurationService> registration =
+                context.registerService(ConfigurationService.class, configurationService, NO_PROPERTIES);
+        registeredServices.add(registration);
+    }
+
+    private void registerScriptEngineService(BundleContext context) {
+        scriptEngineService = ScriptEngine.INSTANCE;
+        ServiceRegistration<ScriptEngineService> registration =
+                context.registerService(ScriptEngineService.class, scriptEngineService, NO_PROPERTIES);
+        registeredServices.add(registration);
     }
 
     private void registerHotSwapService(BundleContext context) {
@@ -81,18 +99,10 @@ public class ServicesManager {
         registeredServices.add(registration);
     }
 
-    private void registerConfigurationService(BundleContext context) {
-        configurationService = new DefaultConfigurationService(configurationAdmin, systemProperty);
-        configurationService.initialize();
-        ServiceRegistration<ConfigurationService> registration =
-                context.registerService(ConfigurationService.class, configurationService, NO_PROPERTIES);
-        registeredServices.add(registration);
-    }
-
-    private void registerScriptEngineService(BundleContext context) {
-        scriptEngineService = ScriptEngine.INSTANCE;
-        ServiceRegistration<ScriptEngineService> registration =
-                context.registerService(ScriptEngineService.class, scriptEngineService, NO_PROPERTIES);
+    private void registerModuleFileProviderService(BundleContext context) {
+        ModuleFileProvider service = new DefaultModuleFileProvider(context, modulesManager);
+        ServiceRegistration<ModuleFileProvider> registration =
+                context.registerService(ModuleFileProvider.class, service, NO_PROPERTIES);
         registeredServices.add(registration);
     }
 }
