@@ -34,7 +34,12 @@
             <version>${runtime.system.api.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.reedelk</groupId>
+            <artifactId>runtime-commons</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.reedelk</groupId>
             <artifactId>rest-module</artifactId>
@@ -87,5 +92,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>
