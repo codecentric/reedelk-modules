@@ -29,8 +29,8 @@ import java.util.Optional;
 import static com.reedelk.file.commons.Messages.FileWriteComponent.ERROR_CREATING_DIRECTORIES;
 
 @ESBComponent("File write")
-@Component(service = FileWriteComponent.class, scope = ServiceScope.PROTOTYPE)
-public class FileWriteComponent implements ProcessorAsync {
+@Component(service = FileWrite.class, scope = ServiceScope.PROTOTYPE)
+public class FileWrite implements ProcessorAsync {
 
     @Reference
     private ScriptEngineService scriptService;

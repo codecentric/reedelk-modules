@@ -1,10 +1,11 @@
 package com.reedelk.file.component;
 
 import com.reedelk.file.commons.MimeTypeParser;
-import com.reedelk.file.commons.PathAsURL;
-import com.reedelk.file.exception.FileNotFoundException;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
+import com.reedelk.runtime.api.file.ModuleFileProvider;
+import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -13,25 +14,29 @@ import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import com.reedelk.runtime.commons.StreamFromURL;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ServiceScope;
 import org.reactivestreams.Publisher;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_NOT_FOUND;
+import static com.reedelk.file.commons.Messages.ModuleFileReadComponent.FILE_NOT_FOUND;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
+import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("File read")
-@Component(service = FileReadComponent.class, scope = ServiceScope.PROTOTYPE)
-public class FileReadComponent implements ProcessorSync {
+@ESBComponent("Local file read")
+@Component(service = LocalFileRead.class, scope = PROTOTYPE)
+public class LocalFileRead implements ProcessorSync {
 
     @Reference
     private ScriptEngineService service;
+    @Reference
+    private ModuleFileProvider moduleFileProvider;
+
+    @Hidden
+    @Property("Module Id")
+    private ModuleId moduleId;
 
     @Property("File name")
     private DynamicString fileName;
@@ -57,29 +62,22 @@ public class FileReadComponent implements ProcessorSync {
 
         return evaluated.map(filePath -> {
 
-            MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);
+            MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);;
 
             Publisher<byte[]> contentAsStream;
 
             if (isBlank(basePath)) {
-
-                Path path = Paths.get(filePath);
-
-                contentAsStream = StreamFromURL.of(PathAsURL.from(path));
-
+                contentAsStream = moduleFileProvider.findBy(moduleId, filePath);
             } else {
-
-                Path path = Paths.get(basePath, filePath);
-
-                contentAsStream = StreamFromURL.of(PathAsURL.from(path));
-
+                String finalFilePath = Paths.get(basePath, filePath).toString();
+                contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath);
             }
 
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
             return MessageBuilder.get().typedContent(content).build();
 
-        }).orElseThrow(() -> new FileNotFoundException(FILE_NOT_FOUND.format(fileName.toString(), basePath)));
+        }).orElseThrow(() -> new ModuleFileNotFoundException(FILE_NOT_FOUND.format(fileName.toString(), basePath, moduleId.get())));
     }
 
     public void setMimeType(String mimeType) {
@@ -88,6 +86,10 @@ public class FileReadComponent implements ProcessorSync {
 
     public void setFileName(DynamicString fileName) {
         this.fileName = fileName;
+    }
+
+    public void setModuleId(ModuleId moduleId) {
+        this.moduleId = moduleId;
     }
 
     public void setAutoMimeType(boolean autoMimeType) {
