@@ -26,6 +26,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import static com.reedelk.file.commons.Messages.FileWriteComponent.ERROR_CREATING_DIRECTORIES;
+
 @ESBComponent("File write")
 @Component(service = FileWriteComponent.class, scope = ServiceScope.PROTOTYPE)
 public class FileWriteComponent implements ProcessorAsync {
@@ -42,7 +44,7 @@ public class FileWriteComponent implements ProcessorAsync {
     private WriteMode mode = WriteMode.OVERWRITE;
 
     @Property("Create directories")
-    private boolean createParentDirectory = false;
+    private boolean createParentDirectory;
 
 
     @Override
@@ -62,8 +64,9 @@ public class FileWriteComponent implements ProcessorAsync {
         if (createParentDirectory) {
             try {
                 Files.createDirectories(path.getParent());
-            } catch (IOException e) {
-                callback.onError(new ESBException(e), flowContext);
+            } catch (IOException exception) {
+                String errorMessage = ERROR_CREATING_DIRECTORIES.format(path.toString(), exception.getMessage());
+                callback.onError(new ESBException(errorMessage, exception), flowContext);
                 return;
             }
         }
@@ -100,12 +103,12 @@ public class FileWriteComponent implements ProcessorAsync {
                 }).subscribe();
     }
 
-    public void setFilePath(DynamicString filePath) {
-        this.filePath = filePath;
-    }
-
     public void setMode(WriteMode mode) {
         this.mode = mode;
+    }
+
+    public void setFilePath(DynamicString filePath) {
+        this.filePath = filePath;
     }
 
     public void setCreateParentDirectory(boolean createParentDirectory) {
@@ -121,6 +124,5 @@ public class FileWriteComponent implements ProcessorAsync {
             }
         }
     }
-
 }
 

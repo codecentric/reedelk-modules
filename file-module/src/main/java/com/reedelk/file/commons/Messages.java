@@ -44,4 +44,21 @@ public class Messages {
             return formatMessage(msg, args);
         }
     }
+
+    public enum FileWriteComponent implements FormattedMessage {
+
+        ERROR_CREATING_DIRECTORIES("Could not create directories for file path=[%s]: %s");
+
+        private String msg;
+
+        FileWriteComponent(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+
+    }
 }
