@@ -7,6 +7,7 @@ import com.reedelk.runtime.api.component.ProcessorAsync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
 import reactor.core.Exceptions;
@@ -32,10 +33,15 @@ public class FileWriteComponent implements ProcessorAsync {
 
     @Override
     public void apply(Message input, FlowContext flowContext, OnResult callback) {
+
+        TypedPublisher<?> originalStream = input.content().stream();
+        // We must convert this stream into a byte stream so that we can write it.
+
         Path path = Paths.get(uploadDirectory, UUID.randomUUID().toString() + "." + extension);
 
+        TypedPublisher<byte[]> stream = null;
 
-        Flux.from(Flux.just((byte[])input.getContent().data()))
+        Flux.from(Flux.from(stream))
                 .reduceWith(() -> {
                     try {
                         return Files.newOutputStream(path, WRITE, CREATE_NEW);

@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.commons.FunctionName;
-import com.reedelk.esb.services.scriptengine.converter.ValueConverterFactory;
+import com.reedelk.esb.services.converter.DefaultConverterService;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueErrorFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
@@ -46,12 +46,12 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         } else if (value instanceof TypedPublisher<?>) {
             // Value is a typed stream
             TypedPublisher<?> typedPublisher = (TypedPublisher<?>) value;
-            Object converted = ValueConverterFactory.convertTypedPublisher(typedPublisher, targetClazz);
+            Object converted = DefaultConverterService.INSTANCE.convert(typedPublisher, targetClazz);
             return provider.from(converted);
 
         } else {
             // Value is NOT a typed stream
-            Object converted = ValueConverterFactory.convert(value, value.getClass(), targetClazz);
+            Object converted = DefaultConverterService.INSTANCE.convert(value, targetClazz);
             return provider.from(converted);
         }
     }

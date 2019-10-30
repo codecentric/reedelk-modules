@@ -1,9 +1,11 @@
 package com.reedelk.esb.services.scriptengine.converter;
 
+import com.reedelk.esb.services.converter.DefaultConverterService;
 import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
+import com.reedelk.runtime.api.service.ConverterService;
 import com.reedelk.runtime.commons.ObjectToBytes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +21,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ValueConverterFactoryTest {
+class converterServiceTest {
+    
+    private ConverterService converterService = DefaultConverterService.INSTANCE;
 
     @Nested
     @DisplayName("Convert boolean from input to output class")
@@ -31,7 +35,7 @@ class ValueConverterFactoryTest {
             Boolean value = true;
 
             // When
-            byte[] actual = ValueConverterFactory.convert(value, byte[].class);
+            byte[] actual = converterService.convert(value, byte[].class);
 
             // Then
             assertThat(actual).isEqualTo(new byte[]{1});
@@ -43,7 +47,7 @@ class ValueConverterFactoryTest {
             Boolean value = false;
 
             // When
-            byte[] actual = ValueConverterFactory.convert(value, byte[].class);
+            byte[] actual = converterService.convert(value, byte[].class);
 
             // Then
             assertThat(actual).isEqualTo(new byte[]{0});
@@ -55,7 +59,7 @@ class ValueConverterFactoryTest {
             Boolean value = true;
 
             // When
-            Double actual = ValueConverterFactory.convert(value, Double.class);
+            Double actual = converterService.convert(value, Double.class);
 
             // Then
             assertThat(actual).isEqualTo(1d);
@@ -67,7 +71,7 @@ class ValueConverterFactoryTest {
             Boolean value = false;
 
             // When
-            Double actual = ValueConverterFactory.convert(value, Double.class);
+            Double actual = converterService.convert(value, Double.class);
 
             // Then
             assertThat(actual).isEqualTo(0d);
@@ -79,7 +83,7 @@ class ValueConverterFactoryTest {
             Boolean value = true;
 
             // When
-            Float actual = ValueConverterFactory.convert(value, Float.class);
+            Float actual = converterService.convert(value, Float.class);
 
             // Then
             assertThat(actual).isEqualTo(1f);
@@ -91,7 +95,7 @@ class ValueConverterFactoryTest {
             Boolean value = false;
 
             // When
-            Float actual = ValueConverterFactory.convert(value, Float.class);
+            Float actual = converterService.convert(value, Float.class);
 
             // Then
             assertThat(actual).isEqualTo(0f);
@@ -103,7 +107,7 @@ class ValueConverterFactoryTest {
             Boolean value = true;
 
             // When
-            Integer actual = ValueConverterFactory.convert(value, Integer.class);
+            Integer actual = converterService.convert(value, Integer.class);
 
             // Then
             assertThat(actual).isEqualTo(1);
@@ -115,7 +119,7 @@ class ValueConverterFactoryTest {
             Boolean value = false;
 
             // When
-            Integer actual = ValueConverterFactory.convert(value, Integer.class);
+            Integer actual = converterService.convert(value, Integer.class);
 
             // Then
             assertThat(actual).isEqualTo(0);
@@ -127,7 +131,7 @@ class ValueConverterFactoryTest {
             Boolean value = true;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isEqualTo("true");
@@ -139,7 +143,7 @@ class ValueConverterFactoryTest {
             Boolean value = false;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isEqualTo("false");
@@ -151,7 +155,7 @@ class ValueConverterFactoryTest {
             Boolean value = null;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(value).isNull();
@@ -163,7 +167,7 @@ class ValueConverterFactoryTest {
             boolean value = true;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isEqualTo("true");
@@ -180,7 +184,7 @@ class ValueConverterFactoryTest {
             byte[] value = "my test".getBytes();
 
             // When
-            String result = ValueConverterFactory.convert(value, String.class);
+            String result = converterService.convert(value, String.class);
 
             // Then
             assertThat(result).isEqualTo("my test");
@@ -192,7 +196,7 @@ class ValueConverterFactoryTest {
             byte[] value = null;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isNull();
@@ -209,7 +213,7 @@ class ValueConverterFactoryTest {
             Double value = 1d;
 
             // When
-            Boolean actual = ValueConverterFactory.convert(value, Boolean.class);
+            Boolean actual = converterService.convert(value, Boolean.class);
 
             // Then
             assertThat(actual).isTrue();
@@ -221,7 +225,7 @@ class ValueConverterFactoryTest {
             Double value = 0d;
 
             // When
-            Boolean actual = ValueConverterFactory.convert(value, Boolean.class);
+            Boolean actual = converterService.convert(value, Boolean.class);
 
             // Then
             assertThat(actual).isFalse();
@@ -233,7 +237,7 @@ class ValueConverterFactoryTest {
             Double value = 2342.234d;
 
             // When
-            byte[] actual = ValueConverterFactory.convert(value, byte[].class);
+            byte[] actual = converterService.convert(value, byte[].class);
 
             // Then
             assertThat(actual).isEqualTo(new byte[]{value.byteValue()});
@@ -245,7 +249,7 @@ class ValueConverterFactoryTest {
             Double value = 234.123d;
 
             // When
-            Float actual = ValueConverterFactory.convert(value, Float.class);
+            Float actual = converterService.convert(value, Float.class);
 
             // Then
             assertThat(actual).isEqualTo(value.floatValue());
@@ -257,7 +261,7 @@ class ValueConverterFactoryTest {
             Double value = 2812.23d;
 
             // When
-            Integer actual = ValueConverterFactory.convert(value, Integer.class);
+            Integer actual = converterService.convert(value, Integer.class);
 
             // Then
             assertThat(actual).isEqualTo(value.intValue());
@@ -269,7 +273,7 @@ class ValueConverterFactoryTest {
             Double value = 234.1234d;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isEqualTo(String.valueOf(value));
@@ -281,7 +285,7 @@ class ValueConverterFactoryTest {
             Double value = null;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isNull();
@@ -293,7 +297,7 @@ class ValueConverterFactoryTest {
             double value = 23.32d;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isEqualTo(String.valueOf(value));
@@ -310,7 +314,7 @@ class ValueConverterFactoryTest {
             ESBException testException = new ESBException("an error");
 
             // When
-            String result = ValueConverterFactory.convert(testException, ESBException.class, String.class);
+            String result = converterService.convert(testException, String.class);
 
             // Then
             assertThat(result).isEqualTo(StackTraceUtils.asString(testException));
@@ -322,7 +326,7 @@ class ValueConverterFactoryTest {
             ESBException testException = new ESBException("another error");
 
             // When
-            byte[] result = ValueConverterFactory.convert(testException, ESBException.class, byte[].class);
+            byte[] result = converterService.convert(testException, byte[].class);
 
             // Then
             assertThat(result).isEqualTo(StackTraceUtils.asByteArray(testException));
@@ -335,11 +339,11 @@ class ValueConverterFactoryTest {
 
             // When
             ESBException exception = Assertions.assertThrows(ESBException.class,
-                    () -> ValueConverterFactory.convert(input, DummyClazz.class, Integer.class));
+                    () -> converterService.convert(input, Integer.class));
 
             // Then
             assertThat(exception).isNotNull();
-            assertThat(exception).hasMessage("Converter for input=[com.reedelk.esb.services.scriptengine.converter.ValueConverterFactoryTest$DummyClazz] to output=[java.lang.Integer] not available");
+            assertThat(exception).hasMessage("Converter for input=[com.reedelk.esb.services.scriptengine.converter.converterServiceTest$DummyClazz] to output=[java.lang.Integer] not available");
         }
 
         @Test
@@ -348,7 +352,7 @@ class ValueConverterFactoryTest {
             Exception value = null;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isNull();
@@ -365,7 +369,7 @@ class ValueConverterFactoryTest {
             Float value = 1f;
 
             // When
-            Boolean actual = ValueConverterFactory.convert(value, Boolean.class);
+            Boolean actual = converterService.convert(value, Boolean.class);
 
             // Then
             assertThat(actual).isTrue();
@@ -377,7 +381,7 @@ class ValueConverterFactoryTest {
             Float value = 1f;
 
             // When
-            byte[] actual = ValueConverterFactory.convert(value, byte[].class);
+            byte[] actual = converterService.convert(value, byte[].class);
 
             // Then
             assertThat(actual).isEqualTo(new byte[]{value.byteValue()});
@@ -389,7 +393,7 @@ class ValueConverterFactoryTest {
             Float value = 234.234f;
 
             // When
-            Double actual = ValueConverterFactory.convert(value, Double.class);
+            Double actual = converterService.convert(value, Double.class);
 
             // Then
             assertThat(actual).isEqualTo(value.doubleValue());
@@ -401,7 +405,7 @@ class ValueConverterFactoryTest {
             Float value = 212.2348f;
 
             // When
-            Integer actual = ValueConverterFactory.convert(value, Integer.class);
+            Integer actual = converterService.convert(value, Integer.class);
 
             // Then
             assertThat(actual).isEqualTo(value.intValue());
@@ -413,7 +417,7 @@ class ValueConverterFactoryTest {
             Float value = 234.12f;
 
             // When
-            String actual  = ValueConverterFactory.convert(value, String.class);
+            String actual  = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isEqualTo(String.valueOf(value));
@@ -425,7 +429,7 @@ class ValueConverterFactoryTest {
             float value = 23.32f;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isEqualTo(String.valueOf(value));
@@ -442,7 +446,7 @@ class ValueConverterFactoryTest {
             Integer value = 1;
 
             // When
-            Boolean result = ValueConverterFactory.convert(value, Boolean.class);
+            Boolean result = converterService.convert(value, Boolean.class);
 
             // Then
             assertThat(result).isTrue();
@@ -454,7 +458,7 @@ class ValueConverterFactoryTest {
             Integer value = 234123;
 
             // When
-            byte[] result = ValueConverterFactory.convert(value, byte[].class);
+            byte[] result = converterService.convert(value, byte[].class);
 
             // Then
             assertThat(result).isEqualTo(new byte[]{value.byteValue()});
@@ -466,7 +470,7 @@ class ValueConverterFactoryTest {
             Integer value = 234;
 
             // When
-            Double result = ValueConverterFactory.convert(value, Double.class);
+            Double result = converterService.convert(value, Double.class);
 
             // Then
             assertThat(result).isEqualTo(value.doubleValue());
@@ -478,7 +482,7 @@ class ValueConverterFactoryTest {
             Integer value = 865;
 
             // When
-            Float result = ValueConverterFactory.convert(value, Float.class);
+            Float result = converterService.convert(value, Float.class);
 
             // Then
             assertThat(result).isEqualTo(value.floatValue());
@@ -490,7 +494,7 @@ class ValueConverterFactoryTest {
             Integer value = 234;
 
             // When
-            String result = ValueConverterFactory.convert(value, String.class);
+            String result = converterService.convert(value, String.class);
 
             // Then
             assertThat(result).isEqualTo("234");
@@ -502,7 +506,7 @@ class ValueConverterFactoryTest {
             int value = 23;
 
             // When
-            String actual = ValueConverterFactory.convert(value, String.class);
+            String actual = converterService.convert(value, String.class);
 
             // Then
             assertThat(actual).isEqualTo(String.valueOf(value));
@@ -519,7 +523,7 @@ class ValueConverterFactoryTest {
             String value = "true";
 
             // When
-            Boolean actual = ValueConverterFactory.convert(value, Boolean.class);
+            Boolean actual = converterService.convert(value, Boolean.class);
 
             // Then
             assertThat(actual).isTrue();
@@ -531,7 +535,7 @@ class ValueConverterFactoryTest {
             String value = "Test text value";
 
             // When
-            byte[] actual = ValueConverterFactory.convert(value, byte[].class);
+            byte[] actual = converterService.convert(value, byte[].class);
 
             // Then
             assertThat(actual).isEqualTo(value.getBytes());
@@ -543,7 +547,7 @@ class ValueConverterFactoryTest {
             String value = "234.21312";
 
             // When
-            Double actual = ValueConverterFactory.convert(value, Double.class);
+            Double actual = converterService.convert(value, Double.class);
 
             // Then
             assertThat(actual).isEqualTo(Double.parseDouble(value));
@@ -555,7 +559,7 @@ class ValueConverterFactoryTest {
             String value = "24.2341";
 
             // When
-            Float actual = ValueConverterFactory.convert(value, Float.class);
+            Float actual = converterService.convert(value, Float.class);
 
             // Then
             assertThat(actual).isEqualTo(Float.parseFloat(value));
@@ -567,7 +571,7 @@ class ValueConverterFactoryTest {
             String value = "234";
 
             // When
-            Integer actual = ValueConverterFactory.convert(value, Integer.class);
+            Integer actual = converterService.convert(value, Integer.class);
 
             // Then
             assertThat(actual).isEqualTo(Integer.parseInt(value));
@@ -579,7 +583,7 @@ class ValueConverterFactoryTest {
             String value = "Test text value";
 
             // When
-            String result = ValueConverterFactory.convert(value, String.class);
+            String result = converterService.convert(value, String.class);
 
             // Then
             assertThat(result).isEqualTo(value);
@@ -591,7 +595,7 @@ class ValueConverterFactoryTest {
             String value = null;
 
             // When
-            String result = ValueConverterFactory.convert(value, String.class);
+            String result = converterService.convert(value, String.class);
 
             // Then
             assertThat(result).isNull();
@@ -608,7 +612,7 @@ class ValueConverterFactoryTest {
             BigDecimal aBigDecimal = new BigDecimal(234);
 
             // When
-            Object result = ValueConverterFactory.convert(aBigDecimal, BigDecimal.class, Object.class);
+            Object result = converterService.convert(aBigDecimal, Object.class);
 
             // Then
             assertThat(result).isEqualTo(aBigDecimal);
@@ -620,7 +624,7 @@ class ValueConverterFactoryTest {
             Map<String,String> keysAndValues = ImmutableMap.of("key1", "value1", "key2", "value2");
 
             // When
-            String result = ValueConverterFactory.convert(keysAndValues, String.class);
+            String result = converterService.convert(keysAndValues, String.class);
 
             // Then
             assertThat(result).isEqualTo(keysAndValues.toString());
@@ -632,7 +636,7 @@ class ValueConverterFactoryTest {
             MyTestClazz value = new MyTestClazz(23,"test");
 
             // When
-            byte[] result = ValueConverterFactory.convert(value, byte[].class);
+            byte[] result = converterService.convert(value, byte[].class);
 
             // Then
             assertThat(result).isEqualTo(ObjectToBytes.from(value));
@@ -650,7 +654,7 @@ class ValueConverterFactoryTest {
 
             // When
             TypedPublisher<Integer> converted =
-                    ValueConverterFactory.convertTypedPublisher(input, Integer.class);
+                    converterService.convert(input, Integer.class);
 
             // Then
             StepVerifier.create(converted)
@@ -665,7 +669,7 @@ class ValueConverterFactoryTest {
 
             // When
             TypedPublisher<Object> converted =
-                    ValueConverterFactory.convertTypedPublisher(input, Object.class);
+                    converterService.convert(input, Object.class);
 
             // Then
             StepVerifier.create(converted)
@@ -681,7 +685,7 @@ class ValueConverterFactoryTest {
 
             // When
             Publisher<Integer> converted =
-                    ValueConverterFactory.convertTypedPublisher(input, Integer.class);
+                    converterService.convert(input, Integer.class);
 
             // Then
             StepVerifier.create(converted)
@@ -697,7 +701,7 @@ class ValueConverterFactoryTest {
 
             // When
             Publisher<Integer> converted =
-                    ValueConverterFactory.convertTypedPublisher(input, Integer.class);
+                    converterService.convert(input, Integer.class);
 
             // Then
             assertThat(converted).isNull();
@@ -710,7 +714,7 @@ class ValueConverterFactoryTest {
 
             // When
             TypedPublisher<Integer> result =
-                    ValueConverterFactory.convertTypedPublisher(input, Integer.class);
+                    converterService.convert(input, Integer.class);
 
             // Then
             assertThat(result).isEqualTo(input);
@@ -723,11 +727,11 @@ class ValueConverterFactoryTest {
 
             // When
             ESBException exception = Assertions.assertThrows(ESBException.class,
-                    () -> ValueConverterFactory.convertTypedPublisher(input, Integer.class));
+                    () -> converterService.convert(input, Integer.class));
 
             // Then
             assertThat(exception).isNotNull();
-            assertThat(exception).hasMessage("Converter for input=[com.reedelk.esb.services.scriptengine.converter.ValueConverterFactoryTest$DummyClazz] to output=[java.lang.Integer] not available");
+            assertThat(exception).hasMessage("Converter for input=[com.reedelk.esb.services.scriptengine.converter.converterServiceTest$DummyClazz] to output=[java.lang.Integer] not available");
         }
     }
 
@@ -737,7 +741,7 @@ class ValueConverterFactoryTest {
         BigInteger input = null;
 
         // When
-        Object actual = ValueConverterFactory.convert(input, BigInteger.class, Object.class);
+        Object actual = converterService.convert(input, Object.class);
 
         // Then
         assertThat(actual).isNull();

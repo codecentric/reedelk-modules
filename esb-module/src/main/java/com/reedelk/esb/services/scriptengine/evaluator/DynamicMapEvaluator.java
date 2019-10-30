@@ -1,6 +1,6 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
-import com.reedelk.esb.services.scriptengine.converter.ValueConverterFactory;
+import com.reedelk.esb.services.converter.DefaultConverterService;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicMapFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -34,7 +34,7 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
 
             // We map the values to the correct output value type
             evaluatedMap.forEach((key, value) -> {
-                T converted = ValueConverterFactory.convert(value, dynamicMap.getEvaluatedType());
+                T converted = DefaultConverterService.INSTANCE.convert(value, dynamicMap.getEvaluatedType());
                 evaluatedMap.put(key, converted);
             });
 
