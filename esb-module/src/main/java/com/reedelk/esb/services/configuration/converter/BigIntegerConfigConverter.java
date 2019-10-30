@@ -1,6 +1,5 @@
 package com.reedelk.esb.services.configuration.converter;
 
-import com.reedelk.runtime.api.exception.ConfigPropertyException;
 import com.reedelk.runtime.api.service.ConfigurationService;
 
 import java.math.BigInteger;
@@ -13,7 +12,7 @@ public class BigIntegerConfigConverter implements ConfigConverter<BigInteger> {
     }
 
     @Override
-    public BigInteger convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
+    public BigInteger convert(ConfigurationService configurationService, String pid, String key) {
         return configurationService.getBigIntegerFrom(pid, key);
     }
 }

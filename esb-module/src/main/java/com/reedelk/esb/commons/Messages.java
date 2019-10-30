@@ -14,6 +14,7 @@ public class Messages {
     }
 
     public enum Flow implements FormattedMessage {
+        EXECUTION_ERROR("An error has occurred while executing flow with id=[%s]: %s"),
         FORCE_STOP("Error forcing stop flow with id=[%s]: %s"),
         FORCE_STOP_WITH_TITLE("Error forcing stop flow with id=[%s] and title '%s': %s"),
         START("Flow with id=[%s] started."),

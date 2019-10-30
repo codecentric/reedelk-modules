@@ -6,6 +6,7 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Inbound;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
@@ -13,9 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+import static com.reedelk.esb.commons.Messages.Flow.EXECUTION_ERROR;
 import static com.reedelk.esb.commons.Preconditions.checkArgument;
 import static com.reedelk.esb.commons.Preconditions.checkState;
-import static java.lang.String.format;
 
 public class Flow implements InboundEventListener {
 
@@ -96,9 +97,9 @@ public class Flow implements InboundEventListener {
         try {
             executionEngine.onEvent(message, onResult);
         } catch (Exception exception) {
-            String errorMessage = format("Exception while executing Flow with id=[%s]", flowId);
-            logger.debug(errorMessage, exception);
-            throw exception;
+            String error = EXECUTION_ERROR.format(flowId, exception.getMessage());
+            logger.debug(error, exception);
+            throw new ESBException(error, exception);
         }
     }
 

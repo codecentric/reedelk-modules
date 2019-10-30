@@ -1,6 +1,5 @@
 package com.reedelk.esb.services.configuration.converter;
 
-import com.reedelk.runtime.api.exception.ConfigPropertyException;
 import com.reedelk.runtime.api.service.ConfigurationService;
 
 public class DoubleConfigConverter implements ConfigConverter<Double> {
@@ -11,7 +10,7 @@ public class DoubleConfigConverter implements ConfigConverter<Double> {
     }
 
     @Override
-    public Double convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
+    public Double convert(ConfigurationService configurationService, String pid, String key) {
         return configurationService.getDoubleFrom(pid, key);
     }
 }

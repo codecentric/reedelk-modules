@@ -48,7 +48,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public String getStringFrom(String configPID, String configKey) throws ConfigPropertyException {
+    public String getStringFrom(String configPID, String configKey) {
         return Optional.ofNullable(getStringSystemProperty(configKey))
                 .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_STRING));
     }
@@ -59,7 +59,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public String getString(String configKey) throws ConfigPropertyException {
+    public String getString(String configKey) {
         return getStringFrom(DEFAULT_CONFIG_FILE_PID, configKey);
     }
 
@@ -72,7 +72,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public int getIntFrom(String configPID, String configKey) throws ConfigPropertyException {
+    public int getIntFrom(String configPID, String configKey) {
         return Optional.ofNullable(getIntSystemProperty(configKey))
                 .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_INT));
     }
@@ -83,7 +83,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public int getInt(String configKey) throws ConfigPropertyException {
+    public int getInt(String configKey) {
         return getIntFrom(DEFAULT_CONFIG_FILE_PID,configKey);
     }
 
@@ -96,7 +96,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public long getLongFrom(String configPID, String configKey) throws ConfigPropertyException {
+    public long getLongFrom(String configPID, String configKey) {
         return Optional.ofNullable(getLongSystemProperty(configKey))
                 .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_LONG));
     }
@@ -107,7 +107,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public long getLong(String configKey) throws ConfigPropertyException {
+    public long getLong(String configKey) {
         return getLongFrom(DEFAULT_CONFIG_FILE_PID, configKey);
     }
 
@@ -120,7 +120,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public double getDoubleFrom(String configPID, String configKey) throws ConfigPropertyException {
+    public double getDoubleFrom(String configPID, String configKey) {
         return Optional.ofNullable(getDoubleSystemProperty(configKey))
                 .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_DOUBLE));
     }
@@ -131,7 +131,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public double getDouble(String configKey) throws ConfigPropertyException {
+    public double getDouble(String configKey) {
         return getDoubleFrom(DEFAULT_CONFIG_FILE_PID, configKey);
     }
 
@@ -144,7 +144,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public float getFloatFrom(String configPID, String configKey) throws ConfigPropertyException {
+    public float getFloatFrom(String configPID, String configKey) {
         return Optional.ofNullable(getFloatSystemProperty(configKey))
                 .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_FLOAT));
     }
@@ -155,7 +155,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public float getFloat(String configKey) throws ConfigPropertyException {
+    public float getFloat(String configKey) {
         return getFloatFrom(DEFAULT_CONFIG_FILE_PID, configKey);
     }
 
@@ -168,7 +168,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public boolean getBooleanFrom(String configPID, String configKey) throws ConfigPropertyException {
+    public boolean getBooleanFrom(String configPID, String configKey) {
         return Optional.ofNullable(getBooleanSystemProperty(configKey))
                 .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_BOOLEAN));
     }
@@ -179,7 +179,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public boolean getBoolean(String configKey) throws ConfigPropertyException {
+    public boolean getBoolean(String configKey) {
         return getBooleanFrom(DEFAULT_CONFIG_FILE_PID, configKey);
     }
 
@@ -192,7 +192,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public BigDecimal getBigDecimalFrom(String configPID, String configKey) throws ConfigPropertyException {
+    public BigDecimal getBigDecimalFrom(String configPID, String configKey) {
         return Optional.ofNullable(getBigDecimalSystemProperty(configKey))
                 .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_BIG_DECIMAL));
     }
@@ -203,7 +203,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public BigDecimal getBigDecimal(String configKey) throws ConfigPropertyException {
+    public BigDecimal getBigDecimal(String configKey) {
         return getBigDecimalFrom(DEFAULT_CONFIG_FILE_PID, configKey);
     }
 
@@ -216,7 +216,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public BigInteger getBigIntegerFrom(String configPID, String configKey) throws ConfigPropertyException {
+    public BigInteger getBigIntegerFrom(String configPID, String configKey) {
         return Optional.ofNullable(getBigIntegerSystemProperty(configKey))
                 .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_BIG_INTEGER));
     }
@@ -227,7 +227,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public BigInteger getBigInteger(String configKey) throws ConfigPropertyException {
+    public BigInteger getBigInteger(String configKey) {
         return getBigIntegerFrom(DEFAULT_CONFIG_FILE_PID, configKey);
     }
 
@@ -242,7 +242,7 @@ public class DefaultConfigurationService implements ConfigurationService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getFrom(String configPID, String configKey, Class<T> type) throws ConfigPropertyException {
+    public <T> T getFrom(String configPID, String configKey, Class<T> type) {
         if (MAP.containsKey(type)) {
             return (T) MAP.get(type).convert(this, configPID, configKey);
         }
@@ -255,7 +255,7 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
-    public <T> T get(String configKey, Class<T> type) throws ConfigPropertyException {
+    public <T> T get(String configKey, Class<T> type) {
         return getFrom(DEFAULT_CONFIG_FILE_PID, configKey, type);
     }
 

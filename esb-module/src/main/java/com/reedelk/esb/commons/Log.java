@@ -10,6 +10,9 @@ import static com.reedelk.esb.commons.Messages.Flow.*;
 
 public class Log {
 
+    private Log() {
+    }
+
     // Flow JSON definition
 
     public static void buildException(Logger logger, JSONObject flowDefinition, String flowId, Exception exception) {

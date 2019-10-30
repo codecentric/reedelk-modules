@@ -1,6 +1,5 @@
 package com.reedelk.esb.services.configuration.converter;
 
-import com.reedelk.runtime.api.exception.ConfigPropertyException;
 import com.reedelk.runtime.api.service.ConfigurationService;
 
 public class IntegerConfigConverter implements ConfigConverter<Integer> {
@@ -11,7 +10,7 @@ public class IntegerConfigConverter implements ConfigConverter<Integer> {
     }
 
     @Override
-    public Integer convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
+    public Integer convert(ConfigurationService configurationService, String pid, String key) {
         return configurationService.getIntFrom(pid, key);
     }
 }
