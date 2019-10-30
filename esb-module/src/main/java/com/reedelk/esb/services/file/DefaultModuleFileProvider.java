@@ -39,7 +39,7 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
         try {
             Enumeration<URL> resources = bundle.getResources(path);
 
-            if (!resources.hasMoreElements()) {
+            if (resources == null || !resources.hasMoreElements()) {
                 // The file at the given path was not found in the Module bundle.
                 String message = Messages.Module.FILE_NOT_FOUND_ERROR.format(
                         path,

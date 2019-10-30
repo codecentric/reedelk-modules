@@ -110,6 +110,25 @@ class DefaultModuleFileProviderTest {
     }
 
     @Test
+    void shouldThrowFileNotFoundExceptionWhenResourcesAreNull() throws IOException {
+        // Given
+        String resource = "/tests/sample.txt";
+        ModuleId moduleId = () -> testModuleId;
+
+        doReturn(bundle).when(context).getBundle(testModuleId);
+        doReturn(module).when(modulesManager).getModuleById(testModuleId);
+
+        doReturn(null).when(bundle).getResources(resource);
+
+        // When
+        ModuleFileNotFoundException thrown = assertThrows(ModuleFileNotFoundException.class,
+                () -> fileProvider.findBy(moduleId, resource));
+
+        assertThat(thrown)
+                .hasMessage("Error, could not find file=[/tests/sample.txt] in module with id=[234], name=[test-module], version=[1.0.0-SNAPSHOT], module file path=[/users/user/test-module-1.0.0-SNAPSHOT.jar].");
+    }
+
+    @Test
     void shouldThrowExceptionWhenErrorWhileReadingDataFromBundle() throws IOException {
         // Given
         String resource = "/tests/sample.txt";
