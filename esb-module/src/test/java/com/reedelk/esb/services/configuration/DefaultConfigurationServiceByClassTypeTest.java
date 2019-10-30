@@ -130,7 +130,7 @@ class DefaultConfigurationServiceByClassTypeTest extends BaseDefaultConfiguratio
                         () -> service.get(TEST_CONFIG_KEY, String.class));
 
         // Then
-        assertThat(thrown).hasMessage("Could not find config property with key='name.endpoint'.");
+        assertThat(thrown).hasMessage("Could not find config property with key=[name.endpoint].");
     }
 
     @Test
@@ -141,6 +141,6 @@ class DefaultConfigurationServiceByClassTypeTest extends BaseDefaultConfiguratio
                         () -> service.get(TEST_CONFIG_KEY, Number.class));
 
         // Then
-        assertThat(thrown).hasMessage("Unsupported conversion. Could not convert config property with key='name.endpoint' for config pid='configuration' to type='java.lang.Number'.");
+        assertThat(thrown).hasMessage("Unsupported conversion. Could not convert config property with key=[name.endpoint] for config pid=[configuration] to type=[java.lang.Number].");
     }
 }

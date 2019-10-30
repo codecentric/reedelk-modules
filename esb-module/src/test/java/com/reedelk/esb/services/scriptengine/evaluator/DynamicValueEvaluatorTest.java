@@ -2,7 +2,6 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.runtime.api.commons.ImmutableMap;
-import com.reedelk.runtime.api.commons.ObjectToBytes;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.*;
@@ -11,6 +10,7 @@ import com.reedelk.runtime.api.message.content.ObjectContent;
 import com.reedelk.runtime.api.message.content.StringContent;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.script.dynamicvalue.*;
+import com.reedelk.runtime.commons.ObjectToBytes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

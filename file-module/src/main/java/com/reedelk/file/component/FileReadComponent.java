@@ -14,14 +14,12 @@ import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import com.reedelk.runtime.commons.FileUtils;
+import com.reedelk.runtime.commons.StreamFromURL;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -71,7 +69,7 @@ public class FileReadComponent implements ProcessorSync {
             if (StringUtils.isBlank(basePath)) {
 
                 try {
-                    contentAsStream = streamFromURL(Paths.get(filePath).toUri().toURL());
+                    contentAsStream = StreamFromURL.of(Paths.get(filePath).toUri().toURL());
                 } catch (MalformedURLException e) {
                     throw new ESBException(e);
                 }
@@ -80,7 +78,7 @@ public class FileReadComponent implements ProcessorSync {
 
                 try {
                     URL finalFilePath = Paths.get(basePath, filePath).toUri().toURL();
-                    contentAsStream = streamFromURL(finalFilePath);
+                    contentAsStream = StreamFromURL.of(finalFilePath);
                 } catch (MalformedURLException e) {
                     throw new ESBException(e);
                 }
@@ -107,24 +105,5 @@ public class FileReadComponent implements ProcessorSync {
 
     public void setBasePath(String basePath) {
         this.basePath = basePath;
-    }
-
-    private static final int FILE_READ_BUFFER_SIZE = 4096;
-
-    private static Publisher<byte[]> streamFromURL(URL target) {
-        return Flux.create(fluxSink -> {
-            try (InputStream inputStream = target.openStream()) {
-                byte[] byteChunk = new byte[FILE_READ_BUFFER_SIZE];
-                int n;
-                while ((n = inputStream.read(byteChunk)) > 0) {
-                    byte[] chunk = new byte[n];
-                    System.arraycopy(byteChunk, 0, chunk, 0, n);
-                    fluxSink.next(chunk);
-                }
-                fluxSink.complete();
-            } catch (IOException e) {
-                fluxSink.error(e);
-            }
-        });
     }
 }

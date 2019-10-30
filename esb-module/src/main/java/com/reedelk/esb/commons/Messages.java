@@ -107,4 +107,24 @@ public class Messages {
             return formatMessage(msg, args);
         }
     }
+
+    public enum ConfigProperty implements FormattedMessage {
+
+        NOT_FOUND_WITH_KEY_AND_PID_AND_DEFAULT("Could not find config property with key=[%s] for config pid=[%s], using defaultValue=[%s]."),
+        NOT_FOUND_WITH_KEY_AND_PID("Could not find config property with key=[%s] for config pid=[%s]."),
+        NOT_FOUND_WITH_KEY("Could not find config property with key=[%s]."),
+        UNSUPPORTED_CONVERSION("Unsupported conversion. Could not convert config property with key=[%s] for config pid=[%s] to type=[%s].");
+
+        private String msg;
+
+        ConfigProperty(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+
+    }
 }

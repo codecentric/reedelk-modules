@@ -1,6 +1,8 @@
 package com.reedelk.esb.services.configuration;
 
+import com.reedelk.esb.commons.Messages.ConfigProperty;
 import com.reedelk.esb.services.configuration.configurer.*;
+import com.reedelk.esb.services.configuration.converter.*;
 import com.reedelk.runtime.api.exception.ConfigPropertyException;
 import com.reedelk.runtime.api.script.dynamicvalue.*;
 import com.reedelk.runtime.api.service.ConfigurationService;
@@ -17,7 +19,6 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Function;
 
-import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
@@ -236,9 +237,7 @@ public class DefaultConfigurationService implements ConfigurationService {
         if (MAP.containsKey(type)) {
             return (T) MAP.get(type).convert(this, configPID, configKey, defaultValue);
         }
-        throw new ConfigPropertyException(
-                format("Unsupported conversion. Could not convert config property with key='%s' for config pid='%s' to type='%s'.",
-                        configKey, configPID, type.getName()));
+        throw new ConfigPropertyException(ConfigProperty.UNSUPPORTED_CONVERSION.format(configKey, configPID, type.getName()));
     }
 
     @Override
@@ -247,9 +246,7 @@ public class DefaultConfigurationService implements ConfigurationService {
         if (MAP.containsKey(type)) {
             return (T) MAP.get(type).convert(this, configPID, configKey);
         }
-        throw new ConfigPropertyException(
-                format("Unsupported conversion. Could not convert config property with key='%s' for config pid='%s' to type='%s'.",
-                        configKey, configPID, type.getName()));
+        throw new ConfigPropertyException(ConfigProperty.UNSUPPORTED_CONVERSION.format(configKey, configPID, type.getName()));
     }
 
     @Override
@@ -277,38 +274,45 @@ public class DefaultConfigurationService implements ConfigurationService {
     }
 
     Integer getIntSystemProperty(String key) {
-        return getStringSystemProperty(key) == null ?
-                null : Integer.valueOf(getStringSystemProperty(key));
+        return Optional.ofNullable(getStringSystemProperty(key))
+                .map(Integer::valueOf)
+                .orElse(null);
     }
 
     Long getLongSystemProperty(String key) {
-        return getStringSystemProperty(key) == null ?
-                null : Long.valueOf(getStringSystemProperty(key));
+        return Optional.ofNullable(getStringSystemProperty(key))
+                .map(Long::valueOf)
+                .orElse(null);
     }
 
     Double getDoubleSystemProperty(String key) {
-        return getStringSystemProperty(key) == null ?
-                null : Double.valueOf(getStringSystemProperty(key));
+        return Optional.ofNullable(getStringSystemProperty(key))
+                .map(Double::valueOf)
+                .orElse(null);
     }
 
     Float getFloatSystemProperty(String key) {
-        return getStringSystemProperty(key) == null ?
-                null : Float.valueOf(getStringSystemProperty(key));
+        return Optional.ofNullable(getStringSystemProperty(key))
+                .map(Float::valueOf)
+                .orElse(null);
     }
 
     BigDecimal getBigDecimalSystemProperty(String key) {
-        return getStringSystemProperty(key) == null ?
-                null : new BigDecimal(getStringSystemProperty(key));
+        return Optional.ofNullable(getStringSystemProperty(key))
+                .map(BigDecimal::new)
+                .orElse(null);
     }
 
     BigInteger getBigIntegerSystemProperty(String key) {
-        return getStringSystemProperty(key) == null ?
-                null : new BigInteger(getStringSystemProperty(key));
+        return Optional.ofNullable(getStringSystemProperty(key))
+                .map(BigInteger::new)
+                .orElse(null);
     }
 
     Boolean getBooleanSystemProperty(String key) {
-        return getStringSystemProperty(key) == null ?
-                null : Boolean.valueOf(getStringSystemProperty(key));
+        return Optional.ofNullable(getStringSystemProperty(key))
+                .map(Boolean::valueOf)
+                .orElse(null);
     }
 
     String getStringSystemProperty(String key) {
@@ -332,7 +336,7 @@ public class DefaultConfigurationService implements ConfigurationService {
             if (properties == null) return defaultValue;
             return getPropertyOrDefault(properties, configKey, defaultValue, mapper);
         } catch (IOException e) {
-            logger.warn("Could not find config property with key={} for config pid={}, using defaultValue={}", configKey, configPid, defaultValue);
+            logger.warn(ConfigProperty.NOT_FOUND_WITH_KEY_AND_PID_AND_DEFAULT.format(configKey, configPid, defaultValue));
             return defaultValue;
         }
     }
@@ -343,29 +347,29 @@ public class DefaultConfigurationService implements ConfigurationService {
             Dictionary<String, Object> properties = configuration.getProperties();
             return getPropertyOrThrow(properties, configKey, mapper);
         } catch (IOException e) {
-            throw new ConfigPropertyException(format("Could not find config property with key='%s' for config pid='%s'", configKey, configPid));
+            throw new ConfigPropertyException(ConfigProperty.NOT_FOUND_WITH_KEY_AND_PID.format(configKey, configPid));
         }
     }
 
     private <T> T getPropertyOrThrow(Dictionary<String, Object> dictionary, String configKey, Function<Object, T> mapper) {
         if (dictionary != null && list(dictionary.keys()).contains(configKey)) {
             return mapper.apply(dictionary.get(configKey));
-        } else {
-            throw new ConfigPropertyException(format("Could not find config property with key='%s'.", configKey));
         }
+        throw new ConfigPropertyException(ConfigProperty.NOT_FOUND_WITH_KEY.format(configKey));
     }
 
     private <T> T getPropertyOrDefault(Dictionary<String, Object> dictionary, String configKey, T defaultValue, Function<Object, T> mapper) {
-        if(list(dictionary.keys()).contains(configKey)) {
-            return mapper.apply(dictionary.get(configKey));
-        } else {
-            return defaultValue;
-        }
+        return list(dictionary.keys()).contains(configKey) ?
+                mapper.apply(dictionary.get(configKey)) :
+                defaultValue;
     }
 
     private static final Map<Class, ConfigConverter> MAP;
     static {
         Map<Class, ConfigConverter> tmp = new HashMap<>();
+
+        // primitives
+
         tmp.put(String.class, new StringConfigConverter());
         tmp.put(boolean.class, new BooleanConfigConverter());
         tmp.put(Boolean.class, new BooleanConfigConverter());
@@ -380,129 +384,26 @@ public class DefaultConfigurationService implements ConfigurationService {
         tmp.put(BigDecimal.class, new BigDecimalConfigConverter());
         tmp.put(BigInteger.class, new BigIntegerConfigConverter());
 
-        tmp.put(DynamicString.class, new StringConfigConverter());
-        tmp.put(DynamicBoolean.class, new BooleanConfigConverter());
-        tmp.put(DynamicInteger.class, new IntegerConfigConverter());
-        tmp.put(DynamicLong.class, new LongConfigConverter());
-        tmp.put(DynamicDouble.class, new DoubleConfigConverter());
-        tmp.put(DynamicFloat.class, new FloatConfigConverter());
-        tmp.put(DynamicBigDecimal.class, new BigDecimalConfigConverter());
-        tmp.put(DynamicBigInteger.class, new BigIntegerConfigConverter());
-        tmp.put(DynamicByteArray.class, new StringConfigConverter());
+        // dynamic types
 
-        MAP = tmp;
+        tmp.put(DynamicString.class, new DynamicStringConfigConverter());
+        tmp.put(DynamicBoolean.class, new DynamicBooleanConfigConverter());
+        tmp.put(DynamicInteger.class, new DynamicIntegerConfigConverter());
+        tmp.put(DynamicLong.class, new DynamicLongConfigConverter());
+        tmp.put(DynamicDouble.class, new DynamicDoubleConfigConverter());
+        tmp.put(DynamicFloat.class, new DynamicFloatConfigConverter());
+        tmp.put(DynamicBigDecimal.class, new DynamicBigDecimalConfigConverter());
+        tmp.put(DynamicBigInteger.class, new DynamicBigIntegerConfigConverter());
+
+        MAP = Collections.unmodifiableMap(tmp);
     }
 
     private static final Function<Object, String> TO_STRING = input -> (String) input;
-    private static final Function<Object, Long> TO_LONG = input -> input instanceof String ? Long.valueOf((String) input) : (Long) input;
+    private static final Function<Object, Boolean> TO_BOOLEAN = input -> input instanceof String ? Boolean.valueOf((String) input) : (Boolean) input;
     private static final Function<Object, Integer> TO_INT = input -> input instanceof String ? Integer.valueOf((String) input) : (Integer) input;
+    private static final Function<Object, Long> TO_LONG = input -> input instanceof String ? Long.valueOf((String) input) : (Long) input;
     private static final Function<Object, Double> TO_DOUBLE = input -> input instanceof String ? Double.valueOf((String) input) : (Double) input;
     private static final Function<Object, Float> TO_FLOAT = input -> input instanceof String ? Float.valueOf((String) input) : (Float) input;
     private static final Function<Object, BigDecimal> TO_BIG_DECIMAL = input -> input instanceof String ? new BigDecimal((String) input) : (BigDecimal) input;
     private static final Function<Object, BigInteger> TO_BIG_INTEGER = input -> input instanceof String ? new BigInteger((String) input) : (BigInteger) input;
-    private static final Function<Object, Boolean> TO_BOOLEAN = input -> input instanceof String ? Boolean.valueOf((String) input) : (Boolean) input;
-
-    private interface ConfigConverter<T> {
-
-        T convert(ConfigurationService configurationService, String pid, String key, T defaultValue);
-
-        T convert(ConfigurationService configurationService, String pid, String key);
-
-    }
-
-    private static class StringConfigConverter implements ConfigConverter<String> {
-        @Override
-        public String convert(ConfigurationService configurationService, String pid, String key, String defaultValue) {
-            return configurationService.getStringFrom(pid, key, defaultValue);
-        }
-
-        @Override
-        public String convert(ConfigurationService configurationService, String pid, String key) {
-            return configurationService.getStringFrom(pid, key);
-        }
-    }
-
-    private static class BooleanConfigConverter implements ConfigConverter<Boolean> {
-        @Override
-        public Boolean convert(ConfigurationService configurationService, String pid, String key, Boolean defaultValue) {
-            return configurationService.getBooleanFrom(pid, key, defaultValue);
-        }
-
-        @Override
-        public Boolean convert(ConfigurationService configurationService, String pid, String key) {
-            return configurationService.getBooleanFrom(pid, key);
-        }
-    }
-
-    private static class LongConfigConverter implements ConfigConverter<Long> {
-        @Override
-        public Long convert(ConfigurationService configurationService, String pid, String key, Long defaultValue) {
-            return configurationService.getLongFrom(pid, key, defaultValue);
-        }
-
-        @Override
-        public Long convert(ConfigurationService configurationService, String pid, String key) {
-            return configurationService.getLongFrom(pid, key);
-        }
-    }
-
-    private static class IntegerConfigConverter implements ConfigConverter<Integer> {
-        @Override
-        public Integer convert(ConfigurationService configurationService, String pid, String key, Integer defaultValue) {
-            return configurationService.getIntFrom(pid, key, defaultValue);
-        }
-
-        @Override
-        public Integer convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
-            return configurationService.getIntFrom(pid, key);
-        }
-    }
-
-    private static class DoubleConfigConverter implements ConfigConverter<Double> {
-        @Override
-        public Double convert(ConfigurationService configurationService, String pid, String key, Double defaultValue) {
-            return configurationService.getDoubleFrom(pid, key, defaultValue);
-        }
-
-        @Override
-        public Double convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
-            return configurationService.getDoubleFrom(pid, key);
-        }
-    }
-
-    private static class FloatConfigConverter implements ConfigConverter<Float> {
-        @Override
-        public Float convert(ConfigurationService configurationService, String pid, String key, Float defaultValue) {
-            return configurationService.getFloatFrom(pid, key, defaultValue);
-        }
-
-        @Override
-        public Float convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
-            return configurationService.getFloatFrom(pid, key);
-        }
-    }
-
-    private static class BigDecimalConfigConverter implements ConfigConverter<BigDecimal> {
-        @Override
-        public BigDecimal convert(ConfigurationService configurationService, String pid, String key, BigDecimal defaultValue) {
-            return configurationService.getBigDecimalFrom(pid, key, defaultValue);
-        }
-
-        @Override
-        public BigDecimal convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
-            return configurationService.getBigDecimalFrom(pid, key);
-        }
-    }
-
-    private static class BigIntegerConfigConverter implements ConfigConverter<BigInteger> {
-        @Override
-        public BigInteger convert(ConfigurationService configurationService, String pid, String key, BigInteger defaultValue) {
-            return configurationService.getBigIntegerFrom(pid, key, defaultValue);
-        }
-
-        @Override
-        public BigInteger convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
-            return configurationService.getBigIntegerFrom(pid, key);
-        }
-    }
 }
