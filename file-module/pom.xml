@@ -10,9 +10,9 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
+    <packaging>bundle</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <artifactId>file-module</artifactId>
-    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -53,5 +53,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>

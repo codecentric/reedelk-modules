@@ -84,7 +84,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -97,27 +96,19 @@
                         <Import-Package>
                             com.reedelk.runtime.api.*,
                             com.reedelk.runtime.system.api.*,
-
                             sun.misc,
-
                             javax.script,
                             javax.annotation,
                             javax.annotation.meta,
-
-                            org.json;version="[20180813.0,20180814)",
-
-                            org.osgi.framework;version="[1.8,2)",
-                            org.osgi.service.cm;version="[1.6,2)",
-
-                            org.slf4j;version="[1.7,2)",
-
-                            org.reactivestreams;version="[1.0,2)",
-
-                            reactor.core;version="[3.2,4)",
-                            reactor.core.publisher;version="[3.2,4)",
-                            reactor.core.scheduler;version="[3.2,4)",
-
-                            jdk.nashorn.api.scripting
+                            jdk.nashorn.api.scripting,
+                            org.json,
+                            org.osgi.framework,
+                            org.osgi.service.cm,
+                            org.slf4j,
+                            org.reactivestreams,
+                            reactor.core,
+                            reactor.core.publisher,
+                            reactor.core.scheduler
                         </Import-Package>
                     </instructions>
                 </configuration>
@@ -143,5 +134,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
