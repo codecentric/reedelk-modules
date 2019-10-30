@@ -20,7 +20,6 @@ public class TestComponent implements ProcessorSync {
     private Float floatObjectProperty;
     private boolean booleanProperty;
     private Boolean booleanObjectProperty;
-    private Number numberProperty;
     private BigDecimal bigDecimalProperty;
     private BigInteger bigIntegerProperty;
 
@@ -115,14 +114,6 @@ public class TestComponent implements ProcessorSync {
 
     public void setBooleanObjectProperty(Boolean booleanObjectProperty) {
         this.booleanObjectProperty = booleanObjectProperty;
-    }
-
-    public Number getNumberProperty() {
-        return numberProperty;
-    }
-
-    public void setNumberProperty(Number numberProperty) {
-        this.numberProperty = numberProperty;
     }
 
     public BigDecimal getBigDecimalProperty() {

@@ -6,7 +6,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -139,9 +138,9 @@ class DefaultConfigurationServiceByClassTypeTest extends BaseDefaultConfiguratio
         // Expect
         ConfigPropertyException thrown =
                 assertThrows(ConfigPropertyException.class,
-                        () -> service.get(TEST_CONFIG_KEY, BigDecimal.class));
+                        () -> service.get(TEST_CONFIG_KEY, Number.class));
 
         // Then
-        assertThat(thrown).hasMessage("Unsupported conversion. Could not convert config property with key='name.endpoint' for config pid='configuration' to type='java.math.BigDecimal'.");
+        assertThat(thrown).hasMessage("Unsupported conversion. Could not convert config property with key='name.endpoint' for config pid='configuration' to type='java.lang.Number'.");
     }
 }

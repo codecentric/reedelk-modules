@@ -18,7 +18,6 @@ public class TestComponentWithCollectionProperties implements ProcessorSync {
     private Collection<Double> myDoubleCollection;
     private Collection<String> myStringCollection;
     private Collection<Boolean> myBooleanCollection;
-    private Collection<Number> myNumberCollection;
     private Collection<BigInteger> myBigIntegerCollection;
     private Collection<BigDecimal> myBigDecimalCollection;
 
@@ -29,7 +28,6 @@ public class TestComponentWithCollectionProperties implements ProcessorSync {
     private List<Double> myDoubleList;
     private List<String> myStringList;
     private List<Boolean> myBooleanList;
-    private List<Number> myNumberList;
     private List<BigInteger> myBigIntegerList;
     private List<BigDecimal> myBigDecimalList;
 
@@ -39,7 +37,6 @@ public class TestComponentWithCollectionProperties implements ProcessorSync {
     private Set<Double> myDoubleSet;
     private Set<String> myStringSet;
     private Set<Boolean> myBooleanSet;
-    private Set<Number> myNumberSet;
     private Set<BigInteger> myBigIntegerSet;
     private Set<BigDecimal> myBigDecimalSet;
 
@@ -94,14 +91,6 @@ public class TestComponentWithCollectionProperties implements ProcessorSync {
 
     public void setMyBooleanCollection(Collection<Boolean> myBooleanCollection) {
         this.myBooleanCollection = myBooleanCollection;
-    }
-
-    public Collection<Number> getMyNumberCollection() {
-        return myNumberCollection;
-    }
-
-    public void setMyNumberCollection(Collection<Number> myNumberCollection) {
-        this.myNumberCollection = myNumberCollection;
     }
 
     public Collection<BigInteger> getMyBigIntegerCollection() {
@@ -168,14 +157,6 @@ public class TestComponentWithCollectionProperties implements ProcessorSync {
         this.myBooleanList = myBooleanList;
     }
 
-    public List<Number> getMyNumberList() {
-        return myNumberList;
-    }
-
-    public void setMyNumberList(List<Number> myNumberList) {
-        this.myNumberList = myNumberList;
-    }
-
     public List<BigInteger> getMyBigIntegerList() {
         return myBigIntegerList;
     }
@@ -238,14 +219,6 @@ public class TestComponentWithCollectionProperties implements ProcessorSync {
 
     public void setMyBooleanSet(Set<Boolean> myBooleanSet) {
         this.myBooleanSet = myBooleanSet;
-    }
-
-    public Set<Number> getMyNumberSet() {
-        return myNumberSet;
-    }
-
-    public void setMyNumberSet(Set<Number> myNumberSet) {
-        this.myNumberSet = myNumberSet;
     }
 
     public Set<BigInteger> getMyBigIntegerSet() {

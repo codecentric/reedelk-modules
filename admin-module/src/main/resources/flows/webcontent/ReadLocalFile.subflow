@@ -3,9 +3,10 @@
   "title": "Read Local File",
   "description": "Read Local File Subflow",
   "subflow": [{
-    "implementor": "com.reedelk.core.component.filesystem.LocalFileReadComponent",
+    "implementor": "com.reedelk.file.component.ModuleFileReadComponent",
     "description": "Local file read",
     "fileName": "#[context.getVariable('targetPage')]",
+    "basePath": "/webapp/",
     "autoMimeType": true
   }]
 }

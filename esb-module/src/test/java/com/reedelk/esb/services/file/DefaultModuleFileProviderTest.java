@@ -17,10 +17,13 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.reactivestreams.Publisher;
+import reactor.test.StepVerifier;
 
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 
@@ -59,7 +62,7 @@ class DefaultModuleFileProviderTest {
     }
 
     @Test
-    void shouldCorrectlyReturnFileBytes() throws IOException {
+    void shouldCorrectlyReturnFileBytes() throws IOException, InterruptedException {
         // Given
         String content = "my content";
         String tmpDirectory = TmpDir.get();
@@ -76,11 +79,14 @@ class DefaultModuleFileProviderTest {
         doReturn(fileURLs).when(bundle).getResources(resource);
 
         // When
-        byte[] data = fileProvider.findBy(moduleId, resource);
+        Publisher<byte[]> stream = fileProvider.findBy(moduleId, resource);
 
         // Then
-        assertThat(data).isEqualTo(content.getBytes());
+        StepVerifier.create(stream)
+                .expectNextMatches(bytes -> Arrays.equals(content.getBytes(), bytes))
+                .verifyComplete();
     }
+
 
     @Test
     void shouldThrowFileNotFoundException() throws IOException {

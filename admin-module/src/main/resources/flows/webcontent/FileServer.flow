@@ -24,7 +24,7 @@
       "description": "Set 'targetPage' equal to the path param of the request URI",
       "name": "targetPage",
       "mimeType": "text/plain",
-      "value": "#['/webapp/' + message.attributes.pathParams.page]"
+      "value": "#[message.attributes.pathParams.page]"
     },
     {
       "implementor": "com.reedelk.runtime.component.FlowReference",

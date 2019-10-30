@@ -21,9 +21,9 @@ import java.util.UUID;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.WRITE;
 
-@ESBComponent("WriteFile")
-@Component(service = WriteFile.class, scope = ServiceScope.PROTOTYPE)
-public class WriteFile implements ProcessorAsync {
+@ESBComponent("File write")
+@Component(service = FileWriteComponent.class, scope = ServiceScope.PROTOTYPE)
+public class FileWriteComponent implements ProcessorAsync {
 
     @Property("Upload directory")
     private String uploadDirectory;

@@ -8,17 +8,21 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
 import com.reedelk.runtime.api.file.ModuleFileProvider;
 import com.reedelk.runtime.api.file.ModuleId;
-import com.reedelk.runtime.commons.FileUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 
 import static com.reedelk.esb.commons.Preconditions.checkNotNull;
 
 public class DefaultModuleFileProvider implements ModuleFileProvider {
+
+    private static final int FILE_READ_BUFFER_SIZE = 4096;
 
     private final BundleContext context;
     private final ModulesManager modulesManager;
@@ -31,7 +35,7 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
     }
 
     @Override
-    public byte[] findBy(ModuleId moduleId, String path) {
+    public Publisher<byte[]> findBy(ModuleId moduleId, String path) {
         Bundle bundle = context.getBundle(moduleId.get());
         Module module = modulesManager.getModuleById(moduleId.get());
 
@@ -49,7 +53,8 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
                 throw new ModuleFileNotFoundException(message);
             }
 
-            return FileUtils.ReadFromURL.asBytes(resources.nextElement());
+            URL targetFileURL = resources.nextElement();
+            return streamFromURL(targetFileURL);
 
         } catch (IOException exception) {
             String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
@@ -62,5 +67,22 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
                     rootCauseMessage);
             throw new ESBException(message, exception);
         }
+    }
+
+    private static Publisher<byte[]> streamFromURL(URL target) {
+        return Flux.create(fluxSink -> {
+            try (InputStream inputStream = target.openStream()) {
+                byte[] byteChunk = new byte[FILE_READ_BUFFER_SIZE];
+                int n;
+                while ((n = inputStream.read(byteChunk)) > 0) {
+                    byte[] chunk = new byte[n];
+                    System.arraycopy(byteChunk, 0, chunk, 0, n);
+                    fluxSink.next(chunk);
+                }
+                fluxSink.complete();
+            } catch (IOException e) {
+                fluxSink.error(e);
+            }
+        });
     }
 }

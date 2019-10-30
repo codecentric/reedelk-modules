@@ -11,7 +11,6 @@ public class TestComponentWithDynamicMapProperty implements ProcessorSync {
     private DynamicFloatMap dynamicFloatMapProperty;
     private DynamicDoubleMap dynamicDoubleMapProperty;
     private DynamicStringMap dynamicStringMapProperty;
-    private DynamicNumberMap dynamicNumberMapProperty;
     private DynamicBooleanMap dynamicBooleanMapProperty;
     private DynamicIntegerMap dynamicIntegerMapProperty;
     private DynamicBigDecimalMap dynamicBigDecimalMapProperty;
@@ -52,14 +51,6 @@ public class TestComponentWithDynamicMapProperty implements ProcessorSync {
 
     public void setDynamicStringMapProperty(DynamicStringMap dynamicStringMapProperty) {
         this.dynamicStringMapProperty = dynamicStringMapProperty;
-    }
-
-    public DynamicNumberMap getDynamicNumberMapProperty() {
-        return dynamicNumberMapProperty;
-    }
-
-    public void setDynamicNumberMapProperty(DynamicNumberMap dynamicNumberMapProperty) {
-        this.dynamicNumberMapProperty = dynamicNumberMapProperty;
     }
 
     public DynamicBooleanMap getDynamicBooleanMapProperty() {

@@ -24,7 +24,7 @@
       "description": "Set file  as index.html",
       "name": "targetPage",
       "mimeType": "text/plain",
-      "value": "/webapp/index.html"
+      "value": "index.html"
     },
     {
       "implementor": "com.reedelk.runtime.component.FlowReference",

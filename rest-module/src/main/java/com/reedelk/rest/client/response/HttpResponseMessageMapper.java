@@ -3,7 +3,7 @@ package com.reedelk.rest.client.response;
 
 import com.reedelk.rest.commons.HttpHeadersAsMap;
 import com.reedelk.rest.commons.MimeTypeExtract;
-import com.reedelk.runtime.api.commons.TypedContentFromByteArrayStream;
+import com.reedelk.rest.commons.TypedContentFromByteArrayStream;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;

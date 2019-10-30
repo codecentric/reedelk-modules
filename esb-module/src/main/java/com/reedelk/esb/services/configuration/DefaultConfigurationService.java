@@ -2,6 +2,7 @@ package com.reedelk.esb.services.configuration;
 
 import com.reedelk.esb.services.configuration.configurer.*;
 import com.reedelk.runtime.api.exception.ConfigPropertyException;
+import com.reedelk.runtime.api.script.dynamicvalue.*;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.system.api.SystemProperty;
 import org.osgi.service.cm.Configuration;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Function;
 
@@ -107,6 +110,54 @@ public class DefaultConfigurationService implements ConfigurationService {
         return getLongFrom(DEFAULT_CONFIG_FILE_PID, configKey);
     }
 
+    // Double
+
+    @Override
+    public double getDoubleFrom(String configPID, String configKey, double defaultValue) {
+        return Optional.ofNullable(getDoubleSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminProperty(configPID, configKey, defaultValue, TO_DOUBLE));
+    }
+
+    @Override
+    public double getDoubleFrom(String configPID, String configKey) throws ConfigPropertyException {
+        return Optional.ofNullable(getDoubleSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_DOUBLE));
+    }
+
+    @Override
+    public double getDouble(String configKey, double defaultValue) {
+        return getDoubleFrom(DEFAULT_CONFIG_FILE_PID, configKey, defaultValue);
+    }
+
+    @Override
+    public double getDouble(String configKey) throws ConfigPropertyException {
+        return getDoubleFrom(DEFAULT_CONFIG_FILE_PID, configKey);
+    }
+
+    // Float
+
+    @Override
+    public float getFloatFrom(String configPID, String configKey, float defaultValue) {
+        return Optional.ofNullable(getFloatSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminProperty(configPID, configKey, defaultValue, TO_FLOAT));
+    }
+
+    @Override
+    public float getFloatFrom(String configPID, String configKey) throws ConfigPropertyException {
+        return Optional.ofNullable(getFloatSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_FLOAT));
+    }
+
+    @Override
+    public float getFloat(String configKey, float defaultValue) {
+        return getFloatFrom(DEFAULT_CONFIG_FILE_PID, configKey, defaultValue);
+    }
+
+    @Override
+    public float getFloat(String configKey) throws ConfigPropertyException {
+        return getFloatFrom(DEFAULT_CONFIG_FILE_PID, configKey);
+    }
+
     // Boolean
 
     @Override
@@ -129,6 +180,54 @@ public class DefaultConfigurationService implements ConfigurationService {
     @Override
     public boolean getBoolean(String configKey) throws ConfigPropertyException {
         return getBooleanFrom(DEFAULT_CONFIG_FILE_PID, configKey);
+    }
+
+    // BigDecimal
+
+    @Override
+    public BigDecimal getBigDecimalFrom(String configPID, String configKey, BigDecimal defaultValue) {
+        return Optional.ofNullable(getBigDecimalSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminProperty(configPID, configKey, defaultValue, TO_BIG_DECIMAL));
+    }
+
+    @Override
+    public BigDecimal getBigDecimalFrom(String configPID, String configKey) throws ConfigPropertyException {
+        return Optional.ofNullable(getBigDecimalSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_BIG_DECIMAL));
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(String configKey, BigDecimal defaultValue) {
+        return getBigDecimalFrom(DEFAULT_CONFIG_FILE_PID, configKey, defaultValue);
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(String configKey) throws ConfigPropertyException {
+        return getBigDecimalFrom(DEFAULT_CONFIG_FILE_PID, configKey);
+    }
+
+    // BigInteger
+
+    @Override
+    public BigInteger getBigIntegerFrom(String configPID, String configKey, BigInteger defaultValue) {
+        return Optional.ofNullable(getBigIntegerSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminProperty(configPID, configKey, defaultValue, TO_BIG_INTEGER));
+    }
+
+    @Override
+    public BigInteger getBigIntegerFrom(String configPID, String configKey) throws ConfigPropertyException {
+        return Optional.ofNullable(getBigIntegerSystemProperty(configKey))
+                .orElseGet(() -> getConfigAdminPropertyOrThrow(configPID, configKey, TO_BIG_INTEGER));
+    }
+
+    @Override
+    public BigInteger getBigInteger(String configKey, BigInteger defaultValue) {
+        return getBigIntegerFrom(DEFAULT_CONFIG_FILE_PID, configKey, defaultValue);
+    }
+
+    @Override
+    public BigInteger getBigInteger(String configKey) throws ConfigPropertyException {
+        return getBigIntegerFrom(DEFAULT_CONFIG_FILE_PID, configKey);
     }
 
     @Override
@@ -185,6 +284,26 @@ public class DefaultConfigurationService implements ConfigurationService {
     Long getLongSystemProperty(String key) {
         return getStringSystemProperty(key) == null ?
                 null : Long.valueOf(getStringSystemProperty(key));
+    }
+
+    Double getDoubleSystemProperty(String key) {
+        return getStringSystemProperty(key) == null ?
+                null : Double.valueOf(getStringSystemProperty(key));
+    }
+
+    Float getFloatSystemProperty(String key) {
+        return getStringSystemProperty(key) == null ?
+                null : Float.valueOf(getStringSystemProperty(key));
+    }
+
+    BigDecimal getBigDecimalSystemProperty(String key) {
+        return getStringSystemProperty(key) == null ?
+                null : new BigDecimal(getStringSystemProperty(key));
+    }
+
+    BigInteger getBigIntegerSystemProperty(String key) {
+        return getStringSystemProperty(key) == null ?
+                null : new BigInteger(getStringSystemProperty(key));
     }
 
     Boolean getBooleanSystemProperty(String key) {
@@ -248,18 +367,39 @@ public class DefaultConfigurationService implements ConfigurationService {
     static {
         Map<Class, ConfigConverter> tmp = new HashMap<>();
         tmp.put(String.class, new StringConfigConverter());
-        tmp.put(int.class, new IntegerConfigConverter());
-        tmp.put(Integer.class, new IntegerConfigConverter());
         tmp.put(boolean.class, new BooleanConfigConverter());
         tmp.put(Boolean.class, new BooleanConfigConverter());
+        tmp.put(int.class, new IntegerConfigConverter());
+        tmp.put(Integer.class, new IntegerConfigConverter());
         tmp.put(long.class, new LongConfigConverter());
         tmp.put(Long.class, new LongConfigConverter());
+        tmp.put(double.class, new DoubleConfigConverter());
+        tmp.put(Double.class, new DoubleConfigConverter());
+        tmp.put(float.class, new FloatConfigConverter());
+        tmp.put(Float.class, new FloatConfigConverter());
+        tmp.put(BigDecimal.class, new BigDecimalConfigConverter());
+        tmp.put(BigInteger.class, new BigIntegerConfigConverter());
+
+        tmp.put(DynamicString.class, new StringConfigConverter());
+        tmp.put(DynamicBoolean.class, new BooleanConfigConverter());
+        tmp.put(DynamicInteger.class, new IntegerConfigConverter());
+        tmp.put(DynamicLong.class, new LongConfigConverter());
+        tmp.put(DynamicDouble.class, new DoubleConfigConverter());
+        tmp.put(DynamicFloat.class, new FloatConfigConverter());
+        tmp.put(DynamicBigDecimal.class, new BigDecimalConfigConverter());
+        tmp.put(DynamicBigInteger.class, new BigIntegerConfigConverter());
+        tmp.put(DynamicByteArray.class, new StringConfigConverter());
+
         MAP = tmp;
     }
 
     private static final Function<Object, String> TO_STRING = input -> (String) input;
     private static final Function<Object, Long> TO_LONG = input -> input instanceof String ? Long.valueOf((String) input) : (Long) input;
     private static final Function<Object, Integer> TO_INT = input -> input instanceof String ? Integer.valueOf((String) input) : (Integer) input;
+    private static final Function<Object, Double> TO_DOUBLE = input -> input instanceof String ? Double.valueOf((String) input) : (Double) input;
+    private static final Function<Object, Float> TO_FLOAT = input -> input instanceof String ? Float.valueOf((String) input) : (Float) input;
+    private static final Function<Object, BigDecimal> TO_BIG_DECIMAL = input -> input instanceof String ? new BigDecimal((String) input) : (BigDecimal) input;
+    private static final Function<Object, BigInteger> TO_BIG_INTEGER = input -> input instanceof String ? new BigInteger((String) input) : (BigInteger) input;
     private static final Function<Object, Boolean> TO_BOOLEAN = input -> input instanceof String ? Boolean.valueOf((String) input) : (Boolean) input;
 
     private interface ConfigConverter<T> {
@@ -315,6 +455,54 @@ public class DefaultConfigurationService implements ConfigurationService {
         @Override
         public Integer convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
             return configurationService.getIntFrom(pid, key);
+        }
+    }
+
+    private static class DoubleConfigConverter implements ConfigConverter<Double> {
+        @Override
+        public Double convert(ConfigurationService configurationService, String pid, String key, Double defaultValue) {
+            return configurationService.getDoubleFrom(pid, key, defaultValue);
+        }
+
+        @Override
+        public Double convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
+            return configurationService.getDoubleFrom(pid, key);
+        }
+    }
+
+    private static class FloatConfigConverter implements ConfigConverter<Float> {
+        @Override
+        public Float convert(ConfigurationService configurationService, String pid, String key, Float defaultValue) {
+            return configurationService.getFloatFrom(pid, key, defaultValue);
+        }
+
+        @Override
+        public Float convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
+            return configurationService.getFloatFrom(pid, key);
+        }
+    }
+
+    private static class BigDecimalConfigConverter implements ConfigConverter<BigDecimal> {
+        @Override
+        public BigDecimal convert(ConfigurationService configurationService, String pid, String key, BigDecimal defaultValue) {
+            return configurationService.getBigDecimalFrom(pid, key, defaultValue);
+        }
+
+        @Override
+        public BigDecimal convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
+            return configurationService.getBigDecimalFrom(pid, key);
+        }
+    }
+
+    private static class BigIntegerConfigConverter implements ConfigConverter<BigInteger> {
+        @Override
+        public BigInteger convert(ConfigurationService configurationService, String pid, String key, BigInteger defaultValue) {
+            return configurationService.getBigIntegerFrom(pid, key, defaultValue);
+        }
+
+        @Override
+        public BigInteger convert(ConfigurationService configurationService, String pid, String key) throws ConfigPropertyException {
+            return configurationService.getBigIntegerFrom(pid, key);
         }
     }
 }

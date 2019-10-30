@@ -1,7 +1,9 @@
-package com.reedelk.core.component.filesystem;
+package com.reedelk.file.component;
 
 import com.reedelk.runtime.api.annotation.*;
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
 import com.reedelk.runtime.api.file.ModuleFileProvider;
 import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -15,14 +17,16 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import com.reedelk.runtime.commons.FileUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.reactivestreams.Publisher;
 
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Local file read")
-@Component(service = LocalFileReadComponent.class, scope = PROTOTYPE)
-public class LocalFileReadComponent implements ProcessorSync {
+@ESBComponent("Module file read")
+@Component(service = ModuleFileReadComponent.class, scope = PROTOTYPE)
+public class ModuleFileReadComponent implements ProcessorSync {
 
     @Reference
     private ScriptEngineService service;
@@ -35,6 +39,9 @@ public class LocalFileReadComponent implements ProcessorSync {
 
     @Property("File name")
     private DynamicString fileName;
+
+    @Property("Base path")
+    private String basePath;
 
     @Property("Auto mime type")
     @Default("true")
@@ -49,32 +56,33 @@ public class LocalFileReadComponent implements ProcessorSync {
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
+
         Optional<String> evaluated = service.evaluate(fileName, message, flowContext);
 
-        if (evaluated.isPresent()) {
-
-            String file = evaluated.get();
-
-            byte[] fileData = moduleFileProvider.findBy(moduleId, file);
+        return evaluated.map(filePath -> {
 
             MimeType actualMimeType;
 
             if (autoMimeType) {
-
-                String pageFileExtension = FileUtils.getExtension(file);
-
+                String pageFileExtension = FileUtils.getExtension(filePath);
                 actualMimeType = MimeType.fromFileExtension(pageFileExtension);
-
             } else {
                 actualMimeType = MimeType.parse(mimeType);
             }
 
-            TypedContent<byte[]> content = new ByteArrayContent(fileData, actualMimeType);
+            Publisher<byte[]> contentAsStream;
+            if (StringUtils.isBlank(basePath)) {
+                contentAsStream = moduleFileProvider.findBy(moduleId, filePath);
+            } else {
+                String finalFilePath = Paths.get(basePath, filePath).toString();
+                contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath);
+            }
+
+            TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
             return MessageBuilder.get().typedContent(content).build();
-        }
 
-        return MessageBuilder.get().empty().build();
+        }).orElseThrow(() -> new ModuleFileNotFoundException("Could not find file"));
     }
 
     public void setMimeType(String mimeType) {
@@ -91,5 +99,9 @@ public class LocalFileReadComponent implements ProcessorSync {
 
     public void setAutoMimeType(boolean autoMimeType) {
         this.autoMimeType = autoMimeType;
+    }
+
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
     }
 }

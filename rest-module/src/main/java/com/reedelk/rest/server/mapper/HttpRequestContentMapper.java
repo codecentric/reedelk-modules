@@ -1,6 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.runtime.api.commons.TypedContentFromByteArrayStream;
+import com.reedelk.rest.commons.TypedContentFromByteArrayStream;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import io.netty.buffer.ByteBuf;

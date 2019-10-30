@@ -264,25 +264,6 @@ class ComponentDefinitionDeserializerTest {
         }
 
         @Test
-        void shouldCorrectlySetNumberProperty() {
-            // Given
-            Object expectedValue = 24234.23;
-            TestComponent component = buildComponentWith("numberProperty", expectedValue);
-
-            // Then
-            assertThat(component.getNumberProperty()).isEqualTo(24234.23d);
-        }
-
-        @Test
-        void shouldCorrectlySetNullNumberProperty() {
-            // Given
-            TestComponent component = buildComponentWith("numberProperty", null);
-
-            // Then
-            assertThat(component.getNumberProperty()).isNull();
-        }
-
-        @Test
         void shouldCorrectlySetBigDecimalProperty() {
             // Given
             Object expectedValue = 2343;
@@ -405,19 +386,6 @@ class ComponentDefinitionDeserializerTest {
         }
 
         @Test
-        void shouldCorrectlySetNumberCollection() {
-            // Given
-            JSONArray array = newArray(234, 234.23f, 5.12324d);
-            TestComponentWithCollectionProperties component =
-                    buildCollectionComponentWith("myNumberCollection", array);
-
-            // Then
-            Collection<Number> collection = component.getMyNumberCollection();
-            assertAllItemsOfType(collection, Number.class);
-            assertThat(collection).containsExactlyInAnyOrder(234, 234.23f, 5.12324d);
-        }
-
-        @Test
         void shouldCorrectlySetBigIntegerCollection() {
             // Given
             JSONArray array = newArray(243234324, 77465);
@@ -525,19 +493,6 @@ class ComponentDefinitionDeserializerTest {
             List<Boolean> collection = component.getMyBooleanList();
             assertAllItemsOfType(collection, Boolean.class);
             assertThat(collection).containsExactlyInAnyOrder(true, false, true);
-        }
-
-        @Test
-        void shouldCorrectlySetNumberList() {
-            // Given
-            JSONArray array = newArray(234, 234.23f, 5.12324d);
-            TestComponentWithCollectionProperties component =
-                    buildCollectionComponentWith("myNumberList", array);
-
-            // Then
-            List<Number> collection = component.getMyNumberList();
-            assertAllItemsOfType(collection, Number.class);
-            assertThat(collection).containsExactlyInAnyOrder(234, 234.23f, 5.12324d);
         }
 
         @Test
@@ -649,19 +604,6 @@ class ComponentDefinitionDeserializerTest {
             Set<Boolean> collection = component.getMyBooleanSet();
             assertAllItemsOfType(collection, Boolean.class);
             assertThat(collection).containsExactlyInAnyOrder(true, false);
-        }
-
-        @Test
-        void shouldCorrectlySetNumberSet() {
-            // Given
-            JSONArray array = newArray(234, 234.23f, 5.12324d);
-            TestComponentWithCollectionProperties component =
-                    buildCollectionComponentWith("myNumberSet", array);
-
-            // Then
-            Set<Number> collection = component.getMyNumberSet();
-            assertAllItemsOfType(collection, Number.class);
-            assertThat(collection).containsExactlyInAnyOrder(234, 234.23f, 5.12324d);
         }
 
         @Test
@@ -1136,26 +1078,6 @@ class ComponentDefinitionDeserializerTest {
             assertThat(property).containsEntry("one", "one value");
             assertThat(property).containsEntry("two", "two value");
             assertThat(property).containsEntry("three", "#['three value']");
-            assertThat(property).hasSize(3);
-        }
-
-        @Test
-        void shouldCorrectlySetDynamicNumberMapProperty() {
-            // Given
-            JSONObject expectedValue = new JSONObject();
-            expectedValue.put("one", 54);
-            expectedValue.put("two", 1);
-            expectedValue.put("three", "#[23]");
-
-            // When
-            TestComponentWithDynamicMapProperty component =
-                    buildDynamicMapComponentWith("dynamicNumberMapProperty", expectedValue);
-
-            // Then
-            DynamicNumberMap property = component.getDynamicNumberMapProperty();
-            assertThat(property).containsEntry("one", 54);
-            assertThat(property).containsEntry("two", 1);
-            assertThat(property).containsEntry("three", "#[23]");
             assertThat(property).hasSize(3);
         }
 
