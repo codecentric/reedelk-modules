@@ -1,7 +1,7 @@
 package com.reedelk.file.component;
 
+import com.reedelk.file.commons.MimeTypeParser;
 import com.reedelk.runtime.api.annotation.*;
-import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
 import com.reedelk.runtime.api.file.ModuleFileProvider;
@@ -14,7 +14,6 @@ import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import com.reedelk.runtime.commons.FileUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.reactivestreams.Publisher;
@@ -22,6 +21,8 @@ import org.reactivestreams.Publisher;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import static com.reedelk.file.commons.Messages.ModuleFileReadComponent.FILE_NOT_FOUND;
+import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Module file read")
@@ -61,17 +62,11 @@ public class ModuleFileReadComponent implements ProcessorSync {
 
         return evaluated.map(filePath -> {
 
-            MimeType actualMimeType;
-
-            if (autoMimeType) {
-                String pageFileExtension = FileUtils.getExtension(filePath);
-                actualMimeType = MimeType.fromFileExtension(pageFileExtension);
-            } else {
-                actualMimeType = MimeType.parse(mimeType);
-            }
+            MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);;
 
             Publisher<byte[]> contentAsStream;
-            if (StringUtils.isBlank(basePath)) {
+
+            if (isBlank(basePath)) {
                 contentAsStream = moduleFileProvider.findBy(moduleId, filePath);
             } else {
                 String finalFilePath = Paths.get(basePath, filePath).toString();
@@ -82,7 +77,7 @@ public class ModuleFileReadComponent implements ProcessorSync {
 
             return MessageBuilder.get().typedContent(content).build();
 
-        }).orElseThrow(() -> new ModuleFileNotFoundException("Could not find file"));
+        }).orElseThrow(() -> new ModuleFileNotFoundException(FILE_NOT_FOUND.format(fileName.toString(), basePath, moduleId.get())));
     }
 
     public void setMimeType(String mimeType) {

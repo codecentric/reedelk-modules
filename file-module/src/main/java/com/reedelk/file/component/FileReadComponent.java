@@ -1,10 +1,10 @@
 package com.reedelk.file.component;
 
+import com.reedelk.file.commons.MimeTypeParser;
+import com.reedelk.file.commons.PathAsURL;
+import com.reedelk.file.exception.FileNotFoundException;
 import com.reedelk.runtime.api.annotation.*;
-import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -13,17 +13,18 @@ import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import com.reedelk.runtime.commons.FileUtils;
 import com.reedelk.runtime.commons.StreamFromURL;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 import org.reactivestreams.Publisher;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+
+import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_NOT_FOUND;
+import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 
 @ESBComponent("File read")
 @Component(service = FileReadComponent.class, scope = ServiceScope.PROTOTYPE)
@@ -56,39 +57,29 @@ public class FileReadComponent implements ProcessorSync {
 
         return evaluated.map(filePath -> {
 
-            MimeType actualMimeType;
-
-            if (autoMimeType) {
-                String pageFileExtension = FileUtils.getExtension(filePath);
-                actualMimeType = MimeType.fromFileExtension(pageFileExtension);
-            } else {
-                actualMimeType = MimeType.parse(mimeType);
-            }
+            MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);
 
             Publisher<byte[]> contentAsStream;
-            if (StringUtils.isBlank(basePath)) {
 
-                try {
-                    contentAsStream = StreamFromURL.of(Paths.get(filePath).toUri().toURL());
-                } catch (MalformedURLException e) {
-                    throw new ESBException(e);
-                }
+            if (isBlank(basePath)) {
+
+                Path path = Paths.get(filePath);
+
+                contentAsStream = StreamFromURL.of(PathAsURL.from(path));
 
             } else {
 
-                try {
-                    URL finalFilePath = Paths.get(basePath, filePath).toUri().toURL();
-                    contentAsStream = StreamFromURL.of(finalFilePath);
-                } catch (MalformedURLException e) {
-                    throw new ESBException(e);
-                }
+                Path path = Paths.get(basePath, filePath);
+
+                contentAsStream = StreamFromURL.of(PathAsURL.from(path));
+
             }
 
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
             return MessageBuilder.get().typedContent(content).build();
 
-        }).orElseThrow(() -> new ModuleFileNotFoundException("Could not find file"));
+        }).orElseThrow(() -> new FileNotFoundException(FILE_NOT_FOUND.format(fileName.toString(), basePath)));
     }
 
     public void setMimeType(String mimeType) {
