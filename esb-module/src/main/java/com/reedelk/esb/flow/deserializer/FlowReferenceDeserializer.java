@@ -13,9 +13,9 @@ import static com.reedelk.esb.commons.Preconditions.checkState;
 import static com.reedelk.runtime.commons.JsonParser.FlowReference;
 import static com.reedelk.runtime.commons.JsonParser.Subflow;
 
-class FlowReferenceComponentDeserializer extends AbstractDeserializer {
+class FlowReferenceDeserializer extends AbstractDeserializer {
 
-    FlowReferenceComponentDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
+    FlowReferenceDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
         super(graph, context);
     }
 

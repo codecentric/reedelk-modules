@@ -11,9 +11,9 @@ import org.json.JSONObject;
 import static com.reedelk.runtime.commons.JsonParser.Fork;
 import static com.reedelk.runtime.commons.JsonParser.Implementor;
 
-class ForkComponentDeserializer extends AbstractDeserializer {
+class ForkDeserializer extends AbstractDeserializer {
 
-    ForkComponentDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
+    ForkDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
         super(graph, context);
     }
 

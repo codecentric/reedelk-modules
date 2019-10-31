@@ -13,9 +13,9 @@ import org.json.JSONObject;
 import static com.reedelk.runtime.commons.JsonParser.Implementor;
 import static com.reedelk.runtime.commons.JsonParser.Router;
 
-class RouterComponentDeserializer extends AbstractDeserializer {
+class RouterDeserializer extends AbstractDeserializer {
 
-    RouterComponentDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
+    RouterDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
         super(graph, context);
     }
 

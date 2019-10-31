@@ -83,7 +83,7 @@ class ForkComponentBuilderTest {
                         .build())
                 .build();
 
-        ForkComponentDeserializer builder = new ForkComponentDeserializer(graph, context);
+        ForkDeserializer builder = new ForkDeserializer(graph, context);
 
         // When
         ExecutionNode lastNode = builder.deserialize(parentExecutionNode, componentDefinition);

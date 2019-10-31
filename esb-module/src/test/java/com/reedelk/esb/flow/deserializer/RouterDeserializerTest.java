@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RouterComponentDeserializerTest {
+class RouterDeserializerTest {
 
     private final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
     private final String COMPONENT_2_NAME = TestComponent.class.getName() + "2";
@@ -87,7 +87,7 @@ class RouterComponentDeserializerTest {
                 .with("when", whenArray)
                 .build();
 
-        RouterComponentDeserializer builder = new RouterComponentDeserializer(graph, context);
+        RouterDeserializer builder = new RouterDeserializer(graph, context);
 
         // When
         ExecutionNode lastNode = builder.deserialize(parentEn, componentDefinition);

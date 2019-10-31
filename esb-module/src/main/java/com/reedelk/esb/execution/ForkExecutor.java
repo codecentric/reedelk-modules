@@ -24,7 +24,6 @@ import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
-
 public class ForkExecutor implements FlowExecutor {
 
     @Override
@@ -47,12 +46,11 @@ public class ForkExecutor implements FlowExecutor {
 
         Join join = (Join) joinComponent;
 
-        Flux<MessageAndContext> mono = Flux.from(publisher).flatMap(messageContext -> {
+        Flux<MessageAndContext> flux = Flux.from(publisher).flatMap(messageContext -> {
 
             // Create fork branches (Fork step)
             List<Mono<MessageAndContext>> forkBranches = nextExecutionNodes.stream()
-                    .map(nextExecutionNode ->
-                            createForkBranch(nextExecutionNode, messageContext, graph, forkScheduler))
+                    .map(nextExecutionNode -> createForkBranch(nextExecutionNode, messageContext, graph, forkScheduler))
                     .collect(toList());
 
             // Join fork branches (Join step)
@@ -65,7 +63,7 @@ public class ForkExecutor implements FlowExecutor {
         // Continue to execute the flow after join
         ExecutionNode nodeAfterJoin = nextNode(joinNode, graph);
 
-        return FlowExecutorFactory.get().execute(mono, nodeAfterJoin, graph);
+        return FlowExecutorFactory.get().execute(flux, nodeAfterJoin, graph);
     }
 
     Scheduler flowScheduler() {
@@ -74,10 +72,9 @@ public class ForkExecutor implements FlowExecutor {
 
     private Mono<MessageAndContext> createForkBranch(ExecutionNode executionNode, MessageAndContext context, ExecutionGraph graph, Scheduler forkScheduler) {
         MessageAndContext messageCopy = context.copy();
-        Mono<MessageAndContext> parent =
-                Mono.just(messageCopy)
-                        .publishOn(forkScheduler);
-        return Mono.from(FlowExecutorFactory.get().execute(parent, executionNode, graph));
+        Mono<MessageAndContext> parent = Mono.just(messageCopy).publishOn(forkScheduler);
+        Publisher<MessageAndContext> forkBranchPublisher = FlowExecutorFactory.get().execute(parent, executionNode, graph);
+        return Mono.from(forkBranchPublisher);
     }
 
     private static Function<Object[], MessageAndContext[]> messagesCombinator() {

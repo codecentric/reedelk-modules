@@ -1,10 +1,7 @@
 package com.reedelk.esb.component;
 
 import com.reedelk.runtime.api.component.Component;
-import com.reedelk.runtime.component.FlowReference;
-import com.reedelk.runtime.component.Fork;
-import com.reedelk.runtime.component.Router;
-import com.reedelk.runtime.component.Stop;
+import com.reedelk.runtime.component.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,8 +15,9 @@ public class RuntimeComponents {
     static {
         Map<String, Class<? extends Component>> tmp = new HashMap<>();
         tmp.put(Stop.class.getName(), Stop.class);
-        tmp.put(Router.class.getName(), RouterWrapper.class);
         tmp.put(Fork.class.getName(), ForkWrapper.class);
+        tmp.put(Router.class.getName(), RouterWrapper.class);
+        tmp.put(TryCatch.class.getName(), TryCatchWrapper.class);
         tmp.put(FlowReference.class.getName(), FlowReference.class);
         COMPONENTS = Collections.unmodifiableMap(tmp);
     }

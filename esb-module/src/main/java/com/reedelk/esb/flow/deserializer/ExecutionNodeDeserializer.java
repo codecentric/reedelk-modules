@@ -8,6 +8,7 @@ import com.reedelk.runtime.commons.JsonParser;
 import com.reedelk.runtime.component.FlowReference;
 import com.reedelk.runtime.component.Fork;
 import com.reedelk.runtime.component.Router;
+import com.reedelk.runtime.component.TryCatch;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
@@ -27,9 +28,10 @@ public class ExecutionNodeDeserializer {
     private static final Map<String, Class<? extends Deserializer>> COMPONENT_NAME_DESERIALIZER_MAP;
     static {
         Map<String, Class<? extends Deserializer>> tmp = new HashMap<>();
-        tmp.put(Fork.class.getName(), ForkComponentDeserializer.class);
-        tmp.put(Router.class.getName(), RouterComponentDeserializer.class);
-        tmp.put(FlowReference.class.getName(), FlowReferenceComponentDeserializer.class);
+        tmp.put(Fork.class.getName(), ForkDeserializer.class);
+        tmp.put(Router.class.getName(), RouterDeserializer.class);
+        tmp.put(TryCatch.class.getName(), TryCatchDeserializer.class);
+        tmp.put(FlowReference.class.getName(), FlowReferenceDeserializer.class);
         COMPONENT_NAME_DESERIALIZER_MAP = Collections.unmodifiableMap(tmp);
     }
 

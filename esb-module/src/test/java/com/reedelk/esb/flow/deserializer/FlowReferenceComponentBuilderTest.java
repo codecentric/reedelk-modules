@@ -70,7 +70,7 @@ class FlowReferenceComponentBuilderTest {
                 .with("ref", "subflow1")
                 .build();
 
-        FlowReferenceComponentDeserializer builder = new FlowReferenceComponentDeserializer(graph, context);
+        FlowReferenceDeserializer builder = new FlowReferenceDeserializer(graph, context);
 
         // When
         ExecutionNode lastNode = builder.deserialize(parentExecutionNode, componentDefinition);

@@ -2,6 +2,7 @@ package com.reedelk.esb.execution;
 
 import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.component.RouterWrapper;
+import com.reedelk.esb.component.TryCatchWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Component;
@@ -24,6 +25,7 @@ public class FlowExecutorFactory {
         tmp.put(Stop.class, new StopExecutor());
         tmp.put(ForkWrapper.class, new ForkExecutor());
         tmp.put(RouterWrapper.class, new RouterExecutor());
+        tmp.put(TryCatchWrapper.class, new TryCatchExecutor());
         tmp.put(ProcessorSync.class, new ProcessorSyncExecutor());
         tmp.put(ProcessorAsync.class, new ProcessorAsyncExecutor());
         COMPONENT_EXECUTOR = Collections.unmodifiableMap(tmp);
