@@ -8,6 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.TreeMap;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +29,7 @@ class HttpHeadersAsMapTest {
             headers.set("header2", "value1,value2");
 
             // When
-            HeadersMap headersMap = HttpHeadersAsMap.of(headers);
+            TreeMap<String, List<String>> headersMap = HttpHeadersAsMap.of(headers);
 
             // Then
             assertThat(headersMap).containsEntry("header1", singletonList("value1"));
@@ -39,7 +42,7 @@ class HttpHeadersAsMapTest {
             HttpHeaders headers = null;
 
             // When
-            HeadersMap headersMap = HttpHeadersAsMap.of(headers);
+            TreeMap<String, List<String>> headersMap = HttpHeadersAsMap.of(headers);
 
             // Then
             assertThat(headersMap).isEmpty();
@@ -58,7 +61,7 @@ class HttpHeadersAsMapTest {
             headers[1] = new BasicHeader("header2", "valueX");
 
             // When
-            HeadersMap headersMap = HttpHeadersAsMap.of(headers);
+            TreeMap<String, List<String>> headersMap = HttpHeadersAsMap.of(headers);
 
             // Then
             assertThat(headersMap).containsEntry("header1", asList("value1", "value2"));
@@ -71,7 +74,7 @@ class HttpHeadersAsMapTest {
             Header[] headers = null;
 
             // When
-            HeadersMap headersMap = HttpHeadersAsMap.of(headers);
+            TreeMap<String, List<String>> headersMap = HttpHeadersAsMap.of(headers);
 
             // Then
             assertThat(headersMap).isEmpty();

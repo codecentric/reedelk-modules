@@ -48,6 +48,13 @@ public class ForkExecutor implements FlowExecutor {
 
         Flux<MessageAndContext> flux = Flux.from(publisher).flatMap(messageContext -> {
 
+            // TODO: Add method consume() inside the message content class (calling data() is bad)
+            // We must consume the message, otherwise we cannot copy its content
+            // and hand it over to the Fork branches in the Message payload.
+            if (!messageContext.getMessage().content().isConsumed()) {
+                messageContext.getMessage().content().data();
+            }
+
             // Create fork branches (Fork step)
             List<Mono<MessageAndContext>> forkBranches = nextExecutionNodes.stream()
                     .map(nextExecutionNode -> createForkBranch(nextExecutionNode, messageContext, graph, forkScheduler))
@@ -106,7 +113,7 @@ public class ForkExecutor implements FlowExecutor {
                         .map(MessageAndContext::getMessage)
                         .collect(toList());
 
-                Message outMessage = join.apply(collect);
+                Message outMessage = join.apply(collect, context.getFlowContext());
 
                 context.replaceWith(outMessage);
 

@@ -1,5 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
+import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
@@ -37,7 +38,7 @@ public class HttpRequestMessageMapper {
         attributes.put(QUERY_STRING, request.queryString());
         attributes.put(REMOTE_ADDRESS, request.remoteAddress());
 
-        HttpRequestAttributes requestAttributes = new HttpRequestAttributes(attributes);
+        DefaultMessageAttributes requestAttributes = new DefaultMessageAttributes(attributes);
 
         MimeType mimeType = request.mimeType();
 

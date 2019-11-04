@@ -4,6 +4,7 @@ package com.reedelk.rest.client.response;
 import com.reedelk.rest.commons.HttpHeadersAsMap;
 import com.reedelk.rest.commons.MimeTypeExtract;
 import com.reedelk.rest.commons.TypedContentFromByteArrayStream;
+import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
@@ -26,7 +27,7 @@ public class HttpResponseMessageMapper {
         attributes.put(HttpResponseAttribute.REASON_PHRASE, statusLine.getReasonPhrase());
         attributes.put(HttpResponseAttribute.HEADERS, HttpHeadersAsMap.of(response.getAllHeaders()));
 
-        HttpResponseAttributes responseAttributes = new HttpResponseAttributes(attributes);
+        DefaultMessageAttributes responseAttributes = new DefaultMessageAttributes(attributes);
 
         Message message = MessageBuilder.get()
                 .attributes(responseAttributes)

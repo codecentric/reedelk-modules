@@ -4,6 +4,7 @@ import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Join;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.assertj.core.api.Assertions;
@@ -206,7 +207,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
 
     class JoinString implements Join {
         @Override
-        public Message apply(List<Message> messages) {
+        public Message apply(List<Message> messages, FlowContext flowContext) {
             String joined = messages.stream()
                     .map(message -> (String) message.getContent().data())
                     .collect(joining(","));
@@ -216,7 +217,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
 
     class JoinThrowingException implements Join {
         @Override
-        public Message apply(List<Message> messagesToJoin) {
+        public Message apply(List<Message> messagesToJoin, FlowContext flowContext) {
             throw new IllegalStateException("Join not valid");
         }
     }

@@ -6,8 +6,10 @@ import org.apache.http.Header;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -16,8 +18,8 @@ public class HttpHeadersAsMap {
     private HttpHeadersAsMap() {
     }
 
-    public static HeadersMap of(HttpHeaders headers) {
-        HeadersMap headersMap = new HeadersMap();
+    public static TreeMap<String, List<String>> of(HttpHeaders headers) {
+        TreeMap<String,List<String>> headersMap = new TreeMap<>(CASE_INSENSITIVE_ORDER);
         if (headers != null) {
             headers.names().forEach(headerName -> {
                 String headerValue = headers.get(headerName);
@@ -27,8 +29,8 @@ public class HttpHeadersAsMap {
         return headersMap;
     }
 
-    public static HeadersMap of(Header[] headers) {
-        HeadersMap headersMap = new HeadersMap();
+    public static TreeMap<String, List<String>> of(Header[] headers) {
+        TreeMap<String,List<String>> headersMap = new TreeMap<>(CASE_INSENSITIVE_ORDER);
         if (headers != null) {
             Stream.of(headers).forEach(header -> {
                 String headerName = header.getName();

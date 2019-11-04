@@ -6,6 +6,7 @@ import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.component.OnResult;
+import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -70,7 +71,7 @@ public class Scheduler extends AbstractInbound {
 
             Map<String, Serializable> attributesMap = new HashMap<>();
             attributesMap.put(SchedulerAttribute.firedAt(), System.currentTimeMillis());
-            SchedulerAttributes attributes = new SchedulerAttributes(attributesMap);
+            DefaultMessageAttributes attributes = new DefaultMessageAttributes(attributesMap);
 
             Message emptyMessage = MessageBuilder.get()
                     .attributes(attributes)

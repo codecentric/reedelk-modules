@@ -12,6 +12,7 @@ import com.reedelk.runtime.api.script.dynamicvalue.DynamicObject;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -61,6 +62,11 @@ public class ScriptEngine implements ScriptEngineService {
     }
 
     // Script
+
+    @Override
+    public <T> Optional<T> evaluate(Script script, List<Message> messages, FlowContext flowContext, Class<T> returnType) {
+        return scriptEvaluator.evaluate(script, messages, flowContext, returnType);
+    }
 
     @Override
     public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext, Class<T> returnType) {

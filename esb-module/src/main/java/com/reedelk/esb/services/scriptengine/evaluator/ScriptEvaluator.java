@@ -1,6 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
-import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateScriptFunctionDefinitionBuilder;
+import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateScriptFunctionWithMessageAndContext;
+import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateScriptFunctionWithMessagesAndContext;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -8,6 +9,7 @@ import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.Script;
 import org.reactivestreams.Publisher;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.OPTIONAL_PROVIDER;
@@ -16,10 +18,20 @@ import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STR
 @SuppressWarnings("unchecked")
 public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
 
-    private static final FunctionDefinitionBuilder FUNCTION = new EvaluateScriptFunctionDefinitionBuilder();
+    private static final FunctionDefinitionBuilder FUNCTION_WITH_MESSAGE_AND_CONTEXT = new EvaluateScriptFunctionWithMessageAndContext();
+    private static final FunctionDefinitionBuilder FUNCTION_WITH_MESSAGES_AND_CONTEXT = new EvaluateScriptFunctionWithMessagesAndContext();
 
     public ScriptEvaluator(ScriptEngineProvider provider) {
         super(provider);
+    }
+
+    @Override
+    public <T> Optional<T> evaluate(Script script, List<Message> messages, FlowContext flowContext, Class<T> returnType) {
+        if (script == null || script.isEmpty()) {
+            return OPTIONAL_PROVIDER.empty();
+        } else {
+            return (Optional<T>) evaluateScript(script, messages, flowContext, returnType, OPTIONAL_PROVIDER);
+        }
     }
 
     @Override
@@ -46,8 +58,15 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     private <T> T evaluateScript(Script script, Message message, FlowContext flowContext, Class<T> returnType, ValueProvider valueProvider) {
-        String functionName = functionNameOf(script, FUNCTION);
+        String functionName = functionNameOf(script, FUNCTION_WITH_MESSAGE_AND_CONTEXT);
         Object evaluationResult = scriptEngine.invokeFunction(functionName, message, flowContext);
         return convert(evaluationResult, returnType, valueProvider);
     }
+
+    private <T> T evaluateScript(Script script, List<Message> messages, FlowContext flowContext, Class<T> returnType, ValueProvider valueProvider) {
+        String functionName = functionNameOf(script, FUNCTION_WITH_MESSAGES_AND_CONTEXT);
+        Object evaluationResult = scriptEngine.invokeFunction(functionName, messages, flowContext);
+        return convert(evaluationResult, returnType, valueProvider);
+    }
+
 }

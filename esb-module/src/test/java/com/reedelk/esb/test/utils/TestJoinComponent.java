@@ -1,6 +1,7 @@
 package com.reedelk.esb.test.utils;
 
 import com.reedelk.runtime.api.component.Join;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class TestJoinComponent implements Join {
     private long prop2;
 
     @Override
-    public Message apply(List<Message> inputs) {
+    public Message apply(List<Message> inputs, FlowContext flowContext) {
         throw new UnsupportedOperationException("Test Only Join");
     }
 

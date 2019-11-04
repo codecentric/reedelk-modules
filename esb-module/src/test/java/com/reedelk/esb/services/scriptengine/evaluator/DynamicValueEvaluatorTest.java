@@ -421,8 +421,7 @@ class DynamicValueEvaluatorTest {
         @Test
         void shouldThrowExceptionWhenObjectToBinaryMimeTypeButContentNotSerializable() {
             // Given
-            Flux<String> content = Flux.just("Hello", ", this", " is", " just", " a");
-            TypedContent<String> typedContent = new StringContent(content, MimeType.TEXT);
+            TypedContent<Object> typedContent = new ObjectContent(new NotSerializableContent(), MimeType.TEXT);
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
@@ -434,7 +433,7 @@ class DynamicValueEvaluatorTest {
 
             // Then
             assertThat(thrown).isNotNull();
-            assertThat(thrown).hasMessage("java.io.NotSerializableException: reactor.core.publisher.FluxArray");
+            assertThat(thrown).hasMessage("java.io.NotSerializableException: com.reedelk.esb.services.scriptengine.evaluator.DynamicValueEvaluatorTest$NotSerializableContent");
         }
 
         @Test
@@ -629,6 +628,10 @@ class DynamicValueEvaluatorTest {
             // Then
             assertThat(result).isPresent().contains(StackTraceUtils.asByteArray(myException));
         }
+    }
+
+    class NotSerializableContent {
+        int value;
     }
 
     private class MyObject {
