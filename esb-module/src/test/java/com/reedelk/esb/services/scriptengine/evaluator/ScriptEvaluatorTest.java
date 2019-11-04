@@ -118,7 +118,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyEvaluateContextVariable() {
             // Given
-            context.setVariable("messageVar", "my sample");
+            context.put("messageVar", "my sample");
             Script contextVariableScript = Script.from("#[return context.messageVar]");
 
             // When

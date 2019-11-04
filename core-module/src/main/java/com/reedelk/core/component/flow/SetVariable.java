@@ -47,7 +47,7 @@ public class SetVariable implements ProcessorSync {
 
         Serializable result = (Serializable) scriptEngine.evaluate(value, mimeType, message, flowContext).orElse(null);
 
-        flowContext.setVariable(name, result);
+        flowContext.put(name, result);
 
         return message;
     }

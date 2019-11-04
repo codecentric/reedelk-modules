@@ -22,7 +22,7 @@ public class RemoveVariable implements ProcessorSync {
     @Override
     public Message apply(Message message, FlowContext flowContext) {
         if (StringUtils.isNotBlank(name)) {
-            flowContext.removeVariable(name);
+            flowContext.remove(name);
         }
         return message;
     }
