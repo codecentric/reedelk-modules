@@ -26,20 +26,20 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     @Override
-    public <T> Optional<T> evaluate(Script script, List<Message> messages, FlowContext flowContext, Class<T> returnType) {
-        if (script == null || script.isEmpty()) {
-            return OPTIONAL_PROVIDER.empty();
-        } else {
-            return (Optional<T>) evaluateScript(script, messages, flowContext, returnType, OPTIONAL_PROVIDER);
-        }
-    }
-
-    @Override
     public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
         if (script == null || script.isEmpty()) {
             return OPTIONAL_PROVIDER.empty();
         } else {
             return (Optional<T>) evaluateScript(script, message, flowContext, returnType, OPTIONAL_PROVIDER);
+        }
+    }
+
+    @Override
+    public <T> Optional<T> evaluate(Script script, List<Message> messages, FlowContext flowContext, Class<T> returnType) {
+        if (script == null || script.isEmpty()) {
+            return OPTIONAL_PROVIDER.empty();
+        } else {
+            return (Optional<T>) evaluateScript(script, messages, flowContext, returnType, OPTIONAL_PROVIDER);
         }
     }
 

@@ -18,8 +18,10 @@ import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,7 +80,7 @@ class ScriptEvaluatorTest {
         }
 
         @Test
-        void shouldThrowExceptionWhenScriptIsInvalid() {
+        void shouldThrowExceptionWhenScriptIsNotValid() {
             // Given
             Script invalidScript = Script.from("#[return 'hello]");
 
@@ -126,6 +128,76 @@ class ScriptEvaluatorTest {
 
             // Then
             assertThat(actual).isPresent().contains("my sample");
+        }
+    }
+
+    @Nested
+    @DisplayName("Evaluate script with messages and context")
+    class EvaluateScriptWithMessagesAndContext {
+
+        private final List<Message> messages = asList(
+                MessageBuilder.get().text("one").build(),
+                MessageBuilder.get().text("two").build(),
+                MessageBuilder.get().text("three").build());
+
+        @Test
+        void shouldCorrectlyEvaluateScriptAndReturnOptional() {
+            // Given
+            String concatenateMessagesScript = "" +
+                    "var result = '';" +
+                    "for (i = 0; i < messages.length; i++) {" +
+                    "   if (i == messages.length - 1) {" +
+                    "       result += messages[i].payload();" +
+                    "   } else {" +
+                    "       result += messages[i].payload() + ';';" +
+                    "   }" +
+                    "}" +
+                    "return result;";
+
+            Script stringConcatenation = Script.from("#[" + concatenateMessagesScript + "]");
+
+            // When
+            Optional<String> actual = evaluator.evaluate(stringConcatenation, messages, context, String.class);
+
+            // Then
+            assertThat(actual).isPresent().contains("one;two;three");
+        }
+
+        @Test
+        void shouldCorrectlyReturnEmptyOptionalWhenScriptIsEmpty() {
+            // Given
+            Script emptyScript = Script.from("#[]");
+
+            // When
+            Optional<String> actual = evaluator.evaluate(emptyScript, messages, context, String.class);
+
+            // Then
+            assertThat(actual).isNotPresent();
+        }
+
+        @Test
+        void shouldCorrectlyReturnEmptyOptionalWhenScriptIsNull() {
+            // Given
+            Script nullScript = null;
+
+            // When
+            Optional<String> actual = evaluator.evaluate(nullScript, messages, context, String.class);
+
+            // Then
+            assertThat(actual).isNotPresent();
+        }
+
+        @Test
+        void shouldThrowExceptionWhenScriptIsNotValid() {
+            // Given
+            Script invalidScript = Script.from("#[return 'hello]");
+
+            // When
+            ESBException exception = Assertions.assertThrows(ESBException.class,
+                    () -> evaluator.evaluate(invalidScript, messages, context, String.class));
+
+            // Then
+            assertThat(exception).isNotNull();
         }
     }
 
