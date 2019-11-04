@@ -5,7 +5,7 @@
   "subflow": [{
     "implementor": "com.reedelk.file.component.LocalFileRead",
     "description": "Local file read",
-    "fileName": "#[context.getVariable('targetPage')]",
+    "fileName": "#[context.get('targetPage')]",
     "basePath": "/webapp/",
     "autoMimeType": true
   }]
