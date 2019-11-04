@@ -48,11 +48,11 @@ public class ForkExecutor implements FlowExecutor {
 
         Flux<MessageAndContext> flux = Flux.from(publisher).flatMap(messageContext -> {
 
-            // TODO: Add method consume() inside the message content class (calling data() is bad)
-            // We must consume the message, otherwise we cannot copy its content
-            // and hand it over to the Fork branches in the Message payload.
+            // We must consume the message stream if it has not been consumed yet,
+            // otherwise we cannot copy (by using serialization) its content and hand
+            // it over to the Fork branches in the Message payload.
             if (!messageContext.getMessage().content().isConsumed()) {
-                messageContext.getMessage().content().data();
+                messageContext.getMessage().content().consume();
             }
 
             // Create fork branches (Fork step)
