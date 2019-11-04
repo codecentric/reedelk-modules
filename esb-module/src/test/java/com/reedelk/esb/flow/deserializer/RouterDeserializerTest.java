@@ -4,6 +4,7 @@ import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.esb.test.utils.ComponentsBuilder;
+import com.reedelk.runtime.component.Router;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,19 +23,19 @@ class RouterDeserializerTest extends AbstractDeserializerTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        doReturn(routerExecutionNode).when(context).instantiateComponent(RouterWrapper.class.getName());
+        doReturn(routerExecutionNode).when(context).instantiateComponent(Router.class.getName());
         deserializer = new RouterDeserializer(graph, context);
     }
 
     @Test
-    void shouldCorrectlyHandleRouterComponent() {
+    void shouldCorrectlyDeserializeRouterComponent() {
         // Given
         JSONArray whenArray = new JSONArray();
         whenArray.put(conditionalBranch("#[1 == 1]", component3Name, component1Name));
         whenArray.put(conditionalBranch("#['hello' == 'hello1']", component2Name, component4Name));
         whenArray.put(conditionalBranch(DEFAULT_CONDITION.value(), component6Name, component5Name));
 
-        JSONObject componentDefinition = ComponentsBuilder.forComponent(RouterWrapper.class)
+        JSONObject componentDefinition = ComponentsBuilder.forComponent(Router.class)
                 .with("when", whenArray)
                 .build();
 

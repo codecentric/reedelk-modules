@@ -4,6 +4,7 @@ import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.ComponentsBuilder;
 import com.reedelk.esb.test.utils.TestJoinComponent;
+import com.reedelk.runtime.component.Fork;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,18 +24,18 @@ class ForkComponentBuilderTest extends AbstractDeserializerTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        doReturn(forkExecutionNode).when(context).instantiateComponent(ForkWrapper.class.getName());
+        doReturn(forkExecutionNode).when(context).instantiateComponent(Fork.class.getName());
         deserializer = new ForkDeserializer(graph, context);
     }
 
     @Test
-    void shouldCorrectlyHandleForkJoinComponent() {
+    void shouldCorrectlyDeserializeForkJoinComponent() {
         // Given
         JSONArray forkArray = new JSONArray();
         forkArray.put(createNextObject(component6Name, component5Name));
         forkArray.put(createNextObject(component1Name, component4Name));
 
-        JSONObject componentDefinition = ComponentsBuilder.forComponent(ForkWrapper.class)
+        JSONObject componentDefinition = ComponentsBuilder.forComponent(Fork.class)
                 .with("threadPoolSize", 3)
                 .with("fork", forkArray)
                 .with("join", ComponentsBuilder.forComponent(TestJoinComponent.class)
