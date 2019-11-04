@@ -30,13 +30,21 @@ public class TryCatchExecutor implements FlowExecutor {
         Publisher<MessageAndContext> tryExecution = FlowExecutorFactory.get().execute(publisher, firstTryNode, graph);
 
         Mono<MessageAndContext> result = Mono.from(tryExecution).onErrorResume(throwable -> {
+
             Mono<MessageAndContext> mapped = Mono.from(publisher).map(messageAndContext -> {
-                ObjectContent content = new ObjectContent(throwable, MimeType.ANY);
+
+                ObjectContent content = new ObjectContent(throwable, MimeType.APPLICATION_JAVA);
+
                 Message messageWithException = MessageBuilder.get().typedContent(content).build();
+
                 messageAndContext.replaceWith(messageWithException);
+
                 return messageAndContext;
+
             });
+
             return Mono.from(FlowExecutorFactory.get().execute(mapped, firstCatchNode, graph));
+
         });
 
         return FlowExecutorFactory.get().execute(result, nodeAfterStop, graph);

@@ -56,6 +56,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = GraphWithForkBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
+                .disposer(disposer)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
                 .join(joinNode)
@@ -79,6 +80,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = GraphWithForkBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
+                .disposer(disposer)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
                 .join(joinNode)
@@ -106,6 +108,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
                 .inbound(inbound)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
+                .disposer(disposer)
                 .join(joinNode)
                 .afterForkSequence(nodeFollowingJoin)
                 .build();
@@ -125,11 +128,13 @@ class ForkExecutorTest extends AbstractExecutionTest {
     @Test
     void shouldThrowExceptionAndStopExecutionWhenBranchProcessorThrowsException() {
         // Given
-        ExecutionNode processorThrowingException = newExecutionNode(new ProcessorThrowingExceptionSync());
+        String exceptionMessage = "ForkException thrown";
+        ExecutionNode processorThrowingException = newExecutionNode(new ProcessorThrowingExceptionSync(exceptionMessage));
 
         ExecutionGraph graph = GraphWithForkBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
+                .disposer(disposer)
                 .forkSequence(fork1Node)
                 .forkSequence(processorThrowingException)
                 .join(joinNode)
@@ -145,7 +150,9 @@ class ForkExecutorTest extends AbstractExecutionTest {
 
         // Then
         StepVerifier.create(endPublisher)
-                .verifyErrorMatches(throwable -> throwable instanceof IllegalStateException);
+                .verifyErrorMatches(throwable ->
+                        throwable instanceof IllegalStateException &&
+                                exceptionMessage.equals(throwable.getMessage()));
     }
 
     @Test
@@ -156,6 +163,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = GraphWithForkBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
+                .disposer(disposer)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
                 .join(joinThrowingException)
@@ -182,6 +190,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = GraphWithForkBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
+                .disposer(disposer)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
                 .join(incorrectJoinType)

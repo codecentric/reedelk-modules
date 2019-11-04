@@ -137,7 +137,8 @@ class RouterExecutorTest extends AbstractExecutionTest {
     @Test
     void shouldThrowExceptionAndStopExecutionWhenBranchProcessorThrowsException() {
         // Given
-        ExecutionNode processorThrowingException = newExecutionNode(new ProcessorThrowingExceptionSync());
+        String exceptionMessage = "Illegal state exception";
+        ExecutionNode processorThrowingException = newExecutionNode(new ProcessorThrowingExceptionSync(exceptionMessage));
 
         ExecutionGraph graph = GraphWithRouterBuilder.get()
                 .router(routerNode)
@@ -156,7 +157,9 @@ class RouterExecutorTest extends AbstractExecutionTest {
                 executor.execute(publisher, routerNode, graph);
 
         StepVerifier.create(endPublisher)
-                .verifyErrorMatches(throwable -> throwable instanceof IllegalStateException);
+                .verifyErrorMatches(throwable ->
+                        exceptionMessage.equals(throwable.getMessage()) &&
+                                throwable instanceof IllegalStateException);
     }
 
     static class GraphWithRouterBuilder {
@@ -233,6 +236,7 @@ class RouterExecutorTest extends AbstractExecutionTest {
         class ConditionWithSequence {
             String condition;
             List<ExecutionNode> sequence;
+
             ConditionWithSequence(String condition, ExecutionNode[] sequence) {
                 this.sequence = Arrays.asList(sequence);
                 this.condition = condition;

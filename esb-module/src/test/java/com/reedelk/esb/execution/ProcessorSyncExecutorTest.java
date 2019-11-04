@@ -2,8 +2,6 @@ package com.reedelk.esb.execution;
 
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.runtime.api.component.OnResult;
-import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -58,7 +56,8 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
     @Test
     void shouldCorrectlyThrowErrorWhenProcessorThrowsException() {
         // Given
-        ExecutionNode processor = newExecutionNode(new ProcessorThrowingExceptionSync());
+        String exceptionThrown = "Illegal state error";
+        ExecutionNode processor = newExecutionNode(new ProcessorThrowingExceptionSync(exceptionThrown));
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
         Message message = MessageBuilder.get().text("input").build();
 
@@ -71,7 +70,8 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
 
         // Then
         StepVerifier.create(endPublisher)
-                .verifyErrorMatches(throwable -> throwable instanceof IllegalStateException);
+                .verifyErrorMatches(throwable -> throwable instanceof IllegalStateException &&
+                        exceptionThrown.equals(throwable.getMessage()));
     }
 
     // If the processor is the last node, then it must be present a Stop node.
@@ -87,13 +87,5 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
         Assertions.assertThrows(IllegalStateException.class, () ->
                         executor.execute(Flux.just(), processor, graph),
                 "Expected processor sync to be followed by one node");
-    }
-
-    class OnResultVerifier implements OnResult {
-        Throwable throwable;
-        @Override
-        public void onError(Throwable throwable, FlowContext flowContext) {
-            this.throwable = throwable;
-        }
     }
 }

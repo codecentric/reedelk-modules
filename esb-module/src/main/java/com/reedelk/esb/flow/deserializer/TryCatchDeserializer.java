@@ -30,7 +30,7 @@ public class TryCatchDeserializer extends AbstractDeserializer {
 
         graph.putEdge(parent, tryCatchExecutionNode);
 
-        ExecutionNode currentNode = parent;
+        ExecutionNode currentNode = tryCatchExecutionNode;
 
         JSONArray doTry = TryCatch.doTry(componentDefinition);
 
@@ -51,7 +51,7 @@ public class TryCatchDeserializer extends AbstractDeserializer {
 
         graph.putEdge(currentNode, stopComponent);
 
-        currentNode = parent;
+        currentNode = tryCatchExecutionNode;
 
         JSONArray doCatch = TryCatch.doCatch(componentDefinition);
 

@@ -75,9 +75,16 @@ abstract class AbstractExecutionTest {
     }
 
     class ProcessorThrowingExceptionSync implements ProcessorSync {
+
+        private final String errorMessage;
+
+        ProcessorThrowingExceptionSync(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
         @Override
         public Message apply(Message message, FlowContext flowContext) {
-            throw new IllegalStateException("Input not valid");
+            throw new IllegalStateException(errorMessage);
         }
     }
 
