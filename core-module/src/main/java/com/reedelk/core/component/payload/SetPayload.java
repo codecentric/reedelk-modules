@@ -41,7 +41,7 @@ public class SetPayload implements ProcessorSync {
 
         TypedContent<?> content = TypedContentFactory.from(result, mimeType);
 
-        return MessageBuilder.get().typedContent(content).build();
+        return MessageBuilder.get().attributes(message.getAttributes()).typedContent(content).build();
     }
 
     public void setPayload(DynamicObject payload) {
