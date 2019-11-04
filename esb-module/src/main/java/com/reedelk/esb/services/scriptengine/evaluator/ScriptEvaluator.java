@@ -68,5 +68,4 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
         Object evaluationResult = scriptEngine.invokeFunction(functionName, messages, flowContext);
         return convert(evaluationResult, returnType, valueProvider);
     }
-
 }
