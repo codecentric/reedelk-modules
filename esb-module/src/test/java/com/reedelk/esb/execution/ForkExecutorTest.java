@@ -125,7 +125,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
     void shouldThrowExceptionAndStopExecutionWhenBranchProcessorThrowsException() {
         // Given
         String exceptionMessage = "ForkException thrown";
-        ExecutionNode processorThrowingException = newExecutionNode(new ProcessorThrowingExceptionSync(exceptionMessage));
+        ExecutionNode processorThrowingException = newExecutionNode(new ProcessorThrowingIllegalStateExceptionSync(exceptionMessage));
 
         ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)

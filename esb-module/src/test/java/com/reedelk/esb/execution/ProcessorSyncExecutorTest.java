@@ -57,7 +57,7 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
     void shouldCorrectlyThrowErrorWhenProcessorThrowsException() {
         // Given
         String exceptionThrown = "Illegal state error";
-        ExecutionNode processor = newExecutionNode(new ProcessorThrowingExceptionSync(exceptionThrown));
+        ExecutionNode processor = newExecutionNode(new ProcessorThrowingIllegalStateExceptionSync(exceptionThrown));
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
         Message message = MessageBuilder.get().text("input").build();
 

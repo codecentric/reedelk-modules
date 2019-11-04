@@ -12,7 +12,7 @@ import java.util.List;
 
 import static com.reedelk.esb.execution.AbstractExecutionTest.newExecutionNode;
 
-class ForkTestGraphBuilder {
+class ForkTestGraphBuilder extends AbstractTestGraphBuilder {
 
     private ExecutionNode fork;
     private ExecutionNode join;
@@ -86,15 +86,6 @@ class ForkTestGraphBuilder {
         }
 
         return graph;
-    }
-
-    private void buildSequence(ExecutionGraph graph, ExecutionNode root, ExecutionNode end, List<ExecutionNode> sequence) {
-        ExecutionNode previous = root;
-        for (ExecutionNode node : sequence) {
-            graph.putEdge(previous, node);
-            previous = node;
-        }
-        graph.putEdge(previous, end);
     }
 
     class ForkSequence {

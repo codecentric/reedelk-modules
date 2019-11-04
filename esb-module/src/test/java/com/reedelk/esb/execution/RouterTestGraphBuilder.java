@@ -13,7 +13,7 @@ import java.util.List;
 
 import static com.reedelk.esb.execution.AbstractExecutionTest.newExecutionNode;
 
-class RouterTestGraphBuilder {
+class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
 
     private ExecutionNode router;
     private ExecutionNode inbound;
@@ -73,15 +73,6 @@ class RouterTestGraphBuilder {
             graph.putEdge(endOfRouter, endOfGraph);
         }
         return graph;
-    }
-
-    private void buildSequence(ExecutionGraph graph, ExecutionNode root, ExecutionNode end, List<ExecutionNode> sequence) {
-        ExecutionNode previous = root;
-        for (ExecutionNode node : sequence) {
-            graph.putEdge(previous, node);
-            previous = node;
-        }
-        graph.putEdge(previous, end);
     }
 
     class ConditionWithSequence {

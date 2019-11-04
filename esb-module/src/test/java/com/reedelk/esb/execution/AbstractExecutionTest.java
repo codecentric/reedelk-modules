@@ -74,11 +74,11 @@ abstract class AbstractExecutionTest {
         }
     }
 
-    class ProcessorThrowingExceptionSync implements ProcessorSync {
+    class ProcessorThrowingIllegalStateExceptionSync implements ProcessorSync {
 
         private final String errorMessage;
 
-        ProcessorThrowingExceptionSync(String errorMessage) {
+        ProcessorThrowingIllegalStateExceptionSync(String errorMessage) {
             this.errorMessage = errorMessage;
         }
 

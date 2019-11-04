@@ -32,7 +32,7 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         tryCatchNode = newExecutionNode(tryCatchWrapper);
         tryNode = newExecutionNode(new AddPostfixSyncProcessor("-try"));
         catchNode = newExecutionNode(new CatchSyncProcessor());
-        tryWithException = newExecutionNode(new ProcessorThrowingExceptionSync(exceptionMessage));
+        tryWithException = newExecutionNode(new ProcessorThrowingIllegalStateExceptionSync(exceptionMessage));
     }
 
     @Test
@@ -78,6 +78,85 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         // Then
         StepVerifier.create(endPublisher)
                 .assertNext(assertMessageContains(exceptionMessage))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldExecuteFlowFollowingForkNodeAfterTryFlow() {
+        // Given
+        String expectedExceptionThrown = "inner exception";
+        ExecutionNode afterTryCatchNode = newExecutionNode(new AddPostfixSyncProcessor("-afterTryCatchNode"));
+
+        ExecutionNode exceptionThrownInsideCatchFlow = newExecutionNode(new ProcessorThrowingIllegalStateExceptionSync(expectedExceptionThrown));
+        ExecutionGraph graph = TryCatchTestGraphBuilder.get()
+                .inbound(inbound)
+                .tryNode(tryWithException)
+                .disposer(disposer)
+                .catchNode(exceptionThrownInsideCatchFlow)
+                .tryCatchNode(tryCatchNode)
+                .afterTryCatchSequence(afterTryCatchNode)
+                .build();
+
+        MessageAndContext event = newEventWithContent("TryCatchTest");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
+
+        // When
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, tryCatchNode, graph);
+
+        // Then
+        StepVerifier.create(endPublisher)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof IllegalStateException &&
+                                expectedExceptionThrown.equals(throwable.getMessage())).verify();
+    }
+
+    @Test
+    void shouldExecuteFlowFollowingForkNodeAfterCatchFlow() {
+        // Given
+        ExecutionNode afterTryCatchNode = newExecutionNode(new AddPostfixSyncProcessor("-afterTryCatchNode"));
+        ExecutionGraph graph = TryCatchTestGraphBuilder.get()
+                .inbound(inbound)
+                .disposer(disposer)
+                .catchNode(catchNode)
+                .tryNode(tryWithException)
+                .tryCatchNode(tryCatchNode)
+                .afterTryCatchSequence(afterTryCatchNode)
+                .build();
+
+        MessageAndContext event = newEventWithContent("TryCatchTest");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
+
+        // When
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, tryCatchNode, graph);
+
+        // Then
+        StepVerifier.create(endPublisher)
+                .assertNext(assertMessageContains(exceptionMessage + "-afterTryCatchNode"))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldRethrowExceptionWhenExceptionThrownInsideCatchFlow() {
+        // Given
+        ExecutionNode afterTryCatchNode = newExecutionNode(new AddPostfixSyncProcessor("-afterTryCatchNode"));
+        ExecutionGraph graph = TryCatchTestGraphBuilder.get()
+                .inbound(inbound)
+                .disposer(disposer)
+                .catchNode(catchNode)
+                .tryNode(tryWithException)
+                .tryCatchNode(tryCatchNode)
+                .afterTryCatchSequence(afterTryCatchNode)
+                .build();
+
+        MessageAndContext event = newEventWithContent("TryCatchTest");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
+
+        // When
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, tryCatchNode, graph);
+
+        // Then
+        StepVerifier.create(endPublisher)
+                .assertNext(assertMessageContains(exceptionMessage + "-afterTryCatchNode"))
                 .verifyComplete();
     }
 

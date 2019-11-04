@@ -131,7 +131,7 @@ class RouterExecutorTest extends AbstractExecutionTest {
     void shouldThrowExceptionAndStopExecutionWhenBranchProcessorThrowsException() {
         // Given
         String exceptionMessage = "Illegal state exception";
-        ExecutionNode processorThrowingException = newExecutionNode(new ProcessorThrowingExceptionSync(exceptionMessage));
+        ExecutionNode processorThrowingException = newExecutionNode(new ProcessorThrowingIllegalStateExceptionSync(exceptionMessage));
 
         ExecutionGraph graph = RouterTestGraphBuilder.get()
                 .router(routerNode)

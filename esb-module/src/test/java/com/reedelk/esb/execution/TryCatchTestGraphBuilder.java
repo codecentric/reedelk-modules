@@ -6,9 +6,13 @@ import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.component.Stop;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static com.reedelk.esb.execution.AbstractExecutionTest.newExecutionNode;
 
-class TryCatchTestGraphBuilder {
+class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
 
     private ExecutionNode tryNode;
     private ExecutionNode inbound;
@@ -16,6 +20,7 @@ class TryCatchTestGraphBuilder {
     private ExecutionNode tryCatchNode;
 
     private ComponentDisposer disposer;
+    private List<ExecutionNode> followingSequence = new ArrayList<>();
 
     static TryCatchTestGraphBuilder get() {
         return new TryCatchTestGraphBuilder();
@@ -46,6 +51,11 @@ class TryCatchTestGraphBuilder {
         return this;
     }
 
+    TryCatchTestGraphBuilder afterTryCatchSequence(ExecutionNode... following) {
+        this.followingSequence = Arrays.asList(following);
+        return this;
+    }
+
     ExecutionGraph build() {
         ExecutionGraph graph = ExecutionGraph.build();
         graph.putEdge(null, inbound);
@@ -62,8 +72,14 @@ class TryCatchTestGraphBuilder {
         graph.putEdge(tryNode, endOfTryCatch);
         graph.putEdge(catchNode, endOfTryCatch);
 
+
         ExecutionNode endOfGraphNode = newExecutionNode(disposer, new Stop());
-        graph.putEdge(endOfTryCatch, endOfGraphNode);
+        if (followingSequence.size() > 0) {
+            buildSequence(graph, endOfTryCatch, endOfGraphNode, followingSequence);
+        } else {
+            graph.putEdge(endOfTryCatch, endOfGraphNode);
+        }
+
         return graph;
     }
 }
