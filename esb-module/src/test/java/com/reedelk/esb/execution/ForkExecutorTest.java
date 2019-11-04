@@ -1,13 +1,11 @@
 package com.reedelk.esb.execution;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Join;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.component.Stop;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +15,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.stream.Collectors.joining;
@@ -53,7 +49,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
     @Test
     void shouldForkAndJoinCorrectlyThePayload() {
         // Given
-        ExecutionGraph graph = GraphWithForkBuilder.get()
+        ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
                 .disposer(disposer)
@@ -77,7 +73,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
     @Test
     void shouldForkAndJoinCorrectlyForAnyMessageInTheStream() {
         // Given
-        ExecutionGraph graph = GraphWithForkBuilder.get()
+        ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
                 .disposer(disposer)
@@ -103,7 +99,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
     @Test
     void shouldForkAndJoinCorrectlyAndContinueExecutionUntilTheEndOfTheGraph() {
         // Given
-        ExecutionGraph graph = GraphWithForkBuilder.get()
+        ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
                 .forkSequence(fork1Node)
@@ -131,7 +127,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
         String exceptionMessage = "ForkException thrown";
         ExecutionNode processorThrowingException = newExecutionNode(new ProcessorThrowingExceptionSync(exceptionMessage));
 
-        ExecutionGraph graph = GraphWithForkBuilder.get()
+        ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
                 .disposer(disposer)
@@ -160,7 +156,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionNode joinThrowingException = newExecutionNode(new JoinThrowingException());
 
-        ExecutionGraph graph = GraphWithForkBuilder.get()
+        ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
                 .disposer(disposer)
@@ -187,7 +183,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionNode incorrectJoinType = newExecutionNode(new AddPostfixSyncProcessor("incorrect-join"));
 
-        ExecutionGraph graph = GraphWithForkBuilder.get()
+        ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
                 .disposer(disposer)
@@ -222,100 +218,6 @@ class ForkExecutorTest extends AbstractExecutionTest {
         @Override
         public Message apply(List<Message> messagesToJoin) {
             throw new IllegalStateException("Join not valid");
-        }
-    }
-
-    static class GraphWithForkBuilder {
-
-        private ExecutionNode fork;
-        private ExecutionNode join;
-        private ExecutionNode inbound;
-        private ComponentDisposer disposer;
-        private List<ForkSequence> forkSequenceList = new ArrayList<>();
-        private List<ExecutionNode> followingSequence = new ArrayList<>();
-
-        static GraphWithForkBuilder get() {
-            return new GraphWithForkBuilder();
-        }
-
-        GraphWithForkBuilder fork(ExecutionNode fork) {
-            this.fork = fork;
-            return this;
-        }
-
-        GraphWithForkBuilder join(ExecutionNode join) {
-            this.join = join;
-            return this;
-        }
-
-        GraphWithForkBuilder inbound(ExecutionNode inbound) {
-            this.inbound = inbound;
-            return this;
-        }
-
-        GraphWithForkBuilder disposer(ComponentDisposer disposer) {
-            this.disposer = disposer;
-            return this;
-        }
-
-        GraphWithForkBuilder forkSequence(ExecutionNode... sequence) {
-            this.forkSequenceList.add(new ForkSequence(sequence));
-            return this;
-        }
-
-        GraphWithForkBuilder afterForkSequence(ExecutionNode... afterForkSequence) {
-            this.followingSequence = Arrays.asList(afterForkSequence);
-            return this;
-        }
-
-        ExecutionGraph build() {
-            ExecutionGraph graph = ExecutionGraph.build();
-            graph.putEdge(null, inbound);
-            graph.putEdge(inbound, fork);
-
-            ExecutionNode endOfFork = newExecutionNode(disposer, new Stop());
-
-            ForkWrapper forkWrapper = (ForkWrapper) fork.getComponent();
-            forkWrapper.setStopNode(endOfFork);
-            for (ForkSequence sequence : forkSequenceList) {
-                buildSequence(graph, fork, endOfFork, sequence.sequence);
-                if (sequence.sequence.size() > 0) {
-                    forkWrapper.addForkNode(sequence.sequence.get(0));
-                }
-            }
-
-            ExecutionNode last = endOfFork;
-
-            if (join != null) {
-                graph.putEdge(endOfFork, join);
-                last = join;
-            }
-
-            ExecutionNode endOfGraph = newExecutionNode(disposer, new Stop());
-            if (followingSequence.size() > 0) {
-                buildSequence(graph, last, endOfGraph, followingSequence);
-            } else {
-                graph.putEdge(last, endOfGraph);
-            }
-
-            return graph;
-        }
-
-        private void buildSequence(ExecutionGraph graph, ExecutionNode root, ExecutionNode end, List<ExecutionNode> sequence) {
-            ExecutionNode previous = root;
-            for (ExecutionNode node : sequence) {
-                graph.putEdge(previous, node);
-                previous = node;
-            }
-            graph.putEdge(previous, end);
-        }
-
-        class ForkSequence {
-            List<ExecutionNode> sequence;
-
-            ForkSequence(ExecutionNode[] sequence) {
-                this.sequence = Arrays.asList(sequence);
-            }
         }
     }
 }
