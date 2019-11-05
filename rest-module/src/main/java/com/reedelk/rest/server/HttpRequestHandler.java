@@ -1,5 +1,6 @@
 package com.reedelk.rest.server;
 
+import com.reedelk.rest.ServerTooBusyException;
 import com.reedelk.rest.configuration.StreamingMode;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.Response;
@@ -115,28 +116,22 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
         @Override
         public void onError(Throwable exception, FlowContext flowContext) {
-            if (exception instanceof RejectedExecutionException) {
 
+            Throwable realException = exception;
+
+            if (exception instanceof RejectedExecutionException) {
                 // Server is too  busy, there are not enough Threads able to handle the request.
 
-                String responseMessage = SERVICE_UNAVAILABLE.code() + " Service Temporarily Unavailable (Server is too busy)";
+                String errorMessage = SERVICE_UNAVAILABLE.code() + " Service Temporarily Unavailable (Server is too busy)";
 
-                byte[] bodyBytes = responseMessage.getBytes();
-
-                response.status(SERVICE_UNAVAILABLE);
-
-                response.addHeader(CONTENT_LENGTH, String.valueOf(bodyBytes.length));
-
-                sink.success(Mono.just(bodyBytes));
-
-            } else {
-
-                responseMapper.map(exception, response, flowContext);
-
-                Publisher<byte[]> body = bodyProvider.from(response, exception, flowContext);
-
-                sink.success(body);
+                realException = new ServerTooBusyException(errorMessage, exception);
             }
+
+            responseMapper.map(realException, response, flowContext);
+
+            Publisher<byte[]> body = bodyProvider.from(response, realException, flowContext);
+
+            sink.success(body);
         }
     }
 
