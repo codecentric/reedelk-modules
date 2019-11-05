@@ -36,7 +36,6 @@ class ForkComponentBuilderTest extends AbstractDeserializerTest {
         forkArray.put(createNextObject(component1Name, component4Name));
 
         JSONObject componentDefinition = ComponentsBuilder.forComponent(Fork.class)
-                .with("threadPoolSize", 3)
                 .with("fork", forkArray)
                 .with("join", ComponentsBuilder.forComponent(TestJoinComponent.class)
                         .with("prop1", "Test")

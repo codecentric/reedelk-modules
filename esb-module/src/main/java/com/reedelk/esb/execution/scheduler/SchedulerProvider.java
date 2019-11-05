@@ -14,9 +14,4 @@ public class SchedulerProvider {
     public static Scheduler flow() {
         return FlowScheduler.scheduler();
     }
-
-    public static Scheduler fork(int threads) {
-        return ForkSchedulerProvider.get(threads);
-    }
-
 }

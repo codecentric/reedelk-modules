@@ -6,8 +6,7 @@
       "message": "Test inbound message"
     },
     {
-      "implementor": "com.reedelk.runtime.component.Fork",
-      "threadPoolSize": 3
+      "implementor": "com.reedelk.runtime.component.Fork"
     }
   ]
 }

@@ -26,11 +26,6 @@ class ForkDeserializer extends AbstractDeserializer {
 
         ForkWrapper forkWrapper = (ForkWrapper) forkExecutionNode.getComponent();
 
-        if (componentDefinition.has(Fork.threadPoolSize())) {
-            Integer threadPoolSize = Fork.threadPoolSize(componentDefinition);
-            forkWrapper.setThreadPoolSize(threadPoolSize);
-        }
-
         graph.putEdge(parent, forkExecutionNode);
 
         JSONArray fork = Fork.fork(componentDefinition);

@@ -31,8 +31,6 @@ public class ForkExecutor implements FlowExecutor {
 
         ForkWrapper fork = (ForkWrapper) currentNode.getComponent();
 
-        Scheduler forkScheduler = fork.getScheduler();
-
         List<ExecutionNode> nextExecutionNodes = fork.getForkNodes();
 
         ExecutionNode stopNode = fork.getStopNode();
@@ -57,13 +55,17 @@ public class ForkExecutor implements FlowExecutor {
 
             // Create fork branches (Fork step)
             List<Mono<MessageAndContext>> forkBranches = nextExecutionNodes.stream()
-                    .map(nextExecutionNode -> createForkBranch(nextExecutionNode, messageContext, graph, forkScheduler))
+                    .map(nextExecutionNode -> createForkBranch(
+                            nextExecutionNode,
+                            messageContext,
+                            graph,
+                            flowScheduler()))
                     .collect(toList());
 
             // Join fork branches (Join step)
             return Mono.zip(forkBranches, messagesCombinator())
                     .flatMap(eventsToJoin -> Mono.create(new JoinConsumer(messageContext, eventsToJoin, join)))
-                    .publishOn(flowScheduler()); // switch back using the flow threads
+                    .publishOn(flowScheduler()); // switch back using another flow thread.
         });
 
 
@@ -84,7 +86,7 @@ public class ForkExecutor implements FlowExecutor {
         return Mono.from(forkBranchPublisher);
     }
 
-    private static Function<Object[], MessageAndContext[]> messagesCombinator() {
+    private Function<Object[], MessageAndContext[]> messagesCombinator() {
         return objects -> {
             MessageAndContext[] messageAndContexts = new MessageAndContext[objects.length];
             for (int i = 0; i < objects.length; i++) {

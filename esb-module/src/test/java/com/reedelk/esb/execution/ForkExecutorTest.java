@@ -37,7 +37,6 @@ class ForkExecutorTest extends AbstractExecutionTest {
     @BeforeEach
     void setUp() {
         ForkWrapper forkWrapper = spy(new ForkWrapper());
-        doReturn(Schedulers.elastic()).when(forkWrapper).getScheduler();
         doReturn(Schedulers.elastic()).when(executor).flowScheduler();
 
         forkNode = newExecutionNode(forkWrapper);
