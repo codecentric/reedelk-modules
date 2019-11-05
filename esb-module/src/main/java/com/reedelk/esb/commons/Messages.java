@@ -128,4 +128,20 @@ public class Messages {
         }
 
     }
+
+    public enum Script implements FormattedMessage {
+
+        SCRIPT_COMPILATION_ERROR("Could not compile script function:\n\n%s\n\nError cause: %s");
+
+        private String msg;
+
+        Script(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+    }
 }

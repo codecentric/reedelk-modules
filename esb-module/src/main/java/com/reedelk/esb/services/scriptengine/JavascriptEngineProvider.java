@@ -1,5 +1,6 @@
 package com.reedelk.esb.services.scriptengine;
 
+import com.reedelk.esb.exception.ScriptCompilationException;
 import com.reedelk.esb.services.scriptengine.evaluator.ScriptEngineProvider;
 import com.reedelk.runtime.api.exception.ESBException;
 
@@ -8,8 +9,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-// TODO: IN CASE OF EXCEPTION WE MUST LOG THE WHOLE SCRIPT!
-//  SO THAT IT IS CLEAR WHAT WENT WRONG!
+import static com.reedelk.esb.commons.Messages.Script.SCRIPT_COMPILATION_ERROR;
+
 public class JavascriptEngineProvider implements ScriptEngineProvider {
 
     public static final ScriptEngineProvider INSTANCE = new JavascriptEngineProvider();
@@ -37,8 +38,9 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     public void eval(String functionDefinition) {
         try {
             engine.eval(functionDefinition);
-        } catch (ScriptException e) {
-            throw new ESBException(e);
+        } catch (ScriptException exception) {
+            String errorMessage = SCRIPT_COMPILATION_ERROR.format(functionDefinition, exception.getMessage());
+            throw new ScriptCompilationException(errorMessage, exception);
         }
     }
 }
