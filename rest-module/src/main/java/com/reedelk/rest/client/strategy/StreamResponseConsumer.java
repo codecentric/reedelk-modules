@@ -8,7 +8,6 @@ import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.ContentDecoder;
@@ -39,7 +38,7 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
     }
 
     @Override
-    protected void onResponseReceived(HttpResponse response) throws HttpException, IOException {
+    protected void onResponseReceived(HttpResponse response) {
         Flux<byte[]> bytesStream;
 
         // HEAD method does not have an entity: the onContentReceived will never be called.
