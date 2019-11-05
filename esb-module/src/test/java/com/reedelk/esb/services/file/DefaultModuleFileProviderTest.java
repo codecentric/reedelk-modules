@@ -36,6 +36,7 @@ import static org.mockito.Mockito.doThrow;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DefaultModuleFileProviderTest {
 
+    private final int BUFFER_SIZE = 65536;
     private final long testModuleId = 234L;
     private final String testModuleName = "test-module";
     private final String testVersion = "1.0.0-SNAPSHOT";
@@ -79,7 +80,7 @@ class DefaultModuleFileProviderTest {
         doReturn(fileURLs).when(bundle).getResources(resource);
 
         // When
-        Publisher<byte[]> stream = fileProvider.findBy(moduleId, resource);
+        Publisher<byte[]> stream = fileProvider.findBy(moduleId, resource, BUFFER_SIZE);
 
         // Then
         StepVerifier.create(stream)
@@ -103,7 +104,7 @@ class DefaultModuleFileProviderTest {
 
         // When
         ModuleFileNotFoundException thrown = assertThrows(ModuleFileNotFoundException.class,
-                () -> fileProvider.findBy(moduleId, resource));
+                () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
 
         assertThat(thrown)
                 .hasMessage("Error, could not find file=[/tests/sample.txt] in module with id=[234], name=[test-module], version=[1.0.0-SNAPSHOT], module file path=[/users/user/test-module-1.0.0-SNAPSHOT.jar].");
@@ -122,7 +123,7 @@ class DefaultModuleFileProviderTest {
 
         // When
         ModuleFileNotFoundException thrown = assertThrows(ModuleFileNotFoundException.class,
-                () -> fileProvider.findBy(moduleId, resource));
+                () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
 
         assertThat(thrown)
                 .hasMessage("Error, could not find file=[/tests/sample.txt] in module with id=[234], name=[test-module], version=[1.0.0-SNAPSHOT], module file path=[/users/user/test-module-1.0.0-SNAPSHOT.jar].");
@@ -141,7 +142,7 @@ class DefaultModuleFileProviderTest {
 
         // When
         ESBException thrown = assertThrows(ESBException.class,
-                () -> fileProvider.findBy(moduleId, resource));
+                () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
 
         assertThat(thrown)
                 .hasMessage("Error, an error occurred while looking for file=[/tests/sample.txt] in module with id=[234], name=[test-module], version=[1.0.0-SNAPSHOT], module file path=[/users/user/test-module-1.0.0-SNAPSHOT.jar]: Error while reading data");

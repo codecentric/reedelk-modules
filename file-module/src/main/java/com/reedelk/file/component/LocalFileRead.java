@@ -1,6 +1,7 @@
 package com.reedelk.file.component;
 
 import com.reedelk.file.commons.MimeTypeParser;
+import com.reedelk.file.configuration.localfileread.AdvancedConfiguration;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
@@ -21,6 +22,7 @@ import org.reactivestreams.Publisher;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import static com.reedelk.file.commons.Defaults.LocalFileRead.READ_FILE_BUFFER_SIZE;
 import static com.reedelk.file.commons.Messages.ModuleFileReadComponent.FILE_NOT_FOUND;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -55,6 +57,9 @@ public class LocalFileRead implements ProcessorSync {
     @When(propertyName = "autoMimeType", propertyValue = When.BLANK)
     private String mimeType;
 
+    @Property("Advanced configuration")
+    private AdvancedConfiguration advancedConfiguration;
+
     @Override
     public Message apply(Message message, FlowContext flowContext) {
 
@@ -62,15 +67,17 @@ public class LocalFileRead implements ProcessorSync {
 
         return evaluated.map(filePath -> {
 
+            int readBufferSize = getReadBufferSize();
+
             MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);;
 
             Publisher<byte[]> contentAsStream;
 
             if (isBlank(basePath)) {
-                contentAsStream = moduleFileProvider.findBy(moduleId, filePath);
+                contentAsStream = moduleFileProvider.findBy(moduleId, filePath, readBufferSize);
             } else {
                 String finalFilePath = Paths.get(basePath, filePath).toString();
-                contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath);
+                contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, readBufferSize);
             }
 
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
@@ -78,10 +85,6 @@ public class LocalFileRead implements ProcessorSync {
             return MessageBuilder.get().typedContent(content).build();
 
         }).orElseThrow(() -> new ModuleFileNotFoundException(FILE_NOT_FOUND.format(fileName.toString(), basePath, moduleId.get())));
-    }
-
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
     }
 
     public void setFileName(DynamicString fileName) {
@@ -92,11 +95,25 @@ public class LocalFileRead implements ProcessorSync {
         this.moduleId = moduleId;
     }
 
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+
+    public void setAdvancedConfiguration(AdvancedConfiguration advancedConfiguration) {
+        this.advancedConfiguration = advancedConfiguration;
+    }
+
     public void setAutoMimeType(boolean autoMimeType) {
         this.autoMimeType = autoMimeType;
     }
 
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    private int getReadBufferSize() {
+        return Optional.ofNullable(advancedConfiguration)
+                .flatMap(config -> Optional.ofNullable(config.getReadBufferSize()))
+                .orElse(READ_FILE_BUFFER_SIZE);
     }
 }

@@ -8,7 +8,7 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
 import com.reedelk.runtime.api.file.ModuleFileProvider;
 import com.reedelk.runtime.api.file.ModuleId;
-import com.reedelk.runtime.commons.StreamFromURL;
+import com.reedelk.runtime.commons.PublisherFrom;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.reactivestreams.Publisher;
@@ -32,7 +32,7 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
     }
 
     @Override
-    public Publisher<byte[]> findBy(ModuleId moduleId, String path) {
+    public Publisher<byte[]> findBy(ModuleId moduleId, String path, int bufferSize) {
         Bundle bundle = context.getBundle(moduleId.get());
         Module module = modulesManager.getModuleById(moduleId.get());
 
@@ -51,7 +51,7 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
             }
 
             URL targetFileURL = resources.nextElement();
-            return StreamFromURL.of(targetFileURL);
+            return PublisherFrom.url(targetFileURL, bufferSize);
 
         } catch (IOException exception) {
             String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
