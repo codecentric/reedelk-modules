@@ -1,15 +1,15 @@
 package com.reedelk.file.component;
 
+import com.reedelk.file.commons.FileReadAttribute;
 import com.reedelk.file.commons.MimeTypeParser;
 import com.reedelk.file.configuration.localfileread.AdvancedConfiguration;
 import com.reedelk.runtime.api.annotation.*;
+import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
 import com.reedelk.runtime.api.file.ModuleFileProvider;
 import com.reedelk.runtime.api.file.ModuleId;
-import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
@@ -73,16 +73,26 @@ public class LocalFileRead implements ProcessorSync {
 
             Publisher<byte[]> contentAsStream;
 
+            String finalFilePath = filePath;
+
             if (isBlank(basePath)) {
-                contentAsStream = moduleFileProvider.findBy(moduleId, filePath, readBufferSize);
+
+                contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, readBufferSize);
+
             } else {
-                String finalFilePath = Paths.get(basePath, filePath).toString();
+
+                finalFilePath = Paths.get(basePath, finalFilePath).toString();
+
                 contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, readBufferSize);
             }
 
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
-            return MessageBuilder.get().typedContent(content).build();
+            MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of(
+                    FileReadAttribute.FILE_NAME, finalFilePath,
+                    FileReadAttribute.TIMESTAMP, System.currentTimeMillis()));
+
+            return MessageBuilder.get().attributes(attributes).typedContent(content).build();
 
         }).orElseThrow(() -> new ModuleFileNotFoundException(FILE_NOT_FOUND.format(fileName.toString(), basePath, moduleId.get())));
     }

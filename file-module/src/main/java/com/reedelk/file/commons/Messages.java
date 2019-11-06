@@ -16,7 +16,7 @@ public class Messages {
     public enum FileReadComponent implements FormattedMessage {
 
         FILE_NOT_FOUND("Could not find file=[%s]"),
-        FILE_NOT_FOUND_WITH_BASE_PATH("Could not find file with name=[%s], base path=[%s]"),
+        FILE_NAME_ERROR("Could not evaluate file with with name=[%s]"),
         FILE_IS_DIRECTORY("Could not read file=[%s]: is a directory"),
         FILE_LOCK_ERROR("Could not acquire lock on file=[%s]: %s"),
         FILE_READ_ERROR("Could not read file=[%s]: %s"),

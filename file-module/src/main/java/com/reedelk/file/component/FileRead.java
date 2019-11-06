@@ -1,16 +1,12 @@
 package com.reedelk.file.component;
 
-import com.reedelk.file.commons.LockType;
-import com.reedelk.file.commons.MimeTypeParser;
-import com.reedelk.file.commons.ReadFrom;
-import com.reedelk.file.commons.ReadOptions;
+import com.reedelk.file.commons.*;
 import com.reedelk.file.configuration.fileread.AdvancedConfiguration;
 import com.reedelk.file.exception.NotValidFileException;
 import com.reedelk.runtime.api.annotation.*;
+import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
@@ -26,7 +22,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import static com.reedelk.file.commons.Defaults.FileRead.*;
-import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_NOT_FOUND_WITH_BASE_PATH;
+import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_NAME_ERROR;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 
 @ESBComponent("File read")
@@ -71,15 +67,17 @@ public class FileRead implements ProcessorSync {
 
             Publisher<byte[]> contentAsStream;
 
+            Path path;
+
             if (isBlank(basePath)) {
 
-                Path path = Paths.get(filePath);
+                path = Paths.get(filePath);
 
                 contentAsStream = ReadFrom.path(path, readBufferSize, options);
 
             } else {
 
-                Path path = Paths.get(basePath, filePath);
+                path = Paths.get(basePath, filePath);
 
                 contentAsStream = ReadFrom.path(path, readBufferSize, options);
 
@@ -87,9 +85,13 @@ public class FileRead implements ProcessorSync {
 
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
-            return MessageBuilder.get().typedContent(content).build();
+            MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of(
+                    FileReadAttribute.FILE_NAME, path.toString(),
+                    FileReadAttribute.TIMESTAMP, System.currentTimeMillis()));
 
-        }).orElseThrow(() -> new NotValidFileException(FILE_NOT_FOUND_WITH_BASE_PATH.format(fileName.toString(), basePath)));
+            return MessageBuilder.get().attributes(attributes).typedContent(content).build();
+
+        }).orElseThrow(() -> new NotValidFileException(FILE_NAME_ERROR.format(fileName.toString())));
     }
 
     public void setMimeType(String mimeType) {

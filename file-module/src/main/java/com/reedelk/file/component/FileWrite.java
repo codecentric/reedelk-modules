@@ -1,15 +1,15 @@
 package com.reedelk.file.component;
 
 import com.reedelk.file.commons.CloseableUtils;
+import com.reedelk.file.commons.FileWriteAttribute;
 import com.reedelk.file.commons.WriteMode;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.api.service.ConverterService;
@@ -21,6 +21,8 @@ import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,17 +75,36 @@ public class FileWrite implements ProcessorAsync {
 
         TypedPublisher<byte[]> stream = converterService.convert(originalStream, byte[].class);
 
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
         Flux.from(Flux.from(stream))
                 .reduceWith(() -> {
                     try {
-                        return Files.newOutputStream(path, mode.options());
+                        return FileChannel.open(path, mode.options());
                     } catch (IOException e) {
                         throw Exceptions.propagate(e);
                     }
                 }, (outputStream, byteChunk) -> {
                     try {
-                        outputStream.write(byteChunk);
+
+                        if (byteChunk.length > 1024) {
+                            // Write it in multiple steps
+                            int offset = 0;
+                            int length = 1024;
+                            while (offset <= byteChunk.length) {
+                                byteBuffer.put(byteChunk, offset, length);
+                                offset += 1024;
+                                length = byteChunk.length - offset;
+                            }
+
+
+                        } else {
+                            byteBuffer.put(byteChunk);
+                        }
+
+                        outputStream.write(byteBuffer);
+
                         return outputStream;
+
                     } catch (IOException e) {
                         throw Exceptions.propagate(e);
                     }
@@ -93,12 +114,18 @@ public class FileWrite implements ProcessorAsync {
                     CloseableUtils.closeSilently(out);
 
                     if (throwable != null) {
+                        // An exception was thrown during the process.
                         callback.onError(new ESBException(throwable), flowContext);
+
                     } else {
-                        Message done = MessageBuilder.get()
-                                .text("Written on path: " + path.toString())
-                                .build();
-                        callback.onResult(done, flowContext);
+
+                        MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of(
+                                FileWriteAttribute.FILE_NAME, path.toString(),
+                                FileWriteAttribute.TIMESTAMP, System.currentTimeMillis()));
+
+                        Message outMessage = MessageBuilder.get().attributes(attributes).empty().build();
+
+                        callback.onResult(outMessage, flowContext);
                     }
                 }).subscribe();
     }
