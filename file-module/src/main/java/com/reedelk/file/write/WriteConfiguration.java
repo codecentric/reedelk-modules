@@ -16,9 +16,9 @@ public class WriteConfiguration {
     private final long retryWaitTime;
     private final boolean createParentDirectory;
 
-    public WriteConfiguration(FileWriteConfiguration configuration) {
+    public WriteConfiguration(FileWriteConfiguration configuration, WriteMode mode) {
         this.lockType = getLockType(configuration);
-        this.writeMode = getWriteMode(configuration);
+        this.writeMode = getWriteMode(mode);
 
         this.writeBufferSize = getWriteBufferSize(configuration);
         this.retryMaxAttempts = getRetryMaxAttempts(configuration);
@@ -81,9 +81,8 @@ public class WriteConfiguration {
                 .orElse(false);
     }
 
-    private WriteMode getWriteMode(FileWriteConfiguration configuration) {
-        return Optional.ofNullable(configuration)
-                .flatMap(config -> Optional.ofNullable(config.getMode()))
+    private WriteMode getWriteMode(WriteMode mode) {
+        return Optional.ofNullable(mode)
                 .orElse(WriteMode.OVERWRITE);
     }
 }

@@ -1,56 +1,52 @@
 package com.reedelk.file.write;
 
-import com.reedelk.file.commons.AcquireLock;
 import com.reedelk.file.commons.CloseableUtils;
-import com.reedelk.file.commons.LockType;
-import com.reedelk.file.commons.RetryCommand;
+import com.reedelk.file.commons.FileChannelProvider;
+import com.reedelk.file.exception.FileWriteException;
+import com.reedelk.file.exception.MaxRetriesExceeded;
+import com.reedelk.file.exception.NotValidFileException;
 import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.OnResult;
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.OverlappingFileLockException;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+
+import static com.reedelk.file.commons.Messages.FileWriteComponent.ERROR_FILE_WRITE_WITH_PATH;
+import static com.reedelk.file.commons.Messages.Misc.FILE_LOCK_MAX_RETRY_ERROR;
+import static com.reedelk.file.commons.Messages.Misc.FILE_NOT_FOUND;
+import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
 
 public class Writer {
 
-    public void writeTo(WriteConfiguration config,
-                        FlowContext flowContext, OnResult callback, Path path, TypedPublisher<byte[]> dataStream) {
+    public void write(WriteConfiguration config,
+                      FlowContext flowContext,
+                      OnResult callback,
+                      Path path,
+                      TypedPublisher<byte[]> dataStream) {
 
         int bufferLength = config.getWriteBufferSize();
         ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
 
         Flux.from(Flux.from(dataStream))
                 .reduceWith(() -> {
-
                     try {
-                        FileChannel channel = FileChannel.open(path, config.getWriteMode().options());
-
-                        if (LockType.LOCK.equals(config.getLockType())) {
-                            RetryCommand.builder()
-                                    .function(AcquireLock.from(path, channel))
-                                    .maxRetries(config.getRetryMaxAttempts())
-                                    .waitTime(config.getRetryWaitTime())
-                                    .retryOn(OverlappingFileLockException.class)
-                                    .build()
-                                    .execute();
-                        }
-
-                        return channel;
-
-                    } catch (IOException e) {
+                        return FileChannelProvider.from(path,
+                                config.getLockType(),
+                                config.getRetryMaxAttempts(),
+                                config.getRetryWaitTime(),
+                                config.getWriteMode().options());
+                    } catch (Exception e) {
                         throw Exceptions.propagate(e);
                     }
-                }, (channel, byteChunk) -> {
+
+                }, (fileChannel, byteChunk) -> {
 
                     try {
-
                         // Write it in multiple steps
                         int remaining;
                         int offset = 0;
@@ -64,7 +60,7 @@ public class Writer {
 
                             byteBuffer.flip();
 
-                            channel.write(byteBuffer);
+                            fileChannel.write(byteBuffer);
 
                             offset += bufferLength;
 
@@ -74,19 +70,35 @@ public class Writer {
 
                         }
 
-                        return channel;
+                        return fileChannel;
 
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw Exceptions.propagate(e);
                     }
                 })
-                .doOnSuccessOrError((out, throwable) -> {
 
-                    CloseableUtils.closeSilently(out);
+                .doOnSuccessOrError((fileChannel, throwable) -> {
+
+                    CloseableUtils.closeSilently(fileChannel);
 
                     if (throwable != null) {
-                        // An exception was thrown during the process.
-                        callback.onError(new ESBException(throwable), flowContext);
+
+                        Exception realException;
+
+                        if (throwable instanceof NoSuchFileException) {
+                            String message = FILE_NOT_FOUND.format(path.toString());
+                            realException = new NotValidFileException(message, throwable);
+
+                        } else if (throwable instanceof MaxRetriesExceeded) {
+                            String message = FILE_LOCK_MAX_RETRY_ERROR.format(path.toString(), rootCauseMessageOf(throwable));
+                            realException = new FileWriteException(message, throwable);
+
+                        } else {
+                            String errorMessage = ERROR_FILE_WRITE_WITH_PATH.format(path.toString(), rootCauseMessageOf(throwable));
+                            realException = new FileWriteException(errorMessage, throwable);
+                        }
+
+                        callback.onError(realException, flowContext);
 
                     } else {
 

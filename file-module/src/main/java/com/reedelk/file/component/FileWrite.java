@@ -1,7 +1,9 @@
 package com.reedelk.file.component;
 
+import com.reedelk.file.exception.FileWriteException;
 import com.reedelk.file.write.FileWriteConfiguration;
 import com.reedelk.file.write.WriteConfiguration;
+import com.reedelk.file.write.WriteMode;
 import com.reedelk.file.write.Writer;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
@@ -18,13 +20,14 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.reedelk.file.commons.Messages.FileWriteComponent.ERROR_CREATING_DIRECTORIES;
+import static com.reedelk.file.commons.Messages.FileWriteComponent.ERROR_FILE_WRITE;
+import static com.reedelk.file.commons.Messages.FileWriteComponent.ERROR_FILE_WRITE_WITH_PATH;
+import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 
 @ESBComponent("File write")
@@ -42,6 +45,9 @@ public class FileWrite implements ProcessorAsync {
     @Property("Base path")
     private String basePath;
 
+    @Property("Write mode")
+    private WriteMode mode;
+
     @Property("Configuration")
     private FileWriteConfiguration configuration;
 
@@ -55,28 +61,32 @@ public class FileWrite implements ProcessorAsync {
 
         if (evaluated.isPresent()) {
 
-            WriteConfiguration config = new WriteConfiguration(configuration);
+            Path finalPath = null;
 
-            String filePath = evaluated.get();
+            try {
 
-            Path finalPath = isBlank(basePath) ? Paths.get(filePath) : Paths.get(basePath, filePath);
+                WriteConfiguration config = new WriteConfiguration(configuration, mode);
 
-            if (config.isCreateParentDirectory()) {
-                try {
+                String filePath = evaluated.get();
+
+                finalPath = isBlank(basePath) ? Paths.get(filePath) : Paths.get(basePath, filePath);
+
+                if (config.isCreateParentDirectory()) {
                     Files.createDirectories(finalPath.getParent());
-                } catch (IOException exception) {
-                    String errorMessage = ERROR_CREATING_DIRECTORIES.format(finalPath.toString(), exception.getMessage());
-                    callback.onError(new ESBException(errorMessage, exception), flowContext);
-                    return;
                 }
+
+                TypedPublisher<?> originalStream = message.content().stream();
+
+                TypedPublisher<byte[]> originalStreamAsBytes = converterService.convert(originalStream, byte[].class);
+
+                writer.write(config, flowContext, callback, finalPath, originalStreamAsBytes);
+
+            } catch (Exception exception) {
+                String errorMessage = finalPath != null ?
+                        ERROR_FILE_WRITE_WITH_PATH.format(finalPath.toString(), rootCauseMessageOf(exception)) :
+                        ERROR_FILE_WRITE.format(rootCauseMessageOf(exception));
+                callback.onError(new FileWriteException(errorMessage, exception), flowContext);
             }
-
-            TypedPublisher<?> originalStream = message.content().stream();
-
-            TypedPublisher<byte[]> originalStreamAsBytes = converterService.convert(originalStream, byte[].class);
-
-            // TODO: Try catch any exception hwere
-            writer.writeTo(config, flowContext, callback, finalPath, originalStreamAsBytes);
 
         } else {
             callback.onError(new ESBException("Could not write file"), flowContext);
@@ -89,6 +99,10 @@ public class FileWrite implements ProcessorAsync {
 
     public void setBasePath(String basePath) {
         this.basePath = basePath;
+    }
+
+    public void setMode(WriteMode mode) {
+        this.mode = mode;
     }
 
     public void setConfiguration(FileWriteConfiguration configuration) {

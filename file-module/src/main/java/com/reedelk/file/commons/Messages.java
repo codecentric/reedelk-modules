@@ -15,12 +15,10 @@ public class Messages {
 
     public enum FileReadComponent implements FormattedMessage {
 
-        FILE_NOT_FOUND("Could not find file=[%s]"),
         FILE_NAME_ERROR("Could not evaluate file with with name=[%s]"),
         FILE_IS_DIRECTORY("Could not read file=[%s]: is a directory"),
         FILE_LOCK_ERROR("Could not acquire lock on file=[%s]: %s"),
-        FILE_READ_ERROR("Could not read file=[%s]: %s"),
-        FILE_READ_LOCK_MAX_RETRY_ERROR("Could not acquire lock on file=[%s]: %s");
+        FILE_READ_ERROR("Could not read file=[%s]: %s");
 
         private String msg;
 
@@ -52,7 +50,8 @@ public class Messages {
 
     public enum FileWriteComponent implements FormattedMessage {
 
-        ERROR_CREATING_DIRECTORIES("Could not create directories for file path=[%s]: %s");
+        ERROR_FILE_WRITE_WITH_PATH("Could not write file with path=[%s]: %s"),
+        ERROR_FILE_WRITE("Could not write file: %s");
 
         private String msg;
 
@@ -69,6 +68,8 @@ public class Messages {
 
     public enum Misc implements FormattedMessage {
 
+        FILE_NOT_FOUND("Could not find file=[%s]"),
+        FILE_LOCK_MAX_RETRY_ERROR("Could not acquire lock on file=[%s]: %s"),
         MAX_ATTEMPTS_EXCEEDED("Max retry attempts (%d) exceeded");
 
         private String msg;

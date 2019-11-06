@@ -1,6 +1,9 @@
 package com.reedelk.file.read;
 
-import com.reedelk.file.commons.*;
+import com.reedelk.file.commons.CloseableUtils;
+import com.reedelk.file.commons.FileChannelProvider;
+import com.reedelk.file.commons.FileOpenOptions;
+import com.reedelk.file.commons.FileOperation;
 import com.reedelk.file.exception.FileReadException;
 import com.reedelk.file.exception.MaxRetriesExceeded;
 import com.reedelk.file.exception.NotValidFileException;
@@ -10,13 +13,15 @@ import reactor.core.publisher.Flux;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 
-import static com.reedelk.file.commons.Messages.FileReadComponent.*;
+import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_IS_DIRECTORY;
+import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_READ_ERROR;
+import static com.reedelk.file.commons.Messages.Misc.FILE_LOCK_MAX_RETRY_ERROR;
+import static com.reedelk.file.commons.Messages.Misc.FILE_NOT_FOUND;
 import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
 
 public class Reader {
@@ -38,17 +43,11 @@ public class Reader {
         FileChannel channel = null;
         try {
 
-            channel = FileChannel.open(path, openOptions);
-
-            if (LockType.LOCK.equals(config.getLockType())) {
-                RetryCommand.builder()
-                        .function(AcquireLock.from(path, channel))
-                        .maxRetries(config.getRetryMaxAttempts())
-                        .waitTime(config.getRetryWaitTime())
-                        .retryOn(OverlappingFileLockException.class)
-                        .build()
-                        .execute();
-            }
+            channel = FileChannelProvider.from(path,
+                    config.getLockType(),
+                    config.getRetryMaxAttempts(),
+                    config.getRetryWaitTime(),
+                    openOptions);
 
         } catch (NoSuchFileException exception) {
 
@@ -67,7 +66,7 @@ public class Reader {
             }
 
             if (exception instanceof MaxRetriesExceeded) {
-                String message = FILE_READ_LOCK_MAX_RETRY_ERROR.format(path.toString(), rootCauseMessageOf(exception));
+                String message = FILE_LOCK_MAX_RETRY_ERROR.format(path.toString(), rootCauseMessageOf(exception));
                 throw new FileReadException(message, exception);
             }
 

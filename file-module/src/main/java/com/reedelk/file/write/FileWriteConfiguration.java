@@ -13,9 +13,6 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = FileWriteConfiguration.class, scope = PROTOTYPE)
 public class FileWriteConfiguration implements Implementor {
 
-    @Property("Write mode")
-    private WriteMode mode;
-
     @Property("Create directories")
     private Boolean createParentDirectory;
 
@@ -35,14 +32,6 @@ public class FileWriteConfiguration implements Implementor {
     @Property("Write buffer size")
     @Hint("65536")
     private Integer writeBufferSize;
-
-    public WriteMode getMode() {
-        return mode;
-    }
-
-    public void setMode(WriteMode mode) {
-        this.mode = mode;
-    }
 
     public boolean isCreateParentDirectory() {
         return createParentDirectory;
