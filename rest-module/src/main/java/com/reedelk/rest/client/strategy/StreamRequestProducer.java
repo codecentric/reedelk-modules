@@ -25,13 +25,16 @@ class StreamRequestProducer extends BasicAsyncRequestProducer {
 
     static class StreamProducer implements HttpAsyncContentProducer {
 
+        private int requestBufferSize;
         private Throwable throwable;
         private ByteBuffer byteBuffer;
         private BlockingQueue<byte[]> queue = new LinkedTransferQueue<>();
 
         StreamProducer(Publisher<byte[]> stream, int requestBufferSize) {
 
-            byteBuffer = ByteBuffer.allocate(requestBufferSize);
+            this.requestBufferSize = requestBufferSize;
+
+            this.byteBuffer = ByteBuffer.allocate(requestBufferSize);
 
             Flux.from(stream).subscribeOn(elastic())
 
@@ -69,14 +72,29 @@ class StreamRequestProducer extends BasicAsyncRequestProducer {
 
                 } else {
 
-                    byteBuffer.put(take);
+                    int remaining;
 
-                    byteBuffer.flip();
+                    int offset = 0;
 
-                    encoder.write(byteBuffer);
+                    int length = take.length > requestBufferSize ? requestBufferSize : take.length;
 
-                    byteBuffer.clear();
+                    while (length > 0) {
 
+                        byteBuffer.clear();
+
+                        byteBuffer.put(take, offset, length);
+
+                        byteBuffer.flip();
+
+                        encoder.write(byteBuffer);
+
+                        offset += requestBufferSize;
+
+                        remaining = take.length - offset;
+
+                        length = remaining > requestBufferSize ? requestBufferSize : remaining;
+
+                    }
                 }
 
             } catch (InterruptedException e) {

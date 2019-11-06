@@ -56,7 +56,7 @@ public class RestClient implements ProcessorAsync {
 
     @Property("Body")
     @Hint("payload")
-    @Default("#[payload]")
+    @Default("#[message.payload()]")
     @When(propertyName = "method", propertyValue = "DELETE")
     @When(propertyName = "method", propertyValue = "POST")
     @When(propertyName = "method", propertyValue = "PUT")
