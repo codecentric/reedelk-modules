@@ -5,7 +5,7 @@ import com.reedelk.file.commons.MimeTypeParser;
 import com.reedelk.file.commons.ReadFrom;
 import com.reedelk.file.commons.ReadOptions;
 import com.reedelk.file.configuration.fileread.AdvancedConfiguration;
-import com.reedelk.file.exception.FileNotFoundException;
+import com.reedelk.file.exception.NotValidFileException;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -89,7 +89,7 @@ public class FileRead implements ProcessorSync {
 
             return MessageBuilder.get().typedContent(content).build();
 
-        }).orElseThrow(() -> new FileNotFoundException(FILE_NOT_FOUND.format(fileName.toString(), basePath)));
+        }).orElseThrow(() -> new NotValidFileException(FILE_NOT_FOUND.format(fileName.toString(), basePath)));
     }
 
     public void setMimeType(String mimeType) {

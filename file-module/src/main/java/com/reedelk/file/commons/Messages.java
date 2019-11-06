@@ -15,7 +15,9 @@ public class Messages {
 
     public enum FileReadComponent implements FormattedMessage {
 
-        FILE_NOT_FOUND("Could not find file with name[%s], base path=[%s]");
+        FILE_NOT_FOUND("Could not find file with name=[%s], base path=[%s]"),
+        FILE_IS_DIRECTORY("Could not read file=[%s]: is a directory"),
+        FILE_LOCK_ERROR("Could not acquire lock on file=[%s]: %s");
 
         private String msg;
 
@@ -52,6 +54,23 @@ public class Messages {
         private String msg;
 
         FileWriteComponent(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+
+    }
+
+    public enum Misc implements FormattedMessage {
+
+        MAX_ATTEMPTS_EXCEEDED("Max retry attempts (%d) exceeded");
+
+        private String msg;
+
+        Misc(String msg) {
             this.msg = msg;
         }
 

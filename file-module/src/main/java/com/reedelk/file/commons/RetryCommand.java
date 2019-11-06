@@ -1,14 +1,12 @@
 package com.reedelk.file.commons;
 
+import com.reedelk.file.commons.Messages.Misc;
+import com.reedelk.file.exception.MaxRetriesExceeded;
 import com.reedelk.runtime.api.exception.ESBException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 
 class RetryCommand {
-
-    private static final Logger logger = LoggerFactory.getLogger(RetryCommand.class);
 
     private final long waitTime;
     private final int maxRetries;
@@ -31,6 +29,7 @@ class RetryCommand {
         try {
             function.get();
         } catch (Exception exception) {
+
             if (retryOnException.isAssignableFrom(exception.getClass())) {
                 // We only retry if the exception thrown is expected
                 // and eligible for the retry.
@@ -42,8 +41,8 @@ class RetryCommand {
         }
     }
 
-
     private void retry() {
+
         int attempt = 0;
 
         while (attempt < maxRetries) {
@@ -54,27 +53,28 @@ class RetryCommand {
 
                 function.get();
 
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException exception) {
 
-                String errorMessage = "Could not read file: " + ex.getMessage();
-                logger.warn(errorMessage, ex);
-                throw new ESBException(errorMessage);
+                throw new ESBException(exception);
 
-            } catch (Exception ex) {
+            } catch (Exception exception) {
 
-                if (retryOnException.isAssignableFrom(ex.getClass())) {
+                if (retryOnException.isAssignableFrom(exception.getClass())) {
+
                     attempt++;
+
                     if (attempt >= maxRetries) {
-                        String errorMessage = "Could not read file: max retries exceeded";
-                        logger.warn(errorMessage, ex);
-                        throw new ESBException(errorMessage);
+
+                        throw new MaxRetriesExceeded(Misc.MAX_ATTEMPTS_EXCEEDED.format(maxRetries));
+
                     }
 
+                    // Otherwise we keep attempting the retry ...
+
                 } else {
-                    // Exception thrown for which we cant' retry.
-                    String errorMessage = "Could not read file: " + ex.getMessage();
-                    logger.warn(errorMessage, ex);
-                    throw new ESBException(errorMessage);
+
+                    throw new ESBException(exception);
+
                 }
             }
         }

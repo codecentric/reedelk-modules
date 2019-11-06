@@ -1,9 +1,8 @@
 package com.reedelk.file.commons;
 
-import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.file.exception.FileReadException;
+import com.reedelk.file.exception.NotValidFileException;
 import org.reactivestreams.Publisher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
@@ -16,19 +15,20 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
-public class ReadFrom {
+import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_IS_DIRECTORY;
+import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_LOCK_ERROR;
+import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
 
-    private static final Logger logger = LoggerFactory.getLogger(ReadFrom.class);
+public class ReadFrom {
 
     public static Publisher<byte[]> path(Path path, int bufferSize, ReadOptions readOptions) {
 
         if (Files.isDirectory(path)) {
-            throw new ESBException("Could not read file, it is a directory " + path.toString());
+            String message = FILE_IS_DIRECTORY.format(path.toString());
+            throw new NotValidFileException(message);
         }
 
         OpenOption[] openOptions = FileOpenOptions.from(FileOperation.READ, readOptions.getLockType());
-
-
 
         // We must immediately create the channel and acquire any lock
         // on the file if the user has requested to lock the file, so that
@@ -42,7 +42,7 @@ public class ReadFrom {
 
             if (LockType.LOCK.equals(readOptions.getLockType())) {
                 RetryCommand.builder()
-                        .function(doLock(channel))
+                        .function(doLock(path, channel))
                         .maxRetries(readOptions.getMaxRetryAttempts())
                         .waitTime(readOptions.getMaxRetryWaitTime())
                         .retryOn(OverlappingFileLockException.class)
@@ -54,7 +54,9 @@ public class ReadFrom {
 
             CloseableUtils.closeSilently(channel);
 
-            throw new ESBException(exception);
+            String message = FILE_LOCK_ERROR.format(path.toString(), rootCauseMessageOf(exception));
+
+            throw new FileReadException(message, exception);
 
         }
 
@@ -93,13 +95,13 @@ public class ReadFrom {
 
     }
 
-    private static Supplier<FileLock> doLock(FileChannel channel) {
+    private static Supplier<FileLock> doLock(Path path, FileChannel channel) {
         return () -> {
             try {
                 return channel.lock();
-            } catch (IOException e) {
-                logger.warn("Could not lock file", e);
-                throw new ESBException(e);
+            } catch (IOException exception) {
+                String message = FILE_LOCK_ERROR.format(path.toString(), rootCauseMessageOf(exception));
+                throw new FileReadException(message, exception);
             }
         };
     }
