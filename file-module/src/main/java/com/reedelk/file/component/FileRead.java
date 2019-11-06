@@ -1,6 +1,8 @@
 package com.reedelk.file.component;
 
+import com.reedelk.file.commons.LockType;
 import com.reedelk.file.commons.MimeTypeParser;
+import com.reedelk.file.commons.ReadFrom;
 import com.reedelk.file.configuration.fileread.AdvancedConfiguration;
 import com.reedelk.file.exception.FileNotFoundException;
 import com.reedelk.runtime.api.annotation.*;
@@ -13,7 +15,6 @@ import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.api.service.ScriptEngineService;
-import com.reedelk.runtime.commons.PublisherFrom;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
@@ -23,7 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.reedelk.file.commons.Defaults.FileRead.READ_FILE_BUFFER_SIZE;
+import static com.reedelk.file.commons.Defaults.FileRead.*;
 import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_NOT_FOUND;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 
@@ -62,6 +63,11 @@ public class FileRead implements ProcessorSync {
         return evaluated.map(filePath -> {
 
             int readBufferSize = getReadBufferSize();
+            ReadFrom.ReadOptions options = new ReadFrom.ReadOptions();
+            options.lockType = getLockType();
+            options.maxRetryAttempts = getRetryMaxAttempts();
+            options.maxRetryWaitTime = getRetryWaitTime();
+
 
             MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);
 
@@ -71,13 +77,13 @@ public class FileRead implements ProcessorSync {
 
                 Path path = Paths.get(filePath);
 
-                contentAsStream = PublisherFrom.path(path, readBufferSize);
+                contentAsStream = ReadFrom.path(path, readBufferSize, options);
 
             } else {
 
                 Path path = Paths.get(basePath, filePath);
 
-                contentAsStream = PublisherFrom.path(path, readBufferSize);
+                contentAsStream = ReadFrom.path(path, readBufferSize, options);
 
             }
 
@@ -112,5 +118,24 @@ public class FileRead implements ProcessorSync {
         return Optional.ofNullable(advancedConfiguration)
                 .flatMap(config -> Optional.ofNullable(config.getReadBufferSize()))
                 .orElse(READ_FILE_BUFFER_SIZE);
+    }
+
+    private LockType getLockType() {
+        return Optional.ofNullable(advancedConfiguration)
+                .flatMap(config -> Optional.ofNullable(config.getLockFile()))
+                .map(shouldLock -> shouldLock ? LockType.LOCK : LockType.NONE)
+                .orElse(LockType.NONE);
+    }
+
+    private int getRetryMaxAttempts() {
+        return Optional.ofNullable(advancedConfiguration)
+                .flatMap(config -> Optional.ofNullable(config.getLockRetryMaxAttempts()))
+                .orElse(RETRY_MAX_ATTEMPTS);
+    }
+
+    private long getRetryWaitTime() {
+        return Optional.ofNullable(advancedConfiguration)
+                .flatMap(config -> Optional.ofNullable(config.getLockRetryWaitTime()))
+                .orElse(RETRY_WAIT_TIME);
     }
 }

@@ -8,7 +8,6 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
 import com.reedelk.runtime.api.file.ModuleFileProvider;
 import com.reedelk.runtime.api.file.ModuleId;
-import com.reedelk.runtime.commons.PublisherFrom;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.reactivestreams.Publisher;
@@ -51,7 +50,7 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
             }
 
             URL targetFileURL = resources.nextElement();
-            return PublisherFrom.url(targetFileURL, bufferSize);
+            return StreamFrom.url(targetFileURL, bufferSize);
 
         } catch (IOException exception) {
             String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);

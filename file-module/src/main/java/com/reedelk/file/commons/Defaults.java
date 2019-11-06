@@ -16,5 +16,7 @@ public class Defaults {
         }
 
         public static final int READ_FILE_BUFFER_SIZE = 65536;
+        public static final int RETRY_MAX_ATTEMPTS = 3;
+        public static final long RETRY_WAIT_TIME = 500;
     }
 }
