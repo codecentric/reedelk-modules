@@ -1,5 +1,6 @@
 package com.reedelk.file.component;
 
+import com.reedelk.file.commons.CloseableUtils;
 import com.reedelk.file.commons.WriteMode;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
@@ -19,7 +20,6 @@ import org.osgi.service.component.annotations.ServiceScope;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,7 +90,7 @@ public class FileWrite implements ProcessorAsync {
                 })
                 .doOnSuccessOrError((out, throwable) -> {
 
-                    closeSilently(out);
+                    CloseableUtils.closeSilently(out);
 
                     if (throwable != null) {
                         callback.onError(new ESBException(throwable), flowContext);
@@ -113,16 +113,6 @@ public class FileWrite implements ProcessorAsync {
 
     public void setCreateParentDirectory(boolean createParentDirectory) {
         this.createParentDirectory = createParentDirectory;
-    }
-
-    private void closeSilently(Closeable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
 

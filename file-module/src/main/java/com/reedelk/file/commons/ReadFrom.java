@@ -21,11 +21,9 @@ public class ReadFrom {
     private static final Logger logger = LoggerFactory.getLogger(ReadFrom.class);
 
     public static Publisher<byte[]> path(Path path, int bufferSize, ReadOptions readOptions) {
-        if (!Files.isReadable(path)) {
-            throw new ESBException("File does not exists " + path.toString());
-        }
+
         if (Files.isDirectory(path)) {
-            throw new ESBException("File is a directory " + path.toString());
+            throw new ESBException("Could not read file, it is a directory " + path.toString());
         }
 
         OpenOption[] openOptions = FileOpenOptions.from(FileOperation.READ, readOptions.getLockType());
@@ -54,7 +52,7 @@ public class ReadFrom {
 
         } catch (Exception exception) {
 
-            ChannelUtils.closeSilently(channel);
+            CloseableUtils.closeSilently(channel);
 
             throw new ESBException(exception);
 
@@ -64,9 +62,9 @@ public class ReadFrom {
 
         return Flux.create(fluxSink -> {
 
-            ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize);
-
             try {
+                ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize);
+
                 while (finalChannel.read(byteBuffer) > 0) {
 
                     byteBuffer.flip();
@@ -88,7 +86,7 @@ public class ReadFrom {
 
             } finally {
 
-                ChannelUtils.closeSilently(finalChannel);
+                CloseableUtils.closeSilently(finalChannel);
 
             }
         });
