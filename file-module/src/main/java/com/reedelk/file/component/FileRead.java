@@ -1,8 +1,11 @@
 package com.reedelk.file.component;
 
-import com.reedelk.file.commons.*;
-import com.reedelk.file.configuration.fileread.AdvancedConfiguration;
+import com.reedelk.file.commons.MimeTypeParser;
+import com.reedelk.file.configuration.FileReadConfiguration;
 import com.reedelk.file.exception.NotValidFileException;
+import com.reedelk.file.read.FileReadAttribute;
+import com.reedelk.file.read.ReadConfiguration;
+import com.reedelk.file.read.Reader;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
@@ -21,7 +24,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.reedelk.file.commons.Defaults.FileRead.*;
 import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_NAME_ERROR;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 
@@ -40,7 +42,7 @@ public class FileRead implements ProcessorSync {
 
     @Property("Auto mime type")
     @Default("true")
-    private boolean autoMimeType;
+    private Boolean autoMimeType;
 
     @Property("Mime type")
     @MimeTypeCombo
@@ -49,8 +51,10 @@ public class FileRead implements ProcessorSync {
     @When(propertyName = "autoMimeType", propertyValue = When.BLANK)
     private String mimeType;
 
-    @Property("Advanced configuration")
-    private AdvancedConfiguration advancedConfiguration;
+    @Property("Configuration")
+    private FileReadConfiguration configuration;
+
+    private Reader reader = new Reader();
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -59,9 +63,7 @@ public class FileRead implements ProcessorSync {
 
         return evaluated.map(filePath -> {
 
-            int readBufferSize = getReadBufferSize();
-
-            ReadOptions options = new ReadOptions(getLockType(), getRetryMaxAttempts(), getRetryWaitTime());
+            ReadConfiguration config = new ReadConfiguration(configuration);
 
             MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);
 
@@ -73,13 +75,13 @@ public class FileRead implements ProcessorSync {
 
                 path = Paths.get(filePath);
 
-                contentAsStream = ReadFrom.path(path, readBufferSize, options);
+                contentAsStream = reader.path(path, config);
 
             } else {
 
                 path = Paths.get(basePath, filePath);
 
-                contentAsStream = ReadFrom.path(path, readBufferSize, options);
+                contentAsStream = reader.path(path, config);
 
             }
 
@@ -94,48 +96,23 @@ public class FileRead implements ProcessorSync {
         }).orElseThrow(() -> new NotValidFileException(FILE_NAME_ERROR.format(fileName.toString())));
     }
 
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
+    public void setConfiguration(FileReadConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public void setFileName(DynamicString fileName) {
         this.fileName = fileName;
     }
 
-    public void setAutoMimeType(boolean autoMimeType) {
-        this.autoMimeType = autoMimeType;
-    }
-
     public void setBasePath(String basePath) {
         this.basePath = basePath;
     }
 
-    public void setAdvancedConfiguration(AdvancedConfiguration advancedConfiguration) {
-        this.advancedConfiguration = advancedConfiguration;
+    public void setAutoMimeType(Boolean autoMimeType) {
+        this.autoMimeType = autoMimeType;
     }
 
-    private int getReadBufferSize() {
-        return Optional.ofNullable(advancedConfiguration)
-                .flatMap(config -> Optional.ofNullable(config.getReadBufferSize()))
-                .orElse(READ_FILE_BUFFER_SIZE);
-    }
-
-    private LockType getLockType() {
-        return Optional.ofNullable(advancedConfiguration)
-                .flatMap(config -> Optional.ofNullable(config.getLockFile()))
-                .map(shouldLock -> shouldLock ? LockType.LOCK : LockType.NONE)
-                .orElse(LockType.NONE);
-    }
-
-    private int getRetryMaxAttempts() {
-        return Optional.ofNullable(advancedConfiguration)
-                .flatMap(config -> Optional.ofNullable(config.getLockRetryMaxAttempts()))
-                .orElse(RETRY_MAX_ATTEMPTS);
-    }
-
-    private long getRetryWaitTime() {
-        return Optional.ofNullable(advancedConfiguration)
-                .flatMap(config -> Optional.ofNullable(config.getLockRetryWaitTime()))
-                .orElse(RETRY_WAIT_TIME);
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 }

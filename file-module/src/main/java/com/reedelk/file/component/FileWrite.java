@@ -1,15 +1,15 @@
 package com.reedelk.file.component;
 
-import com.reedelk.file.commons.CloseableUtils;
-import com.reedelk.file.commons.FileWriteAttribute;
-import com.reedelk.file.commons.WriteMode;
+import com.reedelk.file.configuration.FileWriteConfiguration;
+import com.reedelk.file.write.WriteConfiguration;
+import com.reedelk.file.write.Writer;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
-import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.component.ProcessorAsync;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.message.*;
+import com.reedelk.runtime.api.message.FlowContext;
+import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.api.service.ConverterService;
@@ -17,12 +17,8 @@ import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
-import reactor.core.Exceptions;
-import reactor.core.publisher.Flux;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,12 +38,13 @@ public class FileWrite implements ProcessorAsync {
     @Property("File name")
     private DynamicString filePath;
 
-    @Property("Write mode")
-    private WriteMode mode = WriteMode.OVERWRITE;
+    @Property("Base path")
+    private String basePath;
 
-    @Property("Create directories")
-    private boolean createParentDirectory;
+    @Property("Configuration")
+    private FileWriteConfiguration configuration;
 
+    private final Writer writer = new Writer();
 
     @Override
     public void apply(Message message, FlowContext flowContext, OnResult callback) {
@@ -57,13 +54,14 @@ public class FileWrite implements ProcessorAsync {
             callback.onError(new ESBException("Could not write file"), flowContext);
         }
 
+        WriteConfiguration config = new WriteConfiguration(configuration);
+
         String filePath = evaluated.get();
 
-        TypedPublisher<?> originalStream = message.content().stream();
 
         Path path = Paths.get(filePath);
 
-        if (createParentDirectory) {
+        if (config.isCreateParentDirectory()) {
             try {
                 Files.createDirectories(path.getParent());
             } catch (IOException exception) {
@@ -73,73 +71,23 @@ public class FileWrite implements ProcessorAsync {
             }
         }
 
-        TypedPublisher<byte[]> stream = converterService.convert(originalStream, byte[].class);
+        TypedPublisher<?> originalStream = message.content().stream();
 
-        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-        Flux.from(Flux.from(stream))
-                .reduceWith(() -> {
-                    try {
-                        return FileChannel.open(path, mode.options());
-                    } catch (IOException e) {
-                        throw Exceptions.propagate(e);
-                    }
-                }, (outputStream, byteChunk) -> {
-                    try {
+        TypedPublisher<byte[]> originalStreamAsBytes = converterService.convert(originalStream, byte[].class);
 
-                        if (byteChunk.length > 1024) {
-                            // Write it in multiple steps
-                            int offset = 0;
-                            int length = 1024;
-                            while (offset <= byteChunk.length) {
-                                byteBuffer.put(byteChunk, offset, length);
-                                offset += 1024;
-                                length = byteChunk.length - offset;
-                            }
-
-
-                        } else {
-                            byteBuffer.put(byteChunk);
-                        }
-
-                        outputStream.write(byteBuffer);
-
-                        return outputStream;
-
-                    } catch (IOException e) {
-                        throw Exceptions.propagate(e);
-                    }
-                })
-                .doOnSuccessOrError((out, throwable) -> {
-
-                    CloseableUtils.closeSilently(out);
-
-                    if (throwable != null) {
-                        // An exception was thrown during the process.
-                        callback.onError(new ESBException(throwable), flowContext);
-
-                    } else {
-
-                        MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of(
-                                FileWriteAttribute.FILE_NAME, path.toString(),
-                                FileWriteAttribute.TIMESTAMP, System.currentTimeMillis()));
-
-                        Message outMessage = MessageBuilder.get().attributes(attributes).empty().build();
-
-                        callback.onResult(outMessage, flowContext);
-                    }
-                }).subscribe();
-    }
-
-    public void setMode(WriteMode mode) {
-        this.mode = mode;
+        writer.writeTo(config, flowContext, callback, path, originalStreamAsBytes);
     }
 
     public void setFilePath(DynamicString filePath) {
         this.filePath = filePath;
     }
 
-    public void setCreateParentDirectory(boolean createParentDirectory) {
-        this.createParentDirectory = createParentDirectory;
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+
+    public void setConfiguration(FileWriteConfiguration configuration) {
+        this.configuration = configuration;
     }
 }
 

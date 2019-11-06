@@ -1,4 +1,4 @@
-package com.reedelk.file.configuration.fileread;
+package com.reedelk.file.configuration;
 
 import com.reedelk.runtime.api.annotation.Collapsible;
 import com.reedelk.runtime.api.annotation.Hint;
@@ -10,8 +10,8 @@ import org.osgi.service.component.annotations.Component;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @Collapsible
-@Component(service = AdvancedConfiguration.class, scope = PROTOTYPE)
-public class AdvancedConfiguration implements Implementor {
+@Component(service = FileReadConfiguration.class, scope = PROTOTYPE)
+public class FileReadConfiguration implements Implementor {
 
     @Property("Lock file")
     private Boolean lockFile;

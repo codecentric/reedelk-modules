@@ -1,20 +1,20 @@
-package com.reedelk.file.commons;
+package com.reedelk.file.write;
 
 import com.reedelk.runtime.api.annotation.DisplayName;
 
 import java.nio.file.OpenOption;
 import java.nio.file.StandardOpenOption;
 
-public enum WriteMode implements WriteParameters {
+public enum WriteMode {
 
     @DisplayName("Overwrite")
     OVERWRITE {
         @Override
         public OpenOption[] options() {
-            return new OpenOption[] {
+            return new OpenOption[]{
                     StandardOpenOption.WRITE,
                     StandardOpenOption.CREATE,
-                    StandardOpenOption.TRUNCATE_EXISTING };
+                    StandardOpenOption.TRUNCATE_EXISTING};
         }
     },
 
@@ -22,9 +22,9 @@ public enum WriteMode implements WriteParameters {
     CREATE_NEW {
         @Override
         public OpenOption[] options() {
-            return new OpenOption[] {
+            return new OpenOption[]{
                     StandardOpenOption.WRITE,
-                    StandardOpenOption.CREATE_NEW };
+                    StandardOpenOption.CREATE_NEW};
         }
     },
 
@@ -32,10 +32,13 @@ public enum WriteMode implements WriteParameters {
     APPEND {
         @Override
         public OpenOption[] options() {
-            return new OpenOption[] {
+            return new OpenOption[]{
                     StandardOpenOption.WRITE,
                     StandardOpenOption.CREATE,
-                    StandardOpenOption.APPEND };
+                    StandardOpenOption.APPEND};
         }
-    }
+    };
+
+    abstract OpenOption[] options();
+
 }

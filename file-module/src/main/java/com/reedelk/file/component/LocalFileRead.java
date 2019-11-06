@@ -1,8 +1,8 @@
 package com.reedelk.file.component;
 
-import com.reedelk.file.commons.FileReadAttribute;
 import com.reedelk.file.commons.MimeTypeParser;
-import com.reedelk.file.configuration.localfileread.AdvancedConfiguration;
+import com.reedelk.file.configuration.LocalFileReadConfiguration;
+import com.reedelk.file.read.FileReadAttribute;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
@@ -57,8 +57,8 @@ public class LocalFileRead implements ProcessorSync {
     @When(propertyName = "autoMimeType", propertyValue = When.BLANK)
     private String mimeType;
 
-    @Property("Advanced configuration")
-    private AdvancedConfiguration advancedConfiguration;
+    @Property("Configuration")
+    private LocalFileReadConfiguration configuration;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -109,8 +109,8 @@ public class LocalFileRead implements ProcessorSync {
         this.basePath = basePath;
     }
 
-    public void setAdvancedConfiguration(AdvancedConfiguration advancedConfiguration) {
-        this.advancedConfiguration = advancedConfiguration;
+    public void setConfiguration(LocalFileReadConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public void setAutoMimeType(boolean autoMimeType) {
@@ -122,7 +122,7 @@ public class LocalFileRead implements ProcessorSync {
     }
 
     private int getReadBufferSize() {
-        return Optional.ofNullable(advancedConfiguration)
+        return Optional.ofNullable(configuration)
                 .flatMap(config -> Optional.ofNullable(config.getReadBufferSize()))
                 .orElse(READ_FILE_BUFFER_SIZE);
     }

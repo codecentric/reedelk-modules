@@ -6,7 +6,7 @@ import com.reedelk.runtime.api.exception.ESBException;
 
 import java.util.function.Supplier;
 
-class RetryCommand {
+public class RetryCommand {
 
     private final long waitTime;
     private final int maxRetries;
@@ -80,7 +80,7 @@ class RetryCommand {
         }
     }
 
-    static class Builder {
+    public static class Builder {
 
         private long waitTime;
         private int maxRetries;

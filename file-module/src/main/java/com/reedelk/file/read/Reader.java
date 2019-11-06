@@ -1,5 +1,6 @@
-package com.reedelk.file.commons;
+package com.reedelk.file.read;
 
+import com.reedelk.file.commons.*;
 import com.reedelk.file.exception.FileReadException;
 import com.reedelk.file.exception.MaxRetriesExceeded;
 import com.reedelk.file.exception.NotValidFileException;
@@ -20,16 +21,16 @@ import java.util.function.Supplier;
 import static com.reedelk.file.commons.Messages.FileReadComponent.*;
 import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
 
-public class ReadFrom {
+public class Reader {
 
-    public static Publisher<byte[]> path(Path path, int bufferSize, ReadOptions readOptions) {
+    public Publisher<byte[]> path(Path path, ReadConfiguration config) {
 
         if (Files.isDirectory(path)) {
             String message = FILE_IS_DIRECTORY.format(path.toString());
             throw new NotValidFileException(message);
         }
 
-        OpenOption[] openOptions = FileOpenOptions.from(FileOperation.READ, readOptions.getLockType());
+        OpenOption[] openOptions = FileOpenOptions.from(FileOperation.READ, config.getLockType());
 
         // We must immediately create the channel and acquire any lock
         // on the file if the user has requested to lock the file, so that
@@ -41,11 +42,11 @@ public class ReadFrom {
 
             channel = FileChannel.open(path, openOptions);
 
-            if (LockType.LOCK.equals(readOptions.getLockType())) {
+            if (LockType.LOCK.equals(config.getLockType())) {
                 RetryCommand.builder()
                         .function(doLock(path, channel))
-                        .maxRetries(readOptions.getMaxRetryAttempts())
-                        .waitTime(readOptions.getMaxRetryWaitTime())
+                        .maxRetries(config.getRetryMaxAttempts())
+                        .waitTime(config.getRetryWaitTime())
                         .retryOn(OverlappingFileLockException.class)
                         .build()
                         .execute();
@@ -76,12 +77,13 @@ public class ReadFrom {
             throw new FileReadException(message, exception);
         }
 
-        FileChannel finalChannel = channel;
+        final int readBufferSize = config.getReadBufferSize();
+        final FileChannel finalChannel = channel;
 
         return Flux.create(fluxSink -> {
 
             try {
-                ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize);
+                ByteBuffer byteBuffer = ByteBuffer.allocate(readBufferSize);
 
                 while (finalChannel.read(byteBuffer) > 0) {
 
@@ -111,7 +113,7 @@ public class ReadFrom {
 
     }
 
-    private static Supplier<FileLock> doLock(Path path, FileChannel channel) {
+    private Supplier<FileLock> doLock(Path path, FileChannel channel) {
         return () -> {
             try {
                 return channel.lock();
