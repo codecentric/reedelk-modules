@@ -1,7 +1,8 @@
 package com.reedelk.file.component;
 
 import com.reedelk.file.commons.MimeTypeParser;
-import com.reedelk.file.configuration.LocalFileReadConfiguration;
+import com.reedelk.file.localread.LocalFileReadConfiguration;
+import com.reedelk.file.localread.LocalReadConfiguration;
 import com.reedelk.file.read.FileReadAttribute;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.ImmutableMap;
@@ -22,7 +23,6 @@ import org.reactivestreams.Publisher;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.reedelk.file.commons.Defaults.LocalFileRead.READ_FILE_BUFFER_SIZE;
 import static com.reedelk.file.commons.Messages.ModuleFileReadComponent.FILE_NOT_FOUND;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -67,24 +67,15 @@ public class LocalFileRead implements ProcessorSync {
 
         return evaluated.map(filePath -> {
 
-            int readBufferSize = getReadBufferSize();
+            LocalReadConfiguration config = new LocalReadConfiguration(configuration);
 
             MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);;
 
             Publisher<byte[]> contentAsStream;
 
-            String finalFilePath = filePath;
+            String finalFilePath = isBlank(basePath) ? filePath : Paths.get(basePath, filePath).toString();
 
-            if (isBlank(basePath)) {
-
-                contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, readBufferSize);
-
-            } else {
-
-                finalFilePath = Paths.get(basePath, finalFilePath).toString();
-
-                contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, readBufferSize);
-            }
+            contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
 
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
@@ -119,11 +110,5 @@ public class LocalFileRead implements ProcessorSync {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
-    }
-
-    private int getReadBufferSize() {
-        return Optional.ofNullable(configuration)
-                .flatMap(config -> Optional.ofNullable(config.getReadBufferSize()))
-                .orElse(READ_FILE_BUFFER_SIZE);
     }
 }

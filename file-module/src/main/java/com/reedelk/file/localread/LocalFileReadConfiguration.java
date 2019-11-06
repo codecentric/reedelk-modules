@@ -1,4 +1,4 @@
-package com.reedelk.file.configuration;
+package com.reedelk.file.localread;
 
 import com.reedelk.runtime.api.annotation.Collapsible;
 import com.reedelk.runtime.api.annotation.Hint;

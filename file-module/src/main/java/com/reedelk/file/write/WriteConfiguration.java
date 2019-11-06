@@ -1,7 +1,6 @@
 package com.reedelk.file.write;
 
 import com.reedelk.file.commons.LockType;
-import com.reedelk.file.configuration.FileWriteConfiguration;
 
 import java.util.Optional;
 
@@ -87,5 +86,4 @@ public class WriteConfiguration {
                 .flatMap(config -> Optional.ofNullable(config.getMode()))
                 .orElse(WriteMode.OVERWRITE);
     }
-
 }

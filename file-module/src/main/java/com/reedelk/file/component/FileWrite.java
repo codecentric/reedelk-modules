@@ -1,6 +1,6 @@
 package com.reedelk.file.component;
 
-import com.reedelk.file.configuration.FileWriteConfiguration;
+import com.reedelk.file.write.FileWriteConfiguration;
 import com.reedelk.file.write.WriteConfiguration;
 import com.reedelk.file.write.Writer;
 import com.reedelk.runtime.api.annotation.ESBComponent;
@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import static com.reedelk.file.commons.Messages.FileWriteComponent.ERROR_CREATING_DIRECTORIES;
+import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 
 @ESBComponent("File write")
 @Component(service = FileWrite.class, scope = ServiceScope.PROTOTYPE)
@@ -58,14 +59,13 @@ public class FileWrite implements ProcessorAsync {
 
         String filePath = evaluated.get();
 
-
-        Path path = Paths.get(filePath);
+        Path finalPath = isBlank(basePath) ? Paths.get(filePath) : Paths.get(basePath, filePath);
 
         if (config.isCreateParentDirectory()) {
             try {
-                Files.createDirectories(path.getParent());
+                Files.createDirectories(finalPath.getParent());
             } catch (IOException exception) {
-                String errorMessage = ERROR_CREATING_DIRECTORIES.format(path.toString(), exception.getMessage());
+                String errorMessage = ERROR_CREATING_DIRECTORIES.format(finalPath.toString(), exception.getMessage());
                 callback.onError(new ESBException(errorMessage, exception), flowContext);
                 return;
             }
@@ -75,7 +75,7 @@ public class FileWrite implements ProcessorAsync {
 
         TypedPublisher<byte[]> originalStreamAsBytes = converterService.convert(originalStream, byte[].class);
 
-        writer.writeTo(config, flowContext, callback, path, originalStreamAsBytes);
+        writer.writeTo(config, flowContext, callback, finalPath, originalStreamAsBytes);
     }
 
     public void setFilePath(DynamicString filePath) {

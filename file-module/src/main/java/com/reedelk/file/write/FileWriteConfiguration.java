@@ -1,6 +1,5 @@
-package com.reedelk.file.configuration;
+package com.reedelk.file.write;
 
-import com.reedelk.file.write.WriteMode;
 import com.reedelk.runtime.api.annotation.Collapsible;
 import com.reedelk.runtime.api.annotation.Hint;
 import com.reedelk.runtime.api.annotation.Property;

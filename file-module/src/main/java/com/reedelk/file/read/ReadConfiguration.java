@@ -1,7 +1,6 @@
 package com.reedelk.file.read;
 
 import com.reedelk.file.commons.LockType;
-import com.reedelk.file.configuration.FileReadConfiguration;
 
 import java.util.Optional;
 
