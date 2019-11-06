@@ -3,6 +3,7 @@ package com.reedelk.file.component;
 import com.reedelk.file.commons.LockType;
 import com.reedelk.file.commons.MimeTypeParser;
 import com.reedelk.file.commons.ReadFrom;
+import com.reedelk.file.commons.ReadOptions;
 import com.reedelk.file.configuration.fileread.AdvancedConfiguration;
 import com.reedelk.file.exception.FileNotFoundException;
 import com.reedelk.runtime.api.annotation.*;
@@ -63,11 +64,8 @@ public class FileRead implements ProcessorSync {
         return evaluated.map(filePath -> {
 
             int readBufferSize = getReadBufferSize();
-            ReadFrom.ReadOptions options = new ReadFrom.ReadOptions();
-            options.lockType = getLockType();
-            options.maxRetryAttempts = getRetryMaxAttempts();
-            options.maxRetryWaitTime = getRetryWaitTime();
 
+            ReadOptions options = new ReadOptions(getLockType(), getRetryMaxAttempts(), getRetryWaitTime());
 
             MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);
 
