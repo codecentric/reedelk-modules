@@ -11,12 +11,12 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
-import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_IS_DIRECTORY;
-import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_LOCK_ERROR;
+import static com.reedelk.file.commons.Messages.FileReadComponent.*;
 import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
 
 public class ReadFrom {
@@ -50,14 +50,24 @@ public class ReadFrom {
                         .execute();
             }
 
+        } catch (NoSuchFileException exception) {
+
+            CloseableUtils.closeSilently(channel);
+
+            String message = FILE_NOT_FOUND.format(path.toString(), rootCauseMessageOf(exception));
+
+            throw new NotValidFileException(message, exception);
+
         } catch (Exception exception) {
 
             CloseableUtils.closeSilently(channel);
 
-            String message = FILE_LOCK_ERROR.format(path.toString(), rootCauseMessageOf(exception));
+            if (exception instanceof FileReadException) {
+                throw (FileReadException) exception;
+            }
 
+            String message = FILE_READ_ERROR.format(path.toString(), rootCauseMessageOf(exception));
             throw new FileReadException(message, exception);
-
         }
 
         FileChannel finalChannel = channel;
