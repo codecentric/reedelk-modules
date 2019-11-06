@@ -18,8 +18,6 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.reedelk.rest.commons.ConfigPreconditions.requireNotNull;
 import static com.reedelk.rest.commons.Messages.RestListener.LISTENER_CONFIG_MISSING;
@@ -28,8 +26,6 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @ESBComponent("REST Listener")
 @Component(service = RestListener.class, scope = PROTOTYPE)
 public class RestListener extends AbstractInbound {
-
-    private static final Logger logger = LoggerFactory.getLogger(RestListener.class);
 
     @Reference
     private ServerProvider provider;
