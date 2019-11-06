@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import static com.reedelk.file.commons.Defaults.FileRead.*;
-import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_NOT_FOUND;
+import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_NOT_FOUND_WITH_BASE_PATH;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 
 @ESBComponent("File read")
@@ -89,7 +89,7 @@ public class FileRead implements ProcessorSync {
 
             return MessageBuilder.get().typedContent(content).build();
 
-        }).orElseThrow(() -> new NotValidFileException(FILE_NOT_FOUND.format(fileName.toString(), basePath)));
+        }).orElseThrow(() -> new NotValidFileException(FILE_NOT_FOUND_WITH_BASE_PATH.format(fileName.toString(), basePath)));
     }
 
     public void setMimeType(String mimeType) {

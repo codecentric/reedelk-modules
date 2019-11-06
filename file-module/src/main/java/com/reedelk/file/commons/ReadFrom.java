@@ -1,6 +1,7 @@
 package com.reedelk.file.commons;
 
 import com.reedelk.file.exception.FileReadException;
+import com.reedelk.file.exception.MaxRetriesExceeded;
 import com.reedelk.file.exception.NotValidFileException;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -54,7 +55,7 @@ public class ReadFrom {
 
             CloseableUtils.closeSilently(channel);
 
-            String message = FILE_NOT_FOUND.format(path.toString(), rootCauseMessageOf(exception));
+            String message = FILE_NOT_FOUND.format(path.toString());
 
             throw new NotValidFileException(message, exception);
 
@@ -64,6 +65,11 @@ public class ReadFrom {
 
             if (exception instanceof FileReadException) {
                 throw (FileReadException) exception;
+            }
+
+            if (exception instanceof MaxRetriesExceeded) {
+                String message = FILE_READ_LOCK_MAX_RETRY_ERROR.format(path.toString(), rootCauseMessageOf(exception));
+                throw new FileReadException(message, exception);
             }
 
             String message = FILE_READ_ERROR.format(path.toString(), rootCauseMessageOf(exception));
