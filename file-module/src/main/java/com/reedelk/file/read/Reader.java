@@ -10,13 +10,11 @@ import reactor.core.publisher.Flux;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.util.function.Supplier;
 
 import static com.reedelk.file.commons.Messages.FileReadComponent.*;
 import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
@@ -44,7 +42,7 @@ public class Reader {
 
             if (LockType.LOCK.equals(config.getLockType())) {
                 RetryCommand.builder()
-                        .function(doLock(path, channel))
+                        .function(AcquireLock.from(path, channel))
                         .maxRetries(config.getRetryMaxAttempts())
                         .waitTime(config.getRetryWaitTime())
                         .retryOn(OverlappingFileLockException.class)
@@ -110,17 +108,5 @@ public class Reader {
 
             }
         });
-
-    }
-
-    private Supplier<FileLock> doLock(Path path, FileChannel channel) {
-        return () -> {
-            try {
-                return channel.lock();
-            } catch (IOException exception) {
-                String message = FILE_LOCK_ERROR.format(path.toString(), rootCauseMessageOf(exception));
-                throw new FileReadException(message, exception);
-            }
-        };
     }
 }

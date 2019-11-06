@@ -50,32 +50,37 @@ public class FileWrite implements ProcessorAsync {
     @Override
     public void apply(Message message, FlowContext flowContext, OnResult callback) {
 
+
         Optional<String> evaluated = scriptService.evaluate(filePath, message, flowContext);
-        if (!evaluated.isPresent()) {
+
+        if (evaluated.isPresent()) {
+
+            WriteConfiguration config = new WriteConfiguration(configuration);
+
+            String filePath = evaluated.get();
+
+            Path finalPath = isBlank(basePath) ? Paths.get(filePath) : Paths.get(basePath, filePath);
+
+            if (config.isCreateParentDirectory()) {
+                try {
+                    Files.createDirectories(finalPath.getParent());
+                } catch (IOException exception) {
+                    String errorMessage = ERROR_CREATING_DIRECTORIES.format(finalPath.toString(), exception.getMessage());
+                    callback.onError(new ESBException(errorMessage, exception), flowContext);
+                    return;
+                }
+            }
+
+            TypedPublisher<?> originalStream = message.content().stream();
+
+            TypedPublisher<byte[]> originalStreamAsBytes = converterService.convert(originalStream, byte[].class);
+
+            // TODO: Try catch any exception hwere
+            writer.writeTo(config, flowContext, callback, finalPath, originalStreamAsBytes);
+
+        } else {
             callback.onError(new ESBException("Could not write file"), flowContext);
         }
-
-        WriteConfiguration config = new WriteConfiguration(configuration);
-
-        String filePath = evaluated.get();
-
-        Path finalPath = isBlank(basePath) ? Paths.get(filePath) : Paths.get(basePath, filePath);
-
-        if (config.isCreateParentDirectory()) {
-            try {
-                Files.createDirectories(finalPath.getParent());
-            } catch (IOException exception) {
-                String errorMessage = ERROR_CREATING_DIRECTORIES.format(finalPath.toString(), exception.getMessage());
-                callback.onError(new ESBException(errorMessage, exception), flowContext);
-                return;
-            }
-        }
-
-        TypedPublisher<?> originalStream = message.content().stream();
-
-        TypedPublisher<byte[]> originalStreamAsBytes = converterService.convert(originalStream, byte[].class);
-
-        writer.writeTo(config, flowContext, callback, finalPath, originalStreamAsBytes);
     }
 
     public void setFilePath(DynamicString filePath) {

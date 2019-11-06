@@ -2,7 +2,7 @@ package com.reedelk.file.component;
 
 import com.reedelk.file.commons.MimeTypeParser;
 import com.reedelk.file.exception.NotValidFileException;
-import com.reedelk.file.localread.LocalFileReadAttribute;
+import com.reedelk.file.read.FileReadAttribute;
 import com.reedelk.file.read.FileReadConfiguration;
 import com.reedelk.file.read.ReadConfiguration;
 import com.reedelk.file.read.Reader;
@@ -74,8 +74,8 @@ public class FileRead implements ProcessorSync {
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
             MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of(
-                    LocalFileReadAttribute.FILE_NAME, path.toString(),
-                    LocalFileReadAttribute.TIMESTAMP, System.currentTimeMillis()));
+                    FileReadAttribute.FILE_NAME, path.toString(),
+                    FileReadAttribute.TIMESTAMP, System.currentTimeMillis()));
 
             return MessageBuilder.get().attributes(attributes).typedContent(content).build();
 

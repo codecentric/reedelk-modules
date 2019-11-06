@@ -1,11 +1,10 @@
 package com.reedelk.file.component;
 
 import com.reedelk.file.commons.MimeTypeParser;
+import com.reedelk.file.localread.LocalFileReadAttribute;
 import com.reedelk.file.localread.LocalFileReadConfiguration;
 import com.reedelk.file.localread.LocalReadConfiguration;
-import com.reedelk.file.read.FileReadAttribute;
 import com.reedelk.runtime.api.annotation.*;
-import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
 import com.reedelk.runtime.api.file.ModuleFileProvider;
@@ -24,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import static com.reedelk.file.commons.Messages.ModuleFileReadComponent.FILE_NOT_FOUND;
+import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -69,19 +69,17 @@ public class LocalFileRead implements ProcessorSync {
 
             LocalReadConfiguration config = new LocalReadConfiguration(configuration);
 
-            MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);;
-
-            Publisher<byte[]> contentAsStream;
+            MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);
 
             String finalFilePath = isBlank(basePath) ? filePath : Paths.get(basePath, filePath).toString();
 
-            contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
+            Publisher<byte[]> contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
 
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
-            MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of(
-                    FileReadAttribute.FILE_NAME, finalFilePath,
-                    FileReadAttribute.TIMESTAMP, System.currentTimeMillis()));
+            MessageAttributes attributes = new DefaultMessageAttributes(
+                    of(LocalFileReadAttribute.FILE_NAME, finalFilePath,
+                            LocalFileReadAttribute.TIMESTAMP, System.currentTimeMillis()));
 
             return MessageBuilder.get().attributes(attributes).typedContent(content).build();
 

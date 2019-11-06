@@ -1,6 +1,9 @@
 package com.reedelk.file.write;
 
+import com.reedelk.file.commons.AcquireLock;
 import com.reedelk.file.commons.CloseableUtils;
+import com.reedelk.file.commons.LockType;
+import com.reedelk.file.commons.RetryCommand;
 import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -12,22 +15,35 @@ import reactor.core.publisher.Flux;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Path;
 
 public class Writer {
 
-    public void writeTo(WriteConfiguration configuration,
-                        FlowContext flowContext,
-                        OnResult callback,
-                        Path path,
-                        TypedPublisher<byte[]> stream) {
+    public void writeTo(WriteConfiguration config,
+                        FlowContext flowContext, OnResult callback, Path path, TypedPublisher<byte[]> dataStream) {
 
-        int bufferLength = configuration.getWriteBufferSize();
+        int bufferLength = config.getWriteBufferSize();
         ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
-        Flux.from(Flux.from(stream))
+
+        Flux.from(Flux.from(dataStream))
                 .reduceWith(() -> {
+
                     try {
-                        return FileChannel.open(path, configuration.getWriteMode().options());
+                        FileChannel channel = FileChannel.open(path, config.getWriteMode().options());
+
+                        if (LockType.LOCK.equals(config.getLockType())) {
+                            RetryCommand.builder()
+                                    .function(AcquireLock.from(path, channel))
+                                    .maxRetries(config.getRetryMaxAttempts())
+                                    .waitTime(config.getRetryWaitTime())
+                                    .retryOn(OverlappingFileLockException.class)
+                                    .build()
+                                    .execute();
+                        }
+
+                        return channel;
+
                     } catch (IOException e) {
                         throw Exceptions.propagate(e);
                     }
@@ -49,8 +65,6 @@ public class Writer {
                             byteBuffer.flip();
 
                             channel.write(byteBuffer);
-
-                            // If offset + length == bufferLength we are done.
 
                             offset += bufferLength;
 
@@ -84,7 +98,7 @@ public class Writer {
 
                         callback.onResult(outMessage, flowContext);
                     }
-                }).subscribe();
-    }
 
+                }).subscribe(); // Immediately fire the writing into the buffer
+    }
 }
