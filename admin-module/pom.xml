@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <runtime.rest.api.version>1.0.0-SNAPSHOT</runtime.rest.api.version>
         <runtime.system.api.version>1.0.0-SNAPSHOT</runtime.system.api.version>
-        <json.version>20180813</json.version>
+        <json.version>20190722</json.version>
     </properties>
 
     <dependencies>

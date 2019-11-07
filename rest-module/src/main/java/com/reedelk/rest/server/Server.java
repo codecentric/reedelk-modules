@@ -64,9 +64,9 @@ public class Server {
     }
 
     void stop() {
-        shutdownSilently(server);
         shutdownGracefully(bossGroup);
         shutdownGracefully(workerGroup);
+        shutdownSilently(server);
     }
 
     boolean hasEmptyRoutes() {
@@ -89,8 +89,7 @@ public class Server {
             return serverBootstrap
                     .channel(NioServerSocketChannel.class)
                     .group(bossGroup, workerGroup);
-        })
-                .doOnConnection(ServerConfigurer.onConnection(configuration));
+        }).doOnConnection(ServerConfigurer.onConnection(configuration));
         return bootstrap;
     }
 
