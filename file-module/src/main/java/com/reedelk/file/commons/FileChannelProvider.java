@@ -17,7 +17,6 @@ public class FileChannelProvider {
 
     public static FileChannel from(Path path, LockType lockType, int retryMaxAttempts, long retryWaitTime, OpenOption ...options) throws IOException {
         FileChannel channel = FileChannel.open(path, options);
-
         if (LockType.LOCK.equals(lockType)) {
             // If something goes wrong while acquiring the lock,
             // we must close the channel. This is because if we
@@ -35,7 +34,6 @@ public class FileChannelProvider {
                 throw exception;
             }
         }
-
         return channel;
     }
 
