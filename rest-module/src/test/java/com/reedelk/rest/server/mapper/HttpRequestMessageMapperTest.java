@@ -20,9 +20,12 @@ import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import static com.reedelk.rest.server.mapper.HttpRequestAttribute.*;
+import static com.reedelk.runtime.api.message.MessageAttributeKey.CORRELATION_ID;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -66,9 +69,9 @@ class HttpRequestMessageMapperTest {
         expectedQueryParams.put("queryParam1", singletonList("queryValue1"));
         expectedQueryParams.put("queryParam2", singletonList("queryValue2"));
 
-        HashMap<String, List<String>> expectedHeaders = new HashMap<>();
+        TreeMap<String, List<String>> expectedHeaders = new TreeMap<>(CASE_INSENSITIVE_ORDER);
         expectedHeaders.put(HttpHeader.CONTENT_TYPE, singletonList("application/json"));
-        expectedHeaders.put("X-Correlation-ID", singletonList("aabbccdd1"));
+        expectedHeaders.put(HttpHeader.X_CORRELATION_ID, singletonList("aabbccdd1"));
 
         assertThatContainsAttribute(message, REMOTE_ADDRESS, "localhost/127.0.0.1:7070");
         assertThatContainsAttribute(message, MATCHING_PATH, matchingPath);
@@ -81,6 +84,7 @@ class HttpRequestMessageMapperTest {
         assertThatContainsAttribute(message, HEADERS, expectedHeaders);
         assertThatContainsAttribute(message, SCHEME, HttpScheme.HTTP.toString());
         assertThatContainsAttribute(message, METHOD, PUT.name());
+        assertThatContainsAttribute(message, CORRELATION_ID, "aabbccdd1");
 
         // Check that the content's mime type is correct
         TypedContent<?> content = message.getContent();
