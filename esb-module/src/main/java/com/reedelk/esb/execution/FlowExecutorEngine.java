@@ -19,11 +19,11 @@ public class FlowExecutorEngine {
     }
 
     /**
-     * Executes the flow.
+     * Executes the flow when an Event comes in.
      */
     public void onEvent(Message message, OnResult onResult) {
 
-        DefaultFlowContext defaultContext = new DefaultFlowContext();
+        DefaultFlowContext defaultContext = DefaultFlowContext.from(message);
 
         MessageAndContext event = new MessageAndContext(message, defaultContext);
 
@@ -41,5 +41,4 @@ public class FlowExecutorEngine {
                 .doOnError(throwable -> onResult.onError(throwable, defaultContext))
                 .subscribe(messageContext -> onResult.onResult(messageContext.getMessage(), defaultContext));
     }
-
 }

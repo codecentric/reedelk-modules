@@ -1,7 +1,10 @@
 package com.reedelk.rest.commons;
 
-public class HttpHeader {
-    public static final String CONTENT_TYPE = "Content-Type";
-    public static final String CONTENT_LENGTH = "Content-Length";
-    public static final String TRANSFER_ENCODING = "Transfer-Encoding";
+public interface HttpHeader {
+
+    String CONTENT_TYPE = "content-type";
+    String CONTENT_LENGTH = "content-length";
+    String X_CORRELATION_ID = "x-correlation-id";
+    String TRANSFER_ENCODING = "transfer-encoding";
+
 }

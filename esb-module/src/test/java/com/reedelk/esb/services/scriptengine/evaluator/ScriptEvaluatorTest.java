@@ -35,7 +35,7 @@ class ScriptEvaluatorTest {
 
     @BeforeEach
     void setUp() {
-        context = new DefaultFlowContext();
+        context = DefaultFlowContext.from(emptyMessage);
         evaluator = new ScriptEvaluator(JavascriptEngineProvider.INSTANCE);
     }
 

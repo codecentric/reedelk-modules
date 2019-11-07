@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
-import com.reedelk.runtime.api.commons.ImmutableMap;
+import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicFloatMap;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicIntegerMap;
@@ -34,7 +34,7 @@ class DynamicMapEvaluatorTest {
     @Test
     void shouldCorrectlyEvaluateMapWithScriptAndTextAndNumericValues() {
         // Given
-        MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of("property1", "test1"));
+        MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
         Message message = MessageBuilder.get().text("test").attributes(attributes).build();
 
         DynamicStringMap dynamicMap = DynamicStringMap.from(of(

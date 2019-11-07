@@ -1,5 +1,7 @@
 package com.reedelk.rest.server.mapper;
 
+import com.reedelk.rest.commons.HttpHeader;
+import com.reedelk.rest.component.RestListener;
 import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -12,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.reedelk.rest.server.mapper.HttpRequestAttribute.*;
+import static com.reedelk.runtime.api.message.MessageAttributeKey.CORRELATION_ID;
 import static com.reedelk.runtime.api.message.content.MimeType.MULTIPART_FORM_DATA;
 
 public class HttpRequestMessageMapper {
@@ -38,7 +41,12 @@ public class HttpRequestMessageMapper {
         attributes.put(QUERY_STRING, request.queryString());
         attributes.put(REMOTE_ADDRESS, request.remoteAddress());
 
-        DefaultMessageAttributes requestAttributes = new DefaultMessageAttributes(attributes);
+        // We must set the correlation ID in the Attributes if X-Correlation-ID header is
+        // present in the Request Headers, so that the Flow context can use it to set
+        // the 'correlationId' context variable available in each flow execution instance.
+        setCorrelationIdIfPresent(request, attributes);
+
+        DefaultMessageAttributes requestAttributes = new DefaultMessageAttributes(RestListener.class, attributes);
 
         MimeType mimeType = request.mimeType();
 
@@ -50,5 +58,11 @@ public class HttpRequestMessageMapper {
                 .attributes(requestAttributes)
                 .typedContent(content)
                 .build();
+    }
+
+    private void setCorrelationIdIfPresent(HttpRequestWrapper request, Map<String, Serializable> attributes) {
+        if (request.headers().containsKey(HttpHeader.X_CORRELATION_ID)) {
+            attributes.put(CORRELATION_ID, request.headers().get(HttpHeader.X_CORRELATION_ID).get(0));
+        }
     }
 }

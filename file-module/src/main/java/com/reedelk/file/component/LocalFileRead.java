@@ -1,7 +1,6 @@
 package com.reedelk.file.component;
 
 import com.reedelk.file.commons.MimeTypeParser;
-import com.reedelk.file.localread.LocalFileReadAttribute;
 import com.reedelk.file.localread.LocalFileReadConfiguration;
 import com.reedelk.file.localread.LocalReadConfiguration;
 import com.reedelk.runtime.api.annotation.*;
@@ -23,6 +22,8 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import static com.reedelk.file.commons.Messages.ModuleFileReadComponent.FILE_NOT_FOUND;
+import static com.reedelk.file.localread.LocalFileReadAttribute.FILE_NAME;
+import static com.reedelk.file.localread.LocalFileReadAttribute.TIMESTAMP;
 import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -77,9 +78,8 @@ public class LocalFileRead implements ProcessorSync {
 
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
-            MessageAttributes attributes = new DefaultMessageAttributes(
-                    of(LocalFileReadAttribute.FILE_NAME, finalFilePath,
-                            LocalFileReadAttribute.TIMESTAMP, System.currentTimeMillis()));
+            MessageAttributes attributes = new DefaultMessageAttributes(LocalFileRead.class,
+                    of(FILE_NAME, finalFilePath, TIMESTAMP, System.currentTimeMillis()));
 
             return MessageBuilder.get().attributes(attributes).typedContent(content).build();
 

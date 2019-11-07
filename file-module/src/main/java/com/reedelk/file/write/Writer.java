@@ -2,10 +2,10 @@ package com.reedelk.file.write;
 
 import com.reedelk.file.commons.CloseableUtils;
 import com.reedelk.file.commons.FileChannelProvider;
+import com.reedelk.file.component.FileWrite;
 import com.reedelk.file.exception.FileWriteException;
 import com.reedelk.file.exception.MaxRetriesExceeded;
 import com.reedelk.file.exception.NotValidFileException;
-import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
@@ -19,6 +19,9 @@ import java.nio.file.Path;
 
 import static com.reedelk.file.commons.Messages.FileWriteComponent.*;
 import static com.reedelk.file.commons.Messages.Misc.FILE_LOCK_MAX_RETRY_ERROR;
+import static com.reedelk.file.write.FileWriteAttribute.FILE_NAME;
+import static com.reedelk.file.write.FileWriteAttribute.TIMESTAMP;
+import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
 
 public class Writer {
@@ -32,8 +35,7 @@ public class Writer {
         int bufferLength = config.getWriteBufferSize();
         ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
 
-        Flux.from(Flux.from(dataStream))
-                .reduceWith(() -> {
+        Flux.from(dataStream).reduceWith(() -> {
                     try {
                         return FileChannelProvider.from(path,
                                 config.getLockType(),
@@ -106,9 +108,8 @@ public class Writer {
 
                     } else {
 
-                        MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of(
-                                FileWriteAttribute.FILE_NAME, path.toString(),
-                                FileWriteAttribute.TIMESTAMP, System.currentTimeMillis()));
+                        MessageAttributes attributes = new DefaultMessageAttributes(FileWrite.class,
+                                of(FILE_NAME, path.toString(), TIMESTAMP, System.currentTimeMillis()));
 
                         Message outMessage = MessageBuilder.get().attributes(attributes).empty().build();
 

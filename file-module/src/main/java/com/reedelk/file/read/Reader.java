@@ -1,6 +1,5 @@
 package com.reedelk.file.read;
 
-import com.reedelk.file.commons.CloseableUtils;
 import com.reedelk.file.commons.FileChannelProvider;
 import com.reedelk.file.commons.FileOpenOptions;
 import com.reedelk.file.commons.FileOperation;
@@ -10,7 +9,6 @@ import com.reedelk.file.exception.NotValidFileException;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -26,63 +24,31 @@ import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf
 
 public class Reader {
 
-    public Publisher<byte[]> path(Path path, ReadConfiguration config) {
+    public Publisher<byte[]> read(Path path, ReadConfiguration config) {
 
-        if (Files.isDirectory(path)) {
-            String message = FILE_IS_DIRECTORY.format(path.toString());
-            throw new NotValidFileException(message);
-        }
+        return Flux.create(sink -> {
 
-        OpenOption[] openOptions = FileOpenOptions.from(FileOperation.READ, config.getLockType());
+            // This consumer is only created if the payload is used.
 
-        // We must immediately create the channel and acquire any lock
-        // on the file if the user has requested to lock the file, so that
-        // the exception can be correctly propagated to the caller and it
-        // will not be lazily thrown when the stream is consumed.
+            if (Files.isDirectory(path)) {
+                String message = FILE_IS_DIRECTORY.format(path.toString());
+                throw new NotValidFileException(message);
+            }
 
-        FileChannel channel = null;
-        try {
+            OpenOption[] openOptions = FileOpenOptions.from(FileOperation.READ, config.getLockType());
 
-            channel = FileChannelProvider.from(path,
+            try (FileChannel channel = FileChannelProvider.from(
+                    path,
                     config.getLockType(),
                     config.getRetryMaxAttempts(),
                     config.getRetryWaitTime(),
-                    openOptions);
+                    openOptions)) {
 
-        } catch (NoSuchFileException exception) {
+                int readBufferSize = config.getReadBufferSize();
 
-            CloseableUtils.closeSilently(channel);
-
-            String message = FILE_NOT_FOUND.format(path.toString());
-
-            throw new NotValidFileException(message, exception);
-
-        } catch (Exception exception) {
-
-            CloseableUtils.closeSilently(channel);
-
-            if (exception instanceof FileReadException) {
-                throw (FileReadException) exception;
-            }
-
-            if (exception instanceof MaxRetriesExceeded) {
-                String message = FILE_LOCK_MAX_RETRY_ERROR.format(path.toString(), rootCauseMessageOf(exception));
-                throw new FileReadException(message, exception);
-            }
-
-            String message = FILE_READ_ERROR.format(path.toString(), rootCauseMessageOf(exception));
-            throw new FileReadException(message, exception);
-        }
-
-        final int readBufferSize = config.getReadBufferSize();
-        final FileChannel finalChannel = channel;
-
-        return Flux.create(fluxSink -> {
-
-            try {
                 ByteBuffer byteBuffer = ByteBuffer.allocate(readBufferSize);
 
-                while (finalChannel.read(byteBuffer) > 0) {
+                while (channel.read(byteBuffer) > 0) {
 
                     byteBuffer.flip();
 
@@ -92,18 +58,30 @@ public class Reader {
 
                     byteBuffer.clear();
 
-                    fluxSink.next(chunk);
+                    sink.next(chunk);
                 }
 
-                fluxSink.complete();
+                sink.complete();
 
-            } catch (IOException exception) {
+            } catch (NoSuchFileException exception) {
 
-                fluxSink.error(exception);
+                String message = FILE_NOT_FOUND.format(path.toString());
 
-            } finally {
+                throw new NotValidFileException(message);
 
-                CloseableUtils.closeSilently(finalChannel);
+            } catch (Exception exception) {
+
+                if (exception instanceof FileReadException) {
+                    throw (FileReadException) exception;
+                }
+
+                if (exception instanceof MaxRetriesExceeded) {
+                    String message = FILE_LOCK_MAX_RETRY_ERROR.format(path.toString(), rootCauseMessageOf(exception));
+                    throw new FileReadException(message, exception);
+                }
+
+                String message = FILE_READ_ERROR.format(path.toString(), rootCauseMessageOf(exception));
+                throw new FileReadException(message, exception);
 
             }
         });

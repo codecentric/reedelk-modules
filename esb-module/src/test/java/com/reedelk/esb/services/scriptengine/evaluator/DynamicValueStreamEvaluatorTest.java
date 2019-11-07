@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
-import com.reedelk.runtime.api.commons.ImmutableMap;
+import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.*;
@@ -23,6 +23,7 @@ import reactor.test.StepVerifier;
 
 import java.util.Arrays;
 
+import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +46,7 @@ class DynamicValueStreamEvaluatorTest {
         @Test
         void shouldCorrectlyEvaluateMessageAttributeProperty() {
             // Given
-            MessageAttributes attributes = new DefaultMessageAttributes(ImmutableMap.of("property1", "test1"));
+            MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
             Message message = MessageBuilder.get().text("this is a test").attributes(attributes).build();
             DynamicString dynamicString = DynamicString.from("#[message.attributes.pRoperty1]");
 

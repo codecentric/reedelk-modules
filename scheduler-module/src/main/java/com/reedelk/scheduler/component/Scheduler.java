@@ -71,7 +71,7 @@ public class Scheduler extends AbstractInbound {
 
             Map<String, Serializable> attributesMap = new HashMap<>();
             attributesMap.put(SchedulerAttribute.firedAt(), System.currentTimeMillis());
-            DefaultMessageAttributes attributes = new DefaultMessageAttributes(attributesMap);
+            DefaultMessageAttributes attributes = new DefaultMessageAttributes(Scheduler.class, attributesMap);
 
             Message emptyMessage = MessageBuilder.get()
                     .attributes(attributes)

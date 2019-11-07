@@ -61,7 +61,7 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = newGraphSequence(inbound, processor, stop);
         Message message = MessageBuilder.get().text("input").build();
 
-        MessageAndContext inputMessageAndContext = new MessageAndContext(message, new DefaultFlowContext());
+        MessageAndContext inputMessageAndContext = new MessageAndContext(message, DefaultFlowContext.from(message));
 
         Publisher<MessageAndContext> publisher = Flux.just(inputMessageAndContext);
 
