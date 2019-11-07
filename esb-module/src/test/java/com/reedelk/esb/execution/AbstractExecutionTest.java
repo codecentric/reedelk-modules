@@ -70,7 +70,7 @@ abstract class AbstractExecutionTest {
 
     class NoActionResultMessageAndContext extends MessageAndContext {
         NoActionResultMessageAndContext(Message message) {
-            super(message, new DefaultFlowContext());
+            super(message, DefaultFlowContext.from(message));
         }
     }
 

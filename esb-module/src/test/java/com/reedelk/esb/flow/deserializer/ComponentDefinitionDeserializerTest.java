@@ -939,7 +939,7 @@ class ComponentDefinitionDeserializerTest {
         @Test
         void shouldCorrectlySetBigDecimalDynamicProperty() {
             // Given
-            double expectedValue = 2345342.234;
+            double expectedValue = 2345342.234d;
 
             // When
             TestComponentWithDynamicValueProperty component =
@@ -948,7 +948,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicBigDecimal property = component.getDynamicBigDecimalProperty();
             assertThat(property.isScript()).isFalse();
-            assertThat(property.value()).isEqualTo(new BigDecimal(String.valueOf(expectedValue)));
+            assertThat(property.value()).isEqualTo(new BigDecimal(expectedValue));
         }
 
         @Test
