@@ -19,6 +19,9 @@ public class FileChannelProvider {
         FileChannel channel = FileChannel.open(path, options);
 
         if (LockType.LOCK.equals(lockType)) {
+            // If something goes wrong while acquiring the lock,
+            // we must close the channel. This is because if we
+            // can't acquire the lock, the channel is still open.
             try {
                 RetryCommand.builder()
                         .function(from(path, channel))
