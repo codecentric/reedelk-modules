@@ -30,36 +30,42 @@ class HttpRequestMultipartFormDataMapper {
 
         Mono<Parts> partsMono = request.data().aggregate().flatMap(byteBuffer -> {
 
-            // POST Multipart is only supported on HTTP 1.1 and for POST method.
-            FullHttpRequest fullHttpRequest =
-                    new DefaultFullHttpRequest(
-                            HttpVersion.HTTP_1_1,
-                            HttpMethod.POST,
-                            request.requestUri(),
-                            byteBuffer,
-                            request.requestHeaders(),
-                            EmptyHttpHeaders.INSTANCE);
+            HttpPostRequestDecoder postDecoder = null;
+            FullHttpRequest fullHttpRequest = null;
+            try {
 
-            HttpPostRequestDecoder postDecoder =
-                    new HttpPostRequestDecoder(
-                            new DefaultHttpDataFactory(false),
-                            fullHttpRequest,
-                            CharsetUtil.UTF_8);
+                // POST Multipart is only supported on HTTP 1.1 and for POST method.
+                fullHttpRequest = new DefaultFullHttpRequest(
+                        HttpVersion.HTTP_1_1,
+                        HttpMethod.POST,
+                        request.requestUri(),
+                        byteBuffer,
+                        request.requestHeaders(),
+                        EmptyHttpHeaders.INSTANCE);
 
-            Parts parts = new Parts();
+                postDecoder = new HttpPostRequestDecoder(
+                        new DefaultHttpDataFactory(false),
+                        fullHttpRequest,
+                        CharsetUtil.UTF_8);
 
-            // Loop attribute/file upload parts
-            for (InterfaceHttpData data : postDecoder.getBodyHttpDatas()) {
-                if (HttpDataType.Attribute == data.getHttpDataType()) {
-                    handleAttributePart(parts, (Attribute) data);
+                Parts parts = new Parts();
 
-                } else if (HttpDataType.FileUpload == data.getHttpDataType()) {
-                    handleFileUploadPart(parts, (FileUpload) data);
+                // Loop attribute/file upload parts
+                for (InterfaceHttpData data : postDecoder.getBodyHttpDatas()) {
+                    if (HttpDataType.Attribute == data.getHttpDataType()) {
+                        handleAttributePart(parts, (Attribute) data);
+
+                    } else if (HttpDataType.FileUpload == data.getHttpDataType()) {
+                        handleFileUploadPart(parts, (FileUpload) data);
+                    }
                 }
+
+                return Mono.just(parts);
+
+            } finally {
+                if (postDecoder != null) postDecoder.destroy();
+                if (fullHttpRequest != null) fullHttpRequest.release();
             }
-            postDecoder.destroy();
-            fullHttpRequest.release();
-            return Mono.just(parts);
         });
 
         return new MultipartContent(partsMono, MimeType.MULTIPART_FORM_DATA);
@@ -67,11 +73,6 @@ class HttpRequestMultipartFormDataMapper {
 
     private static void handleFileUploadPart(Parts parts, FileUpload fileUpload) {
         String name = fileUpload.getName();
-        String filename = fileUpload.getFilename();
-        String contentType = fileUpload.getContentType();
-        String contentTransferEncoding = fileUpload.getContentTransferEncoding();
-
-        MimeType mimeType = MimeType.parse(contentType);
 
         byte[] fileContentAsBytes;
         try {
@@ -80,8 +81,18 @@ class HttpRequestMultipartFormDataMapper {
             ESBException rethrown = new ESBException(ERROR_MULTIPART_FILE_UPLOAD_VALUE.format(name), e);
             logger.error("Multipart Mapper error", rethrown);
             throw rethrown;
+        } finally {
+            // We MUST call delete otherwise the associated ByteBuffer
+            // related to this part will NOT be released and a memory
+            // leak would occur.
+            fileUpload.delete();
         }
 
+        String filename = fileUpload.getFilename();
+        String contentType = fileUpload.getContentType();
+        String contentTransferEncoding = fileUpload.getContentTransferEncoding();
+
+        MimeType mimeType = MimeType.parse(contentType);
         ByteArrayContent content = new ByteArrayContent(fileContentAsBytes, mimeType);
         Part part = Part.builder()
                 .content(content)

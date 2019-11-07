@@ -13,12 +13,12 @@ import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 
 import java.nio.ByteBuffer;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
-import static com.reedelk.file.commons.Messages.FileWriteComponent.ERROR_FILE_WRITE_WITH_PATH;
+import static com.reedelk.file.commons.Messages.FileWriteComponent.*;
 import static com.reedelk.file.commons.Messages.Misc.FILE_LOCK_MAX_RETRY_ERROR;
-import static com.reedelk.file.commons.Messages.Misc.FILE_NOT_FOUND;
 import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
 
 public class Writer {
@@ -86,11 +86,15 @@ public class Writer {
                         Exception realException;
 
                         if (throwable instanceof NoSuchFileException) {
-                            String message = FILE_NOT_FOUND.format(path.toString());
+                            String message = ERROR_FILE_NOT_FOUND.format(path.toString());
                             realException = new NotValidFileException(message, throwable);
 
                         } else if (throwable instanceof MaxRetriesExceeded) {
                             String message = FILE_LOCK_MAX_RETRY_ERROR.format(path.toString(), rootCauseMessageOf(throwable));
+                            realException = new FileWriteException(message, throwable);
+
+                        } else if (throwable instanceof FileAlreadyExistsException) {
+                            String message = ERROR_FILE_WRITE_ALREADY_EXISTS.format(path.toString());
                             realException = new FileWriteException(message, throwable);
 
                         } else {

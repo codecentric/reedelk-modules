@@ -50,6 +50,8 @@ public class Messages {
 
     public enum FileWriteComponent implements FormattedMessage {
 
+        ERROR_FILE_NOT_FOUND("Could not find file=[%s]. Check that all the directories in the path exist already or enable the option 'Create directories' in the File Write component"),
+        ERROR_FILE_WRITE_ALREADY_EXISTS("Could not write file=[%s]: the file already exists"),
         ERROR_FILE_WRITE_WITH_PATH("Could not write file with path=[%s]: %s"),
         ERROR_FILE_WRITE("Could not write file: %s");
 
