@@ -19,13 +19,18 @@ public class FileChannelProvider {
         FileChannel channel = FileChannel.open(path, options);
 
         if (LockType.LOCK.equals(lockType)) {
-            RetryCommand.builder()
-                    .function(from(path, channel))
-                    .maxRetries(retryMaxAttempts)
-                    .waitTime(retryWaitTime)
-                    .retryOn(OverlappingFileLockException.class)
-                    .build()
-                    .execute();
+            try {
+                RetryCommand.builder()
+                        .function(from(path, channel))
+                        .maxRetries(retryMaxAttempts)
+                        .waitTime(retryWaitTime)
+                        .retryOn(OverlappingFileLockException.class)
+                        .build()
+                        .execute();
+            } catch (Exception exception) {
+                CloseableUtils.closeSilently(channel);
+                throw exception;
+            }
         }
 
         return channel;
