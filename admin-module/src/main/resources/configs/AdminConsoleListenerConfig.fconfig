@@ -7,5 +7,5 @@
   "protocol": "HTTP",
   "basePath": "",
   "keepAlive": true,
-  "compress": true
+  "compress": false
 }
