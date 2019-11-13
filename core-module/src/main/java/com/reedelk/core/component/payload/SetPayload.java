@@ -28,7 +28,6 @@ public class SetPayload implements ProcessorSync {
     private String mimeType;
 
     @Property("Payload")
-    @Default("#[]")
     @Hint("payload text value")
     private DynamicObject payload;
 
