@@ -6,9 +6,9 @@ import com.reedelk.file.read.FileReadConfiguration;
 import com.reedelk.file.read.ReadConfiguration;
 import com.reedelk.file.read.Reader;
 import com.reedelk.runtime.api.annotation.*;
+import com.reedelk.runtime.api.commons.TypedContentFrom;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.*;
-import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
@@ -43,7 +43,7 @@ public class FileRead implements ProcessorSync {
 
     @Property("Auto mime type")
     @Default("true")
-    private Boolean autoMimeType;
+    private boolean autoMimeType;
 
     @Property("Mime type")
     @MimeTypeCombo
@@ -72,7 +72,7 @@ public class FileRead implements ProcessorSync {
 
             Publisher<byte[]> contentAsStream = reader.read(path, config);
 
-            TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
+            TypedContent<?> content = TypedContentFrom.stream(contentAsStream, actualMimeType);
 
             MessageAttributes attributes = new DefaultMessageAttributes(FileRead.class,
                     of(FILE_NAME, path.toString(), TIMESTAMP, System.currentTimeMillis()));
@@ -94,7 +94,7 @@ public class FileRead implements ProcessorSync {
         this.basePath = basePath;
     }
 
-    public void setAutoMimeType(Boolean autoMimeType) {
+    public void setAutoMimeType(boolean autoMimeType) {
         this.autoMimeType = autoMimeType;
     }
 

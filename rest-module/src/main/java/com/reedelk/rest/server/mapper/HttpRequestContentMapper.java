@@ -1,6 +1,6 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.rest.commons.TypedContentFromByteArrayStream;
+import com.reedelk.runtime.api.commons.TypedContentFrom;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import io.netty.buffer.ByteBuf;
@@ -29,7 +29,7 @@ class HttpRequestContentMapper {
         // We retain and we release it when we read the bytes in the sink below.
         Flux<byte[]> byteArrayStream = request.data().retain().handle(asByteArrayStream());
 
-        return TypedContentFromByteArrayStream.fromMimeType(byteArrayStream, mimeType);
+        return TypedContentFrom.stream(byteArrayStream, mimeType);
     }
 
     private static BiConsumer<ByteBuf, SynchronousSink<byte[]>> asByteArrayStream() {
