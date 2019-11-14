@@ -34,7 +34,6 @@ public class ListenerConfiguration implements Implementor {
     private Boolean keepAlive;
 
     @Property("Compress response")
-    @Default("true")
     private Boolean compress;
 
     @Property("Read timeout millis")
