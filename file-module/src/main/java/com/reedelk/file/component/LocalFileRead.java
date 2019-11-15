@@ -71,7 +71,7 @@ public class LocalFileRead implements ProcessorSync {
 
             MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);
 
-            String finalFilePath = isBlank(basePath) ? filePath : basePath + filePath;
+            String finalFilePath = localFinalFilePath(basePath, filePath);
 
             Publisher<byte[]> contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
 
@@ -107,5 +107,16 @@ public class LocalFileRead implements ProcessorSync {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    /**
+     * Returns the local file path by prefixing the file path with the given base path.
+     * IMPORTANT: note that this path is NOT a system (e.g Unix/Windows) dependent path,
+     * but it is a path pointing to a file within the given bundle /resources directory.
+     * Hence, the correct way to specify directories and subdirectories leading to a
+     * wanted file is using '/' slashes and NOT '\' slashes.
+     */
+    static String localFinalFilePath(String basePath, String filePath) {
+        return isBlank(basePath) ? filePath : basePath + filePath;
     }
 }
