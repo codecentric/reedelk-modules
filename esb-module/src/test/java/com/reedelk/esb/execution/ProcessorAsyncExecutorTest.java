@@ -15,6 +15,7 @@ import org.mockito.quality.Strictness;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
 import java.util.Optional;
@@ -30,6 +31,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
 
     @BeforeEach
     void setUp() {
+        doReturn(Schedulers.elastic()).when(executor).flowScheduler();
         doReturn(Optional.of(500L)).when(executor).asyncCallbackTimeout();
     }
 
