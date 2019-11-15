@@ -10,6 +10,9 @@ import java.nio.channels.ReadableByteChannel;
 
 public class StreamFrom {
 
+    private StreamFrom() {
+    }
+
     public static Publisher<byte[]> url(URL target, int bufferSize) {
 
         return Flux.create(sink -> {
