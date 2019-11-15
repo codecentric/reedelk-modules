@@ -18,7 +18,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.reactivestreams.Publisher;
 
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import static com.reedelk.file.commons.Messages.ModuleFileReadComponent.FILE_NOT_FOUND;
@@ -72,7 +71,7 @@ public class LocalFileRead implements ProcessorSync {
 
             MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);
 
-            String finalFilePath = isBlank(basePath) ? filePath : Paths.get(basePath, filePath).toString();
+            String finalFilePath = isBlank(basePath) ? filePath : basePath + filePath;
 
             Publisher<byte[]> contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
 
