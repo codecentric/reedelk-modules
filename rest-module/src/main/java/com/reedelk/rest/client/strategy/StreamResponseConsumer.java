@@ -15,7 +15,6 @@ import org.apache.http.nio.IOControl;
 import org.apache.http.nio.protocol.AbstractAsyncResponseConsumer;
 import org.apache.http.protocol.HttpContext;
 import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -83,10 +82,7 @@ class StreamResponseConsumer extends AbstractAsyncResponseConsumer<Void> {
 
                     exception = null;
                 }
-
-                // We must subscribe on a different scheduler because
-                // otherwise we would block the HTTP server NIO Thread.
-            }).subscribeOn(Schedulers.elastic()).cast(byte[].class);
+            });
         }
 
 
