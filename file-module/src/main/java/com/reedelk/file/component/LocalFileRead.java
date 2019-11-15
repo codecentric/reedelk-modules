@@ -1,5 +1,6 @@
 package com.reedelk.file.component;
 
+import com.reedelk.file.commons.LocalFilePath;
 import com.reedelk.file.commons.MimeTypeParser;
 import com.reedelk.file.localread.LocalFileReadConfiguration;
 import com.reedelk.file.localread.LocalReadConfiguration;
@@ -24,7 +25,6 @@ import static com.reedelk.file.commons.Messages.ModuleFileReadComponent.FILE_NOT
 import static com.reedelk.file.localread.LocalFileReadAttribute.FILE_NAME;
 import static com.reedelk.file.localread.LocalFileReadAttribute.TIMESTAMP;
 import static com.reedelk.runtime.api.commons.ImmutableMap.of;
-import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Local file read")
@@ -71,7 +71,7 @@ public class LocalFileRead implements ProcessorSync {
 
             MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);
 
-            String finalFilePath = localFinalFilePath(basePath, filePath);
+            String finalFilePath = LocalFilePath.from(basePath, filePath);
 
             Publisher<byte[]> contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
 
@@ -107,16 +107,5 @@ public class LocalFileRead implements ProcessorSync {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
-    }
-
-    /**
-     * Returns the local file path by prefixing the file path with the given base path.
-     * IMPORTANT: note that this path is NOT a system (e.g Unix/Windows) dependent path,
-     * but it is a path pointing to a file within the given bundle /resources directory.
-     * Hence, the correct way to specify directories and subdirectories leading to a
-     * wanted file is using '/' slashes and NOT '\' slashes.
-     */
-    static String localFinalFilePath(String basePath, String filePath) {
-        return isBlank(basePath) ? filePath : basePath + filePath;
     }
 }

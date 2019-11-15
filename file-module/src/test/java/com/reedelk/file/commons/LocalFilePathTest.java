@@ -1,10 +1,10 @@
-package com.reedelk.file.component;
+package com.reedelk.file.commons;
 
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LocalFileReadTest {
+class LocalFilePathTest {
 
     @Test
     void shouldCreateCorrectPathWithNotEmptyBasePath() {
@@ -13,7 +13,7 @@ class LocalFileReadTest {
         String filePath = "index.html";
 
         // When
-        String finalPath = LocalFileRead.localFinalFilePath(basePath, filePath);
+        String finalPath = LocalFilePath.from(basePath, filePath);
 
         // Then
         assertThat(finalPath).isEqualTo("/webapp/index.html");
@@ -26,7 +26,7 @@ class LocalFileReadTest {
         String filePath = "layout.css";
 
         // When
-        String finalPath = LocalFileRead.localFinalFilePath(basePath, filePath);
+        String finalPath = LocalFilePath.from(basePath, filePath);
 
         // Then
         assertThat(finalPath).isEqualTo("layout.css");
