@@ -11,8 +11,10 @@ import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -33,22 +35,36 @@ public class Writer {
                       TypedPublisher<byte[]> dataStream) {
 
         int bufferLength = config.getWriteBufferSize();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
 
-        Flux.from(dataStream).reduceWith(() -> {
+        Flux.from(dataStream)
+                // This data stream is executed from originator Thread (which could be nio Thread or flow thread and so on).
+                // Since we MUST execute this asynchronously (otherwise we might end up blocking a nio Thread - e.g from a rest call -
+                // we must subscribe the stream from an elastic Thread. If we don't do it we might block
+                // the NIO thread indefinitely. Note that the reduceWith is executed within the publishOn thread,
+                // while the accumulator BiFunction is executed within the source Thread (e.g NIO thread).
+                // The success callback is executed within the source Thread, while the onError from the elastic thread.
+
+                .reduceWith(() -> {
                     try {
-                        return FileChannelProvider.from(path,
+                        FileChannel fileChannel = FileChannelProvider.from(path,
                                 config.getLockType(),
                                 config.getRetryMaxAttempts(),
                                 config.getRetryWaitTime(),
                                 config.getWriteMode().options());
+
+                        // We only allocate the buffer object if the FileChannel
+                        // has been correctly opened.
+                        ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
+                        return new Initial(byteBuffer, fileChannel);
+
                     } catch (Exception e) {
                         throw Exceptions.propagate(e);
                     }
 
-                }, (fileChannel, byteChunk) -> {
+                }, (initial, byteChunk) -> {
 
                     try {
+
                         // Write it in multiple steps
                         int remaining;
                         int offset = 0;
@@ -56,13 +72,13 @@ public class Writer {
 
                         while (length > 0) {
 
-                            byteBuffer.clear();
+                            initial.buffer.clear();
 
-                            byteBuffer.put(byteChunk, offset, length);
+                            initial.buffer.put(byteChunk, offset, length);
 
-                            byteBuffer.flip();
+                            initial.buffer.flip();
 
-                            fileChannel.write(byteBuffer);
+                            initial.fileChannel.write(initial.buffer);
 
                             offset += bufferLength;
 
@@ -72,50 +88,82 @@ public class Writer {
 
                         }
 
-                        return fileChannel;
+                        return initial;
 
                     } catch (Exception e) {
+                        // Do on success or error is not called if an exception
+                        // occurred here. Therefore we MUST clean up byte buffer
+                        // AND close file channel here.
+                        cleanUp(initial);
                         throw Exceptions.propagate(e);
                     }
-                })
 
-                .doOnSuccessOrError((fileChannel, throwable) -> {
 
-                    CloseableUtils.closeSilently(fileChannel);
+                }).doOnSuccessOrError((initial, throwable) -> {
 
-                    if (throwable != null) {
+            // We must always and in any case (success or error) close the file channel.
+            cleanUp(initial);
 
-                        Exception realException;
+        }).doOnError(throwable -> {
 
-                        if (throwable instanceof NoSuchFileException) {
-                            String message = ERROR_FILE_NOT_FOUND.format(path.toString());
-                            realException = new NotValidFileException(message, throwable);
+            // On error map the exception and invoke the error callback.
+            Exception realException = mapException(path, throwable);
+            callback.onError(realException, flowContext);
 
-                        } else if (throwable instanceof MaxRetriesExceeded) {
-                            String message = FILE_LOCK_MAX_RETRY_ERROR.format(path.toString(), rootCauseMessageOf(throwable));
-                            realException = new FileWriteException(message, throwable);
+        }).doOnSuccess(initial -> {
 
-                        } else if (throwable instanceof FileAlreadyExistsException) {
-                            String message = ERROR_FILE_WRITE_ALREADY_EXISTS.format(path.toString());
-                            realException = new FileWriteException(message, throwable);
+            // On success build the message and invoke the callback.
+            MessageAttributes attributes = new DefaultMessageAttributes(FileWrite.class,
+                    of(FILE_NAME, path.toString(), TIMESTAMP, System.currentTimeMillis()));
+            Message outMessage = MessageBuilder.get().attributes(attributes).empty().build();
 
-                        } else {
-                            String errorMessage = ERROR_FILE_WRITE_WITH_PATH.format(path.toString(), rootCauseMessageOf(throwable));
-                            realException = new FileWriteException(errorMessage, throwable);
-                        }
+            callback.onResult(outMessage, flowContext);
 
-                        callback.onError(realException, flowContext);
+        }).subscribeOn(Schedulers.elastic())
+                .subscribe(); // Immediately fire the writing into the buffer
+    }
 
-                    } else {
+    private Exception mapException(Path path, Throwable throwable) {
+        if (throwable instanceof NoSuchFileException) {
+            String message = ERROR_FILE_NOT_FOUND.format(path.toString());
+            return new NotValidFileException(message, throwable);
 
-                        MessageAttributes attributes = new DefaultMessageAttributes(FileWrite.class,
-                                of(FILE_NAME, path.toString(), TIMESTAMP, System.currentTimeMillis()));
+        } else if (throwable instanceof MaxRetriesExceeded) {
+            String message = FILE_LOCK_MAX_RETRY_ERROR.format(path.toString(), rootCauseMessageOf(throwable));
+            return new FileWriteException(message, throwable);
 
-                        Message outMessage = MessageBuilder.get().attributes(attributes).empty().build();
+        } else if (throwable instanceof FileAlreadyExistsException) {
+            String message = ERROR_FILE_WRITE_ALREADY_EXISTS.format(path.toString());
+            return new FileWriteException(message, throwable);
 
-                        callback.onResult(outMessage, flowContext);
-                    }
+        } else {
+            String errorMessage = ERROR_FILE_WRITE_WITH_PATH.format(path.toString(), rootCauseMessageOf(throwable));
+            return new FileWriteException(errorMessage, throwable);
+        }
+    }
 
-                }).subscribe(); // Immediately fire the writing into the buffer
+    private void cleanUp(Initial initial) {
+        if (initial != null) {
+            if (initial.buffer != null) initial.buffer.clear();
+            initial.buffer = null;
+
+            CloseableUtils.closeSilently(initial.fileChannel);
+            initial.fileChannel = null;
+        }
+    }
+
+    /**
+     * An object keeping a pair of buffer and file channel used in the reduce step
+     * to avoid creating a buffer before knowing if the file channel could be successfully
+     * opened.
+     */
+    class Initial {
+        ByteBuffer buffer;
+        FileChannel fileChannel;
+
+        Initial(ByteBuffer buffer, FileChannel fileChannel) {
+            this.buffer = buffer;
+            this.fileChannel = fileChannel;
+        }
     }
 }
