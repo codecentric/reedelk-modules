@@ -28,6 +28,7 @@ public class ClientConfiguration implements Implementor {
     private String basePath;
 
     @Property("Protocol")
+    @Default("HTTP")
     private HttpProtocol protocol;
 
     // Default request config
