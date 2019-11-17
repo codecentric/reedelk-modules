@@ -13,6 +13,7 @@ import org.osgi.service.component.annotations.Reference;
 import static com.reedelk.runtime.api.annotation.AutocompleteType.JSON_SCHEMA;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
+// TODO: SHould not be  hidden
 @Hidden
 @ESBComponent("JSON Mapper")
 @Component(service = JsonMapper.class, scope = PROTOTYPE)
