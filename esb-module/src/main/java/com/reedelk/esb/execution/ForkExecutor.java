@@ -7,6 +7,7 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Join;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.content.TypedContent;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -49,8 +50,9 @@ public class ForkExecutor implements FlowExecutor {
             // We must consume the message stream if it has not been consumed yet,
             // otherwise we cannot copy (by using serialization) its content and hand
             // it over to the Fork branches in the Message payload.
-            if (!messageContext.getMessage().content().isConsumed()) {
-                messageContext.getMessage().content().consume();
+            TypedContent<?> content = messageContext.getMessage().content();
+            if (!content.isConsumed()) {
+                content.consume();
             }
 
             // Create fork branches (Fork step)

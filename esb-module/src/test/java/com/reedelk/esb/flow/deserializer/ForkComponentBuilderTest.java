@@ -47,19 +47,19 @@ class ForkComponentBuilderTest extends AbstractDeserializerTest {
         ExecutionNode lastNode = deserializer.deserialize(parent, componentDefinition);
 
         // Then
-        assertThat(lastNode).isEqualTo(stopExecutionNode);
+        assertThat(lastNode).isEqualTo(stopNode1);
 
         verify(graph).putEdge(parent, forkExecutionNode);
 
         // First Fork
         verify(graph).putEdge(forkExecutionNode, component6);
         verify(graph).putEdge(component6, component5);
-        verify(graph).putEdge(component5, stopExecutionNode);
+        verify(graph).putEdge(component5, stopNode1);
 
         // Second Fork
         verify(graph).putEdge(forkExecutionNode, component1);
         verify(graph).putEdge(component1, component4);
-        verify(graph).putEdge(component4, stopExecutionNode);
+        verify(graph).putEdge(component4, stopNode1);
     }
 
     private JSONObject createNextObject(String... componentNames) {

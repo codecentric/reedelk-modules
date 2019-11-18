@@ -30,7 +30,7 @@ public class ComponentsBuilder {
         return new Builder();
     }
 
-    private static Builder forComponent(String componentName) {
+    public static Builder forComponent(String componentName) {
         Builder builder = new Builder();
         builder.with(JsonParser.Implementor.name(), componentName);
         return builder;

@@ -2,6 +2,7 @@ package com.reedelk.esb.flow.deserializer;
 
 
 import com.reedelk.esb.component.RouterWrapper;
+import com.reedelk.esb.execution.commons.FindFirstSuccessorLeadingTo;
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -51,7 +52,12 @@ class RouterDeserializer extends AbstractDeserializer {
                 // must be added as a router expression pair.
                 if (j == 0) {
                     DynamicString expression = DynamicString.from(condition);
-                    routerWrapper.addExpressionAndPathPair(expression, lastNode);
+                    // 'lastNode' might be the last stop node from another scoped execution node (e.g. Fork, Router, Try-Catch).
+                    // We must find the *FIRST* node leading to that stop node, otherwise we would not execute the nested
+                    // scoped node components.
+                    ExecutionNode firstRouterNode =
+                            FindFirstSuccessorLeadingTo.of(graph, routerExecutionNode, lastNode);
+                    routerWrapper.addExpressionAndPathPair(expression, firstRouterNode);
                 }
 
                 currentNode = lastNode;

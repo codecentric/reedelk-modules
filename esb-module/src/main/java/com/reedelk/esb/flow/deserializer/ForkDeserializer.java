@@ -1,6 +1,7 @@
 package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.component.ForkWrapper;
+import com.reedelk.esb.execution.commons.FindFirstSuccessorLeadingTo;
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -47,7 +48,14 @@ class ForkDeserializer extends AbstractDeserializer {
 
                 // The first nextObject of A GIVEN fork path,
                 // must be added as a fork execution node.
-                if (j == 0) forkWrapper.addForkNode(lastNode);
+                if (j == 0) {
+                    // 'lastNode' might be the last stop node from another scoped execution node (e.g. Fork, Router, Try-Catch).
+                    // We must find the *FIRST* node leading to that stop node, otherwise we would not execute the nested
+                    // scoped node components.
+                    ExecutionNode firstForkNode =
+                            FindFirstSuccessorLeadingTo.of(graph, forkExecutionNode, lastNode);
+                    forkWrapper.addForkNode(firstForkNode);
+                }
 
                 currentNode = lastNode;
             }

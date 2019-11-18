@@ -43,24 +43,24 @@ class RouterDeserializerTest extends AbstractDeserializerTest {
         ExecutionNode lastNode = deserializer.deserialize(parent, componentDefinition);
 
         // Then
-        assertThat(lastNode).isEqualTo(stopExecutionNode);
+        assertThat(lastNode).isEqualTo(stopNode1);
 
         verify(graph).putEdge(parent, routerExecutionNode);
 
         // First condition
         verify(graph).putEdge(routerExecutionNode, component3);
         verify(graph).putEdge(component3, component1);
-        verify(graph).putEdge(component1, stopExecutionNode);
+        verify(graph).putEdge(component1, stopNode1);
 
         // Second condition
         verify(graph).putEdge(routerExecutionNode, component2);
         verify(graph).putEdge(component2, component4);
-        verify(graph).putEdge(component4, stopExecutionNode);
+        verify(graph).putEdge(component4, stopNode1);
 
         // Otherwise
         verify(graph).putEdge(routerExecutionNode, component6);
         verify(graph).putEdge(component6, component5);
-        verify(graph).putEdge(component5, stopExecutionNode);
+        verify(graph).putEdge(component5, stopNode1);
 
         verifyNoMoreInteractions(parent);
     }

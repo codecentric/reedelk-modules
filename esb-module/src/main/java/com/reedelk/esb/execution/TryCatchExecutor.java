@@ -8,7 +8,10 @@ import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.ObjectContent;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.function.Function;
 
 import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
 
@@ -27,23 +30,28 @@ public class TryCatchExecutor implements FlowExecutor {
 
         ExecutionNode firstCatchNode = tryCatch.getFirstCatchNode();
 
-        Publisher<MessageAndContext> tryExecution = FlowExecutorFactory.get().execute(publisher, firstTryNode, graph);
+        Flux<MessageAndContext> result = Flux.from(publisher).flatMap((Function<MessageAndContext, Mono<MessageAndContext>>) messageAndContext -> {
 
-        Mono<MessageAndContext> result = Mono.from(tryExecution).onErrorResume(throwable -> {
+            Publisher<MessageAndContext> tryExecution =
+                    FlowExecutorFactory.get().execute(Mono.just(messageAndContext), firstTryNode, graph);
 
-            Mono<MessageAndContext> mapped = Mono.from(publisher).map(messageAndContext -> {
+            return Mono.from(tryExecution).onErrorResume(throwable -> {
 
-                ObjectContent content = new ObjectContent(throwable, MimeType.APPLICATION_JAVA);
+                Mono<MessageAndContext> mapped = Mono.just(messageAndContext).map(context -> {
 
-                Message messageWithException = MessageBuilder.get().typedContent(content).build();
+                    ObjectContent content = new ObjectContent(throwable, MimeType.APPLICATION_JAVA);
 
-                messageAndContext.replaceWith(messageWithException);
+                    Message messageWithException = MessageBuilder.get().typedContent(content).build();
 
-                return messageAndContext;
+                    context.replaceWith(messageWithException);
+
+                    return context;
+
+                });
+
+                return Mono.from(FlowExecutorFactory.get().execute(mapped, firstCatchNode, graph));
 
             });
-
-            return Mono.from(FlowExecutorFactory.get().execute(mapped, firstCatchNode, graph));
 
         });
 

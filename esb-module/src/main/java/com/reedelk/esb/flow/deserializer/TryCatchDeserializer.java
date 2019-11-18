@@ -1,6 +1,7 @@
 package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.component.TryCatchWrapper;
+import com.reedelk.esb.execution.commons.FindFirstSuccessorLeadingTo;
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -46,7 +47,14 @@ public class TryCatchDeserializer extends AbstractDeserializer {
             // The first try node must be set to the wrapper object.
             // This is required for the executor to know which node
             // to follow in the try block.
-            if (i == 0) tryCatchWrapper.setFirstTryNode(currentNode);
+            if (i == 0) {
+                // 'currentNode' might be the last stop node from another scoped execution node (e.g. Fork, Router, Try-Catch).
+                // We must find the *FIRST* node leading to that stop node, otherwise we would not execute the nested
+                // scoped node's components.
+                ExecutionNode firstTryNode =
+                        FindFirstSuccessorLeadingTo.of(graph, tryCatchExecutionNode, currentNode);
+                tryCatchWrapper.setFirstTryNode(firstTryNode);
+            }
         }
 
         graph.putEdge(currentNode, stopComponent);
@@ -68,7 +76,14 @@ public class TryCatchDeserializer extends AbstractDeserializer {
             // This is required for the executor to know which node
             // to follow in the catch block when an exception has
             // occurred in the try flow.
-            if (i == 0) tryCatchWrapper.setFirstCatchNode(currentNode);
+            if (i == 0) {
+                // 'currentNode' might be the last stop node from another scoped execution node (e.g. Fork, Router, Try-Catch).
+                // We must find the *FIRST* node leading to that stop node, otherwise we would not execute the nested
+                // scoped node's components.
+                ExecutionNode firstCatchNode =
+                        FindFirstSuccessorLeadingTo.of(graph, tryCatchExecutionNode, currentNode);
+                tryCatchWrapper.setFirstCatchNode(firstCatchNode);
+            }
         }
 
         graph.putEdge(currentNode, stopComponent);

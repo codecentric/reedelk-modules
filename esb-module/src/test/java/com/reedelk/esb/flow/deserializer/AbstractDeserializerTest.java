@@ -23,6 +23,8 @@ class AbstractDeserializerTest {
     final String component4Name = TestComponent.class.getName() + "4";
     final String component5Name = TestComponent.class.getName() + "5";
     final String component6Name = TestComponent.class.getName() + "6";
+    final String component7Name = TestComponent.class.getName() + "7";
+    final String component8Name = TestComponent.class.getName() + "8";
 
     @Mock
     protected ExecutionGraph graph;
@@ -44,8 +46,13 @@ class AbstractDeserializerTest {
     protected ExecutionNode component5;
     @Mock
     protected ExecutionNode component6;
+    @Mock
+    protected ExecutionNode component7;
+    @Mock
+    protected ExecutionNode component8;
 
-    ExecutionNode stopExecutionNode = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new Stop()));
+    ExecutionNode stopNode1 = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new Stop()));
+    ExecutionNode stopNode2 = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new Stop()));
 
     @BeforeEach
     void setUp() {
@@ -55,13 +62,17 @@ class AbstractDeserializerTest {
         lenient().doReturn(new TestComponent()).when(component4).getComponent();
         lenient().doReturn(new TestComponent()).when(component5).getComponent();
         lenient().doReturn(new TestComponent()).when(component6).getComponent();
+        lenient().doReturn(new TestComponent()).when(component7).getComponent();
+        lenient().doReturn(new TestComponent()).when(component8).getComponent();
 
-        lenient().doReturn(stopExecutionNode).when(context).instantiateComponent(Stop.class);
+        lenient().doReturn(stopNode1, stopNode2).when(context).instantiateComponent(Stop.class);
         lenient().doReturn(component1).when(context).instantiateComponent(component1Name);
         lenient().doReturn(component2).when(context).instantiateComponent(component2Name);
         lenient().doReturn(component3).when(context).instantiateComponent(component3Name);
         lenient().doReturn(component4).when(context).instantiateComponent(component4Name);
         lenient().doReturn(component5).when(context).instantiateComponent(component5Name);
         lenient().doReturn(component6).when(context).instantiateComponent(component6Name);
+        lenient().doReturn(component7).when(context).instantiateComponent(component7Name);
+        lenient().doReturn(component8).when(context).instantiateComponent(component8Name);
     }
 }

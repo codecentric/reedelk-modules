@@ -144,4 +144,21 @@ public class Messages {
             return formatMessage(msg, args);
         }
     }
+
+    public enum Execution implements FormattedMessage {
+
+        ERROR_FIRST_SUCCESSOR_LEADING_TO_END("Could not find first successor of component=[%s], leading to component=[%s]");
+
+        private String msg;
+
+        Execution(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+
+    }
 }
