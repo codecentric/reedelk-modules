@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FlowReferenceComponentBuilderTest {
+class FlowReferenceComponentDeserializerTest {
 
     private final String COMPONENT_1_NAME = TestComponent.class.getName() + "1";
     private final String COMPONENT_2_NAME = TestComponent.class.getName() + "2";

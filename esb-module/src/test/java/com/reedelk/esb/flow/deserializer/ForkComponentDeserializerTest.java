@@ -10,12 +10,14 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 
-class ForkComponentBuilderTest extends AbstractDeserializerTest {
+class ForkComponentDeserializerTest extends AbstractDeserializerTest {
 
     private ExecutionNode forkExecutionNode = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new ForkWrapper()));
 
@@ -42,6 +44,11 @@ class ForkComponentBuilderTest extends AbstractDeserializerTest {
                         .with("prop2", 3L)
                         .build())
                 .build();
+
+        // Mock the call made by FindFirstSuccessorLeadingTo.of function.
+        doReturn(singletonList(component6), asList(component6, component1))
+                .when(graph)
+                .successors(forkExecutionNode);
 
         // When
         ExecutionNode lastNode = deserializer.deserialize(parent, componentDefinition);

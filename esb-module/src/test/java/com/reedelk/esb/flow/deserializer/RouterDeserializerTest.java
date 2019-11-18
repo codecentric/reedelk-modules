@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.reedelk.runtime.component.Router.DEFAULT_CONDITION;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -38,6 +40,13 @@ class RouterDeserializerTest extends AbstractDeserializerTest {
         JSONObject componentDefinition = ComponentsBuilder.forComponent(Router.class)
                 .with("when", whenArray)
                 .build();
+
+        // Mock the call made by FindFirstSuccessorLeadingTo.of function.
+        doReturn(singletonList(component3),
+                asList(component3, component2),
+                asList(component3, component2, component6))
+                .when(graph)
+                .successors(routerExecutionNode);
 
         // When
         ExecutionNode lastNode = deserializer.deserialize(parent, componentDefinition);
