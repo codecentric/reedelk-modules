@@ -28,7 +28,7 @@ public class SetVariable implements ProcessorSync {
     private String name;
 
     @Property("Mime type")
-    @Default(MimeType.ANY_MIME_TYPE)
+    @Default(MimeType.MIME_TYPE_ANY)
     @MimeTypeCombo
     private String mimeType;
 

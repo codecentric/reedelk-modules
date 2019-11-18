@@ -47,7 +47,7 @@ public class FileRead implements ProcessorSync {
 
     @Property("Mime type")
     @MimeTypeCombo
-    @Default(MimeType.ANY_MIME_TYPE)
+    @Default(MimeType.MIME_TYPE_TEXT_PLAIN)
     @When(propertyName = "autoMimeType", propertyValue = "false")
     @When(propertyName = "autoMimeType", propertyValue = When.BLANK)
     private String mimeType;

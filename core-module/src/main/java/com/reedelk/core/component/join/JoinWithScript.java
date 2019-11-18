@@ -26,7 +26,7 @@ public class JoinWithScript implements Join {
     private ScriptEngineService service;
 
     @Property("Mime type")
-    @Default(MimeType.ANY_MIME_TYPE)
+    @Default(MimeType.MIME_TYPE_TEXT_PLAIN)
     @MimeTypeCombo
     private String mimeType;
 

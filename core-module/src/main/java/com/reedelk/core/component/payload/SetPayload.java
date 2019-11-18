@@ -23,7 +23,7 @@ public class SetPayload implements ProcessorSync {
     private ScriptEngineService scriptEngine;
 
     @Property("Mime type")
-    @Default(MimeType.ANY_MIME_TYPE)
+    @Default(MimeType.MIME_TYPE_ANY)
     @MimeTypeCombo
     private String mimeType;
 
