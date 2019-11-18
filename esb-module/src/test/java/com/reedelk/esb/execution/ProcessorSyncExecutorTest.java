@@ -71,7 +71,7 @@ class ProcessorSyncExecutorTest extends AbstractExecutionTest {
         // Then
         StepVerifier.create(endPublisher)
                 .verifyErrorMatches(throwable -> throwable instanceof IllegalStateException &&
-                        exceptionThrown.equals(throwable.getMessage()));
+                        throwable.getMessage().equals(exceptionThrown + " (input)"));
     }
 
     // If the processor is the last node, then it must be present a Stop node.

@@ -25,6 +25,8 @@ class ExecutionUtils {
         Collection<ExecutionNode> nextExecutorNodes = graph.successors(current);
         return checkAtLeastOneAndGetOrThrow(
                 nextExecutorNodes.stream(),
-                "Expected only one following node");
+                "Expected [%s] to have exactly one following node, but %d were found",
+                current.getComponent().getClass().getName(),
+                nextExecutorNodes.size());
     }
 }

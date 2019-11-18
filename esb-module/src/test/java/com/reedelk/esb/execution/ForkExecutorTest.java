@@ -148,7 +148,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
         StepVerifier.create(endPublisher)
                 .verifyErrorMatches(throwable ->
                         throwable instanceof IllegalStateException &&
-                                exceptionMessage.equals(throwable.getMessage()));
+                                throwable.getMessage().equals(exceptionMessage + " (ForkTest)"));
     }
 
     @Test

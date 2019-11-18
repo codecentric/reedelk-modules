@@ -151,7 +151,7 @@ class RouterExecutorTest extends AbstractExecutionTest {
 
         StepVerifier.create(endPublisher)
                 .verifyErrorMatches(throwable ->
-                        exceptionMessage.equals(throwable.getMessage()) &&
+                        throwable.getMessage().equals(exceptionMessage + " (Route1)") &&
                                 throwable instanceof IllegalStateException);
     }
 }

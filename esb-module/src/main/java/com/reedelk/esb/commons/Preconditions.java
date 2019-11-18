@@ -38,11 +38,11 @@ public class Preconditions {
         }
     }
 
-    public static <T> T checkAtLeastOneAndGetOrThrow(Stream<T> stream, String errorMessage, String... args) {
+    public static <T> T checkAtLeastOneAndGetOrThrow(Stream<T> stream, String errorMessage, Object... args) {
         return stream.findFirst().orElseThrow(() -> new IllegalStateException(String.format(errorMessage, args)));
     }
 
-    public static <T> T checkIsPresentAndGetOrThrow(Optional<T> optional, String errorMessage, String... args) {
+    public static <T> T checkIsPresentAndGetOrThrow(Optional<T> optional, String errorMessage, Object... args) {
         return optional.orElseThrow(() -> new IllegalStateException(String.format(errorMessage, args)));
     }
 }

@@ -7,11 +7,14 @@ import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.mockito.Mockito.spy;
 
@@ -23,6 +26,8 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
 
     private ExecutionNode tryNode;
     private ExecutionNode catchNode;
+    private ExecutionNode catchWithException;
+
     private ExecutionNode tryCatchNode;
     private ExecutionNode tryWithException;
 
@@ -33,6 +38,7 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         tryNode = newExecutionNode(new AddPostfixSyncProcessor("-try"));
         catchNode = newExecutionNode(new CatchSyncProcessor());
         tryWithException = newExecutionNode(new ProcessorThrowingIllegalStateExceptionSync(exceptionMessage));
+        catchWithException = newExecutionNode(new ProcessorThrowingIllegalStateExceptionSync(exceptionMessage));
     }
 
     @Test
@@ -69,7 +75,7 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
                 .tryCatchNode(tryCatchNode)
                 .build();
 
-        MessageAndContext event = newEventWithContent("TryCatchTest");
+        MessageAndContext event = newEventWithContent("input message");
         Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
@@ -77,27 +83,26 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
 
         // Then
         StepVerifier.create(endPublisher)
-                .assertNext(assertMessageContains(exceptionMessage))
+                .assertNext(assertMessageContains(exceptionMessage + " (input message)"))
                 .verifyComplete();
     }
 
     @Test
-    void shouldExecuteFlowFollowingForkNodeAfterTryFlow() {
+    void shouldContinueFlowExecutionAfterTryCatchAndExceptionCaught() {
         // Given
-        String expectedExceptionThrown = "inner exception";
         ExecutionNode afterTryCatchNode = newExecutionNode(new AddPostfixSyncProcessor("-afterTryCatchNode"));
 
-        ExecutionNode exceptionThrownInsideCatchFlow = newExecutionNode(new ProcessorThrowingIllegalStateExceptionSync(expectedExceptionThrown));
+
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
-                .tryNodes(tryWithException)
                 .disposer(disposer)
-                .catchNodes(exceptionThrownInsideCatchFlow)
+                .catchNodes(catchNode)
+                .tryNodes(tryWithException)
                 .tryCatchNode(tryCatchNode)
                 .afterTryCatchSequence(afterTryCatchNode)
                 .build();
 
-        MessageAndContext event = newEventWithContent("TryCatchTest");
+        MessageAndContext event = newEventWithContent("input message");
         Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
@@ -105,9 +110,8 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
 
         // Then
         StepVerifier.create(endPublisher)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof IllegalStateException &&
-                                expectedExceptionThrown.equals(throwable.getMessage())).verify();
+                .assertNext(assertMessageContains(exceptionMessage + " (input message)-afterTryCatchNode"))
+                .verifyComplete();
     }
 
     @Test
@@ -123,7 +127,7 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
                 .afterTryCatchSequence(afterTryCatchNode)
                 .build();
 
-        MessageAndContext event = newEventWithContent("TryCatchTest");
+        MessageAndContext event = newEventWithContent("input message");
         Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
@@ -131,7 +135,7 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
 
         // Then
         StepVerifier.create(endPublisher)
-                .assertNext(assertMessageContains(exceptionMessage + "-afterTryCatchNode"))
+                .assertNext(assertMessageContains(exceptionMessage + " (input message)-afterTryCatchNode"))
                 .verifyComplete();
     }
 
@@ -142,13 +146,13 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
                 .disposer(disposer)
-                .catchNodes(catchNode)
+                .catchNodes(catchNode, catchWithException)
                 .tryNodes(tryWithException)
                 .tryCatchNode(tryCatchNode)
                 .afterTryCatchSequence(afterTryCatchNode)
                 .build();
 
-        MessageAndContext event = newEventWithContent("TryCatchTest");
+        MessageAndContext event = newEventWithContent("input message");
         Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
@@ -156,8 +160,9 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
 
         // Then
         StepVerifier.create(endPublisher)
-                .assertNext(assertMessageContains(exceptionMessage + "-afterTryCatchNode"))
-                .verifyComplete();
+                .expectErrorMatches(throwable -> throwable instanceof IllegalStateException &&
+                        throwable.getMessage().equals("TryCatch-Exception thrown (TryCatch-Exception thrown (input message))"))
+                .verify();
     }
 
     @Test
@@ -171,7 +176,7 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
                 .tryCatchNode(tryCatchNode)
                 .build();
 
-        MessageAndContext event = newEventWithContent("TryCatchTest");
+        MessageAndContext event = newEventWithContent("input message");
         Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
@@ -179,8 +184,41 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
 
         // Then
         StepVerifier.create(endPublisher)
-                .assertNext(assertMessageContains(exceptionMessage))
+                .assertNext(assertMessageContains(exceptionMessage + " (input message-try)"))
                 .verifyComplete();
+    }
+
+    @Test
+    void shouldExecuteProcessorsBeforeTryCatchAtMostOneTimeWhenExceptionOccurred() {
+        ExecutionGraph graph = TryCatchTestGraphBuilder.get()
+                .inbound(inbound)
+                .disposer(disposer)
+                .catchNodes(catchNode)
+                .tryNodes(tryNode, tryWithException)
+                .tryCatchNode(tryCatchNode)
+                .build();
+
+        AtomicInteger numberOfExecutions = new AtomicInteger(0);
+
+        MessageAndContext event = newEventWithContent("input message");
+        Publisher<MessageAndContext> publisher = Mono.just(event).handle((messageAndContext, sink) -> {
+            Message message = messageAndContext.getMessage();
+            String content = message.payload();
+            Message newMessage = MessageBuilder.get().text(content + "-handler").build();
+            messageAndContext.replaceWith(newMessage);
+            sink.next(messageAndContext);
+            numberOfExecutions.incrementAndGet();
+        });
+
+        // When
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, tryCatchNode, graph);
+
+        // Then
+        StepVerifier.create(endPublisher)
+                .assertNext(assertMessageContains("TryCatch-Exception thrown (input message-handler-try)"))
+                .verifyComplete();
+
+        Assertions.assertThat(numberOfExecutions.get()).isEqualTo(1);
     }
 
     class CatchSyncProcessor implements ProcessorSync {

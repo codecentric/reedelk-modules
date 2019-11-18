@@ -84,7 +84,7 @@ abstract class AbstractExecutionTest {
 
         @Override
         public Message apply(Message message, FlowContext flowContext) {
-            throw new IllegalStateException(errorMessage);
+            throw new IllegalStateException(errorMessage + " (" + message.payload() + ")");
         }
     }
 
