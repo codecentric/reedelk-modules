@@ -40,9 +40,9 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
-                .tryNode(tryNode)
+                .tryNodes(tryNode)
                 .disposer(disposer)
-                .catchNode(catchNode)
+                .catchNodes(catchNode)
                 .tryCatchNode(tryCatchNode)
                 .build();
 
@@ -64,8 +64,8 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
                 .disposer(disposer)
-                .catchNode(catchNode)
-                .tryNode(tryWithException)
+                .catchNodes(catchNode)
+                .tryNodes(tryWithException)
                 .tryCatchNode(tryCatchNode)
                 .build();
 
@@ -90,9 +90,9 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         ExecutionNode exceptionThrownInsideCatchFlow = newExecutionNode(new ProcessorThrowingIllegalStateExceptionSync(expectedExceptionThrown));
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
-                .tryNode(tryWithException)
+                .tryNodes(tryWithException)
                 .disposer(disposer)
-                .catchNode(exceptionThrownInsideCatchFlow)
+                .catchNodes(exceptionThrownInsideCatchFlow)
                 .tryCatchNode(tryCatchNode)
                 .afterTryCatchSequence(afterTryCatchNode)
                 .build();
@@ -117,8 +117,8 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
                 .disposer(disposer)
-                .catchNode(catchNode)
-                .tryNode(tryWithException)
+                .catchNodes(catchNode)
+                .tryNodes(tryWithException)
                 .tryCatchNode(tryCatchNode)
                 .afterTryCatchSequence(afterTryCatchNode)
                 .build();
@@ -142,8 +142,8 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
                 .disposer(disposer)
-                .catchNode(catchNode)
-                .tryNode(tryWithException)
+                .catchNodes(catchNode)
+                .tryNodes(tryWithException)
                 .tryCatchNode(tryCatchNode)
                 .afterTryCatchSequence(afterTryCatchNode)
                 .build();
@@ -157,6 +157,29 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         // Then
         StepVerifier.create(endPublisher)
                 .assertNext(assertMessageContains(exceptionMessage + "-afterTryCatchNode"))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldExecuteCatchFlowWhenExceptionThrownAfterFirstTryNode() {
+        // Given
+        ExecutionGraph graph = TryCatchTestGraphBuilder.get()
+                .inbound(inbound)
+                .disposer(disposer)
+                .catchNodes(catchNode)
+                .tryNodes(tryNode, tryWithException)
+                .tryCatchNode(tryCatchNode)
+                .build();
+
+        MessageAndContext event = newEventWithContent("TryCatchTest");
+        Publisher<MessageAndContext> publisher = Mono.just(event);
+
+        // When
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, tryCatchNode, graph);
+
+        // Then
+        StepVerifier.create(endPublisher)
+                .assertNext(assertMessageContains(exceptionMessage))
                 .verifyComplete();
     }
 

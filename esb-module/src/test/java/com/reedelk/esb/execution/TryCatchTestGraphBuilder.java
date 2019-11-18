@@ -14,9 +14,10 @@ import static com.reedelk.esb.execution.AbstractExecutionTest.newExecutionNode;
 
 class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
 
-    private ExecutionNode tryNode;
+    private Sequence trySequence;
+    private Sequence catchSequence;
+
     private ExecutionNode inbound;
-    private ExecutionNode catchNode;
     private ExecutionNode tryCatchNode;
 
     private ComponentDisposer disposer;
@@ -31,13 +32,13 @@ class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
         return this;
     }
 
-    TryCatchTestGraphBuilder tryNode(ExecutionNode tryNode) {
-        this.tryNode = tryNode;
+    TryCatchTestGraphBuilder tryNodes(ExecutionNode ...trySequence) {
+        this.trySequence = new Sequence(trySequence);
         return this;
     }
 
-    TryCatchTestGraphBuilder catchNode(ExecutionNode catchNode) {
-        this.catchNode = catchNode;
+    TryCatchTestGraphBuilder catchNodes(ExecutionNode ...catchSequence) {
+        this.catchSequence = new Sequence(catchSequence);
         return this;
     }
 
@@ -57,21 +58,19 @@ class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
     }
 
     ExecutionGraph build() {
-        ExecutionGraph graph = ExecutionGraph.build();
-        graph.putEdge(null, inbound);
-        graph.putEdge(inbound, tryCatchNode);
-        graph.putEdge(tryCatchNode, tryNode);
-        graph.putEdge(tryCatchNode, catchNode);
-
         ExecutionNode endOfTryCatch = newExecutionNode(disposer, new Stop());
         TryCatchWrapper tryCatchWrapper = (TryCatchWrapper) tryCatchNode.getComponent();
         tryCatchWrapper.setStopNode(endOfTryCatch);
-        tryCatchWrapper.setFirstTryNode(tryNode);
-        tryCatchWrapper.setFirstCatchNode(catchNode);
 
-        graph.putEdge(tryNode, endOfTryCatch);
-        graph.putEdge(catchNode, endOfTryCatch);
+        ExecutionGraph graph = ExecutionGraph.build();
+        graph.putEdge(null, inbound);
+        graph.putEdge(inbound, tryCatchNode);
 
+        buildSequence(graph, tryCatchNode, endOfTryCatch, trySequence.sequence);
+        trySequence.sequence.stream().findFirst().ifPresent(tryCatchWrapper::setFirstTryNode);
+
+        buildSequence(graph, tryCatchNode, endOfTryCatch, catchSequence.sequence);
+        catchSequence.sequence.stream().findFirst().ifPresent(tryCatchWrapper::setFirstCatchNode);
 
         ExecutionNode endOfGraphNode = newExecutionNode(disposer, new Stop());
         if (followingSequence.size() > 0) {
@@ -81,5 +80,12 @@ class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
         }
 
         return graph;
+    }
+
+    class Sequence {
+        List<ExecutionNode> sequence;
+        Sequence(ExecutionNode[] sequence) {
+            this.sequence = Arrays.asList(sequence);
+        }
     }
 }
