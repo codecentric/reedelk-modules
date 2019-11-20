@@ -27,7 +27,7 @@ public class StartListener extends AbstractInbound {
 
         String bindAddress = configurationService.getString(PROPERTY_ADMIN_CONSOLE_ADDRESS);
 
-        int bindPort = configurationService.getInt( PROPERTY_ADMIN_CONSOLE_PORT);
+        int bindPort = configurationService.getInt(PROPERTY_ADMIN_CONSOLE_PORT);
 
         logger.info(String.format("Admin console listening on http://%s:%d/console", bindAddress, bindPort));
     }
