@@ -1,9 +1,0 @@
-{
-  "id": "8fdb8fa4-7f7c-4ff1-b87d-e450cc2de4c6",
-  "title": "Start Listener",
-  "description": "Start Listener Flow",
-  "flow": [{
-    "implementor": "com.reedelk.admin.console.StartListener",
-    "description": "Just a start listener to log that the module started successfully"
-  }]
-}

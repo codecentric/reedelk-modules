@@ -1,20 +1,19 @@
 package com.reedelk.admin.console;
 
-import com.reedelk.runtime.api.annotation.ESBComponent;
-import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.service.ConfigurationService;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
+import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
 
-@ESBComponent("Start Listener")
-@Component(service = StartListener.class, scope = PROTOTYPE)
-public class StartListener extends AbstractInbound {
+@Component(service = AdminConsoleActivator.class, scope = SINGLETON, immediate = true)
+public class AdminConsoleActivator {
 
-    private static final Logger logger = LoggerFactory.getLogger(StartListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminConsoleActivator.class);
 
     private static final String PROPERTY_ADMIN_CONSOLE_ADDRESS = "admin.console.address";
     private static final String PROPERTY_ADMIN_CONSOLE_PORT = "admin.console.port";
@@ -22,18 +21,15 @@ public class StartListener extends AbstractInbound {
     @Reference
     private ConfigurationService configurationService;
 
-    @Override
-    public void onStart() {
+    @Activate
+    public void start(BundleContext context) {
+
+        ModuleIdProvider.id = context.getBundle().getBundleId();
 
         String bindAddress = configurationService.getString(PROPERTY_ADMIN_CONSOLE_ADDRESS);
 
         int bindPort = configurationService.getInt(PROPERTY_ADMIN_CONSOLE_PORT);
 
         logger.info(String.format("Admin console listening on http://%s:%d/console", bindAddress, bindPort));
-    }
-
-    @Override
-    public void onShutdown() {
-        // Nothing to do.
     }
 }
