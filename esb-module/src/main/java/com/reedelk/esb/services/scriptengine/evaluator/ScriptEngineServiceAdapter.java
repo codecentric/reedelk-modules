@@ -6,6 +6,7 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.Script;
+import com.reedelk.runtime.api.script.ScriptSource;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicObject;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
@@ -65,6 +66,13 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
 
     @Override
     public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, Message message, FlowContext context) {
+        throw new UnsupportedOperationException();
+    }
+
+    // Register Function
+
+    @Override
+    public void registerFunction(ScriptSource scriptSource) {
         throw new UnsupportedOperationException();
     }
 

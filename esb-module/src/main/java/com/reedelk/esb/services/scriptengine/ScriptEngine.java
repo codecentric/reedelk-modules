@@ -7,6 +7,7 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.Script;
+import com.reedelk.runtime.api.script.ScriptSource;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicObject;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
@@ -23,6 +24,7 @@ public class ScriptEngine implements ScriptEngineService {
     private DynamicValueStreamEvaluator dynamicValueStreamEvaluator;
     private DynamicValueEvaluator dynamicValueEvaluator;
     private DynamicMapEvaluator dynamicMapEvaluator;
+    private FunctionRegister functionRegister;
     private ScriptEvaluator scriptEvaluator;
 
     private ScriptEngine() {
@@ -31,6 +33,7 @@ public class ScriptEngine implements ScriptEngineService {
         dynamicValueStreamEvaluator = new DynamicValueStreamEvaluator(provider);
         dynamicValueEvaluator = new DynamicValueEvaluator(provider);
         dynamicMapEvaluator = new DynamicMapEvaluator(provider);
+        functionRegister = new FunctionRegister(provider);
         scriptEvaluator = new ScriptEvaluator(provider);
     }
 
@@ -83,6 +86,13 @@ public class ScriptEngine implements ScriptEngineService {
     @Override
     public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, Message message, FlowContext context) {
         return dynamicMapEvaluator.evaluate(dynamicMap, message, context);
+    }
+
+    // Register Function
+
+    @Override
+    public void registerFunction(ScriptSource scriptSource) {
+        functionRegister.registerFunction(scriptSource);
     }
 
     @Override

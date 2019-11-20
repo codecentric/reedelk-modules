@@ -9,7 +9,7 @@ import java.util.Map;
 public class EvaluateDynamicMapFunctionDefinitionBuilder implements FunctionDefinitionBuilder<DynamicMap<Object>> {
 
     private static final String EVALUATE_MAP_SCRIPT =
-            "var %s = function(message, context) {\n" +
+            "function %s(message, context) {\n" +
                     "  return %s\n" +
                     "};";
 

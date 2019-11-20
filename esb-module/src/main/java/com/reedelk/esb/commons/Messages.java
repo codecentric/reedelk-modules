@@ -131,7 +131,8 @@ public class Messages {
 
     public enum Script implements FormattedMessage {
 
-        SCRIPT_COMPILATION_ERROR("Could not compile script function:\n\n%s\n\nError cause: %s");
+        SCRIPT_COMPILATION_ERROR("Could not compile script. Error cause: %s"),
+        SCRIPT_COMPILATION_ERROR_WITH_FUNCTION("Could not compile script function:\n\n%s\n\nError cause: %s");
 
         private String msg;
 
@@ -159,6 +160,5 @@ public class Messages {
         public String format(Object... args) {
             return formatMessage(msg, args);
         }
-
     }
 }

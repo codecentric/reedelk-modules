@@ -723,7 +723,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicLong property = component.getDynamicLongProperty();
             assertThat(property.isScript()).isTrue();
-            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+            assertThat(property.body()).isEqualTo(expectedValue);
         }
 
         @Test
@@ -753,7 +753,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicFloat property = component.getDynamicFloatProperty();
             assertThat(property.isScript()).isTrue();
-            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+            assertThat(property.body()).isEqualTo(expectedValue);
         }
 
         @Test
@@ -783,7 +783,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicDouble property = component.getDynamicDoubleProperty();
             assertThat(property.isScript()).isTrue();
-            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+            assertThat(property.body()).isEqualTo(expectedValue);
         }
 
         @Test
@@ -813,7 +813,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicString property = component.getDynamicStringProperty();
             assertThat(property.isScript()).isTrue();
-            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+            assertThat(property.body()).isEqualTo(expectedValue);
         }
 
         @Test
@@ -843,7 +843,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicObject property = component.getDynamicObjectProperty();
             assertThat(property.isScript()).isTrue();
-            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+            assertThat(property.body()).isEqualTo(expectedValue);
         }
 
         @Test
@@ -873,7 +873,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicBoolean property = component.getDynamicBooleanProperty();
             assertThat(property.isScript()).isTrue();
-            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+            assertThat(property.body()).isEqualTo(expectedValue);
         }
 
         @Test
@@ -903,7 +903,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicInteger property = component.getDynamicIntegerProperty();
             assertThat(property.isScript()).isTrue();
-            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+            assertThat(property.body()).isEqualTo(expectedValue);
         }
 
         @Test
@@ -933,7 +933,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicByteArray property = component.getDynamicByteArrayProperty();
             assertThat(property.isScript()).isTrue();
-            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+            assertThat(property.body()).isEqualTo(expectedValue);
         }
 
         @Test
@@ -963,7 +963,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicBigDecimal property = component.getDynamicBigDecimalProperty();
             assertThat(property.isScript()).isTrue();
-            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+            assertThat(property.body()).isEqualTo(expectedValue);
         }
 
         @Test
@@ -993,7 +993,7 @@ class ComponentDefinitionDeserializerTest {
             // Then
             DynamicBigInteger property = component.getDynamicBigIntegerProperty();
             assertThat(property.isScript()).isTrue();
-            assertThat(property.scriptBody()).isEqualTo(expectedValue);
+            assertThat(property.body()).isEqualTo(expectedValue);
         }
     }
 
