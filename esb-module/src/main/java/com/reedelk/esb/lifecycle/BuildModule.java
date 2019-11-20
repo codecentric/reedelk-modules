@@ -76,10 +76,15 @@ public class BuildModule extends AbstractStep<Module, Module> {
         ConfigPropertyAwareJsonTypeConverter converter = new ConfigPropertyAwareJsonTypeConverter(configurationService());
 
         try {
+
             FlowBuilderContext context = new FlowBuilderContext(bundle, modulesManager, deserializedModule, converter);
+
             FlowBuilder flowBuilder = new FlowBuilder(context);
+
             flowBuilder.build(flowGraph, flowDefinition);
+
             return new Flow(flowId, flowTitle, flowGraph, executionEngine);
+
         } catch (Exception exception) {
             Log.buildException(logger, flowDefinition, flowId, exception);
             return new ErrorStateFlow(flowId, flowTitle, flowGraph, executionEngine, exception);
