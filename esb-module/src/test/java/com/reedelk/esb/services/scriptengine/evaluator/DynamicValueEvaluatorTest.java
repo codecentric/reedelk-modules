@@ -1,6 +1,5 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
-import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -36,7 +35,7 @@ class DynamicValueEvaluatorTest {
 
     @BeforeEach
     void setUp() {
-        evaluator = new DynamicValueEvaluator(JavascriptEngineProvider.INSTANCE);
+        evaluator = new DynamicValueEvaluator();
     }
 
     @Nested

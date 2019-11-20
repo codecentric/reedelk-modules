@@ -3,10 +3,10 @@ package com.reedelk.esb.services.scriptengine;
 import com.reedelk.esb.exception.ScriptCompilationException;
 import com.reedelk.esb.services.scriptengine.evaluator.ScriptEngineProvider;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
+import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import javax.script.Bindings;
 import javax.script.CompiledScript;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.Reader;
 import java.util.Map;
@@ -17,16 +17,18 @@ import static javax.script.ScriptContext.ENGINE_SCOPE;
 
 public class JavascriptEngineProvider implements ScriptEngineProvider {
 
-    public static final ScriptEngineProvider INSTANCE = new JavascriptEngineProvider();
-
-    private static final String ENGINE_NAME = "nashorn";
-
     private final NashornScriptEngine engine;
-    private final Bindings bindings;
 
     private JavascriptEngineProvider() {
-        this.engine = (NashornScriptEngine) new ScriptEngineManager().getEngineByName(ENGINE_NAME);
-        this.bindings = engine.getBindings(ENGINE_SCOPE);
+        this.engine = (NashornScriptEngine) new NashornScriptEngineFactory().getScriptEngine();
+    }
+
+    private static class ScriptEngineProviderHelper {
+        private static final JavascriptEngineProvider INSTANCE = new JavascriptEngineProvider();
+    }
+
+    public static JavascriptEngineProvider getInstance(){
+        return ScriptEngineProviderHelper.INSTANCE;
     }
 
     @Override
@@ -56,7 +58,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
 
             Object moduleObject = tmpBindings.get(moduleName);
 
-            bindings.put(moduleName, moduleObject);
+            engine.getBindings(ENGINE_SCOPE).put(moduleName, moduleObject);
 
         } catch (ScriptException exception) {
             String errorMessage = SCRIPT_COMPILATION_ERROR.format(exception.getMessage());
@@ -70,7 +72,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
 
             CompiledScript compiled = engine.compile(functionDefinition);
 
-            compiled.eval(bindings);
+            compiled.eval(engine.getBindings(ENGINE_SCOPE));
 
         } catch (ScriptException exception) {
             String errorMessage = SCRIPT_COMPILATION_ERROR_WITH_FUNCTION.format(functionDefinition, exception.getMessage());
@@ -80,6 +82,6 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
 
     @Override
     public void clear(String module) {
-        bindings.put(module, null);
+        engine.getBindings(ENGINE_SCOPE).put(module, null);
     }
 }

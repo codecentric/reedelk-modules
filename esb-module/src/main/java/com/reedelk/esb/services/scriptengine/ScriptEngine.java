@@ -28,13 +28,11 @@ public class ScriptEngine implements ScriptEngineService {
     private ScriptEvaluator scriptEvaluator;
 
     private ScriptEngine() {
-        ScriptEngineProvider provider = JavascriptEngineProvider.INSTANCE;
-
-        dynamicValueStreamEvaluator = new DynamicValueStreamEvaluator(provider);
-        dynamicValueEvaluator = new DynamicValueEvaluator(provider);
-        dynamicMapEvaluator = new DynamicMapEvaluator(provider);
-        functionRegister = new FunctionRegister(provider);
-        scriptEvaluator = new ScriptEvaluator(provider);
+        dynamicValueStreamEvaluator = new DynamicValueStreamEvaluator();
+        dynamicValueEvaluator = new DynamicValueEvaluator();
+        dynamicMapEvaluator = new DynamicMapEvaluator();
+        functionRegister = new FunctionRegister();
+        scriptEvaluator = new ScriptEvaluator();
     }
 
     // Dynamic value

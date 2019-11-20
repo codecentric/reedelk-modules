@@ -21,10 +21,10 @@ public class CoreModuleActivator {
 
     @Activate
     public void start() {
-        UtilModule utilModule = new UtilModule();
-        LogModule logModule = new LogModule();
-        scriptEngineService.registerFunction(utilModule);
-        scriptEngineService.registerFunction(logModule);
+      //  UtilModule utilModule = new UtilModule();
+      //  LogModule logModule = new LogModule();
+      //  scriptEngineService.registerFunction(utilModule);
+      //  scriptEngineService.registerFunction(logModule);
     }
 
     @Deactivate

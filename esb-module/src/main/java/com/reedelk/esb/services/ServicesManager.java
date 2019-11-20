@@ -110,7 +110,7 @@ public class ServicesManager {
     }
 
     private void registerConverterService(BundleContext context) {
-        ConverterService service = DefaultConverterService.INSTANCE;
+        ConverterService service = DefaultConverterService.getInstance();
         ServiceRegistration<ConverterService> registration =
                 context.registerService(ConverterService.class, service, NO_PROPERTIES);
         registeredServices.add(registration);

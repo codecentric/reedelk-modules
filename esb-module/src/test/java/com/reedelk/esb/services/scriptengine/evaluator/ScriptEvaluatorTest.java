@@ -1,7 +1,6 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.execution.DefaultFlowContext;
-import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -36,7 +35,7 @@ class ScriptEvaluatorTest {
     @BeforeEach
     void setUp() {
         context = DefaultFlowContext.from(emptyMessage);
-        evaluator = new ScriptEvaluator(JavascriptEngineProvider.INSTANCE);
+        evaluator = new ScriptEvaluator();
     }
 
     @Nested

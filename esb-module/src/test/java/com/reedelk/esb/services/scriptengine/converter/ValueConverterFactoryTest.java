@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class converterServiceTest {
     
-    private ConverterService converterService = DefaultConverterService.INSTANCE;
+    private ConverterService converterService = DefaultConverterService.getInstance();
 
     @Nested
     @DisplayName("Convert boolean from input to output class")

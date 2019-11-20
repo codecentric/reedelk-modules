@@ -15,10 +15,6 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
     private static final FunctionDefinitionBuilder MAP_FUNCTION_BUILDER = new EvaluateDynamicMapFunctionDefinitionBuilder();
     private static final Map<String,?> EMPTY_MAP = Collections.unmodifiableMap(Collections.emptyMap());
 
-    public DynamicMapEvaluator(ScriptEngineProvider provider) {
-        super(provider);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, Message message, FlowContext context) {
@@ -30,11 +26,11 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
 
             String functionName = functionNameOf(dynamicMap, MAP_FUNCTION_BUILDER);
 
-            Map<String, T> evaluatedMap = (Map<String, T>) scriptEngine.invokeFunction(functionName, message, context);
+            Map<String, T> evaluatedMap = (Map<String, T>) scriptEngine().invokeFunction(functionName, message, context);
 
             // We map the values to the correct output value type
             evaluatedMap.forEach((key, value) -> {
-                T converted = DefaultConverterService.INSTANCE.convert(value, dynamicMap.getEvaluatedType());
+                T converted = DefaultConverterService.getInstance().convert(value, dynamicMap.getEvaluatedType());
                 evaluatedMap.put(key, converted);
             });
 

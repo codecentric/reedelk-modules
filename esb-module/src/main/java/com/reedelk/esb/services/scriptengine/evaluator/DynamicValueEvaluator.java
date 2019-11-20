@@ -13,10 +13,6 @@ import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.OPT
 
 public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
 
-    public DynamicValueEvaluator(ScriptEngineProvider provider) {
-        super(provider);
-    }
-
     @Override
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
         if (dynamicValue == null) {
@@ -71,7 +67,7 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
                 return convert(payload, JavaType.from(mimeType), OPTIONAL_PROVIDER);
             } else {
                 String functionName = functionNameOf(dynamicObject, FUNCTION);
-                Object evaluationResult = scriptEngine.invokeFunction(functionName, message, flowContext);
+                Object evaluationResult = scriptEngine().invokeFunction(functionName, message, flowContext);
                 return convert(evaluationResult, JavaType.from(mimeType), OPTIONAL_PROVIDER);
             }
         } else {

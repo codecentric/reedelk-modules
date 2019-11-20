@@ -10,10 +10,6 @@ import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STR
 
 public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
-    public DynamicValueStreamEvaluator(ScriptEngineProvider provider) {
-        super(provider);
-    }
-
     @Override
     public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
         if (dynamicValue == null) {

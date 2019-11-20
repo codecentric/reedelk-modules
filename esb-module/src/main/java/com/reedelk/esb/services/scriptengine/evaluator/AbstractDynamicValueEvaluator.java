@@ -2,6 +2,7 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.commons.FunctionName;
 import com.reedelk.esb.services.converter.DefaultConverterService;
+import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueErrorFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
@@ -21,20 +22,14 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     static final FunctionDefinitionBuilder<DynamicValue> ERROR_FUNCTION = new EvaluateDynamicValueErrorFunctionDefinitionBuilder();
     static final FunctionDefinitionBuilder<DynamicValue> FUNCTION = new EvaluateDynamicValueFunctionDefinitionBuilder();
 
-    final ScriptEngineProvider scriptEngine;
-
     private final Map<String, String> uuidFunctionNameMap = new HashMap<>();
-
-    AbstractDynamicValueEvaluator(ScriptEngineProvider scriptEngine) {
-        this.scriptEngine = scriptEngine;
-    }
 
     <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider provider, FunctionDefinitionBuilder<DynamicValue> functionDefinitionBuilder, Object... args) {
         if (dynamicValue.isEmpty()) {
             return provider.empty();
         } else {
             String functionName = functionNameOf(dynamicValue, functionDefinitionBuilder);
-            Object evaluationResult = scriptEngine.invokeFunction(functionName, args);
+            Object evaluationResult = scriptEngine().invokeFunction(functionName, args);
             return convert(evaluationResult, dynamicValue.getEvaluatedType(), provider);
         }
     }
@@ -46,12 +41,12 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         } else if (value instanceof TypedPublisher<?>) {
             // Value is a typed stream
             TypedPublisher<?> typedPublisher = (TypedPublisher<?>) value;
-            Object converted = DefaultConverterService.INSTANCE.convert(typedPublisher, targetClazz);
+            Object converted = converterService().convert(typedPublisher, targetClazz);
             return provider.from(converted);
 
         } else {
             // Value is NOT a typed stream
-            Object converted = DefaultConverterService.INSTANCE.convert(value, targetClazz);
+            Object converted = converterService().convert(value, targetClazz);
             return provider.from(converted);
         }
     }
@@ -69,7 +64,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             String functionDefinition = functionDefinitionBuilder.from(computedFunctionName, scriptBlock);
 
             // pre-compile the function definition.
-            scriptEngine.eval(functionDefinition);
+            scriptEngine().eval(functionDefinition);
             uuidFunctionNameMap.put(valueUUID, computedFunctionName);
             return computedFunctionName;
         }
@@ -90,5 +85,13 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             Publisher<T> converted = convert(message.payload(), targetType, STREAM_PROVIDER);
             return TypedPublisher.from(converted, targetType);
         }
+    }
+
+    DefaultConverterService converterService() {
+        return DefaultConverterService.getInstance();
+    }
+
+    ScriptEngineProvider scriptEngine() {
+        return JavascriptEngineProvider.getInstance();
     }
 }

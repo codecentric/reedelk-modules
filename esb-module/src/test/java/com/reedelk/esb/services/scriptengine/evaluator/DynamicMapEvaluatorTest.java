@@ -1,6 +1,5 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
-import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicFloatMap;
@@ -27,7 +26,7 @@ class DynamicMapEvaluatorTest {
 
     @BeforeEach
     void setUp() {
-        evaluator = new DynamicMapEvaluator(JavascriptEngineProvider.INSTANCE);
+        evaluator = new DynamicMapEvaluator();
     }
 
 

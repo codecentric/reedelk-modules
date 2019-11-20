@@ -16,16 +16,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-import static com.reedelk.esb.commons.Preconditions.checkNotNull;
-
 public class DefaultModuleFileProvider implements ModuleFileProvider {
 
     private final BundleContext context;
     private final ModulesManager modulesManager;
 
     public DefaultModuleFileProvider(BundleContext context, ModulesManager modulesManager) {
-        checkNotNull(context, "context");
-        checkNotNull(modulesManager, "modulesManager");
         this.context = context;
         this.modulesManager = modulesManager;
     }
