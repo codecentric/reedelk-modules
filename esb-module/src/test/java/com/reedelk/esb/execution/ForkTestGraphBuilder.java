@@ -1,6 +1,5 @@
 package com.reedelk.esb.execution;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -17,7 +16,6 @@ class ForkTestGraphBuilder extends AbstractTestGraphBuilder {
     private ExecutionNode fork;
     private ExecutionNode join;
     private ExecutionNode inbound;
-    private ComponentDisposer disposer;
     private List<ForkSequence> forkSequenceList = new ArrayList<>();
     private List<ExecutionNode> followingSequence = new ArrayList<>();
 
@@ -40,11 +38,6 @@ class ForkTestGraphBuilder extends AbstractTestGraphBuilder {
         return this;
     }
 
-    ForkTestGraphBuilder disposer(ComponentDisposer disposer) {
-        this.disposer = disposer;
-        return this;
-    }
-
     ForkTestGraphBuilder forkSequence(ExecutionNode... sequence) {
         this.forkSequenceList.add(new ForkSequence(sequence));
         return this;
@@ -60,7 +53,7 @@ class ForkTestGraphBuilder extends AbstractTestGraphBuilder {
         graph.putEdge(null, inbound);
         graph.putEdge(inbound, fork);
 
-        ExecutionNode endOfFork = newExecutionNode(disposer, new Stop());
+        ExecutionNode endOfFork = newExecutionNode(new Stop());
 
         ForkWrapper forkWrapper = (ForkWrapper) fork.getComponent();
         forkWrapper.setStopNode(endOfFork);
@@ -78,7 +71,7 @@ class ForkTestGraphBuilder extends AbstractTestGraphBuilder {
             last = join;
         }
 
-        ExecutionNode endOfGraph = newExecutionNode(disposer, new Stop());
+        ExecutionNode endOfGraph = newExecutionNode(new Stop());
         if (followingSequence.size() > 0) {
             buildSequence(graph, last, endOfGraph, followingSequence);
         } else {

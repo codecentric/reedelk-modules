@@ -1,6 +1,5 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
-import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.MimeType;
@@ -79,10 +78,5 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
     @Override
     public void unregister(ScriptSource scriptSource) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void onDisposed(Component component) {
-        // by default nothing gets done.
     }
 }

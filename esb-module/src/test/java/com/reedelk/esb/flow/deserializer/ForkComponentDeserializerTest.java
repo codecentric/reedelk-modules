@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 
 class ForkComponentDeserializerTest extends AbstractDeserializerTest {
 
-    private ExecutionNode forkExecutionNode = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new ForkWrapper()));
+    private ExecutionNode forkExecutionNode = new ExecutionNode(new ExecutionNode.ReferencePair<>(new ForkWrapper()));
 
     private ForkDeserializer deserializer;
 

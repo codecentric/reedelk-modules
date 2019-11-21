@@ -1,6 +1,5 @@
 package com.reedelk.esb.graph;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.framework.ServiceReference;
@@ -10,12 +9,10 @@ import java.util.List;
 
 public class ExecutionNode {
 
-    private ComponentDisposer disposer;
     private ReferencePair<Component> componentReference;
     private List<ReferencePair<Implementor>> dependencyReferences = new ArrayList<>();
 
-    public ExecutionNode(ComponentDisposer disposer, ReferencePair<Component> componentReference) {
-        this.disposer = disposer;
+    public ExecutionNode(ReferencePair<Component> componentReference) {
         this.componentReference = componentReference;
     }
 
@@ -41,7 +38,6 @@ public class ExecutionNode {
         dependencyReferences.clear();
 
         // we help the gc to faster identify which objects can be garbage collected.
-        disposer = null;
         componentReference = null;
         dependencyReferences = null;
     }
@@ -61,10 +57,6 @@ public class ExecutionNode {
     }
 
     private void dispose(ReferencePair<? extends Implementor> componentReference) {
-        Implementor implementor = componentReference.implementor;
-        if (implementor instanceof Component) {
-            disposer.dispose((Component) implementor);
-        }
         componentReference.implementor = null;
         componentReference.serviceReference = null;
     }

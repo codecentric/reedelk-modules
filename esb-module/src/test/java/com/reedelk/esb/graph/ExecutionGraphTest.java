@@ -1,6 +1,5 @@
 package com.reedelk.esb.graph;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.esb.test.utils.AnotherTestComponent;
 import com.reedelk.esb.test.utils.TestComponent;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -22,9 +20,6 @@ import static org.assertj.core.util.introspection.FieldSupport.EXTRACTION;
 @ExtendWith(MockitoExtension.class)
 class ExecutionGraphTest {
 
-    @Mock
-    private ComponentDisposer disposer;
-
     private ExecutionGraph graph;
 
     @BeforeEach
@@ -35,8 +30,8 @@ class ExecutionGraphTest {
     @Test
     void shouldThrowExceptionWhenPutEdgeAndN1NotAddedAlready() {
         // Given
-        ExecutionNode n1 = new ExecutionNode(disposer, new ReferencePair<>(new TestInboundComponent()));
-        ExecutionNode n2 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
+        ExecutionNode n1 = new ExecutionNode(new ReferencePair<>(new TestInboundComponent()));
+        ExecutionNode n2 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
 
         // When
         Assertions.assertThrows(IllegalStateException.class, () -> graph.putEdge(n1, n2));
@@ -45,7 +40,7 @@ class ExecutionGraphTest {
     @Test
     void shouldSetRootElementWhenN1IsNull() {
         // Given
-        ExecutionNode n1 = new ExecutionNode(disposer, new ReferencePair<>(new TestInboundComponent()));
+        ExecutionNode n1 = new ExecutionNode(new ReferencePair<>(new TestInboundComponent()));
 
         // When
         graph.putEdge(null, n1);
@@ -58,8 +53,8 @@ class ExecutionGraphTest {
     @Test
     void shouldThrowExceptionWhenRootAlreadyPresentAndNXIsNull() {
         // Given
-        ExecutionNode n1 = new ExecutionNode(disposer, new ReferencePair<>(new TestInboundComponent()));
-        ExecutionNode n2 = new ExecutionNode(disposer, new ReferencePair<>(new TestInboundComponent()));
+        ExecutionNode n1 = new ExecutionNode(new ReferencePair<>(new TestInboundComponent()));
+        ExecutionNode n2 = new ExecutionNode(new ReferencePair<>(new TestInboundComponent()));
         graph.putEdge(null, n1);
 
         // Expect
@@ -69,7 +64,7 @@ class ExecutionGraphTest {
     @Test
     void shouldThrowExceptionWhenRootIsNotInbound() {
         // Given
-        ExecutionNode n1 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
+        ExecutionNode n1 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
 
         // Expect
         Assertions.assertThrows(IllegalStateException.class, () -> graph.putEdge(null, n1));
@@ -78,8 +73,8 @@ class ExecutionGraphTest {
     @Test
     void shouldThrowExceptionWhenAddingANodeWithoutN1AddedBefore() {
         // Given
-        ExecutionNode n1 = new ExecutionNode(disposer, new ReferencePair<>(new TestInboundComponent()));
-        ExecutionNode n2 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
+        ExecutionNode n1 = new ExecutionNode(new ReferencePair<>(new TestInboundComponent()));
+        ExecutionNode n2 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
 
         // When
         Assertions.assertThrows(IllegalStateException.class, () -> graph.putEdge(n1, n2));
@@ -88,10 +83,10 @@ class ExecutionGraphTest {
     @Test
     void shouldSuccessorsReturnCorrectSuccessors() {
         // Given
-        ExecutionNode n1 = new ExecutionNode(disposer, new ReferencePair<>(new TestInboundComponent()));
-        ExecutionNode n2 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
-        ExecutionNode n3 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
-        ExecutionNode n4 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
+        ExecutionNode n1 = new ExecutionNode(new ReferencePair<>(new TestInboundComponent()));
+        ExecutionNode n2 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
+        ExecutionNode n3 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
+        ExecutionNode n4 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
 
         graph.putEdge(null, n1);
         graph.putEdge(n1, n2);
@@ -108,10 +103,10 @@ class ExecutionGraphTest {
     @Test
     void shouldApplyOnNodesTraverseAllNodes() {
         // Given
-        ExecutionNode n1 = new ExecutionNode(disposer, new ReferencePair<>(new TestInboundComponent()));
-        ExecutionNode n2 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
-        ExecutionNode n3 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
-        ExecutionNode n4 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
+        ExecutionNode n1 = new ExecutionNode(new ReferencePair<>(new TestInboundComponent()));
+        ExecutionNode n2 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
+        ExecutionNode n3 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
+        ExecutionNode n4 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
 
         graph.putEdge(null, n1);
         graph.putEdge(n1, n2);
@@ -130,8 +125,8 @@ class ExecutionGraphTest {
     @Test
     void shouldFindOneReturnEmpty() {
         // Given
-        ExecutionNode n1 = new ExecutionNode(disposer, new ReferencePair<>(new TestInboundComponent()));
-        ExecutionNode n2 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
+        ExecutionNode n1 = new ExecutionNode(new ReferencePair<>(new TestInboundComponent()));
+        ExecutionNode n2 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
 
         graph.putEdge(null, n1);
         graph.putEdge(n1, n2);
@@ -147,8 +142,8 @@ class ExecutionGraphTest {
     @Test
     void shouldFindOneReturnExistingNodeMatchingCondition() {
         // Given
-        ExecutionNode n1 = new ExecutionNode(disposer, new ReferencePair<>(new TestInboundComponent()));
-        ExecutionNode n2 = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
+        ExecutionNode n1 = new ExecutionNode(new ReferencePair<>(new TestInboundComponent()));
+        ExecutionNode n2 = new ExecutionNode(new ReferencePair<>(new TestComponent()));
 
         graph.putEdge(null, n1);
         graph.putEdge(n1, n2);

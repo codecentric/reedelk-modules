@@ -1,6 +1,5 @@
 package com.reedelk.esb.execution;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.TryCatchWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -20,7 +19,6 @@ class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
     private ExecutionNode inbound;
     private ExecutionNode tryCatchNode;
 
-    private ComponentDisposer disposer;
     private List<ExecutionNode> followingSequence = new ArrayList<>();
 
     static TryCatchTestGraphBuilder get() {
@@ -42,11 +40,6 @@ class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
         return this;
     }
 
-    TryCatchTestGraphBuilder disposer(ComponentDisposer disposer) {
-        this.disposer = disposer;
-        return this;
-    }
-
     TryCatchTestGraphBuilder tryCatchNode(ExecutionNode tryCatchNode) {
         this.tryCatchNode = tryCatchNode;
         return this;
@@ -58,7 +51,7 @@ class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
     }
 
     ExecutionGraph build() {
-        ExecutionNode endOfTryCatch = newExecutionNode(disposer, new Stop());
+        ExecutionNode endOfTryCatch = newExecutionNode(new Stop());
         TryCatchWrapper tryCatchWrapper = (TryCatchWrapper) tryCatchNode.getComponent();
         tryCatchWrapper.setStopNode(endOfTryCatch);
 
@@ -72,7 +65,7 @@ class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
         buildSequence(graph, tryCatchNode, endOfTryCatch, catchSequence.sequence);
         catchSequence.sequence.stream().findFirst().ifPresent(tryCatchWrapper::setFirstCatchNode);
 
-        ExecutionNode endOfGraphNode = newExecutionNode(disposer, new Stop());
+        ExecutionNode endOfGraphNode = newExecutionNode(new Stop());
         if (followingSequence.size() > 0) {
             buildSequence(graph, endOfTryCatch, endOfGraphNode, followingSequence);
         } else {

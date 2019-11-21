@@ -17,8 +17,8 @@ import static org.mockito.Mockito.*;
 
 public class TryCatchDeserializerTest extends AbstractDeserializerTest {
 
-    private ExecutionNode tryCatchExecutionNode1 = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new TryCatchWrapper()));
-    private ExecutionNode tryCatchExecutionNode2 = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new TryCatchWrapper()));
+    private ExecutionNode tryCatchExecutionNode1 = new ExecutionNode(new ExecutionNode.ReferencePair<>(new TryCatchWrapper()));
+    private ExecutionNode tryCatchExecutionNode2 = new ExecutionNode(new ExecutionNode.ReferencePair<>(new TryCatchWrapper()));
 
     private TryCatchDeserializer deserializer;
 

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 
 class RouterDeserializerTest extends AbstractDeserializerTest {
 
-    private ExecutionNode routerExecutionNode = new ExecutionNode(disposer, new ReferencePair<>(new RouterWrapper()));
+    private ExecutionNode routerExecutionNode = new ExecutionNode(new ReferencePair<>(new RouterWrapper()));
 
     private RouterDeserializer deserializer;
 

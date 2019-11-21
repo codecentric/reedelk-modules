@@ -1,6 +1,5 @@
 package com.reedelk.esb.flow.deserializer;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.MockFlowBuilderContext;
@@ -28,8 +27,6 @@ class AbstractDeserializerTest {
 
     @Mock
     protected ExecutionGraph graph;
-    @Mock
-    protected ComponentDisposer disposer;
     @Spy
     protected MockFlowBuilderContext context;
     @Mock
@@ -51,8 +48,8 @@ class AbstractDeserializerTest {
     @Mock
     protected ExecutionNode component8;
 
-    ExecutionNode stopNode1 = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new Stop()));
-    ExecutionNode stopNode2 = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new Stop()));
+    ExecutionNode stopNode1 = new ExecutionNode(new ExecutionNode.ReferencePair<>(new Stop()));
+    ExecutionNode stopNode2 = new ExecutionNode(new ExecutionNode.ReferencePair<>(new Stop()));
 
     @BeforeEach
     void setUp() {

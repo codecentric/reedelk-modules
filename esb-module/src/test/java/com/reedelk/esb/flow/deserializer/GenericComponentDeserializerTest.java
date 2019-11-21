@@ -1,6 +1,5 @@
 package com.reedelk.esb.flow.deserializer;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -22,8 +21,6 @@ import static org.mockito.Mockito.*;
 @DisplayName("Generic Component Builder")
 class GenericComponentDeserializerTest {
 
-    @Mock
-    private ComponentDisposer disposer;
     @Mock
     private ExecutionGraph graph;
     @Mock
@@ -48,7 +45,7 @@ class GenericComponentDeserializerTest {
             JSONObject componentDefinition = ComponentsBuilder.forComponent(TestComponent.class)
                     .build();
 
-            ExecutionNode en = new ExecutionNode(disposer, new ReferencePair<>(new TestComponent()));
+            ExecutionNode en = new ExecutionNode(new ReferencePair<>(new TestComponent()));
             mockInstantiation(en);
 
             // When

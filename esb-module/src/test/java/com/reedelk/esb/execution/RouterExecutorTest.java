@@ -32,7 +32,6 @@ class RouterExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionGraph graph = RouterTestGraphBuilder.get()
                 .router(routerNode)
-                .disposer(disposer)
                 .inbound(inbound)
                 .conditionWithSequence("#[message.payload() == 'Route1']", route1Node)
                 .conditionWithSequence("#[message.payload() == 'Route2']", route2Node)
@@ -57,7 +56,6 @@ class RouterExecutorTest extends AbstractExecutionTest {
         ExecutionNode route3Node = newExecutionNode(new AddPostfixSyncProcessor("-otherwise"));
         ExecutionGraph graph = RouterTestGraphBuilder.get()
                 .router(routerNode)
-                .disposer(disposer)
                 .inbound(inbound)
                 .conditionWithSequence("#[message.payload() == 'Route1']", route1Node)
                 .conditionWithSequence("#[message.payload() == 'Route2']", route2Node)
@@ -82,7 +80,6 @@ class RouterExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionGraph graph = RouterTestGraphBuilder.get()
                 .router(routerNode)
-                .disposer(disposer)
                 .inbound(inbound)
                 .conditionWithSequence("#[message.payload() == 'Route1']", route1Node)
                 .conditionWithSequence("#[message.payload() == 'Route2']", route2Node)
@@ -105,7 +102,6 @@ class RouterExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionGraph graph = RouterTestGraphBuilder.get()
                 .router(routerNode)
-                .disposer(disposer)
                 .inbound(inbound)
                 .conditionWithSequence("#[message.payload() == 'Route1']", route1Node)
                 .conditionWithSequence("#[message.payload() == 'Route2']", route2Node)
@@ -135,7 +131,6 @@ class RouterExecutorTest extends AbstractExecutionTest {
 
         ExecutionGraph graph = RouterTestGraphBuilder.get()
                 .router(routerNode)
-                .disposer(disposer)
                 .inbound(inbound)
                 .conditionWithSequence("#[message.payload() == 'Route1']", processorThrowingException)
                 .conditionWithSequence("#[message.payload() == 'Route2']", route2Node)

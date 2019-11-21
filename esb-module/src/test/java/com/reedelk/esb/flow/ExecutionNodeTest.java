@@ -1,6 +1,5 @@
 package com.reedelk.esb.flow;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
 import com.reedelk.esb.test.utils.TestComponent;
@@ -18,14 +17,13 @@ import org.osgi.framework.ServiceReference;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ExecutionNodeTest {
 
-    @Mock
-    private ComponentDisposer disposer;
     @Mock
     private ServiceReference<Component> serviceReference;
 
@@ -40,7 +38,7 @@ class ExecutionNodeTest {
     void shouldReturnCorrectComponentReference() {
         // Given
         ReferencePair<Component> expectedReference = new ReferencePair<>(testComponent, serviceReference);
-        ExecutionNode EN = new ExecutionNode(disposer, expectedReference);
+        ExecutionNode EN = new ExecutionNode(expectedReference);
 
         // When
         ReferencePair<Component> actualReference = EN.getComponentReference();
@@ -121,19 +119,6 @@ class ExecutionNodeTest {
     }
 
     @Test
-    void shouldClearReferencesCallDisposeWhenImplementorIsAComponent() {
-        // Given
-        Component testComponentSpy = spy(testComponent);
-        ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(testComponentSpy, serviceReference);
-
-        // When
-        testComponentEN.clearReferences();
-
-        // Then
-        verify(disposer).dispose(testComponentSpy);
-    }
-
-    @Test
     void shouldIsUsingComponentReturnTrueWhenExecutionNodeComponentMatches() {
         // Given
         ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(testComponent, serviceReference);
@@ -184,7 +169,7 @@ class ExecutionNodeTest {
     }
 
     private ExecutionNode mockExecutionNodeWithComponentAndReference(Component component, ServiceReference<Component> serviceReference) {
-        return spy(new ExecutionNode(disposer, new ReferencePair<>(component, serviceReference)));
+        return spy(new ExecutionNode(new ReferencePair<>(component, serviceReference)));
     }
 
 }

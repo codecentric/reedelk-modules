@@ -1,6 +1,5 @@
 package com.reedelk.esb.lifecycle;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.flow.Flow;
@@ -65,8 +64,6 @@ class BuildModuleTest {
     private Flow flow;
     @Mock
     private Bundle bundle;
-    @Mock
-    private ComponentDisposer disposer;
     @Mock
     private BundleContext bundleContext;
     @Mock
@@ -281,7 +278,7 @@ class BuildModuleTest {
         try {
             T component = clazz.getConstructor().newInstance();
             ReferencePair<Component> referencePair = new ReferencePair<>(component, serviceReference);
-            ExecutionNode componentExecutionNode = new ExecutionNode(disposer, referencePair);
+            ExecutionNode componentExecutionNode = new ExecutionNode(referencePair);
             mockInstantiateComponent(componentExecutionNode, clazz);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             fail("mock component with service reference", e);
@@ -292,7 +289,7 @@ class BuildModuleTest {
         try {
             T component = realInstance.getConstructor().newInstance();
             ReferencePair<Component> referencePair = new ReferencePair<>(component);
-            ExecutionNode componentExecutionNode = new ExecutionNode(disposer, referencePair);
+            ExecutionNode componentExecutionNode = new ExecutionNode(referencePair);
             mockInstantiateComponent(componentExecutionNode, clazz);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             fail("mock component", e);
@@ -303,7 +300,7 @@ class BuildModuleTest {
         try {
             T component = clazz.getConstructor().newInstance();
             ReferencePair<Component> referencePair = new ReferencePair<>(component);
-            ExecutionNode componentExecutionNode = new ExecutionNode(disposer, referencePair);
+            ExecutionNode componentExecutionNode = new ExecutionNode(referencePair);
             mockInstantiateComponent(componentExecutionNode, clazz);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             fail("mock component", e);

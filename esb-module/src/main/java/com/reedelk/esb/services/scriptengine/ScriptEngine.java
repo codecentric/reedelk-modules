@@ -1,7 +1,6 @@
 package com.reedelk.esb.services.scriptengine;
 
 import com.reedelk.esb.services.scriptengine.evaluator.*;
-import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.MimeType;
@@ -96,14 +95,5 @@ public class ScriptEngine implements ScriptEngineService {
     @Override
     public void unregister(ScriptSource scriptSource) {
         scriptSourceEvaluator.unregister(scriptSource);
-    }
-
-    @Override
-    public void onDisposed(Component component) {
-        dynamicValueStreamEvaluator.onDisposed(component);
-        dynamicValueEvaluator.onDisposed(component);
-        scriptSourceEvaluator.onDisposed(component);
-        dynamicMapEvaluator.onDisposed(component);
-        scriptEvaluator.onDisposed(component);
     }
 }

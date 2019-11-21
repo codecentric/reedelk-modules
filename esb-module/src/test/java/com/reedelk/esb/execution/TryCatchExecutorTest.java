@@ -47,7 +47,6 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
                 .tryNodes(tryNode)
-                .disposer(disposer)
                 .catchNodes(catchNode)
                 .tryCatchNode(tryCatchNode)
                 .build();
@@ -69,7 +68,6 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
-                .disposer(disposer)
                 .catchNodes(catchNode)
                 .tryNodes(tryWithException)
                 .tryCatchNode(tryCatchNode)
@@ -95,7 +93,6 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
 
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
-                .disposer(disposer)
                 .catchNodes(catchNode)
                 .tryNodes(tryWithException)
                 .tryCatchNode(tryCatchNode)
@@ -120,7 +117,6 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         ExecutionNode afterTryCatchNode = newExecutionNode(new AddPostfixSyncProcessor("-afterTryCatchNode"));
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
-                .disposer(disposer)
                 .catchNodes(catchNode)
                 .tryNodes(tryWithException)
                 .tryCatchNode(tryCatchNode)
@@ -145,7 +141,6 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         ExecutionNode afterTryCatchNode = newExecutionNode(new AddPostfixSyncProcessor("-afterTryCatchNode"));
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
-                .disposer(disposer)
                 .catchNodes(catchNode, catchWithException)
                 .tryNodes(tryWithException)
                 .tryCatchNode(tryCatchNode)
@@ -170,7 +165,6 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         // Given
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
-                .disposer(disposer)
                 .catchNodes(catchNode)
                 .tryNodes(tryNode, tryWithException)
                 .tryCatchNode(tryCatchNode)
@@ -192,7 +186,6 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
     void shouldExecuteProcessorsBeforeTryCatchAtMostOneTimeWhenExceptionOccurred() {
         ExecutionGraph graph = TryCatchTestGraphBuilder.get()
                 .inbound(inbound)
-                .disposer(disposer)
                 .catchNodes(catchNode)
                 .tryNodes(tryNode, tryWithException)
                 .tryCatchNode(tryCatchNode)

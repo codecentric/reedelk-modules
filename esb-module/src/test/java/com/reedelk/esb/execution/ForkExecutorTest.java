@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-
 class ForkExecutorTest extends AbstractExecutionTest {
 
     private ForkExecutor executor = spy(new ForkExecutor());
@@ -52,7 +51,6 @@ class ForkExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
-                .disposer(disposer)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
                 .join(joinNode)
@@ -76,7 +74,6 @@ class ForkExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
-                .disposer(disposer)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
                 .join(joinNode)
@@ -104,7 +101,6 @@ class ForkExecutorTest extends AbstractExecutionTest {
                 .inbound(inbound)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
-                .disposer(disposer)
                 .join(joinNode)
                 .afterForkSequence(nodeFollowingJoin)
                 .build();
@@ -130,7 +126,6 @@ class ForkExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
-                .disposer(disposer)
                 .forkSequence(fork1Node)
                 .forkSequence(processorThrowingException)
                 .join(joinNode)
@@ -159,7 +154,6 @@ class ForkExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
-                .disposer(disposer)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
                 .join(joinThrowingException)
@@ -186,7 +180,6 @@ class ForkExecutorTest extends AbstractExecutionTest {
         ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
-                .disposer(disposer)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
                 .join(incorrectJoinType)

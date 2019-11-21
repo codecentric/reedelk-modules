@@ -1,6 +1,5 @@
 package com.reedelk.esb.execution;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -17,7 +16,6 @@ class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
 
     private ExecutionNode router;
     private ExecutionNode inbound;
-    private ComponentDisposer disposer;
     private List<ExecutionNode> followingSequence = new ArrayList<>();
     private List<ConditionWithSequence> conditionWithSequences = new ArrayList<>();
 
@@ -32,11 +30,6 @@ class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
 
     RouterTestGraphBuilder inbound(ExecutionNode inbound) {
         this.inbound = inbound;
-        return this;
-    }
-
-    RouterTestGraphBuilder disposer(ComponentDisposer disposer) {
-        this.disposer = disposer;
         return this;
     }
 
@@ -55,7 +48,7 @@ class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
         graph.putEdge(null, inbound);
         graph.putEdge(inbound, router);
 
-        ExecutionNode endOfRouter = newExecutionNode(disposer, new Stop());
+        ExecutionNode endOfRouter = newExecutionNode(new Stop());
 
         RouterWrapper routerWrapper = (RouterWrapper) router.getComponent();
         routerWrapper.setEndOfRouterStopNode(endOfRouter);
@@ -66,7 +59,7 @@ class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
             }
         }
 
-        ExecutionNode endOfGraph = newExecutionNode(disposer, new Stop());
+        ExecutionNode endOfGraph = newExecutionNode(new Stop());
         if (followingSequence.size() > 0) {
             buildSequence(graph, endOfRouter, endOfGraph, followingSequence);
         } else {

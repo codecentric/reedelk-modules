@@ -1,29 +1,24 @@
 package com.reedelk.esb.execution.commons;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.esb.test.utils.TestInboundComponent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FindFirstSuccessorLeadingToTest {
 
-    @Mock
-    protected ComponentDisposer disposer;
-
     private ExecutionGraph graph;
 
-    private ExecutionNode root = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new TestInboundComponent()));
-    private ExecutionNode component1 = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new TestComponent()));
-    private ExecutionNode component2 = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new TestComponent()));
-    private ExecutionNode component3 = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new TestComponent()));
-    private ExecutionNode component4 = new ExecutionNode(disposer, new ExecutionNode.ReferencePair<>(new TestComponent()));
+    private ExecutionNode root = new ExecutionNode(new ExecutionNode.ReferencePair<>(new TestInboundComponent()));
+    private ExecutionNode component1 = new ExecutionNode(new ExecutionNode.ReferencePair<>(new TestComponent()));
+    private ExecutionNode component2 = new ExecutionNode(new ExecutionNode.ReferencePair<>(new TestComponent()));
+    private ExecutionNode component3 = new ExecutionNode(new ExecutionNode.ReferencePair<>(new TestComponent()));
+    private ExecutionNode component4 = new ExecutionNode(new ExecutionNode.ReferencePair<>(new TestComponent()));
 
     @BeforeEach
     void setUp() {

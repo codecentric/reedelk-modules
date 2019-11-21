@@ -1,6 +1,5 @@
 package com.reedelk.esb.module;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.component.RuntimeComponents;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
@@ -23,12 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 public class ModulesManager {
 
-    private final ComponentDisposer disposer;
     private final Map<Long, Module> idModulesMap = new HashMap<>();
-
-    public ModulesManager(ComponentDisposer disposer) {
-        this.disposer = disposer;
-    }
 
     public void add(Module module) {
         long moduleId = module.id();
@@ -76,11 +70,11 @@ public class ModulesManager {
     public ExecutionNode instantiateComponent(final BundleContext context, final String componentName) {
         if (RuntimeComponents.is(componentName)) {
             Component component = instantiateSystemComponent(componentName);
-            return new ExecutionNode(disposer, new ReferencePair<>(component));
+            return new ExecutionNode(new ReferencePair<>(component));
         }
 
         ReferencePair<Component> implementorReferencePair = instantiateImplementor(context, componentName);
-        return new ExecutionNode(disposer, implementorReferencePair);
+        return new ExecutionNode(implementorReferencePair);
     }
 
     public Implementor instantiateImplementor(final BundleContext context, final ExecutionNode executionNode, final String componentName) {

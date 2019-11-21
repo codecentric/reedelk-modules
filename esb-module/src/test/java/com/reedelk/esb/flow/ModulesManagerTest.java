@@ -1,6 +1,5 @@
 package com.reedelk.esb.flow;
 
-import com.reedelk.esb.commons.ComponentDisposer;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModuleDeserializer;
 import com.reedelk.esb.module.ModulesManager;
@@ -31,15 +30,13 @@ class ModulesManagerTest {
     private final String testLocation = "file://location/test";
 
     @Mock
-    private ComponentDisposer disposer;
-    @Mock
     private ModuleDeserializer deserializer;
 
     private ModulesManager manager;
 
     @BeforeEach
     void setUp() {
-        manager = new ModulesManager(disposer);
+        manager = new ModulesManager();
     }
 
     @Test
