@@ -21,12 +21,12 @@ public class DefaultBodyProvider implements BodyProvider {
 
     @Override
     public byte[] asByteArray(Message message, FlowContext flowContext) {
-        return scriptEngine.evaluate(body, message, flowContext).orElse(new byte[0]);
+        return scriptEngine.evaluate(body, flowContext, message).orElse(new byte[0]);
     }
 
     @Override
     public Publisher<byte[]> asStream(Message message, FlowContext flowContext) {
-        return scriptEngine.evaluateStream(body, message, flowContext);
+        return scriptEngine.evaluateStream(body, flowContext, message);
     }
 
     @Override

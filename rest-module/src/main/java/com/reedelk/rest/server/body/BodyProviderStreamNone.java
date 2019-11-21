@@ -30,7 +30,7 @@ public class BodyProviderStreamNone implements BodyProvider {
     // No streaming, single valued Stream (Mono)
     @Override
     public Publisher<byte[]> from(HttpServerResponse response, Message message, FlowContext flowContext) {
-        Optional<byte[]> evaluated = scriptEngine.evaluate(responseBody, message, flowContext);
+        Optional<byte[]> evaluated = scriptEngine.evaluate(responseBody, flowContext, message);
         return publisherFrom(response, evaluated);
     }
 
@@ -38,7 +38,7 @@ public class BodyProviderStreamNone implements BodyProvider {
     @Override
     public Publisher<byte[]> from(HttpServerResponse response, Throwable throwable, FlowContext flowContext) {
         try {
-            Optional<byte[]> evaluated = scriptEngine.evaluate(errorResponseBody, throwable, flowContext);
+            Optional<byte[]> evaluated = scriptEngine.evaluate(errorResponseBody, flowContext, throwable);
             return publisherFrom(response, evaluated);
         } catch (Exception exception) {
             // Evaluating an error response, cannot throw again an exception,

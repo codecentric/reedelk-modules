@@ -27,7 +27,7 @@ class RestClientPutTest extends RestClientAbstractTest {
 
         doReturn(Optional.of(requestBody.getBytes()))
                 .when(scriptEngine)
-                .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
+                .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(FlowContext.class), any(Message.class));
 
         givenThat(put(urlEqualTo(PATH))
                 .withRequestBody(equalToJson(requestBody))
@@ -50,7 +50,7 @@ class RestClientPutTest extends RestClientAbstractTest {
 
         doReturn(Optional.of(new byte[]{}))
                 .when(scriptEngine)
-                .evaluate(Mockito.isNull(DynamicByteArray.class), any(Message.class), any(FlowContext.class));
+                .evaluate(Mockito.isNull(DynamicByteArray.class), any(FlowContext.class), any(Message.class));
 
         givenThat(put(urlEqualTo(PATH))
                 .withRequestBody(binaryEqualTo(new byte[0]))

@@ -33,7 +33,7 @@ class RestClientCustomHeadersTest extends RestClientAbstractTest {
 
         doReturn(additionalHeaders)
                 .when(scriptEngine)
-                .evaluate(eq(additionalHeadersMap), any(Message.class), any(FlowContext.class));
+                .evaluate(eq(additionalHeadersMap), any(FlowContext.class), any(Message.class));
 
         givenThat(WireMock.any(urlEqualTo(PATH))
                 .withHeader("X-Token", equalTo("123456789"))

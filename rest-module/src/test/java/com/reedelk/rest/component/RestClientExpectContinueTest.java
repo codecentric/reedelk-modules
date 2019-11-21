@@ -41,7 +41,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
 
         doReturn(Optional.of("my body".getBytes()))
                 .when(scriptEngine)
-                .evaluate(eq(dynamicBody), any(Message.class), any(FlowContext.class));
+                .evaluate(eq(dynamicBody), any(FlowContext.class), any(Message.class));
 
 
         givenThat(WireMock.any(urlEqualTo(PATH))
@@ -78,7 +78,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
 
         doReturn(Optional.of("my body".getBytes()))
                 .when(scriptEngine)
-                .evaluate(eq(dynamicBody), any(Message.class), any(FlowContext.class));
+                .evaluate(eq(dynamicBody), any(FlowContext.class), any(Message.class));
 
 
         givenThat(WireMock.any(urlEqualTo(PATH))
@@ -116,7 +116,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
 
         doReturn(Optional.of("my body".getBytes()))
                 .when(scriptEngine)
-                .evaluate(eq(dynamicBody), any(Message.class), any(FlowContext.class));
+                .evaluate(eq(dynamicBody), any(FlowContext.class), any(Message.class));
 
 
         givenThat(WireMock.any(urlEqualTo(PATH))

@@ -57,7 +57,7 @@ public class FileWrite implements ProcessorAsync {
     public void apply(Message message, FlowContext flowContext, OnResult callback) {
 
 
-        Optional<String> evaluated = scriptService.evaluate(filePath, message, flowContext);
+        Optional<String> evaluated = scriptService.evaluate(filePath, flowContext, message);
 
         if (evaluated.isPresent()) {
 

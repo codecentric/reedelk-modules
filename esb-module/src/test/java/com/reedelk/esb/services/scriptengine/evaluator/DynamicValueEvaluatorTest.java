@@ -50,7 +50,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.attributes.property1]");
 
             // When
-            Optional<String> evaluated = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains("test1");
@@ -63,7 +63,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.payload()]");
 
             // When
-            Optional<String> evaluated = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains("this is a test");
@@ -78,7 +78,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.payload()]");
 
             // When
-            Optional<String> evaluated = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains("onetwo");
@@ -95,7 +95,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']");
 
             // When
-            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> result = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(result).isPresent().contains("Hello, this is just a test.");
@@ -111,7 +111,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']");
 
             // When
-            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> result = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(result).isPresent().contains("Hello, this is just a test.");
@@ -125,7 +125,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#['evaluation test']");
 
             // When
-            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> result = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(result).isPresent().contains("evaluation test");
@@ -138,7 +138,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("Expected text");
 
             // When
-            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> result = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(result).isPresent().contains("Expected text");
@@ -151,7 +151,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("");
 
             // When
-            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> result = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(result).isPresent().contains("");
@@ -164,7 +164,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = null;
 
             // When
-            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> result = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(result).isNotPresent();
@@ -177,7 +177,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[]");
 
             // When
-            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> result = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(result).isNotPresent();
@@ -190,7 +190,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from(null);
 
             // When
-            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> result = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(result).isNotPresent();
@@ -203,7 +203,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[message.payload()]");
 
             // When
-            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> result = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(result).contains("23432");
@@ -216,7 +216,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[null]");
 
             // When
-            Optional<String> result = evaluator.evaluate(dynamicString, message, context);
+            Optional<String> result = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(result).isNotPresent();
@@ -234,7 +234,7 @@ class DynamicValueEvaluatorTest {
             DynamicInteger dynamicInteger = DynamicInteger.from("#[506]");
 
             // When
-            Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, message, context);
+            Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains(506);
@@ -249,7 +249,7 @@ class DynamicValueEvaluatorTest {
             DynamicInteger dynamicInteger = DynamicInteger.from("#[parseInt(message.payload()) + 10]");
 
             // When
-            Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, message, context);
+            Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains(22);
@@ -262,7 +262,7 @@ class DynamicValueEvaluatorTest {
             DynamicInteger dynamicInteger = DynamicInteger.from(53);
 
             // When
-            Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, message, context);
+            Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains(53);
@@ -275,7 +275,7 @@ class DynamicValueEvaluatorTest {
             DynamicInteger dynamicInteger = DynamicInteger.from("#[message.payload()]");
 
             // When
-            Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, message, context);
+            Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains(120);
@@ -293,7 +293,7 @@ class DynamicValueEvaluatorTest {
             DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[1 == 1]");
 
             // When
-            Optional<Boolean> evaluated = evaluator.evaluate(dynamicBoolean, message, context);
+            Optional<Boolean> evaluated = evaluator.evaluate(dynamicBoolean, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains(true);
@@ -306,7 +306,7 @@ class DynamicValueEvaluatorTest {
             DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[message.payload()]");
 
             // When
-            Optional<Boolean> evaluated = evaluator.evaluate(dynamicBoolean, message, context);
+            Optional<Boolean> evaluated = evaluator.evaluate(dynamicBoolean, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains(true);
@@ -325,7 +325,7 @@ class DynamicValueEvaluatorTest {
             DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]");
 
             // When
-            Optional<byte[]> evaluated = evaluator.evaluate(dynamicByteArray, message, context);
+            Optional<byte[]> evaluated = evaluator.evaluate(dynamicByteArray, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains(payload.getBytes());
@@ -347,7 +347,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[message.content]");
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, message, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message);
 
             // Then
             assertThat(result).isPresent().containsSame(typedContent);
@@ -360,7 +360,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicString = DynamicObject.from("#[message]");
 
             // When
-            Optional<Object> evaluated = evaluator.evaluate(dynamicString, message, context);
+            Optional<Object> evaluated = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains(message);
@@ -374,7 +374,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicString = DynamicObject.from("#[message.payload()]");
 
             // When
-            Optional<Object> evaluated = evaluator.evaluate(dynamicString, message, context);
+            Optional<Object> evaluated = evaluator.evaluate(dynamicString, context, message);
 
             // Then
             assertThat(evaluated).isPresent().contains(given);
@@ -396,7 +396,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[message.content]");
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.TEXT, message, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.TEXT);
 
             // Then
             assertThat(result).isPresent().contains(typedContent.toString());
@@ -412,7 +412,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[message.content.type()]");
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.APPLICATION_BINARY, message, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.APPLICATION_BINARY);
 
             // Then
             assertThat(result).isPresent().contains(ObjectToBytes.from(typedContent.type()));
@@ -429,7 +429,7 @@ class DynamicValueEvaluatorTest {
 
             // When
             ESBException thrown = assertThrows(ESBException.class,
-                    () -> evaluator.evaluate(dynamicObject, MimeType.APPLICATION_BINARY, message, context));
+                    () -> evaluator.evaluate(dynamicObject, context, message, MimeType.APPLICATION_BINARY));
 
             // Then
             assertThat(thrown).isNotNull();
@@ -444,7 +444,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = null;
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.APPLICATION_BINARY, message, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.APPLICATION_BINARY);
 
             // Then
             assertThat(result).isNotPresent();
@@ -458,7 +458,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[]");
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.APPLICATION_JSON, message, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.APPLICATION_JSON);
 
             // Then
             assertThat(result).isNotPresent();
@@ -474,7 +474,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from(testObject);
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.TEXT, message, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.TEXT);
 
             // Then
             assertThat(result).isPresent().contains(testObject.toString());
@@ -491,7 +491,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[message.payload()]");
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.TEXT, message, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.TEXT);
 
             // Then
             assertThat(result).isPresent().contains(testObject.toString());
@@ -509,7 +509,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[error]");
 
             // When
-            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
 
             // Then
             assertThat(evaluated).isPresent().contains(StackTraceUtils.asString(myException));
@@ -522,7 +522,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[error.getMessage()]");
 
             // When
-            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
 
             // Then
             assertThat(evaluated).isPresent().contains("My exception message");
@@ -535,7 +535,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("#[]");
 
             // When
-            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
 
             // Then
             assertThat(evaluated).isNotPresent();
@@ -548,7 +548,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from(null);
 
             // When
-            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
 
             // Then
             assertThat(evaluated).isNotPresent();
@@ -561,7 +561,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = DynamicString.from("my text");
 
             // When
-            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
 
             // Then
             assertThat(evaluated).contains("my text");
@@ -574,7 +574,7 @@ class DynamicValueEvaluatorTest {
             DynamicString dynamicString = null;
 
             // When
-            Optional<String> evaluated = evaluator.evaluate(dynamicString, myException, context);
+            Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
 
             // Then
             assertThat(evaluated).isNotPresent();
@@ -592,7 +592,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[error]");
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, myException, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, context, myException);
 
             // Then
             assertThat(result).isPresent().containsSame(myException);
@@ -605,7 +605,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("my text");
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, myException, context);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, context, myException);
 
             // Then
             assertThat(result).isPresent().contains("my text");
@@ -623,7 +623,7 @@ class DynamicValueEvaluatorTest {
             DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[error]");
 
             // When
-            Optional<byte[]> result = evaluator.evaluate(dynamicByteArray, myException, context);
+            Optional<byte[]> result = evaluator.evaluate(dynamicByteArray, context, myException);
 
             // Then
             assertThat(result).isPresent().contains(StackTraceUtils.asByteArray(myException));

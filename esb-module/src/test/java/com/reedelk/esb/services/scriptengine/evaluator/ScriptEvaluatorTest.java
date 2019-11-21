@@ -48,7 +48,7 @@ class ScriptEvaluatorTest {
             Script stringConcatenation = Script.from("#[return 'one' + ' ' + 'two']");
 
             // When
-            Optional<String> actual = evaluator.evaluate(stringConcatenation, emptyMessage, context, String.class);
+            Optional<String> actual = evaluator.evaluate(stringConcatenation, context, emptyMessage, String.class);
 
             // Then
             assertThat(actual).isPresent().contains("one two");
@@ -60,7 +60,7 @@ class ScriptEvaluatorTest {
             Script emptyScript = Script.from("#[]");
 
             // When
-            Optional<String> actual = evaluator.evaluate(emptyScript, emptyMessage, context, String.class);
+            Optional<String> actual = evaluator.evaluate(emptyScript, context, emptyMessage, String.class);
 
             // Then
             assertThat(actual).isNotPresent();
@@ -72,7 +72,7 @@ class ScriptEvaluatorTest {
             Script nullScript = null;
 
             // When
-            Optional<String> actual = evaluator.evaluate(nullScript, emptyMessage, context, String.class);
+            Optional<String> actual = evaluator.evaluate(nullScript, context, emptyMessage, String.class);
 
             // Then
             assertThat(actual).isNotPresent();
@@ -85,7 +85,7 @@ class ScriptEvaluatorTest {
 
             // When
             ESBException exception = Assertions.assertThrows(ESBException.class,
-                    () -> evaluator.evaluate(invalidScript, emptyMessage, context, String.class));
+                    () -> evaluator.evaluate(invalidScript, context, emptyMessage, String.class));
 
             // Then
             assertThat(exception).isNotNull();
@@ -97,7 +97,7 @@ class ScriptEvaluatorTest {
             Script intScript = Script.from("#[return 2351]");
 
             // When
-            Optional<Integer> actual = evaluator.evaluate(intScript, emptyMessage, context, Integer.class);
+            Optional<Integer> actual = evaluator.evaluate(intScript, context, emptyMessage, Integer.class);
 
             // Then
             assertThat(actual).isPresent().contains(2351);
@@ -110,7 +110,7 @@ class ScriptEvaluatorTest {
             Message message = MessageBuilder.get().text("my payload as text").build();
 
             // When
-            Optional<String> actual = evaluator.evaluate(payloadScript, message, context, String.class);
+            Optional<String> actual = evaluator.evaluate(payloadScript, context, message, String.class);
 
             // Then
             assertThat(actual).isPresent().contains("my payload as text");
@@ -123,7 +123,7 @@ class ScriptEvaluatorTest {
             Script contextVariableScript = Script.from("#[return context.messageVar]");
 
             // When
-            Optional<String> actual = evaluator.evaluate(contextVariableScript, emptyMessage, context, String.class);
+            Optional<String> actual = evaluator.evaluate(contextVariableScript, context, emptyMessage, String.class);
 
             // Then
             assertThat(actual).isPresent().contains("my sample");
@@ -156,7 +156,7 @@ class ScriptEvaluatorTest {
             Script stringConcatenation = Script.from("#[" + concatenateMessagesScript + "]");
 
             // When
-            Optional<String> actual = evaluator.evaluate(stringConcatenation, messages, context, String.class);
+            Optional<String> actual = evaluator.evaluate(stringConcatenation, context, messages, String.class);
 
             // Then
             assertThat(actual).isPresent().contains("one;two;three");
@@ -168,7 +168,7 @@ class ScriptEvaluatorTest {
             Script emptyScript = Script.from("#[]");
 
             // When
-            Optional<String> actual = evaluator.evaluate(emptyScript, messages, context, String.class);
+            Optional<String> actual = evaluator.evaluate(emptyScript, context, messages, String.class);
 
             // Then
             assertThat(actual).isNotPresent();
@@ -180,7 +180,7 @@ class ScriptEvaluatorTest {
             Script nullScript = null;
 
             // When
-            Optional<String> actual = evaluator.evaluate(nullScript, messages, context, String.class);
+            Optional<String> actual = evaluator.evaluate(nullScript, context, messages, String.class);
 
             // Then
             assertThat(actual).isNotPresent();
@@ -193,7 +193,7 @@ class ScriptEvaluatorTest {
 
             // When
             ESBException exception = Assertions.assertThrows(ESBException.class,
-                    () -> evaluator.evaluate(invalidScript, messages, context, String.class));
+                    () -> evaluator.evaluate(invalidScript, context, messages, String.class));
 
             // Then
             assertThat(exception).isNotNull();
@@ -210,7 +210,7 @@ class ScriptEvaluatorTest {
             Script textValuedScript = Script.from("#[return 'my test']");
 
             // When
-            TypedPublisher<byte[]> actual = evaluator.evaluateStream(textValuedScript, emptyMessage, context, byte[].class);
+            TypedPublisher<byte[]> actual = evaluator.evaluateStream(textValuedScript, context, emptyMessage, byte[].class);
 
             // Then
             assertThat(actual.getType()).isEqualTo(byte[].class);
@@ -229,7 +229,7 @@ class ScriptEvaluatorTest {
             Script extractStreamScript = Script.from("#[message.payload()]");
 
             // When
-            TypedPublisher<byte[]> actual = evaluator.evaluateStream(extractStreamScript, message, context, byte[].class);
+            TypedPublisher<byte[]> actual = evaluator.evaluateStream(extractStreamScript, context, message, byte[].class);
 
             // Then
             assertThat(actual.getType()).isEqualTo(byte[].class);
@@ -245,7 +245,7 @@ class ScriptEvaluatorTest {
             Script nullScript = null;
 
             // When
-            Publisher<byte[]> actual = evaluator.evaluateStream(nullScript, emptyMessage, context, byte[].class);
+            Publisher<byte[]> actual = evaluator.evaluateStream(nullScript, context, emptyMessage, byte[].class);
 
             // Then
             assertThat(actual).isNull();
@@ -257,7 +257,7 @@ class ScriptEvaluatorTest {
             Script emptyScript = Script.from("#[]");
 
             // When
-            Publisher<byte[]> actual = evaluator.evaluateStream(emptyScript, emptyMessage, context, byte[].class);
+            Publisher<byte[]> actual = evaluator.evaluateStream(emptyScript, context, emptyMessage, byte[].class);
 
             // Then
             StepVerifier.create(actual).verifyComplete();
@@ -269,7 +269,7 @@ class ScriptEvaluatorTest {
             Script scriptReturningNull = Script.from("#[return null]");
 
             // When
-            Publisher<byte[]> actual = evaluator.evaluateStream(scriptReturningNull, emptyMessage, context, byte[].class);
+            Publisher<byte[]> actual = evaluator.evaluateStream(scriptReturningNull, context, emptyMessage, byte[].class);
 
             // Then
             StepVerifier.create(actual).verifyComplete();

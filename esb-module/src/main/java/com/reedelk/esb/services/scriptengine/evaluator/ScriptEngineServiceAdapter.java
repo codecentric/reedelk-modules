@@ -7,7 +7,6 @@ import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.api.script.ScriptSource;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
-import com.reedelk.runtime.api.script.dynamicvalue.DynamicObject;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
@@ -20,51 +19,51 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
     // Dynamic value
 
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> value, Message message, FlowContext flowContext) {
+    public <T> Optional<T> evaluate(DynamicValue<T> value, FlowContext flowContext, Message message) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> value, Throwable throwable, FlowContext flowContext) {
+    public <T> Optional<T> evaluate(DynamicValue<T> value, FlowContext flowContext, Throwable throwable) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T> Optional<T> evaluate(DynamicObject dynamicObject, MimeType mimeType, Message message, FlowContext flowContext) {
+    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, FlowContext flowContext, Message message, MimeType mimeType) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> value, Message message, FlowContext flowContext) {
+    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> value, FlowContext flowContext, Message message) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> value, Throwable throwable, FlowContext flowContext) {
+    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> value, FlowContext flowContext, Throwable throwable) {
         throw new UnsupportedOperationException();
     }
 
     // Script
 
     @Override
-    public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
+    public <T> Optional<T> evaluate(Script script, FlowContext flowContext, Message message, Class<T> returnType) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T> Optional<T> evaluate(Script script, List<Message> messages, FlowContext flowContext, Class<T> returnType) {
+    public <T> Optional<T> evaluate(Script script, FlowContext flowContext, List<Message> messages, Class<T> returnType) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T> TypedPublisher<T> evaluateStream(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
+    public <T> TypedPublisher<T> evaluateStream(Script script, FlowContext flowContext, Message message, Class<T> returnType) {
         throw new UnsupportedOperationException();
     }
 
     // Dynamic map
 
     @Override
-    public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, Message message, FlowContext context) {
+    public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, FlowContext context, Message message) {
         throw new UnsupportedOperationException();
     }
 
@@ -75,8 +74,4 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void unregister(ScriptSource scriptSource) {
-        throw new UnsupportedOperationException();
-    }
 }

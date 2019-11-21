@@ -38,7 +38,7 @@ public class ScriptEvaluator implements ProcessorSync {
 
         MimeType mimeType = MimeType.parse(this.mimeType);
 
-        Object evaluated = service.evaluate(script, message, flowContext, Object.class).orElse(null);
+        Object evaluated = service.evaluate(script, flowContext, message, Object.class).orElse(null);
 
         TypedContent<?> content = TypedContentFactory.from(evaluated, mimeType);
 

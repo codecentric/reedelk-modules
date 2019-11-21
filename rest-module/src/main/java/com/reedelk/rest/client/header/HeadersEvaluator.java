@@ -38,7 +38,7 @@ public class HeadersEvaluator {
 
         if (!userHeaders.isEmpty()) {
             // User-defined headers: interpret and add them
-            Map<String, String> evaluatedHeaders = scriptEngine.evaluate(userHeaders, message, flowContext);
+            Map<String, String> evaluatedHeaders = scriptEngine.evaluate(userHeaders, flowContext, message);
             headers.putAll(evaluatedHeaders);
         }
 

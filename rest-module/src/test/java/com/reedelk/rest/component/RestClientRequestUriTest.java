@@ -87,22 +87,22 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
             client.setQueryParameters(queryParameters);
             doReturn(pathParameters)
                     .when(scriptEngine)
-                    .evaluate(eq(pathParameters), any(Message.class), any(FlowContext.class));
+                    .evaluate(eq(pathParameters), any(FlowContext.class), any(Message.class));
             doReturn(queryParameters)
                     .when(scriptEngine)
-                    .evaluate(eq(queryParameters), any(Message.class), any(FlowContext.class));
+                    .evaluate(eq(queryParameters), any(FlowContext.class), any(Message.class));
         }
         if (pathParameters != null && queryParameters == null) {
             client.setPathParameters(pathParameters);
             doReturn(pathParameters)
                     .when(scriptEngine)
-                    .evaluate(eq(pathParameters), any(Message.class), any(FlowContext.class));
+                    .evaluate(eq(pathParameters), any(FlowContext.class), any(Message.class));
         }
         if (pathParameters == null && queryParameters != null) {
             client.setQueryParameters(queryParameters);
             doReturn(queryParameters)
                     .when(scriptEngine)
-                    .evaluate(eq(queryParameters), any(Message.class), any(FlowContext.class));
+                    .evaluate(eq(queryParameters), any(FlowContext.class), any(Message.class));
         }
     }
 }

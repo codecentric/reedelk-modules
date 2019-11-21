@@ -11,7 +11,7 @@ import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STR
 public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
     @Override
-    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
+    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, FlowContext flowContext, Message message) {
         if (dynamicValue == null) {
             // Value is not present
             return null;
@@ -29,7 +29,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     @Override
-    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, Throwable throwable, FlowContext flowContext) {
+    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, FlowContext flowContext, Throwable throwable) {
         if (dynamicValue == null) {
             // Value is not present
             return null;

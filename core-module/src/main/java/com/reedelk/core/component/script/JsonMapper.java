@@ -41,7 +41,7 @@ public class JsonMapper implements ProcessorSync {
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
-        return service.evaluate(enhancer(), message, flowContext, String.class)
+        return service.evaluate(enhancer(), flowContext, message, String.class)
                 .map(mappedJson -> MessageBuilder.get().json(mappedJson).build())
                 .orElse(MessageBuilder.get().empty().build());
     }

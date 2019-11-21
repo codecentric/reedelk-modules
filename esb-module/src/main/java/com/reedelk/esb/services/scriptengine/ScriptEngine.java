@@ -8,7 +8,6 @@ import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.api.script.ScriptSource;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
-import com.reedelk.runtime.api.script.dynamicvalue.DynamicObject;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
@@ -37,52 +36,52 @@ public class ScriptEngine implements ScriptEngineService {
     // Dynamic value
 
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
-        return dynamicValueEvaluator.evaluate(dynamicValue, message, flowContext);
+    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, FlowContext flowContext, Message message) {
+        return dynamicValueEvaluator.evaluate(dynamicValue, flowContext, message);
     }
 
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, Throwable exception, FlowContext flowContext) {
-        return dynamicValueEvaluator.evaluate(dynamicValue, exception, flowContext);
+    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, FlowContext flowContext, Throwable exception) {
+        return dynamicValueEvaluator.evaluate(dynamicValue, flowContext, exception);
     }
 
     @Override
-    public <T> Optional<T> evaluate(DynamicObject dynamicObject, MimeType mimeType, Message message, FlowContext flowContext) {
-        return dynamicValueEvaluator.evaluate(dynamicObject, mimeType, message, flowContext);
+    public <T> Optional<T> evaluate(DynamicValue<T> dynamicObject, FlowContext flowContext, Message message, MimeType mimeType) {
+        return dynamicValueEvaluator.evaluate(dynamicObject, flowContext, message, mimeType);
     }
 
     @Override
-    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, Throwable throwable, FlowContext flowContext) {
-        return dynamicValueStreamEvaluator.evaluateStream(dynamicValue, throwable, flowContext);
+    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, FlowContext flowContext, Throwable throwable) {
+        return dynamicValueStreamEvaluator.evaluateStream(dynamicValue, flowContext, throwable);
     }
 
     @Override
-    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, Message message, FlowContext flowContext) {
-        return dynamicValueStreamEvaluator.evaluateStream(dynamicValue, message, flowContext);
+    public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, FlowContext flowContext, Message message) {
+        return dynamicValueStreamEvaluator.evaluateStream(dynamicValue, flowContext, message);
     }
 
     // Script
 
     @Override
-    public <T> Optional<T> evaluate(Script script, List<Message> messages, FlowContext flowContext, Class<T> returnType) {
-        return scriptEvaluator.evaluate(script, messages, flowContext, returnType);
+    public <T> Optional<T> evaluate(Script script, FlowContext flowContext, List<Message> messages, Class<T> returnType) {
+        return scriptEvaluator.evaluate(script, flowContext, messages, returnType);
     }
 
     @Override
-    public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
-        return scriptEvaluator.evaluate(script, message, flowContext, returnType);
+    public <T> Optional<T> evaluate(Script script, FlowContext flowContext, Message message, Class<T> returnType) {
+        return scriptEvaluator.evaluate(script, flowContext, message, returnType);
     }
 
     @Override
-    public <T> TypedPublisher<T> evaluateStream(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
-        return scriptEvaluator.evaluateStream(script, message, flowContext, returnType);
+    public <T> TypedPublisher<T> evaluateStream(Script script, FlowContext flowContext, Message message, Class<T> returnType) {
+        return scriptEvaluator.evaluateStream(script, flowContext, message, returnType);
     }
 
     // Dynamic map
 
     @Override
-    public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, Message message, FlowContext context) {
-        return dynamicMapEvaluator.evaluate(dynamicMap, message, context);
+    public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, FlowContext context, Message message) {
+        return dynamicMapEvaluator.evaluate(dynamicMap, context, message);
     }
 
     // Register Function
@@ -92,8 +91,4 @@ public class ScriptEngine implements ScriptEngineService {
         scriptSourceEvaluator.register(scriptSource);
     }
 
-    @Override
-    public void unregister(ScriptSource scriptSource) {
-        scriptSourceEvaluator.unregister(scriptSource);
-    }
 }

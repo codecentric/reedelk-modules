@@ -65,7 +65,7 @@ public class LoggerComponent implements ProcessorSync {
     private void debug(Message message, FlowContext flowContext) throws ScriptException {
         // The logger should just print the Stream object if it is a stream, otherwise if
         // the stream was resolved (hence loaded into memory) it should print the value.
-        Object evaluationResult = service.evaluate(this.message, message, flowContext).orElse(null);
+        Object evaluationResult = service.evaluate(this.message, flowContext, message).orElse(null);
         level.log(evaluationResult);
     }
 }

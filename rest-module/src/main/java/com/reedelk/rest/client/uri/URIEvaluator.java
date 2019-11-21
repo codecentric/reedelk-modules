@@ -45,18 +45,18 @@ public class URIEvaluator {
 
         } else if (pathParameters.isEmpty()) {
             // Only query parameters are present.
-            Map<String, String> evaluatedQueryParameters = scriptEngine.evaluate(queryParameters, message, flowContext);
+            Map<String, String> evaluatedQueryParameters = scriptEngine.evaluate(queryParameters, flowContext, message);
             return pathComponent.expand(EMPTY_MAP, evaluatedQueryParameters);
 
         } else if (queryParameters.isEmpty()) {
             // Only path parameters are present.
-            Map<String, String> evaluatedPathParameters = scriptEngine.evaluate(pathParameters, message, flowContext);
+            Map<String, String> evaluatedPathParameters = scriptEngine.evaluate(pathParameters, flowContext, message);
             return pathComponent.expand(evaluatedPathParameters, EMPTY_MAP);
 
         } else {
             // Both path and query parameters are present.
-            Map<String, String> evaluatedPathParameters = scriptEngine.evaluate(pathParameters, message, flowContext);
-            Map<String, String> evaluatedQueryParameters = scriptEngine.evaluate(queryParameters, message, flowContext);
+            Map<String, String> evaluatedPathParameters = scriptEngine.evaluate(pathParameters, flowContext, message);
+            Map<String, String> evaluatedQueryParameters = scriptEngine.evaluate(queryParameters, flowContext, message);
             return pathComponent.expand(evaluatedPathParameters, evaluatedQueryParameters);
         }
     }

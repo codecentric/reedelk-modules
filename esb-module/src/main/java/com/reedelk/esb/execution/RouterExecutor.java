@@ -83,7 +83,7 @@ public class RouterExecutor implements FlowExecutor {
         try {
             return Router.DEFAULT_CONDITION.equals(expression) ?
                     TRUE :
-                    ENGINE.evaluate(expression, message, flowContext)
+                    ENGINE.evaluate(expression, flowContext, message)
                             .map(resultAsString -> Mono.just(Boolean.parseBoolean(resultAsString)))
                             .orElse(FALSE);
         } catch (Exception e) {

@@ -190,12 +190,12 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         // Status
         doReturn(Optional.empty())
                 .when(scriptEngine)
-                .evaluate(null, exception, context);
+                .evaluate(null, context, exception);
 
         // Evaluation of error message
         doReturn(Optional.of(errorMessage.getBytes()))
                 .when(scriptEngine)
-                .evaluate(errorResponseBody, exception, context);
+                .evaluate(errorResponseBody, context, exception);
 
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setBody(errorResponseBody);

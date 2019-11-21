@@ -42,7 +42,7 @@ class DynamicMapEvaluatorTest {
                 "numeric", "23532"));
 
         // When
-        Map<String, String> evaluated = evaluator.evaluate(dynamicMap, message, context);
+        Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
 
         // Then
         assertThat(evaluated.get("script")).isEqualTo("test1");
@@ -56,7 +56,7 @@ class DynamicMapEvaluatorTest {
         Message message = MessageBuilder.get().empty().build();
 
         // When
-        Map<String, String> evaluated = evaluator.evaluate(DynamicStringMap.empty(), message, context);
+        Map<String, String> evaluated = evaluator.evaluate(DynamicStringMap.empty(), context, message);
 
         // Then
         assertThat(evaluated).isEmpty();
@@ -69,7 +69,7 @@ class DynamicMapEvaluatorTest {
         DynamicStringMap dynamicStringMap = null;
 
         // When
-        Map<String,String> evaluated = evaluator.evaluate(dynamicStringMap, message, context);
+        Map<String,String> evaluated = evaluator.evaluate(dynamicStringMap, context, message);
 
         // Then
         assertThat(evaluated).isEmpty();
@@ -83,7 +83,7 @@ class DynamicMapEvaluatorTest {
                 of("text", "a simple text 'with quotes'"));
 
         // When
-        Map<String, String> evaluated = evaluator.evaluate(dynamicMap, message, context);
+        Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
 
         // Then
         assertThat(evaluated.get("text")).isEqualTo("a simple text 'with quotes'");
@@ -98,7 +98,7 @@ class DynamicMapEvaluatorTest {
                 "aScriptedNumericValue", "#[45 + 23]"));
 
         // When
-        Map<String,Integer> evaluated = evaluator.evaluate(dynamicMap, message, context);
+        Map<String,Integer> evaluated = evaluator.evaluate(dynamicMap, context, message);
 
         // Then
         assertThat(evaluated.get("aNumericValue")).isEqualTo(23);
@@ -114,7 +114,7 @@ class DynamicMapEvaluatorTest {
                 "aScriptedFloatValue", "#[34.23 + 12.1]"));
 
         // When
-        Map<String,Float> evaluated = evaluator.evaluate(dynamicMap, message, context);
+        Map<String,Float> evaluated = evaluator.evaluate(dynamicMap, context, message);
 
         // Then
         assertThat(evaluated.get("aFloatValue")).isEqualTo(23.23f);

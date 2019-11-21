@@ -60,7 +60,7 @@ public class FileRead implements ProcessorSync {
     @Override
     public Message apply(Message message, FlowContext flowContext) {
 
-        Optional<String> evaluated = service.evaluate(fileName, message, flowContext);
+        Optional<String> evaluated = service.evaluate(fileName, flowContext, message);
 
         return evaluated.map(filePath -> {
 

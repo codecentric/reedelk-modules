@@ -62,12 +62,12 @@ class EvaluateStatusCode {
      */
     HttpResponseStatus evaluate() {
         if (message != null) {
-            return scriptEngine.evaluate(status, message, flowContext)
+            return scriptEngine.evaluate(status, flowContext, message)
                     .flatMap(status -> Optional.of(valueOf(status)))
                     .orElse(defaultCode);
 
         } else if (throwable != null) {
-            return scriptEngine.evaluate(status, throwable, flowContext)
+            return scriptEngine.evaluate(status, flowContext, throwable)
                     .flatMap(status -> Optional.of(valueOf(status)))
                     .orElse(defaultCode);
 

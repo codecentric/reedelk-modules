@@ -59,7 +59,7 @@ class MessageHttpResponseMapperTest {
                 Message message = MessageBuilder.get().text("a body").build();
 
                 doReturn(Optional.of(201))
-                        .when(scriptEngine).evaluate(status, message, flowContext);
+                        .when(scriptEngine).evaluate(status, flowContext, message);
 
                 // When
                 mapper.map(message, response, flowContext);
@@ -77,7 +77,7 @@ class MessageHttpResponseMapperTest {
 
                 doReturn(Optional.of(201))
                         .when(scriptEngine)
-                        .evaluate(status, message, flowContext);
+                        .evaluate(status, flowContext, message);
 
                 // When
                 mapper.map(message, response, flowContext);
@@ -94,7 +94,7 @@ class MessageHttpResponseMapperTest {
                 Message message = MessageBuilder.get().text("a body").build();
 
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(status, message, flowContext);
+                        .when(scriptEngine).evaluate(status, flowContext, message);
 
                 // When
                 mapper.map(message, response, flowContext);
@@ -251,7 +251,7 @@ class MessageHttpResponseMapperTest {
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 doReturn(Optional.of(507))
-                        .when(scriptEngine).evaluate(status, exception, flowContext);
+                        .when(scriptEngine).evaluate(status, flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -268,7 +268,7 @@ class MessageHttpResponseMapperTest {
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 doReturn(Optional.of(507))
-                        .when(scriptEngine).evaluate(errorStatus, exception, flowContext);
+                        .when(scriptEngine).evaluate(errorStatus, flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -303,7 +303,7 @@ class MessageHttpResponseMapperTest {
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, exception, flowContext);
+                        .when(scriptEngine).evaluate(null, flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -321,7 +321,7 @@ class MessageHttpResponseMapperTest {
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, exception, flowContext);
+                        .when(scriptEngine).evaluate(null, flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -338,7 +338,7 @@ class MessageHttpResponseMapperTest {
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, exception, flowContext);
+                        .when(scriptEngine).evaluate(null, flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -356,7 +356,7 @@ class MessageHttpResponseMapperTest {
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, exception, flowContext);
+                        .when(scriptEngine).evaluate(null, flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -373,7 +373,7 @@ class MessageHttpResponseMapperTest {
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, exception, flowContext);
+                        .when(scriptEngine).evaluate(null, flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -445,7 +445,7 @@ class MessageHttpResponseMapperTest {
 
                 // Then
                 assertThat(initialHeaders).isEmpty();
-                verify(scriptEngine, never()).evaluate(any(DynamicStringMap.class), any(Message.class), any(FlowContext.class));
+                verify(scriptEngine, never()).evaluate(any(DynamicStringMap.class), any(FlowContext.class), any(Message.class));
             }
         }
     }
@@ -474,7 +474,7 @@ class MessageHttpResponseMapperTest {
         response.setStatus(statusValue);
 
         doReturn(Optional.of(200))
-                .when(scriptEngine).evaluate(eq(statusValue), any(Message.class), any(FlowContext.class));
+                .when(scriptEngine).evaluate(eq(statusValue), any(FlowContext.class), any(Message.class));
 
         return new MessageHttpResponseMapper(scriptEngine, response, null);
     }
@@ -498,7 +498,7 @@ class MessageHttpResponseMapperTest {
         response.setStatus(statusValue);
 
         doReturn(Optional.of(200))
-                .when(scriptEngine).evaluate(eq(statusValue), any(Message.class), any(FlowContext.class));
+                .when(scriptEngine).evaluate(eq(statusValue), any(FlowContext.class), any(Message.class));
 
         return new MessageHttpResponseMapper(scriptEngine, response, null);
     }

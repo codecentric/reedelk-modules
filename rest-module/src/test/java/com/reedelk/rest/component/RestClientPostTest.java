@@ -34,7 +34,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             doReturn(Optional.of(requestBody.getBytes()))
                     .when(scriptEngine)
-                    .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
+                    .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(FlowContext.class), any(Message.class));
 
             givenThat(post(urlEqualTo(PATH))
                     .withRequestBody(equalToJson(requestBody))
@@ -61,7 +61,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             doReturn(Optional.of(requestBody.getBytes()))
                     .when(scriptEngine)
-                    .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
+                    .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(FlowContext.class), any(Message.class));
 
             givenThat(post(urlEqualTo(PATH))
                     .withRequestBody(equalTo(requestBody))
@@ -87,7 +87,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             doReturn(Optional.of(requestBody))
                     .when(scriptEngine)
-                    .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
+                    .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(FlowContext.class), any(Message.class));
 
             givenThat(post(urlEqualTo(PATH))
                     .withRequestBody(binaryEqualTo(requestBody))
@@ -152,7 +152,7 @@ class RestClientPostTest extends RestClientAbstractTest {
 
             doReturn(Optional.of("hello this is a script".getBytes()))
                     .when(scriptEngine)
-                    .evaluate(eq(body), any(Message.class), any(FlowContext.class));
+                    .evaluate(eq(body), any(FlowContext.class), any(Message.class));
 
             Message message = MessageBuilder.get().text("my payload").build();
 

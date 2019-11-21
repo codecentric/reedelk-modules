@@ -49,10 +49,10 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
             String requestBody = "{\"Name\":\"John\"}";
             doReturn(Optional.of(requestBody.getBytes()))
                     .when(scriptEngine)
-                    .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
+                    .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(FlowContext.class), any(Message.class));
 
             Mockito.verify(scriptEngine, never())
-                    .evaluateStream(any(DynamicValue.class), any(Message.class), any(FlowContext.class));
+                    .evaluateStream(any(DynamicValue.class), any(FlowContext.class), any(Message.class));
 
             givenThat(WireMock.any(urlEqualTo(PATH))
                     .withHeader("Content-Length", equalTo(String.valueOf(requestBody.getBytes().length)))
@@ -92,10 +92,10 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
 
             doReturn(byteArrayContent.stream())
                     .when(scriptEngine)
-                    .evaluateStream(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
+                    .evaluateStream(eq(EVALUATE_PAYLOAD_BODY), any(FlowContext.class), any(Message.class));
 
             Mockito.verify(scriptEngine, never())
-                    .evaluate(any(DynamicValue.class), any(Message.class), any(FlowContext.class));
+                    .evaluate(any(DynamicValue.class), any(FlowContext.class), any(Message.class));
 
             givenThat(WireMock.any(urlEqualTo(PATH))
                     .withHeader("Transfer-Encoding", equalTo("chunked"))
@@ -135,10 +135,10 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
 
             doReturn(byteArrayContent.stream())
                     .when(scriptEngine)
-                    .evaluateStream(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
+                    .evaluateStream(eq(EVALUATE_PAYLOAD_BODY), any(FlowContext.class), any(Message.class));
 
             Mockito.verify(scriptEngine, never())
-                    .evaluate(any(DynamicValue.class), any(Message.class), any(FlowContext.class));
+                    .evaluate(any(DynamicValue.class), any(FlowContext.class), any(Message.class));
 
             givenThat(WireMock.any(urlEqualTo(PATH))
                     .withHeader("Transfer-Encoding", equalTo("chunked"))
@@ -171,10 +171,10 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
 
             doReturn(Optional.of(requestBody.getBytes()))
                     .when(scriptEngine)
-                    .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
+                    .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(FlowContext.class), any(Message.class));
 
             Mockito.verify(scriptEngine, never())
-                    .evaluateStream(any(DynamicValue.class), any(Message.class), any(FlowContext.class));
+                    .evaluateStream(any(DynamicValue.class), any(FlowContext.class), any(Message.class));
 
             givenThat(WireMock.any(urlEqualTo(PATH))
                     .withHeader("Content-Length", equalTo(String.valueOf(requestBody.getBytes().length)))

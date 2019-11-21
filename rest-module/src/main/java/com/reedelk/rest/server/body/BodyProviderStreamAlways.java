@@ -23,13 +23,13 @@ public class BodyProviderStreamAlways implements BodyProvider {
 
     @Override
     public Publisher<byte[]> from(HttpServerResponse response, Message message, FlowContext flowContext) {
-        return scriptEngine.evaluateStream(responseBody, message, flowContext);
+        return scriptEngine.evaluateStream(responseBody, flowContext, message);
     }
 
     @Override
     public Publisher<byte[]> from(HttpServerResponse response, Throwable throwable, FlowContext flowContext) {
         try {
-            return scriptEngine.evaluateStream(errorResponseBody, throwable, flowContext);
+            return scriptEngine.evaluateStream(errorResponseBody, flowContext, throwable);
         } catch (Exception exception) {
             // Evaluating an error response, cannot throw again an exception,
             // Therefore we catch any exception and we return the exception message.

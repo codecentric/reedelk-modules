@@ -45,7 +45,7 @@ public class SetVariable implements ProcessorSync {
 
         MimeType mimeType = MimeType.parse(this.mimeType);
 
-        Serializable result = (Serializable) scriptEngine.evaluate(value, mimeType, message, flowContext).orElse(null);
+        Serializable result = (Serializable) scriptEngine.evaluate(value, flowContext, message, mimeType).orElse(null);
 
         flowContext.put(name, result);
 

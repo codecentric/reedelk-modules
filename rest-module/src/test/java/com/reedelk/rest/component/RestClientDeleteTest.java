@@ -26,7 +26,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
 
         doReturn(Optional.of(requestBody.getBytes()))
                 .when(scriptEngine)
-                .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(Message.class), any(FlowContext.class));
+                .evaluate(eq(EVALUATE_PAYLOAD_BODY), any(FlowContext.class), any(Message.class));
 
         givenThat(delete(urlEqualTo(PATH))
                 .withRequestBody(equalToJson(requestBody))

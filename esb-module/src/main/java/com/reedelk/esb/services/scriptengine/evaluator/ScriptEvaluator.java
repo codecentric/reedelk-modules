@@ -22,7 +22,7 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
     private static final FunctionDefinitionBuilder FUNCTION_WITH_MESSAGES_AND_CONTEXT = new EvaluateScriptFunctionWithMessagesAndContext();
 
     @Override
-    public <T> Optional<T> evaluate(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
+    public <T> Optional<T> evaluate(Script script, FlowContext flowContext, Message message, Class<T> returnType) {
         if (script == null || script.isEmpty()) {
             return OPTIONAL_PROVIDER.empty();
         } else {
@@ -31,7 +31,7 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     @Override
-    public <T> Optional<T> evaluate(Script script, List<Message> messages, FlowContext flowContext, Class<T> returnType) {
+    public <T> Optional<T> evaluate(Script script, FlowContext flowContext, List<Message> messages, Class<T> returnType) {
         if (script == null || script.isEmpty()) {
             return OPTIONAL_PROVIDER.empty();
         } else {
@@ -40,7 +40,7 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     @Override
-    public <T> TypedPublisher<T> evaluateStream(Script script, Message message, FlowContext flowContext, Class<T> returnType) {
+    public <T> TypedPublisher<T> evaluateStream(Script script, FlowContext flowContext, Message message, Class<T> returnType) {
         if (script == null) {
             return null;
         } else if (script.isEmpty()) {

@@ -5,6 +5,8 @@ import com.reedelk.esb.component.RuntimeComponents;
 import com.reedelk.esb.configuration.ApplyRuntimeConfiguration;
 import com.reedelk.esb.lifecycle.*;
 import com.reedelk.esb.module.ModulesManager;
+import com.reedelk.esb.pubsub.Action;
+import com.reedelk.esb.pubsub.Event;
 import com.reedelk.esb.services.ServicesManager;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
 import com.reedelk.esb.services.module.EventListener;
@@ -17,6 +19,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import static com.reedelk.esb.pubsub.Action.Module.Uninstalled;
 import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
 
 @Component(service = ESB.class, scope = SINGLETON, immediate = true)
@@ -121,6 +124,14 @@ public class ESB implements EventListener, HotSwapListener {
                     .next(new TransitionToInstalled())
                     .execute(moduleId);
         }
+
+        publishActionModuleUninstalled(moduleId);
+    }
+
+    // TODO: This one should be put in a separate step and not in this step!!!!
+    private void publishActionModuleUninstalled(long moduleId) {
+        Action.Module.ActionModuleUninstalled message = new Action.Module.ActionModuleUninstalled(moduleId);
+        Event.operation.publish(Uninstalled, message);
     }
 
     @Override
@@ -130,6 +141,8 @@ public class ESB implements EventListener, HotSwapListener {
                     .next(new RemoveModule())
                     .execute(moduleId);
         }
+
+        publishActionModuleUninstalled(moduleId);
     }
 
     @Override

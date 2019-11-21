@@ -37,7 +37,7 @@ public class JoinWithScript implements Join {
 
     @Override
     public Message apply(List<Message> messagesToJoin, FlowContext flowContext) {
-        Optional<Object> result = service.evaluate(script, messagesToJoin, flowContext, Object.class);
+        Optional<Object> result = service.evaluate(script, flowContext, messagesToJoin, Object.class);
         if (result.isPresent()) {
             MimeType mimeType = MimeType.parse(this.mimeType);
             TypedContent<?> typedContent = TypedContentFactory.from(result.get(), mimeType);

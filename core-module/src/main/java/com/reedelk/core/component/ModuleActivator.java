@@ -3,9 +3,9 @@ package com.reedelk.core.component;
 import com.reedelk.core.component.logger.ScriptLogger;
 import com.reedelk.runtime.api.script.ScriptSource;
 import com.reedelk.runtime.api.service.ScriptEngineService;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.Arrays;
@@ -21,19 +21,19 @@ public class ModuleActivator {
     @Reference
     private ScriptEngineService scriptEngine;
 
-    private final CoreScriptModules coreScriptModules = new CoreScriptModules();
-
     @Activate
-    public void start() {
+    public void start(BundleContext context) {
+        CoreScriptModules coreScriptModules = new CoreScriptModules(context.getBundle().getBundleId());
         scriptEngine.register(coreScriptModules);
     }
 
-    @Deactivate
-    public void stop() {
-        scriptEngine.unregister(coreScriptModules);
-    }
-
     class CoreScriptModules implements ScriptSource {
+
+        private final long moduleId;
+
+        CoreScriptModules(long moduleId) {
+            this.moduleId = moduleId;
+        }
 
         @Override
         public Map<String, Object> bindings() {
@@ -45,6 +45,11 @@ public class ModuleActivator {
         @Override
         public Collection<String> scriptModuleNames() {
             return Arrays.asList("Util", "Log");
+        }
+
+        @Override
+        public long moduleId() {
+            return moduleId;
         }
 
         @Override
