@@ -1,5 +1,6 @@
 package com.reedelk.esb.commons;
 
+import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +62,20 @@ class ConfigPropertyAwareTypeFactoryTest {
 
         // Then
         assertThat(typeInstance).isEqualTo(expectedValue);
+        verifyNoMoreInteractions(configurationService);
+    }
+
+    @Test
+    void shouldReturnModuleIdTypeInstance() {
+        // When
+        Object typeInstance = typeFactory.create(ModuleId.class, null, null, testModuleId);
+
+        // Then
+        assertThat(typeInstance).isInstanceOf(ModuleId.class);
+
+        ModuleId actual = (ModuleId) typeInstance;
+        assertThat(actual.get()).isEqualTo(testModuleId);
+
         verifyNoMoreInteractions(configurationService);
     }
 }

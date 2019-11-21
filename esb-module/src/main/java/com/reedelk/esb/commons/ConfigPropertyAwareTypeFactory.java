@@ -15,15 +15,21 @@ public class ConfigPropertyAwareTypeFactory {
     }
 
     public Object create(Class<?> clazz, JSONObject componentDefinition, String propertyName, long moduleId) {
-        // If component definition value is a string and starts with $[], then it is a system property.
-        // Otherwise we use the default converter.
-        Object propertyValue = componentDefinition.get(propertyName);
-        if (ConfigurationPropertyUtils.isConfigProperty(propertyValue)) {
-            String propertyKey = ConfigurationPropertyUtils.unwrap((String) propertyValue);
-            return configurationService.get(propertyKey, clazz);
-        } else {
-            return TypeFactory.create(clazz, componentDefinition, propertyName, moduleId);
+        // Note that a component definition might be null for some types. For instance, the ModuleId type
+        // does not require any component definition in order to be instantiated, it only requires the moduleId.
+        if (componentDefinition != null ) {
+
+            Object propertyValue = componentDefinition.get(propertyName);
+
+            // If component definition value is a string and starts with $[], then it is a system property.
+            if (ConfigurationPropertyUtils.isConfigProperty(propertyValue)) {
+                String propertyKey = ConfigurationPropertyUtils.unwrap((String) propertyValue);
+                return configurationService.get(propertyKey, clazz);
+            }
         }
+
+        // Otherwise we use the default converter.
+        return TypeFactory.create(clazz, componentDefinition, propertyName, moduleId);
     }
 
     public Object create(Class<?> genericType, JSONArray array, int index) {
