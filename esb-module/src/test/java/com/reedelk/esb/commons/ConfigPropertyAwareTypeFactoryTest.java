@@ -12,16 +12,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ConfigPropertyAwareJsonTypeConverterTest {
+class ConfigPropertyAwareTypeFactoryTest {
 
     @Mock
     private ConfigurationService configurationService;
 
-    private ConfigPropertyAwareJsonTypeConverter jsonTypeConverter;
+    private ConfigPropertyAwareTypeFactory typeFactory;
 
     @BeforeEach
     void setUp() {
-        jsonTypeConverter = new ConfigPropertyAwareJsonTypeConverter(configurationService);
+        typeFactory = new ConfigPropertyAwareTypeFactory(configurationService);
     }
 
     @Test
@@ -37,10 +37,10 @@ class ConfigPropertyAwareJsonTypeConverterTest {
         componentDefinition.put(configKey, "${listener.port}");
 
         // When
-        Object converted = jsonTypeConverter.convert(int.class, componentDefinition, configKey);
+        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey);
 
         // Then
-        assertThat(converted).isEqualTo(expectedValue);
+        assertThat(typeInstance).isEqualTo(expectedValue);
         verify(configurationService).get("listener.port", int.class);
         verifyNoMoreInteractions(configurationService);
     }
@@ -55,10 +55,10 @@ class ConfigPropertyAwareJsonTypeConverterTest {
         componentDefinition.put(configKey, expectedValue);
 
         // When
-        Object converted = jsonTypeConverter.convert(int.class, componentDefinition, configKey);
+        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey);
 
         // Then
-        assertThat(converted).isEqualTo(expectedValue);
+        assertThat(typeInstance).isEqualTo(expectedValue);
         verifyNoMoreInteractions(configurationService);
     }
 }

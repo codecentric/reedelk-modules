@@ -1,6 +1,6 @@
 package com.reedelk.esb.lifecycle;
 
-import com.reedelk.esb.commons.ConfigPropertyAwareJsonTypeConverter;
+import com.reedelk.esb.commons.ConfigPropertyAwareTypeFactory;
 import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.flow.ErrorStateFlow;
@@ -73,11 +73,12 @@ public class BuildModule extends AbstractStep<Module, Module> {
                 JsonParser.Flow.title(flowDefinition) : null;
 
         ModulesManager modulesManager = modulesManager();
-        ConfigPropertyAwareJsonTypeConverter converter = new ConfigPropertyAwareJsonTypeConverter(configurationService());
+
+        ConfigPropertyAwareTypeFactory typeFactory = new ConfigPropertyAwareTypeFactory(configurationService());
 
         try {
 
-            FlowBuilderContext context = new FlowBuilderContext(bundle, modulesManager, deserializedModule, converter);
+            FlowBuilderContext context = new FlowBuilderContext(bundle, modulesManager, deserializedModule, typeFactory);
 
             FlowBuilder flowBuilder = new FlowBuilder(context);
 

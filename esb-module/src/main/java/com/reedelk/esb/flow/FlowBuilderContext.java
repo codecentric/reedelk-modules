@@ -1,7 +1,7 @@
 package com.reedelk.esb.flow;
 
 
-import com.reedelk.esb.commons.ConfigPropertyAwareJsonTypeConverter;
+import com.reedelk.esb.commons.ConfigPropertyAwareTypeFactory;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.ModulesManager;
@@ -16,12 +16,12 @@ public class FlowBuilderContext {
     private final Bundle bundle;
     private final ModulesManager modulesManager;
     private final DeserializedModule deserializedModule;
-    private final ConfigPropertyAwareJsonTypeConverter jsonTypeConverter;
+    private final ConfigPropertyAwareTypeFactory typeFactory;
 
-    public FlowBuilderContext(Bundle bundle, ModulesManager modulesManager, DeserializedModule deserializedModule, ConfigPropertyAwareJsonTypeConverter jsonTypeConverter) {
+    public FlowBuilderContext(Bundle bundle, ModulesManager modulesManager, DeserializedModule deserializedModule, ConfigPropertyAwareTypeFactory typeFactory) {
         this.bundle = bundle;
+        this.typeFactory = typeFactory;
         this.modulesManager = modulesManager;
-        this.jsonTypeConverter = jsonTypeConverter;
         this.deserializedModule = deserializedModule;
     }
 
@@ -46,10 +46,10 @@ public class FlowBuilderContext {
     }
 
     public Object convert(Class<?> clazz, JSONObject componentDefinition, String propertyName) {
-        return jsonTypeConverter.convert(clazz, componentDefinition, propertyName);
+        return typeFactory.create(clazz, componentDefinition, propertyName);
     }
 
     public Object convert(Class<?> genericType, JSONArray array, int index) {
-        return jsonTypeConverter.convert(genericType, array, index);
+        return typeFactory.create(genericType, array, index);
     }
 }
