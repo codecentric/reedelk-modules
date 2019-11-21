@@ -14,6 +14,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ConfigPropertyAwareTypeFactoryTest {
 
+    private long testModuleId = 23;
+
     @Mock
     private ConfigurationService configurationService;
 
@@ -37,7 +39,7 @@ class ConfigPropertyAwareTypeFactoryTest {
         componentDefinition.put(configKey, "${listener.port}");
 
         // When
-        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey);
+        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey, testModuleId);
 
         // Then
         assertThat(typeInstance).isEqualTo(expectedValue);
@@ -55,7 +57,7 @@ class ConfigPropertyAwareTypeFactoryTest {
         componentDefinition.put(configKey, expectedValue);
 
         // When
-        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey);
+        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey, testModuleId);
 
         // Then
         assertThat(typeInstance).isEqualTo(expectedValue);

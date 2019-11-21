@@ -15,10 +15,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.osgi.framework.Bundle;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -30,21 +30,26 @@ import java.util.Set;
 
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ComponentDefinitionDeserializerTest {
 
     @Mock
+    private Bundle bundle;
+    @Mock
     private ExecutionNode mockExecutionNode;
-    @Spy
-    private MockFlowBuilderContext context;
 
+    private MockFlowBuilderContext context;
     private ComponentDefinitionDeserializer deserializer;
 
     @BeforeEach
     void setUp() {
+        context = spy(new MockFlowBuilderContext(bundle));
         deserializer = new ComponentDefinitionDeserializer(mockExecutionNode, context);
     }
 
@@ -1169,15 +1174,17 @@ class ComponentDefinitionDeserializerTest {
         @Test
         void shouldCorrectlySetModuleIdProperty() {
             // Given
-            doReturn((ModuleId) () -> 234L).when(context).instantiateModuleId();
+            long expectedModuleId = 234L;
+            doReturn((ModuleId) () -> expectedModuleId).when(context).create(eq(ModuleId.class), any(JSONObject.class));
 
             // When
             TestComponentWithModuleIdProperty component =
-                    buildModuleIdComponent("stringProperty", "my test string");
+                    buildModuleIdComponent(
+                            "stringProperty",
+                            "my test string");
 
             // Then
-            assertThat(component.getModuleId().get()).isEqualTo(234L);
-            assertThat(component.getStringProperty()).isEqualTo("my test string");
+            assertThat(component.getModuleId().get()).isEqualTo(expectedModuleId);
         }
     }
 

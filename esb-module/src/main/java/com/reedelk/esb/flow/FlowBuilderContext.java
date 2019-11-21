@@ -36,7 +36,7 @@ public class FlowBuilderContext {
         return modulesManager.instantiateImplementor(bundle.getBundleContext(), executionNode, implementorName);
     }
 
-    public DeserializedModule getDeSerializedModule() {
+    public DeserializedModule deserializedModule() {
         return deserializedModule;
     }
 

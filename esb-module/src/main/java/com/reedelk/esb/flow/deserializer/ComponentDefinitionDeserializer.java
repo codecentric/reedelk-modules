@@ -149,7 +149,7 @@ public class ComponentDefinitionDeserializer {
     }
 
     private JSONObject findReferenceDefinition(String reference) {
-        return context.getDeSerializedModule()
+        return context.deserializedModule()
                 .getConfigurations()
                 .stream()
                 .filter(referenceJsonObject -> reference.equals(Config.id(referenceJsonObject)))
