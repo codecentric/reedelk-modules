@@ -77,6 +77,11 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
     }
 
     @Override
+    public void unregister(ScriptSource scriptSource) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void onDisposed(Component component) {
         // by default nothing gets done.
     }

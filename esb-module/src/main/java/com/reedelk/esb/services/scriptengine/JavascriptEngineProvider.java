@@ -43,6 +43,20 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     }
 
     @Override
+    public void eval(String functionDefinition) {
+        try {
+
+            CompiledScript compiled = engine.compile(functionDefinition);
+
+            compiled.eval(engine.getBindings(ENGINE_SCOPE));
+
+        } catch (ScriptException exception) {
+            String errorMessage = SCRIPT_COMPILATION_ERROR_WITH_FUNCTION.format(functionDefinition, exception.getMessage());
+            throw new ScriptCompilationException(errorMessage, exception);
+        }
+    }
+
+    @Override
     public void eval(Collection<String> moduleNames, Reader reader, Map<String, Object> customBindings) {
         try {
 
@@ -69,21 +83,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     }
 
     @Override
-    public void eval(String functionDefinition) {
-        try {
-
-            CompiledScript compiled = engine.compile(functionDefinition);
-
-            compiled.eval(engine.getBindings(ENGINE_SCOPE));
-
-        } catch (ScriptException exception) {
-            String errorMessage = SCRIPT_COMPILATION_ERROR_WITH_FUNCTION.format(functionDefinition, exception.getMessage());
-            throw new ScriptCompilationException(errorMessage, exception);
-        }
-    }
-
-    @Override
-    public void clear(String module) {
-        engine.getBindings(ENGINE_SCOPE).put(module, null);
+    public void clear(String moduleName) {
+        engine.getBindings(ENGINE_SCOPE).remove(moduleName, null);
     }
 }

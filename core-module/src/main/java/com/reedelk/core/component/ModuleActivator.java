@@ -21,17 +21,19 @@ public class ModuleActivator {
     @Reference
     private ScriptEngineService scriptEngine;
 
+    private final CoreScriptModules coreScriptModules = new CoreScriptModules();
+
     @Activate
     public void start() {
-        CoreJavascriptFunctions coreJavascriptFunctions = new CoreJavascriptFunctions();
-        scriptEngine.register(coreJavascriptFunctions);
+        scriptEngine.register(coreScriptModules);
     }
 
     @Deactivate
     public void stop() {
+        scriptEngine.unregister(coreScriptModules);
     }
 
-    class CoreJavascriptFunctions implements ScriptSource {
+    class CoreScriptModules implements ScriptSource {
 
         @Override
         public Map<String, Object> bindings() {
@@ -41,7 +43,7 @@ public class ModuleActivator {
         }
 
         @Override
-        public Collection<String> names() {
+        public Collection<String> scriptModuleNames() {
             return Arrays.asList("Util", "Log");
         }
 

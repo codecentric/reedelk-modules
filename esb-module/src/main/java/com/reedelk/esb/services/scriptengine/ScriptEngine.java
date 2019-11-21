@@ -24,14 +24,14 @@ public class ScriptEngine implements ScriptEngineService {
     private DynamicValueStreamEvaluator dynamicValueStreamEvaluator;
     private DynamicValueEvaluator dynamicValueEvaluator;
     private DynamicMapEvaluator dynamicMapEvaluator;
-    private FunctionRegister functionRegister;
+    private ScriptSourceEvaluator scriptSourceEvaluator;
     private ScriptEvaluator scriptEvaluator;
 
     private ScriptEngine() {
         dynamicValueStreamEvaluator = new DynamicValueStreamEvaluator();
         dynamicValueEvaluator = new DynamicValueEvaluator();
         dynamicMapEvaluator = new DynamicMapEvaluator();
-        functionRegister = new FunctionRegister();
+        scriptSourceEvaluator = new ScriptSourceEvaluator();
         scriptEvaluator = new ScriptEvaluator();
     }
 
@@ -90,13 +90,19 @@ public class ScriptEngine implements ScriptEngineService {
 
     @Override
     public void register(ScriptSource scriptSource) {
-        functionRegister.register(scriptSource);
+        scriptSourceEvaluator.register(scriptSource);
+    }
+
+    @Override
+    public void unregister(ScriptSource scriptSource) {
+        scriptSourceEvaluator.unregister(scriptSource);
     }
 
     @Override
     public void onDisposed(Component component) {
         dynamicValueStreamEvaluator.onDisposed(component);
         dynamicValueEvaluator.onDisposed(component);
+        scriptSourceEvaluator.onDisposed(component);
         dynamicMapEvaluator.onDisposed(component);
         scriptEvaluator.onDisposed(component);
     }
