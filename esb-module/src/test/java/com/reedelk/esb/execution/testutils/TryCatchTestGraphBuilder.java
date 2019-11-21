@@ -1,4 +1,4 @@
-package com.reedelk.esb.execution;
+package com.reedelk.esb.execution.testutils;
 
 import com.reedelk.esb.component.TryCatchWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.reedelk.esb.execution.AbstractExecutionTest.newExecutionNode;
-
-class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
+public class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
 
     private Sequence trySequence;
     private Sequence catchSequence;
@@ -21,36 +19,36 @@ class TryCatchTestGraphBuilder extends AbstractTestGraphBuilder {
 
     private List<ExecutionNode> followingSequence = new ArrayList<>();
 
-    static TryCatchTestGraphBuilder get() {
+    public static TryCatchTestGraphBuilder get() {
         return new TryCatchTestGraphBuilder();
     }
 
-    TryCatchTestGraphBuilder inbound(ExecutionNode inbound) {
+    public TryCatchTestGraphBuilder inbound(ExecutionNode inbound) {
         this.inbound = inbound;
         return this;
     }
 
-    TryCatchTestGraphBuilder tryNodes(ExecutionNode ...trySequence) {
+    public TryCatchTestGraphBuilder tryNodes(ExecutionNode ...trySequence) {
         this.trySequence = new Sequence(trySequence);
         return this;
     }
 
-    TryCatchTestGraphBuilder catchNodes(ExecutionNode ...catchSequence) {
+    public TryCatchTestGraphBuilder catchNodes(ExecutionNode ...catchSequence) {
         this.catchSequence = new Sequence(catchSequence);
         return this;
     }
 
-    TryCatchTestGraphBuilder tryCatchNode(ExecutionNode tryCatchNode) {
+    public TryCatchTestGraphBuilder tryCatchNode(ExecutionNode tryCatchNode) {
         this.tryCatchNode = tryCatchNode;
         return this;
     }
 
-    TryCatchTestGraphBuilder afterTryCatchSequence(ExecutionNode... following) {
+    public TryCatchTestGraphBuilder afterTryCatchSequence(ExecutionNode... following) {
         this.followingSequence = Arrays.asList(following);
         return this;
     }
 
-    ExecutionGraph build() {
+    public ExecutionGraph build() {
         ExecutionNode endOfTryCatch = newExecutionNode(new Stop());
         TryCatchWrapper tryCatchWrapper = (TryCatchWrapper) tryCatchNode.getComponent();
         tryCatchWrapper.setStopNode(endOfTryCatch);

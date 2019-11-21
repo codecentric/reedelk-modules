@@ -1,6 +1,7 @@
 package com.reedelk.esb.execution;
 
 import com.reedelk.esb.component.ForkWrapper;
+import com.reedelk.esb.execution.testutils.ForkTestGraphBuilder;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Join;

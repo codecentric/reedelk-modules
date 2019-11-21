@@ -1,7 +1,8 @@
-package com.reedelk.esb.execution;
+package com.reedelk.esb.execution.testutils;
 
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
+import com.reedelk.runtime.api.component.Component;
 
 import java.util.List;
 
@@ -14,5 +15,9 @@ class AbstractTestGraphBuilder {
             previous = node;
         }
         graph.putEdge(previous, end);
+    }
+
+    ExecutionNode newExecutionNode(Component component) {
+        return new ExecutionNode(new ExecutionNode.ReferencePair<>(component));
     }
 }

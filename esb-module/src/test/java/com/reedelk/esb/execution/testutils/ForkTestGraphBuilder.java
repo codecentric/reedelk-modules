@@ -1,4 +1,4 @@
-package com.reedelk.esb.execution;
+package com.reedelk.esb.execution.testutils;
 
 import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.reedelk.esb.execution.AbstractExecutionTest.newExecutionNode;
 
-class ForkTestGraphBuilder extends AbstractTestGraphBuilder {
+public class ForkTestGraphBuilder extends AbstractTestGraphBuilder {
 
     private ExecutionNode fork;
     private ExecutionNode join;
@@ -19,36 +18,36 @@ class ForkTestGraphBuilder extends AbstractTestGraphBuilder {
     private List<ForkSequence> forkSequenceList = new ArrayList<>();
     private List<ExecutionNode> followingSequence = new ArrayList<>();
 
-    static ForkTestGraphBuilder get() {
+    public static ForkTestGraphBuilder get() {
         return new ForkTestGraphBuilder();
     }
 
-    ForkTestGraphBuilder fork(ExecutionNode fork) {
+    public ForkTestGraphBuilder fork(ExecutionNode fork) {
         this.fork = fork;
         return this;
     }
 
-    ForkTestGraphBuilder join(ExecutionNode join) {
+    public ForkTestGraphBuilder join(ExecutionNode join) {
         this.join = join;
         return this;
     }
 
-    ForkTestGraphBuilder inbound(ExecutionNode inbound) {
+    public ForkTestGraphBuilder inbound(ExecutionNode inbound) {
         this.inbound = inbound;
         return this;
     }
 
-    ForkTestGraphBuilder forkSequence(ExecutionNode... sequence) {
+    public ForkTestGraphBuilder forkSequence(ExecutionNode... sequence) {
         this.forkSequenceList.add(new ForkSequence(sequence));
         return this;
     }
 
-    ForkTestGraphBuilder afterForkSequence(ExecutionNode... afterForkSequence) {
+    public ForkTestGraphBuilder afterForkSequence(ExecutionNode... afterForkSequence) {
         this.followingSequence = Arrays.asList(afterForkSequence);
         return this;
     }
 
-    ExecutionGraph build() {
+    public ExecutionGraph build() {
         ExecutionGraph graph = ExecutionGraph.build();
         graph.putEdge(null, inbound);
         graph.putEdge(inbound, fork);

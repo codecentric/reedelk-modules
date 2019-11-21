@@ -1,6 +1,7 @@
 package com.reedelk.esb.execution;
 
 import com.reedelk.esb.component.RouterWrapper;
+import com.reedelk.esb.execution.testutils.RouterTestGraphBuilder;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import org.junit.jupiter.api.BeforeEach;

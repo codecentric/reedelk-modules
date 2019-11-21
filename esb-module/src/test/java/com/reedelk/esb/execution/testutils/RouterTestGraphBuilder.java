@@ -1,4 +1,4 @@
-package com.reedelk.esb.execution;
+package com.reedelk.esb.execution.testutils;
 
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
@@ -10,40 +10,38 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.reedelk.esb.execution.AbstractExecutionTest.newExecutionNode;
-
-class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
+public class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
 
     private ExecutionNode router;
     private ExecutionNode inbound;
     private List<ExecutionNode> followingSequence = new ArrayList<>();
     private List<ConditionWithSequence> conditionWithSequences = new ArrayList<>();
 
-    static RouterTestGraphBuilder get() {
+    public static RouterTestGraphBuilder get() {
         return new RouterTestGraphBuilder();
     }
 
-    RouterTestGraphBuilder router(ExecutionNode router) {
+    public RouterTestGraphBuilder router(ExecutionNode router) {
         this.router = router;
         return this;
     }
 
-    RouterTestGraphBuilder inbound(ExecutionNode inbound) {
+    public RouterTestGraphBuilder inbound(ExecutionNode inbound) {
         this.inbound = inbound;
         return this;
     }
 
-    RouterTestGraphBuilder conditionWithSequence(String condition, ExecutionNode... sequence) {
+    public RouterTestGraphBuilder conditionWithSequence(String condition, ExecutionNode... sequence) {
         conditionWithSequences.add(new ConditionWithSequence(condition, sequence));
         return this;
     }
 
-    RouterTestGraphBuilder afterRouterSequence(ExecutionNode... following) {
+    public RouterTestGraphBuilder afterRouterSequence(ExecutionNode... following) {
         this.followingSequence = Arrays.asList(following);
         return this;
     }
 
-    ExecutionGraph build() {
+    public ExecutionGraph build() {
         ExecutionGraph graph = ExecutionGraph.build();
         graph.putEdge(null, inbound);
         graph.putEdge(inbound, router);
