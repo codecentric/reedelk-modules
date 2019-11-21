@@ -32,9 +32,9 @@ public class ConfigPropertyAwareTypeFactory {
         return TypeFactory.create(clazz, componentDefinition, propertyName, moduleId);
     }
 
-    public Object create(Class<?> genericType, JSONArray array, int index) {
+    public Object create(Class<?> genericType, JSONArray array, int index, long moduleId) {
         // If component definition is a string and starts with $[],
         // then it is a system property. Otherwise we use the default converter.
-        return TypeFactory.create(genericType, array, index);
+        return TypeFactory.create(genericType, array, index, moduleId);
     }
 }

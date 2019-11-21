@@ -24,7 +24,6 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.netty.http.server.HttpServerResponse;
 
-import javax.script.ScriptException;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +34,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MessageHttpResponseMapperTest {
+
+    private final long testModuleId = 10L;
 
     @Mock
     private FlowContext flowContext;
@@ -54,7 +55,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromString() {
                 // Given
-                DynamicInteger status = DynamicInteger.from("201");
+                DynamicInteger status = DynamicInteger.from("201", testModuleId);
                 MessageHttpResponseMapper mapper = newMapperWithStatus(status);
                 Message message = MessageBuilder.get().text("a body").build();
 
@@ -69,9 +70,9 @@ class MessageHttpResponseMapperTest {
             }
 
             @Test
-            void shouldSetHttpResponseStatusFromScript() throws ScriptException {
+            void shouldSetHttpResponseStatusFromScript() {
                 // Given
-                DynamicInteger status = DynamicInteger.from("#[myStatusCodeVar]");
+                DynamicInteger status = DynamicInteger.from("#[myStatusCodeVar]", testModuleId);
                 MessageHttpResponseMapper mapper = newMapperWithStatus(status);
                 Message message = MessageBuilder.get().text("a body").build();
 
@@ -109,9 +110,9 @@ class MessageHttpResponseMapperTest {
         class ContentType {
 
             @Test
-            void shouldSetContentTypeHeaderFromMessageContentTypeWhenBodyIsPayload() throws ScriptException {
+            void shouldSetContentTypeHeaderFromMessageContentTypeWhenBodyIsPayload() {
                 // Given
-                DynamicByteArray body = DynamicByteArray.from("#[message.payload()]");
+                DynamicByteArray body = DynamicByteArray.from("#[message.payload()]", testModuleId);
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().text("my text body").build();
 
@@ -126,7 +127,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldNotSetContentTypeHeaderWhenBodyIsEmptyText() {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithBody(DynamicByteArray.from(""));
+                MessageHttpResponseMapper mapper = newMapperWithBody(DynamicByteArray.from("", testModuleId));
                 Message message = MessageBuilder.get().build();
 
                 // When
@@ -154,7 +155,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldNotSetContentTypeHeaderWhenBodyIsNullBody() {
                 // Given
-                DynamicByteArray body = DynamicByteArray.from(null);
+                DynamicByteArray body = DynamicByteArray.from(null, testModuleId);
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().build();
 
@@ -246,7 +247,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromString() {
                 // Given
-                DynamicInteger status = DynamicInteger.from("#[507]");
+                DynamicInteger status = DynamicInteger.from("#[507]", testModuleId);
                 MessageHttpResponseMapper mapper = newMapperWithErrorStatus(status);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -263,7 +264,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromScript() {
                 // Given
-                DynamicInteger errorStatus = DynamicInteger.from("#[myStatusCodeVar]");
+                DynamicInteger errorStatus = DynamicInteger.from("#[myStatusCodeVar]", testModuleId);
                 MessageHttpResponseMapper mapper = newMapperWithErrorStatus(errorStatus);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -298,7 +299,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeTextPlainByDefault() {
                 // Given
-                DynamicByteArray errorBody = DynamicByteArray.from("#[error]");
+                DynamicByteArray errorBody = DynamicByteArray.from("#[error]", testModuleId);
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -316,7 +317,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeHeaderWhenBodyIsText() {
                 // Given
-                DynamicByteArray errorBody = DynamicByteArray.from("my text body");
+                DynamicByteArray errorBody = DynamicByteArray.from("my text body", testModuleId);
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -333,7 +334,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeHeaderWhenBodyIsEmptyText() {
                 // Given
-                DynamicByteArray errorBody = DynamicByteArray.from("");
+                DynamicByteArray errorBody = DynamicByteArray.from("", testModuleId);
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -351,7 +352,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldNotSetContentTypeHeaderWhenBodyIsNullText() {
                 // Given
-                DynamicByteArray errorBody = DynamicByteArray.from(null);
+                DynamicByteArray errorBody = DynamicByteArray.from(null, testModuleId);
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -468,7 +469,7 @@ class MessageHttpResponseMapperTest {
     }
 
     private MessageHttpResponseMapper newMapperWithBody(DynamicByteArray responseBody) {
-        DynamicInteger statusValue = DynamicInteger.from(HttpResponseStatus.OK.codeAsText().toString());
+        DynamicInteger statusValue = DynamicInteger.from(HttpResponseStatus.OK.codeAsText().toString(), testModuleId);
         Response response = new Response();
         response.setBody(responseBody);
         response.setStatus(statusValue);
@@ -481,7 +482,7 @@ class MessageHttpResponseMapperTest {
 
     private MessageHttpResponseMapper newMapperWithStatus(DynamicInteger responseStatus) {
         String bodyContent = "sample body";
-        DynamicByteArray value = DynamicByteArray.from(bodyContent);
+        DynamicByteArray value = DynamicByteArray.from(bodyContent, testModuleId);
         Response response = new Response();
         response.setBody(value);
         response.setStatus(responseStatus);
@@ -490,8 +491,8 @@ class MessageHttpResponseMapperTest {
 
     private MessageHttpResponseMapper newMapperWithAdditionalHeaders(DynamicStringMap responseHeaders) {
         String bodyContent = "sample body";
-        DynamicByteArray bodyValue = DynamicByteArray.from(bodyContent);
-        DynamicInteger statusValue = DynamicInteger.from(HttpResponseStatus.OK.codeAsText().toString());
+        DynamicByteArray bodyValue = DynamicByteArray.from(bodyContent, testModuleId);
+        DynamicInteger statusValue = DynamicInteger.from(HttpResponseStatus.OK.codeAsText().toString(), testModuleId);
         Response response = new Response();
         response.setHeaders(responseHeaders);
         response.setBody(bodyValue);
@@ -511,7 +512,7 @@ class MessageHttpResponseMapperTest {
 
     private MessageHttpResponseMapper newMapperWithErrorStatus(DynamicInteger errorResponseStatus) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setBody(DynamicByteArray.from("error body"));
+        errorResponse.setBody(DynamicByteArray.from("error body", testModuleId));
         errorResponse.setStatus(errorResponseStatus);
         return new MessageHttpResponseMapper(scriptEngine, null, errorResponse);
     }
@@ -519,7 +520,7 @@ class MessageHttpResponseMapperTest {
     private MessageHttpResponseMapper newMapperWithErrorAdditionalHeaders(DynamicStringMap errorResponseHeaders) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setHeaders(errorResponseHeaders);
-        errorResponse.setBody(DynamicByteArray.from("error body"));
+        errorResponse.setBody(DynamicByteArray.from("error body", testModuleId));
         return new MessageHttpResponseMapper(scriptEngine, null, errorResponse);
     }
 }

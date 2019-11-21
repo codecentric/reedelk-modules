@@ -51,7 +51,7 @@ class RouterDeserializer extends AbstractDeserializer {
                 // The first component of A GIVEN router path,
                 // must be added as a router expression pair.
                 if (j == 0) {
-                    DynamicString expression = DynamicString.from(condition);
+                    DynamicString expression = DynamicString.from(condition, context.moduleId());
                     // 'lastNode' might be the last stop node from another scoped execution node (e.g. Fork, Router, Try-Catch).
                     // We must find the *FIRST* node leading to that stop node, otherwise we would not execute the nested
                     // scoped node components.

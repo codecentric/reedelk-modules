@@ -26,10 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class ScriptEvaluatorTest {
 
+    private long testModuleId = 10L;
+
     private FlowContext context;
-
     private ScriptEvaluator evaluator;
-
     private Message emptyMessage = MessageBuilder.get().empty().build();
 
     @BeforeEach
@@ -45,7 +45,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyEvaluateScriptAndReturnOptional() {
             // Given
-            Script stringConcatenation = Script.from("#[return 'one' + ' ' + 'two']");
+            Script stringConcatenation = Script.from("#[return 'one' + ' ' + 'two']", testModuleId);
 
             // When
             Optional<String> actual = evaluator.evaluate(stringConcatenation, context, emptyMessage, String.class);
@@ -57,7 +57,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyReturnEmptyOptionalWhenScriptIsEmpty() {
             // Given
-            Script emptyScript = Script.from("#[]");
+            Script emptyScript = Script.from("#[]", testModuleId);
 
             // When
             Optional<String> actual = evaluator.evaluate(emptyScript, context, emptyMessage, String.class);
@@ -81,7 +81,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldThrowExceptionWhenScriptIsNotValid() {
             // Given
-            Script invalidScript = Script.from("#[return 'hello]");
+            Script invalidScript = Script.from("#[return 'hello]", testModuleId);
 
             // When
             ESBException exception = Assertions.assertThrows(ESBException.class,
@@ -94,7 +94,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyConvertIntegerResultToString() {
             // Given
-            Script intScript = Script.from("#[return 2351]");
+            Script intScript = Script.from("#[return 2351]", testModuleId);
 
             // When
             Optional<Integer> actual = evaluator.evaluate(intScript, context, emptyMessage, Integer.class);
@@ -106,7 +106,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyEvaluateMessagePayload() {
             // Given
-            Script payloadScript = Script.from("#[return message.payload()]");
+            Script payloadScript = Script.from("#[return message.payload()]", testModuleId);
             Message message = MessageBuilder.get().text("my payload as text").build();
 
             // When
@@ -120,7 +120,7 @@ class ScriptEvaluatorTest {
         void shouldCorrectlyEvaluateContextVariable() {
             // Given
             context.put("messageVar", "my sample");
-            Script contextVariableScript = Script.from("#[return context.messageVar]");
+            Script contextVariableScript = Script.from("#[return context.messageVar]", testModuleId);
 
             // When
             Optional<String> actual = evaluator.evaluate(contextVariableScript, context, emptyMessage, String.class);
@@ -153,7 +153,7 @@ class ScriptEvaluatorTest {
                     "}" +
                     "return result;";
 
-            Script stringConcatenation = Script.from("#[" + concatenateMessagesScript + "]");
+            Script stringConcatenation = Script.from("#[" + concatenateMessagesScript + "]", testModuleId);
 
             // When
             Optional<String> actual = evaluator.evaluate(stringConcatenation, context, messages, String.class);
@@ -165,7 +165,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyReturnEmptyOptionalWhenScriptIsEmpty() {
             // Given
-            Script emptyScript = Script.from("#[]");
+            Script emptyScript = Script.from("#[]", testModuleId);
 
             // When
             Optional<String> actual = evaluator.evaluate(emptyScript, context, messages, String.class);
@@ -189,7 +189,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldThrowExceptionWhenScriptIsNotValid() {
             // Given
-            Script invalidScript = Script.from("#[return 'hello]");
+            Script invalidScript = Script.from("#[return 'hello]", testModuleId);
 
             // When
             ESBException exception = Assertions.assertThrows(ESBException.class,
@@ -207,7 +207,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldReturnByteStreamFromString() {
             // Given
-            Script textValuedScript = Script.from("#[return 'my test']");
+            Script textValuedScript = Script.from("#[return 'my test']", testModuleId);
 
             // When
             TypedPublisher<byte[]> actual = evaluator.evaluateStream(textValuedScript, context, emptyMessage, byte[].class);
@@ -226,7 +226,7 @@ class ScriptEvaluatorTest {
             ByteArrayContent byteArrayContent = new ByteArrayContent(stream, MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(byteArrayContent).build();
 
-            Script extractStreamScript = Script.from("#[message.payload()]");
+            Script extractStreamScript = Script.from("#[message.payload()]", testModuleId);
 
             // When
             TypedPublisher<byte[]> actual = evaluator.evaluateStream(extractStreamScript, context, message, byte[].class);
@@ -254,7 +254,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldReturnEmptyStreamWhenScriptIsEmpty() {
             // Given
-            Script emptyScript = Script.from("#[]");
+            Script emptyScript = Script.from("#[]", testModuleId);
 
             // When
             Publisher<byte[]> actual = evaluator.evaluateStream(emptyScript, context, emptyMessage, byte[].class);
@@ -266,7 +266,7 @@ class ScriptEvaluatorTest {
         @Test
         void shouldReturnEmptyStreamWhenScriptReturnsNull() {
             // Given
-            Script scriptReturningNull = Script.from("#[return null]");
+            Script scriptReturningNull = Script.from("#[return null]", testModuleId);
 
             // When
             Publisher<byte[]> actual = evaluator.evaluateStream(scriptReturningNull, context, emptyMessage, byte[].class);

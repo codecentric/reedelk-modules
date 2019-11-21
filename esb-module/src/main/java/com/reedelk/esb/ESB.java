@@ -5,7 +5,6 @@ import com.reedelk.esb.component.RuntimeComponents;
 import com.reedelk.esb.configuration.ApplyRuntimeConfiguration;
 import com.reedelk.esb.lifecycle.*;
 import com.reedelk.esb.module.ModulesManager;
-import com.reedelk.esb.pubsub.Action;
 import com.reedelk.esb.pubsub.Event;
 import com.reedelk.esb.services.ServicesManager;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
@@ -19,7 +18,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
-import static com.reedelk.esb.pubsub.Action.Module.Uninstalled;
 import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
 
 @Component(service = ESB.class, scope = SINGLETON, immediate = true)
@@ -77,14 +75,14 @@ public class ESB implements EventListener, HotSwapListener {
      * Install:
      * - moduleInstalled: state=INSTALLED
      * - moduleStarted: state=STARTED
-     * <p>
+     *
      * Update (e.g. because component source code was changed - no hotswap -):
      * - moduleStopping: state=RESOLVED
      * - componentUnregistering: state=UNRESOLVED
      * - moduleStopped: state=UNRESOLVED (no-op)
      * - componentRegistered: state=STARTED (auto-start when all components are resolved)
      * - moduleStarted: state=STARTED (no-op)
-     * <p>
+     *
      * This is why we have this isModuleStarted check: the module might have been already started.
      */
     @Override
@@ -124,14 +122,11 @@ public class ESB implements EventListener, HotSwapListener {
                     .next(new TransitionToInstalled())
                     .execute(moduleId);
         }
-
-        publishActionModuleUninstalled(moduleId);
-    }
-
-    // TODO: This one should be put in a separate step and not in this step!!!!
-    private void publishActionModuleUninstalled(long moduleId) {
-        Action.Module.ActionModuleUninstalled message = new Action.Module.ActionModuleUninstalled(moduleId);
-        Event.operation.publish(Uninstalled, message);
+        // Important: module uninstalled event *must* be fired even if a module
+        // has not been started. This is because there might be modules providing
+        // only components and/or Script Functions without any flow and subscribers
+        // of this event must be notified to property unregister script functions.
+        Event.fireModuleUninstalled(moduleId);
     }
 
     @Override
@@ -141,8 +136,11 @@ public class ESB implements EventListener, HotSwapListener {
                     .next(new RemoveModule())
                     .execute(moduleId);
         }
-
-        publishActionModuleUninstalled(moduleId);
+        // Important: module uninstalled event *must* be fired even if a module
+        // has not been started. This is because there might be modules providing
+        // only components and/or Script Functions without any flow and subscribers
+        // of this event must be notified to property unregister script functions.
+        Event.fireModuleUninstalled(moduleId);
     }
 
     @Override

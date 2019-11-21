@@ -17,6 +17,7 @@ public class DynamicBigIntegerConfigConverter implements ConfigConverter<Dynamic
     @Override
     public DynamicBigInteger convert(ConfigurationService configurationService, String pid, String key) {
         BigInteger configValue = delegate.convert(configurationService, pid, key);
+        // A config value cannot be a script, hence we don't provide the module id needed only for script functions.
         return DynamicBigInteger.from(configValue);
     }
 }

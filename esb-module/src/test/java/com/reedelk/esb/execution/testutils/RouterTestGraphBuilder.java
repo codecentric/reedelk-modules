@@ -12,6 +12,8 @@ import java.util.List;
 
 public class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
 
+    private final long testModuleId = 10L;
+
     private ExecutionNode router;
     private ExecutionNode inbound;
     private List<ExecutionNode> followingSequence = new ArrayList<>();
@@ -52,7 +54,7 @@ public class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
         routerWrapper.setEndOfRouterStopNode(endOfRouter);
         for (ConditionWithSequence item : conditionWithSequences) {
             if (item.sequence.size() > 0) {
-                routerWrapper.addExpressionAndPathPair(DynamicString.from(item.condition), item.sequence.get(0));
+                routerWrapper.addExpressionAndPathPair(DynamicString.from(item.condition, testModuleId), item.sequence.get(0));
                 buildSequence(graph, router, endOfRouter, item.sequence);
             }
         }

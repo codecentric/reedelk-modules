@@ -15,6 +15,7 @@ public class DynamicFloatConfigConverter implements ConfigConverter<DynamicFloat
     @Override
     public DynamicFloat convert(ConfigurationService configurationService, String pid, String key) {
         float configValue = delegate.convert(configurationService, pid, key);
+        // A config value cannot be a script, hence we don't provide the module id needed only for script functions.
         return DynamicFloat.from(configValue);
     }
 }

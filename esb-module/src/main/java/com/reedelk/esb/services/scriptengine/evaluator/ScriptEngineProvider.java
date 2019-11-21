@@ -10,7 +10,9 @@ public interface ScriptEngineProvider {
 
     void eval(String functionDefinition);
 
-    void clear(String module);
+    void removeModule(String module);
+
+    void removeFunction(String functionName);
 
     Object invokeFunction(String functionName, Object ...args);
 }

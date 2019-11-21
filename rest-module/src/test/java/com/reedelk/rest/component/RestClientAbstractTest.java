@@ -30,6 +30,8 @@ import static org.junit.Assert.fail;
 @Tag(INTEGRATION)
 abstract class RestClientAbstractTest {
 
+    final long testModuleId = 10L;
+
     @Mock
     protected ScriptEngineService scriptEngine;
     @Mock
@@ -43,7 +45,7 @@ abstract class RestClientAbstractTest {
 
     private static WireMockServer mockServer;
 
-    DynamicByteArray EVALUATE_PAYLOAD_BODY = DynamicByteArray.from(EVALUATE_PAYLOAD);
+    DynamicByteArray EVALUATE_PAYLOAD_BODY = DynamicByteArray.from(EVALUATE_PAYLOAD, testModuleId);
 
     private HttpClientFactory clientFactory = new DefaultHttpClientFactory();
 

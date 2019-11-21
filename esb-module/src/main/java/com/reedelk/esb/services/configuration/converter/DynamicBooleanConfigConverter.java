@@ -15,6 +15,7 @@ public class DynamicBooleanConfigConverter implements ConfigConverter<DynamicBoo
     @Override
     public DynamicBoolean convert(ConfigurationService configurationService, String pid, String key) {
         boolean configValue = delegate.convert(configurationService, pid, key);
+        // A config value cannot be a script, hence we don't provide the module id needed only for script functions.
         return DynamicBoolean.from(configValue);
     }
 }

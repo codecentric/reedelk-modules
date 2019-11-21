@@ -1,6 +1,9 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.commons.FunctionName;
+import com.reedelk.esb.pubsub.Action;
+import com.reedelk.esb.pubsub.Event;
+import com.reedelk.esb.pubsub.OnMessage;
 import com.reedelk.esb.services.converter.DefaultConverterService;
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueErrorFunctionDefinitionBuilder;
@@ -12,9 +15,12 @@ import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import org.reactivestreams.Publisher;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static com.reedelk.esb.pubsub.Action.Module.Uninstalled;
 import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STREAM_PROVIDER;
 
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
@@ -23,6 +29,11 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     static final FunctionDefinitionBuilder<DynamicValue> FUNCTION = new EvaluateDynamicValueFunctionDefinitionBuilder();
 
     private final Map<String, String> uuidFunctionNameMap = new HashMap<>();
+    private final Map<Long, List<String>> moduleIdFunctionNamesMap = new HashMap<>();
+
+    AbstractDynamicValueEvaluator() {
+        Event.operation.subscribe(Uninstalled, this);
+    }
 
     <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider provider, FunctionDefinitionBuilder<DynamicValue> functionDefinitionBuilder, Object... args) {
         if (dynamicValue.isEmpty()) {
@@ -66,6 +77,14 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             // pre-compile the function definition.
             scriptEngine().eval(functionDefinition);
             uuidFunctionNameMap.put(valueUUID, computedFunctionName);
+
+            // add mapping between module id and function name so that we can remove
+            // the functions from the runtime when a module is un-deployed.
+            long moduleId = scriptBlock.moduleId();
+            if (!moduleIdFunctionNamesMap.containsKey(moduleId)) {
+                moduleIdFunctionNamesMap.put(moduleId, new ArrayList<>());
+            }
+            moduleIdFunctionNamesMap.get(moduleId).add(computedFunctionName);
             return computedFunctionName;
         }
     }
@@ -93,5 +112,14 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
 
     ScriptEngineProvider scriptEngine() {
         return JavascriptEngineProvider.getInstance();
+    }
+
+    @OnMessage
+    public void onModuleUninstalled(Action.Module.ActionModuleUninstalled action) {
+        long moduleId = action.getMessage();
+        if (moduleIdFunctionNamesMap.containsKey(moduleId)) {
+            moduleIdFunctionNamesMap.get(moduleId).forEach(computedFunctionName ->
+                    JavascriptEngineProvider.getInstance().removeFunction(computedFunctionName));
+        }
     }
 }

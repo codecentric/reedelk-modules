@@ -15,6 +15,7 @@ public class DynamicIntegerConfigConverter implements ConfigConverter<DynamicInt
     @Override
     public DynamicInteger convert(ConfigurationService configurationService, String pid, String key) {
         int configValue = delegate.convert(configurationService, pid, key);
+        // A config value cannot be a script, hence we don't provide the module id needed only for script functions.
         return DynamicInteger.from(configValue);
     }
 }

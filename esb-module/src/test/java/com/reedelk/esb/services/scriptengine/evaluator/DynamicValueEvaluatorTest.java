@@ -28,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class DynamicValueEvaluatorTest {
 
+    private final long testModuleId = 10L;
+
     @Mock
     private FlowContext context;
 
@@ -47,7 +49,7 @@ class DynamicValueEvaluatorTest {
             // Given
             MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
             Message message = MessageBuilder.get().text("this is a test").attributes(attributes).build();
-            DynamicString dynamicString = DynamicString.from("#[message.attributes.property1]");
+            DynamicString dynamicString = DynamicString.from("#[message.attributes.property1]", testModuleId);
 
             // When
             Optional<String> evaluated = evaluator.evaluate(dynamicString, context, message);
@@ -60,7 +62,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateTextPayload() {
             // Given
             Message message = MessageBuilder.get().text("this is a test").build();
-            DynamicString dynamicString = DynamicString.from("#[message.payload()]");
+            DynamicString dynamicString = DynamicString.from("#[message.payload()]", testModuleId);
 
             // When
             Optional<String> evaluated = evaluator.evaluate(dynamicString, context, message);
@@ -75,7 +77,7 @@ class DynamicValueEvaluatorTest {
             TypedContent<String> typedContent = new StringContent(Flux.just("one", "two"), MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicString dynamicString = DynamicString.from("#[message.payload()]");
+            DynamicString dynamicString = DynamicString.from("#[message.payload()]", testModuleId);
 
             // When
             Optional<String> evaluated = evaluator.evaluate(dynamicString, context, message);
@@ -92,7 +94,7 @@ class DynamicValueEvaluatorTest {
             TypedContent<String> typedContent = new StringContent(content, MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']");
+            DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']", testModuleId);
 
             // When
             Optional<String> result = evaluator.evaluate(dynamicString, context, message);
@@ -108,7 +110,7 @@ class DynamicValueEvaluatorTest {
             TypedContent<String> typedContent = new StringContent(payload, MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']");
+            DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']", testModuleId);
 
             // When
             Optional<String> result = evaluator.evaluate(dynamicString, context, message);
@@ -122,7 +124,7 @@ class DynamicValueEvaluatorTest {
             // Given
             Message message = MessageBuilder.get().text("test").build();
 
-            DynamicString dynamicString = DynamicString.from("#['evaluation test']");
+            DynamicString dynamicString = DynamicString.from("#['evaluation test']", testModuleId);
 
             // When
             Optional<String> result = evaluator.evaluate(dynamicString, context, message);
@@ -135,7 +137,7 @@ class DynamicValueEvaluatorTest {
         void shouldReturnTextFromDynamicValue() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicString dynamicString = DynamicString.from("Expected text");
+            DynamicString dynamicString = DynamicString.from("Expected text", testModuleId);
 
             // When
             Optional<String> result = evaluator.evaluate(dynamicString, context, message);
@@ -148,7 +150,7 @@ class DynamicValueEvaluatorTest {
         void shouldReturnEmptyString() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicString dynamicString = DynamicString.from("");
+            DynamicString dynamicString = DynamicString.from("", testModuleId);
 
             // When
             Optional<String> result = evaluator.evaluate(dynamicString, context, message);
@@ -174,7 +176,7 @@ class DynamicValueEvaluatorTest {
         void shouldResultNotBePresentWhenDynamicValueScriptIsEmpty() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicString dynamicString = DynamicString.from("#[]");
+            DynamicString dynamicString = DynamicString.from("#[]", testModuleId);
 
             // When
             Optional<String> result = evaluator.evaluate(dynamicString, context, message);
@@ -187,7 +189,7 @@ class DynamicValueEvaluatorTest {
         void shouldResultNotBePresentWhenDynamicValueStringIsNull() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicString dynamicString = DynamicString.from(null);
+            DynamicString dynamicString = DynamicString.from(null, testModuleId);
 
             // When
             Optional<String> result = evaluator.evaluate(dynamicString, context, message);
@@ -200,7 +202,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateInteger() {
             // Given
             Message message = MessageBuilder.get().javaObject(23432).build();
-            DynamicString dynamicString = DynamicString.from("#[message.payload()]");
+            DynamicString dynamicString = DynamicString.from("#[message.payload()]", testModuleId);
 
             // When
             Optional<String> result = evaluator.evaluate(dynamicString, context, message);
@@ -213,7 +215,7 @@ class DynamicValueEvaluatorTest {
         void shouldEvaluateNullScriptResults() {
             // Given
             Message message = MessageBuilder.get().text("A text").build();
-            DynamicString dynamicString = DynamicString.from("#[null]");
+            DynamicString dynamicString = DynamicString.from("#[null]", testModuleId);
 
             // When
             Optional<String> result = evaluator.evaluate(dynamicString, context, message);
@@ -231,7 +233,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateInteger() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicInteger dynamicInteger = DynamicInteger.from("#[506]");
+            DynamicInteger dynamicInteger = DynamicInteger.from("#[506]", testModuleId);
 
             // When
             Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, context, message);
@@ -246,7 +248,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlySumNumber() {
             // Given
             Message message = MessageBuilder.get().text("12").build();
-            DynamicInteger dynamicInteger = DynamicInteger.from("#[parseInt(message.payload()) + 10]");
+            DynamicInteger dynamicInteger = DynamicInteger.from("#[parseInt(message.payload()) + 10]", testModuleId);
 
             // When
             Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, context, message);
@@ -259,7 +261,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateIntegerFromText() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicInteger dynamicInteger = DynamicInteger.from(53);
+            DynamicInteger dynamicInteger = DynamicInteger.from(53, testModuleId);
 
             // When
             Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, context, message);
@@ -272,7 +274,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateIntegerFromMessagePayload() {
             // Given
             Message message = MessageBuilder.get().javaObject(120).build();
-            DynamicInteger dynamicInteger = DynamicInteger.from("#[message.payload()]");
+            DynamicInteger dynamicInteger = DynamicInteger.from("#[message.payload()]", testModuleId);
 
             // When
             Optional<Integer> evaluated = evaluator.evaluate(dynamicInteger, context, message);
@@ -290,7 +292,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateBoolean() {
             // Given
             Message message = MessageBuilder.get().text("a test").build();
-            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[1 == 1]");
+            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[1 == 1]", testModuleId);
 
             // When
             Optional<Boolean> evaluated = evaluator.evaluate(dynamicBoolean, context, message);
@@ -303,7 +305,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateBooleanFromPayload() {
             // Given
             Message message = MessageBuilder.get().text("true").build();
-            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[message.payload()]");
+            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[message.payload()]", testModuleId);
 
             // When
             Optional<Boolean> evaluated = evaluator.evaluate(dynamicBoolean, context, message);
@@ -322,7 +324,7 @@ class DynamicValueEvaluatorTest {
             // Given
             String payload = "My sample payload";
             Message message = MessageBuilder.get().text(payload).build();
-            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]");
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]", testModuleId);
 
             // When
             Optional<byte[]> evaluated = evaluator.evaluate(dynamicByteArray, context, message);
@@ -344,7 +346,7 @@ class DynamicValueEvaluatorTest {
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicObject dynamicObject = DynamicObject.from("#[message.content]");
+            DynamicObject dynamicObject = DynamicObject.from("#[message.content]", testModuleId);
 
             // When
             Optional<Object> result = evaluator.evaluate(dynamicObject, context, message);
@@ -357,7 +359,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateMessage() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicObject dynamicString = DynamicObject.from("#[message]");
+            DynamicObject dynamicString = DynamicObject.from("#[message]", testModuleId);
 
             // When
             Optional<Object> evaluated = evaluator.evaluate(dynamicString, context, message);
@@ -371,7 +373,7 @@ class DynamicValueEvaluatorTest {
             // Given
             MyObject given = new MyObject();
             Message message = MessageBuilder.get().javaObject(given).build();
-            DynamicObject dynamicString = DynamicObject.from("#[message.payload()]");
+            DynamicObject dynamicString = DynamicObject.from("#[message.payload()]", testModuleId);
 
             // When
             Optional<Object> evaluated = evaluator.evaluate(dynamicString, context, message);
@@ -393,7 +395,7 @@ class DynamicValueEvaluatorTest {
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicObject dynamicObject = DynamicObject.from("#[message.content]");
+            DynamicObject dynamicObject = DynamicObject.from("#[message.content]", testModuleId);
 
             // When
             Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.TEXT);
@@ -409,7 +411,7 @@ class DynamicValueEvaluatorTest {
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicObject dynamicObject = DynamicObject.from("#[message.content.type()]");
+            DynamicObject dynamicObject = DynamicObject.from("#[message.content.type()]", testModuleId);
 
             // When
             Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.APPLICATION_BINARY);
@@ -425,7 +427,7 @@ class DynamicValueEvaluatorTest {
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicObject dynamicObject = DynamicObject.from("#[message.content]");
+            DynamicObject dynamicObject = DynamicObject.from("#[message.content]", testModuleId);
 
             // When
             ESBException thrown = assertThrows(ESBException.class,
@@ -455,7 +457,7 @@ class DynamicValueEvaluatorTest {
             // Given
             Message message = MessageBuilder.get().empty().build();
 
-            DynamicObject dynamicObject = DynamicObject.from("#[]");
+            DynamicObject dynamicObject = DynamicObject.from("#[]", testModuleId);
 
             // When
             Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.APPLICATION_JSON);
@@ -471,7 +473,7 @@ class DynamicValueEvaluatorTest {
 
             MyTestObject testObject = new MyTestObject(43, 234.23f, "test");
 
-            DynamicObject dynamicObject = DynamicObject.from(testObject);
+            DynamicObject dynamicObject = DynamicObject.from(testObject, testModuleId);
 
             // When
             Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.TEXT);
@@ -488,7 +490,7 @@ class DynamicValueEvaluatorTest {
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicObject dynamicObject = DynamicObject.from("#[message.payload()]");
+            DynamicObject dynamicObject = DynamicObject.from("#[message.payload()]", testModuleId);
 
             // When
             Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.TEXT);
@@ -506,7 +508,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateErrorPayload() {
             // Given
             Throwable myException = new ESBException("Test error");
-            DynamicString dynamicString = DynamicString.from("#[error]");
+            DynamicString dynamicString = DynamicString.from("#[error]", testModuleId);
 
             // When
             Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
@@ -519,7 +521,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateExceptionMessage() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicString dynamicString = DynamicString.from("#[error.getMessage()]");
+            DynamicString dynamicString = DynamicString.from("#[error.getMessage()]", testModuleId);
 
             // When
             Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
@@ -532,7 +534,7 @@ class DynamicValueEvaluatorTest {
         void shouldReturnEmptyWhenScriptIsEmpty() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicString dynamicString = DynamicString.from("#[]");
+            DynamicString dynamicString = DynamicString.from("#[]", testModuleId);
 
             // When
             Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
@@ -545,7 +547,7 @@ class DynamicValueEvaluatorTest {
         void shouldReturnEmptyWhenNullString() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicString dynamicString = DynamicString.from(null);
+            DynamicString dynamicString = DynamicString.from(null, testModuleId);
 
             // When
             Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
@@ -558,7 +560,7 @@ class DynamicValueEvaluatorTest {
         void shouldReturnStringValue() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicString dynamicString = DynamicString.from("my text");
+            DynamicString dynamicString = DynamicString.from("my text", testModuleId);
 
             // When
             Optional<String> evaluated = evaluator.evaluate(dynamicString, context, myException);
@@ -589,7 +591,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateDynamicObject() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicObject dynamicObject = DynamicObject.from("#[error]");
+            DynamicObject dynamicObject = DynamicObject.from("#[error]", testModuleId);
 
             // When
             Optional<Object> result = evaluator.evaluate(dynamicObject, context, myException);
@@ -602,7 +604,7 @@ class DynamicValueEvaluatorTest {
         void shouldReturnStringDynamicObject() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicObject dynamicObject = DynamicObject.from("my text");
+            DynamicObject dynamicObject = DynamicObject.from("my text", testModuleId);
 
             // When
             Optional<Object> result = evaluator.evaluate(dynamicObject, context, myException);
@@ -620,7 +622,7 @@ class DynamicValueEvaluatorTest {
         void shouldCorrectlyEvaluateDynamicByteArrayFromException() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[error]");
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[error]", testModuleId);
 
             // When
             Optional<byte[]> result = evaluator.evaluate(dynamicByteArray, context, myException);

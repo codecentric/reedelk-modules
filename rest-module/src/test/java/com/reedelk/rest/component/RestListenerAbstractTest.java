@@ -33,6 +33,8 @@ import static org.junit.Assert.fail;
 @Tag(INTEGRATION)
 abstract class RestListenerAbstractTest {
 
+    final long testModuleId = 10L;
+
     static final String TEST_JSON_BODY = "{\"name\":\"John\"}";
     static final String TEST_TEXT_BODY = "This is a sample text";
 

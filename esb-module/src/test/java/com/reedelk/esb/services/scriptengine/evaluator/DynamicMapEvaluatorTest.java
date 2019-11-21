@@ -19,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class DynamicMapEvaluatorTest {
 
+    private final long testModuleId = 10L;
+
     @Mock
     private FlowContext context;
 
@@ -39,7 +41,7 @@ class DynamicMapEvaluatorTest {
         DynamicStringMap dynamicMap = DynamicStringMap.from(of(
                 "script", "#[message.attributes.propErty1]",
                 "text", "This is a text",
-                "numeric", "23532"));
+                "numeric", "23532"), testModuleId);
 
         // When
         Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
@@ -80,7 +82,7 @@ class DynamicMapEvaluatorTest {
         // Given
         Message message = MessageBuilder.get().text("test").build();
         DynamicStringMap dynamicMap = DynamicStringMap.from(
-                of("text", "a simple text 'with quotes'"));
+                of("text", "a simple text 'with quotes'"), testModuleId);
 
         // When
         Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
@@ -95,7 +97,7 @@ class DynamicMapEvaluatorTest {
         Message message = MessageBuilder.get().text("a text").build();
         DynamicIntegerMap dynamicMap = DynamicIntegerMap.from(of(
                 "aNumericValue", 23,
-                "aScriptedNumericValue", "#[45 + 23]"));
+                "aScriptedNumericValue", "#[45 + 23]"), testModuleId);
 
         // When
         Map<String,Integer> evaluated = evaluator.evaluate(dynamicMap, context, message);
@@ -111,7 +113,7 @@ class DynamicMapEvaluatorTest {
         Message message = MessageBuilder.get().text("a text").build();
         DynamicFloatMap dynamicMap = DynamicFloatMap.from(of(
                 "aFloatValue", 23.23f,
-                "aScriptedFloatValue", "#[34.23 + 12.1]"));
+                "aScriptedFloatValue", "#[34.23 + 12.1]"), testModuleId);
 
         // When
         Map<String,Float> evaluated = evaluator.evaluate(dynamicMap, context, message);

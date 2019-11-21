@@ -15,6 +15,7 @@ public class DynamicDoubleConfigConverter implements ConfigConverter<DynamicDoub
     @Override
     public DynamicDouble convert(ConfigurationService configurationService, String pid, String key) {
         double configValue = delegate.convert(configurationService, pid, key);
+        // A config value cannot be a script, hence we don't provide the module id needed only for script functions.
         return DynamicDouble.from(configValue);
     }
 }

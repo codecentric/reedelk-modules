@@ -24,6 +24,10 @@ public class FlowBuilderContext {
         this.deserializedModule = deserializedModule;
     }
 
+    public long moduleId() {
+        return bundle.getBundleId();
+    }
+
     public ExecutionNode instantiateComponent(Class clazz) {
         return instantiateComponent(clazz.getName());
     }
@@ -39,9 +43,9 @@ public class FlowBuilderContext {
     public DeserializedModule deserializedModule() {
         return deserializedModule;
     }
-
     // Method to create Component's types which do not require any
     // JSON Component definition, e.g the ModuleId type.
+
     public Object create(Class<?> clazz) {
         return create(clazz, null, null);
     }
@@ -51,6 +55,6 @@ public class FlowBuilderContext {
     }
 
     public Object create(Class<?> genericType, JSONArray array, int index) {
-        return typeFactory.create(genericType, array, index);
+        return typeFactory.create(genericType, array, index, bundle.getBundleId());
     }
 }
