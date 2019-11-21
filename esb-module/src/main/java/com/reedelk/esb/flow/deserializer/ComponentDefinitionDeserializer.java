@@ -7,7 +7,6 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.commons.CollectionFactory;
 import com.reedelk.runtime.commons.JsonParser;
-import com.reedelk.runtime.commons.ReflectionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -51,8 +50,8 @@ public class ComponentDefinitionDeserializer {
         // as the  ModuleFileProvider  in order to discover the files within the
         // Module/resources folder.
         getSetterByArgumentType(implementor, ModuleId.class).ifPresent(method -> {
-            ModuleId moduleId = context.instantiateModuleId();
-            ReflectionUtils.setProperty(implementor, method, moduleId);
+            Object moduleId = context.create(ModuleId.class, componentDefinition);
+            setProperty(implementor, method, moduleId);
         });
     }
 
@@ -74,12 +73,12 @@ public class ComponentDefinitionDeserializer {
             // Enum
         } else if (setterArgument.isEnum()){
             Class enumClazz = setterArgument.getClazz();
-            return context.convert(enumClazz, componentDefinition, propertyName);
+            return context.create(enumClazz, componentDefinition, propertyName);
 
             // Primitive or Dynamic Value
         } else {
             Class<?> clazz = setterArgument.getClazz();
-            return context.convert(clazz, componentDefinition, propertyName);
+            return context.create(clazz, componentDefinition, propertyName);
         }
     }
 
@@ -96,7 +95,7 @@ public class ComponentDefinitionDeserializer {
             // be used by the Script engine as a reference for the pre-compiled script
             // to be used at runtime evaluation.
             Class<?> clazz = setterArgument.getClazz();
-            return context.convert(clazz, componentDefinition, propertyName);
+            return context.create(clazz, componentDefinition, propertyName);
         } else {
             // It is a complex type implementing implementor interface.
             // We expect that this JSONObject satisfies the properties
@@ -116,7 +115,7 @@ public class ComponentDefinitionDeserializer {
         Collection collection = CollectionFactory.from(clazz);
         Class<?> genericType = argument.getGenericType();
         for (int index = 0; index < array.length(); index++) {
-            Object converted = context.convert(genericType, array, index);
+            Object converted = context.create(genericType, array, index);
             collection.add(converted);
         }
         return collection;

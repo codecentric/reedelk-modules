@@ -6,7 +6,6 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.runtime.api.component.Implementor;
-import com.reedelk.runtime.api.file.ModuleId;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.osgi.framework.Bundle;
@@ -37,19 +36,19 @@ public class FlowBuilderContext {
         return modulesManager.instantiateImplementor(bundle.getBundleContext(), executionNode, implementorName);
     }
 
-    public ModuleId instantiateModuleId() {
-        return bundle::getBundleId;
-    }
-
     public DeserializedModule getDeSerializedModule() {
         return deserializedModule;
     }
 
-    public Object convert(Class<?> clazz, JSONObject componentDefinition, String propertyName) {
-        return typeFactory.create(clazz, componentDefinition, propertyName);
+    public Object create(Class<?> clazz, JSONObject componentDefinition) {
+        return create(clazz, componentDefinition, null);
     }
 
-    public Object convert(Class<?> genericType, JSONArray array, int index) {
+    public Object create(Class<?> clazz, JSONObject componentDefinition, String propertyName) {
+        return typeFactory.create(clazz, componentDefinition, propertyName, bundle.getBundleId());
+    }
+
+    public Object create(Class<?> genericType, JSONArray array, int index) {
         return typeFactory.create(genericType, array, index);
     }
 }

@@ -14,7 +14,7 @@ public class ConfigPropertyAwareTypeFactory {
         this.configurationService = configurationService;
     }
 
-    public Object create(Class<?> clazz, JSONObject componentDefinition, String propertyName) {
+    public Object create(Class<?> clazz, JSONObject componentDefinition, String propertyName, long moduleId) {
         // If component definition value is a string and starts with $[], then it is a system property.
         // Otherwise we use the default converter.
         Object propertyValue = componentDefinition.get(propertyName);
@@ -22,7 +22,7 @@ public class ConfigPropertyAwareTypeFactory {
             String propertyKey = ConfigurationPropertyUtils.unwrap((String) propertyValue);
             return configurationService.get(propertyKey, clazz);
         } else {
-            return TypeFactory.create(clazz, componentDefinition, propertyName);
+            return TypeFactory.create(clazz, componentDefinition, propertyName, moduleId);
         }
     }
 
