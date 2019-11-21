@@ -33,7 +33,10 @@ public class ExecutionNode {
     }
 
     public void clearReferences() {
+        // Dispose the component reference
         dispose(componentReference);
+
+        // Dispose the dependencies
         dependencyReferences.forEach(this::dispose);
         dependencyReferences.clear();
 
@@ -57,6 +60,10 @@ public class ExecutionNode {
     }
 
     private void dispose(ReferencePair<? extends Implementor> componentReference) {
+        if (componentReference.implementor != null) {
+            // We must  call dispose() before clearing Implementor's references.
+            componentReference.implementor.dispose();
+        }
         componentReference.implementor = null;
         componentReference.serviceReference = null;
     }

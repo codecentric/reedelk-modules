@@ -17,8 +17,7 @@ import org.osgi.framework.ServiceReference;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -116,6 +115,29 @@ class ExecutionNodeTest {
         assertThat(dependencyReferencePair1.getServiceReference()).isNull();
         assertThat(dependencyReferencePair2.getImplementor()).isNull();
         assertThat(dependencyReferencePair2.getServiceReference()).isNull();
+    }
+
+    @Test
+    void shouldClearReferencesCallDisposeOnComponentAndDependentImplementors() {
+        // Given
+        Component spyTestComponent = spy(testComponent);
+        ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(spyTestComponent, serviceReference);
+
+        Dependency dependency1 = spy(new Dependency());
+        ReferencePair<Implementor> dependencyReferencePair1 = mockReferencePair(dependency1);
+        testComponentEN.add(dependencyReferencePair1);
+
+        Dependency dependency2 = spy(new Dependency());
+        ReferencePair<Implementor> dependencyReferencePair2 = mockReferencePair(dependency2);
+        testComponentEN.add(dependencyReferencePair2);
+
+        // When
+        testComponentEN.clearReferences();
+
+        // Then
+        verify(spyTestComponent).dispose();
+        verify(dependency1).dispose();
+        verify(dependency2).dispose();
     }
 
     @Test
