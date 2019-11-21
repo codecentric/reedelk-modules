@@ -40,8 +40,10 @@ public class FlowBuilderContext {
         return deserializedModule;
     }
 
-    public Object create(Class<?> clazz, JSONObject componentDefinition) {
-        return create(clazz, componentDefinition, null);
+    // Method to create Component's types which do not require any
+    // JSON Component definition, e.g the ModuleId type.
+    public Object create(Class<?> clazz) {
+        return create(clazz, null, null);
     }
 
     public Object create(Class<?> clazz, JSONObject componentDefinition, String propertyName) {

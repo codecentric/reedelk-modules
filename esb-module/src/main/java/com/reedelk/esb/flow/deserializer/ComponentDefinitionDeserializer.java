@@ -50,7 +50,7 @@ public class ComponentDefinitionDeserializer {
         // as the  ModuleFileProvider  in order to discover the files within the
         // Module/resources folder.
         getSetterByArgumentType(implementor, ModuleId.class).ifPresent(method -> {
-            Object moduleId = context.create(ModuleId.class, componentDefinition);
+            Object moduleId = context.create(ModuleId.class);
             setProperty(implementor, method, moduleId);
         });
     }

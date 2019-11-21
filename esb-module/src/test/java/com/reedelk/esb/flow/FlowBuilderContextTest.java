@@ -3,7 +3,6 @@ package com.reedelk.esb.flow;
 import com.reedelk.esb.commons.ConfigPropertyAwareTypeFactory;
 import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.service.ConfigurationService;
-import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,17 +32,16 @@ class FlowBuilderContextTest {
     @Test
     void shouldCorrectlyDelegateToTypeFactoryCreationOfModuleId() {
         // Given
-        JSONObject componentDefinition = new JSONObject();
         long expectedModuleId = 997L;
         doReturn(expectedModuleId).when(bundle).getBundleId();
         doReturn((ModuleId) () -> expectedModuleId)
                 .when(typeFactory)
-                .create(ModuleId.class, componentDefinition, null, expectedModuleId);
+                .create(ModuleId.class, null, null, expectedModuleId);
 
         FlowBuilderContext context = new FlowBuilderContext(bundle, null, null, typeFactory);
 
         // When
-        ModuleId actualModuleId = (ModuleId) context.create(ModuleId.class, componentDefinition);
+        ModuleId actualModuleId = (ModuleId) context.create(ModuleId.class);
 
         // Then
         assertThat(actualModuleId.get()).isEqualTo(expectedModuleId);

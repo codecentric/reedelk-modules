@@ -30,7 +30,6 @@ import java.util.Set;
 
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -1175,7 +1174,7 @@ class ComponentDefinitionDeserializerTest {
         void shouldCorrectlySetModuleIdProperty() {
             // Given
             long expectedModuleId = 234L;
-            doReturn((ModuleId) () -> expectedModuleId).when(context).create(eq(ModuleId.class), any(JSONObject.class));
+            doReturn((ModuleId) () -> expectedModuleId).when(context).create(eq(ModuleId.class));
 
             // When
             TestComponentWithModuleIdProperty component =
