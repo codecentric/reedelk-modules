@@ -8,43 +8,30 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
 
-@Component(service = CoreModuleActivator.class, scope = SINGLETON, immediate = true)
-public class CoreModuleActivator {
+@Component(service = ModuleActivator.class, scope = SINGLETON, immediate = true)
+public class ModuleActivator {
 
     @Reference
-    private ScriptEngineService scriptEngineService;
+    private ScriptEngineService scriptEngine;
 
     @Activate
     public void start() {
-      //  UtilModule utilModule = new UtilModule();
-      //  LogModule logModule = new LogModule();
-      //  scriptEngineService.registerFunction(utilModule);
-      //  scriptEngineService.registerFunction(logModule);
+        CoreJavascriptFunctions coreJavascriptFunctions = new CoreJavascriptFunctions();
+        scriptEngine.registerFunction(coreJavascriptFunctions);
     }
 
     @Deactivate
     public void stop() {
     }
 
-    class UtilModule implements ScriptSource {
-
-        @Override
-        public String name() {
-            return "Util";
-        }
-
-        @Override
-        public String resource() {
-            return "/function/util.js";
-        }
-    }
-
-    class LogModule implements ScriptSource {
+    class CoreJavascriptFunctions implements ScriptSource {
 
         @Override
         public Map<String, Object> bindings() {
@@ -54,13 +41,13 @@ public class CoreModuleActivator {
         }
 
         @Override
-        public String name() {
-            return "Log";
+        public Collection<String> names() {
+            return Arrays.asList("Util", "Log");
         }
 
         @Override
         public String resource() {
-            return "/function/log.js";
+            return "/function/core-javascript-functions.js";
         }
     }
 }

@@ -1,11 +1,12 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import java.io.Reader;
+import java.util.Collection;
 import java.util.Map;
 
 public interface ScriptEngineProvider {
 
-    void eval(String module, Reader reader, Map<String,Object> bindings);
+    void eval(Collection<String> modules, Reader reader, Map<String,Object> bindings);
 
     void eval(String functionDefinition);
 

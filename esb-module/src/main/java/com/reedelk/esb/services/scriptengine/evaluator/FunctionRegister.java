@@ -13,7 +13,7 @@ public class FunctionRegister extends ScriptEngineServiceAdapter {
     public void registerFunction(ScriptSource scriptSource) {
         try (Reader reader = scriptSource.get()) {
             JavascriptEngineProvider.getInstance()
-                    .eval(scriptSource.name(), reader, scriptSource.bindings());
+                    .eval(scriptSource.names(), reader, scriptSource.bindings());
         } catch (IOException e) {
             throw new ESBException(e);
         }

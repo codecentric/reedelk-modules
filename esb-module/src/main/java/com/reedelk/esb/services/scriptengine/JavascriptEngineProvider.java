@@ -9,6 +9,7 @@ import javax.script.Bindings;
 import javax.script.CompiledScript;
 import javax.script.ScriptException;
 import java.io.Reader;
+import java.util.Collection;
 import java.util.Map;
 
 import static com.reedelk.esb.commons.Messages.Script.SCRIPT_COMPILATION_ERROR;
@@ -20,7 +21,8 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     private final NashornScriptEngine engine;
 
     private JavascriptEngineProvider() {
-        this.engine = (NashornScriptEngine) new NashornScriptEngineFactory().getScriptEngine();
+        this.engine =
+                (NashornScriptEngine) new NashornScriptEngineFactory().getScriptEngine(new String[] { "--optimistic-types=false" });
     }
 
     private static class ScriptEngineProviderHelper {
@@ -41,7 +43,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     }
 
     @Override
-    public void eval(String moduleName, Reader reader, Map<String, Object> customBindings) {
+    public void eval(Collection<String> moduleNames, Reader reader, Map<String, Object> customBindings) {
         try {
 
             // We create a temporary binding object just to pass custom initialization bindings
@@ -56,9 +58,9 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
 
             compiled.eval(tmpBindings);
 
-            Object moduleObject = tmpBindings.get(moduleName);
+            Bindings bindings = engine.getBindings(ENGINE_SCOPE);
 
-            engine.getBindings(ENGINE_SCOPE).put(moduleName, moduleObject);
+            moduleNames.forEach(moduleName -> bindings.put(moduleName, tmpBindings.get(moduleName)));
 
         } catch (ScriptException exception) {
             String errorMessage = SCRIPT_COMPILATION_ERROR.format(exception.getMessage());
