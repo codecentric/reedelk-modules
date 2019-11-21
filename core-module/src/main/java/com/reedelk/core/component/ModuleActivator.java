@@ -24,7 +24,7 @@ public class ModuleActivator {
     @Activate
     public void start() {
         CoreJavascriptFunctions coreJavascriptFunctions = new CoreJavascriptFunctions();
-        scriptEngine.registerFunction(coreJavascriptFunctions);
+        scriptEngine.register(coreJavascriptFunctions);
     }
 
     @Deactivate

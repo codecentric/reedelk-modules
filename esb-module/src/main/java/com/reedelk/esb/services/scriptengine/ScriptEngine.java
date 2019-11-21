@@ -89,8 +89,8 @@ public class ScriptEngine implements ScriptEngineService {
     // Register Function
 
     @Override
-    public void registerFunction(ScriptSource scriptSource) {
-        functionRegister.registerFunction(scriptSource);
+    public void register(ScriptSource scriptSource) {
+        functionRegister.register(scriptSource);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
     // Register Function
 
     @Override
-    public void registerFunction(ScriptSource scriptSource) {
+    public void register(ScriptSource scriptSource) {
         throw new UnsupportedOperationException();
     }
 

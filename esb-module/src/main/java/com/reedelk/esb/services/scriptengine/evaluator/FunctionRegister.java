@@ -10,7 +10,7 @@ import java.io.Reader;
 public class FunctionRegister extends ScriptEngineServiceAdapter {
 
     @Override
-    public void registerFunction(ScriptSource scriptSource) {
+    public void register(ScriptSource scriptSource) {
         try (Reader reader = scriptSource.get()) {
             JavascriptEngineProvider.getInstance()
                     .eval(scriptSource.names(), reader, scriptSource.bindings());
