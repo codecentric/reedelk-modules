@@ -6,19 +6,20 @@ import com.reedelk.file.localread.LocalFileReadConfiguration;
 import com.reedelk.file.localread.LocalReadConfiguration;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
-import com.reedelk.runtime.api.file.ModuleFileProvider;
-import com.reedelk.runtime.api.file.ModuleId;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.api.service.ScriptEngineService;
+import com.reedelk.runtime.system.api.file.ModuleFileProvider;
+import com.reedelk.runtime.system.api.file.ModuleId;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.reactivestreams.Publisher;
 
+import java.io.FileNotFoundException;
 import java.util.Optional;
 
 import static com.reedelk.file.commons.Messages.ModuleFileReadComponent.FILE_NOT_FOUND;
@@ -73,16 +74,22 @@ public class LocalFileRead implements ProcessorSync {
 
             String finalFilePath = LocalFilePath.from(basePath, filePath);
 
-            Publisher<byte[]> contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
+            try {
 
-            TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
+                Publisher<byte[]> contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
 
-            MessageAttributes attributes = new DefaultMessageAttributes(LocalFileRead.class,
-                    of(FILE_NAME, finalFilePath, TIMESTAMP, System.currentTimeMillis()));
+                TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
-            return MessageBuilder.get().attributes(attributes).typedContent(content).build();
+                MessageAttributes attributes = new DefaultMessageAttributes(LocalFileRead.class,
+                        of(FILE_NAME, finalFilePath, TIMESTAMP, System.currentTimeMillis()));
 
-        }).orElseThrow(() -> new ModuleFileNotFoundException(FILE_NOT_FOUND.format(fileName.toString(), basePath, moduleId.get())));
+                return MessageBuilder.get().attributes(attributes).typedContent(content).build();
+
+            } catch (FileNotFoundException e) {
+                throw new ESBException(e);
+            }
+
+        }).orElseThrow(() -> new ESBException(FILE_NOT_FOUND.format(fileName.toString(), basePath, moduleId.get())));
     }
 
     public void setFileName(DynamicString fileName) {

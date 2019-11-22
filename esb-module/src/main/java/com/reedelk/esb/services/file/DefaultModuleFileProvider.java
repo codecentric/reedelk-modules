@@ -1,13 +1,12 @@
 package com.reedelk.esb.services.file;
 
-import com.reedelk.esb.commons.Messages;
+import com.reedelk.esb.exception.FileNotFoundException;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
-import com.reedelk.runtime.api.file.ModuleFileProvider;
-import com.reedelk.runtime.api.file.ModuleId;
+import com.reedelk.runtime.system.api.file.ModuleFileProvider;
+import com.reedelk.runtime.system.api.file.ModuleId;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.reactivestreams.Publisher;
@@ -15,6 +14,9 @@ import org.reactivestreams.Publisher;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
+
+import static com.reedelk.esb.commons.Messages.Module.FILE_FIND_ERROR;
+import static com.reedelk.esb.commons.Messages.Module.FILE_NOT_FOUND_ERROR;
 
 public class DefaultModuleFileProvider implements ModuleFileProvider {
 
@@ -36,13 +38,13 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
 
             if (resources == null || !resources.hasMoreElements()) {
                 // The file at the given path was not found in the Module bundle.
-                String message = Messages.Module.FILE_NOT_FOUND_ERROR.format(
+                String message = FILE_NOT_FOUND_ERROR.format(
                         path,
                         module.id(),
                         module.name(),
                         module.version(),
                         module.filePath());
-                throw new ModuleFileNotFoundException(message);
+                throw new FileNotFoundException(message);
             }
 
             URL targetFileURL = resources.nextElement();
@@ -50,7 +52,7 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
 
         } catch (IOException exception) {
             String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
-            String message = Messages.Module.FILE_FIND_ERROR.format(
+            String message = FILE_FIND_ERROR.format(
                     path,
                     module.id(),
                     module.name(),

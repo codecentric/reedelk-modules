@@ -1,8 +1,8 @@
 package com.reedelk.esb.flow;
 
 import com.reedelk.esb.commons.ConfigPropertyAwareTypeFactory;
-import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.service.ConfigurationService;
+import com.reedelk.runtime.system.api.file.ModuleId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

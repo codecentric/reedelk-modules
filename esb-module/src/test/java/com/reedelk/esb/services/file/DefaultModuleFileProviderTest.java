@@ -1,13 +1,13 @@
 package com.reedelk.esb.services.file;
 
+import com.reedelk.esb.exception.FileNotFoundException;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.test.utils.FileUtils;
 import com.reedelk.esb.test.utils.TmpDir;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.exception.ModuleFileNotFoundException;
-import com.reedelk.runtime.api.file.ModuleFileProvider;
-import com.reedelk.runtime.api.file.ModuleId;
+import com.reedelk.runtime.system.api.file.ModuleFileProvider;
+import com.reedelk.runtime.system.api.file.ModuleId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -103,7 +103,7 @@ class DefaultModuleFileProviderTest {
         doReturn(fileURLs).when(bundle).getResources(resource);
 
         // When
-        ModuleFileNotFoundException thrown = assertThrows(ModuleFileNotFoundException.class,
+        FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
                 () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
 
         assertThat(thrown)
@@ -122,7 +122,7 @@ class DefaultModuleFileProviderTest {
         doReturn(null).when(bundle).getResources(resource);
 
         // When
-        ModuleFileNotFoundException thrown = assertThrows(ModuleFileNotFoundException.class,
+        FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
                 () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
 
         assertThat(thrown)

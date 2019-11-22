@@ -23,13 +23,14 @@
     <dependencies>
         <dependency>
             <groupId>com.reedelk</groupId>
-            <artifactId>runtime-commons</artifactId>
-            <version>${runtime.commons.version}</version>
+            <artifactId>runtime-components</artifactId>
+            <version>${runtime.components.version}</version>
         </dependency>
         <dependency>
             <groupId>com.reedelk</groupId>
-            <artifactId>runtime-components</artifactId>
-            <version>${runtime.components.version}</version>
+            <artifactId>runtime-commons</artifactId>
+            <version>${runtime.commons.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.reedelk</groupId>
@@ -96,6 +97,8 @@
                         <Import-Package>
                             com.reedelk.runtime.api.*,
                             com.reedelk.runtime.system.api.*,
+                            com.reedelk.runtime.system.api.file.*,
+                            com.reedelk.runtime.commons.*,
                             sun.misc,
                             javax.script,
                             javax.annotation,

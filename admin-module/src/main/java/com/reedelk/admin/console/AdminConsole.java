@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
 
-@Component(service = AdminConsoleActivator.class, scope = SINGLETON, immediate = true)
-public class AdminConsoleActivator {
+@Component(service = AdminConsole.class, scope = SINGLETON, immediate = true)
+public class AdminConsole {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdminConsoleActivator.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminConsole.class);
 
     private static final String PROPERTY_ADMIN_CONSOLE_ADDRESS = "admin.console.address";
     private static final String PROPERTY_ADMIN_CONSOLE_PORT = "admin.console.port";

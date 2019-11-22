@@ -2,7 +2,7 @@ package com.reedelk.admin.console;
 
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.component.ProcessorSync;
-import com.reedelk.runtime.api.file.ModuleFileProvider;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -10,10 +10,12 @@ import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.commons.FileUtils;
+import com.reedelk.runtime.system.api.file.ModuleFileProvider;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.reactivestreams.Publisher;
 
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -24,7 +26,10 @@ public class LocalFileRead implements ProcessorSync {
 
     private static final int READ_LOCAL_FILE_BUFFER_SIZE = 65536;
 
-    private static final String WEBAPP_FOLDER = "/webapp/";
+    private final String webappFolder = "/webapp/";
+    private final String indexPage = "index.html";
+    private final String pathParamPage = "page";
+    private final String pathParamAttribute = "pathParams";
 
     @Reference
     private ModuleFileProvider moduleFileProvider;
@@ -32,24 +37,25 @@ public class LocalFileRead implements ProcessorSync {
     @Override
     public Message apply(Message message, FlowContext flowContext) {
 
-        Map<String, String> pathParams = message.getAttributes().get("pathParams");
+        Map<String, String> pathParams = message.getAttributes().get(pathParamAttribute);
 
-        String requestedFile = "index.html";
-        if (pathParams.containsKey("page")) {
-            requestedFile = pathParams.get("page");
-        }
+        String requestedFile = pathParams.getOrDefault(pathParamPage, indexPage);
 
-        String finalFilePath = WEBAPP_FOLDER + requestedFile;
+        String finalFilePath = webappFolder + requestedFile;
 
         String pageFileExtension = FileUtils.getExtension(finalFilePath);
 
         MimeType actualMimeType = MimeType.fromFileExtension(pageFileExtension);
 
-        Publisher<byte[]> contentAsStream =
-                moduleFileProvider.findBy(ModuleIdProvider.get(), finalFilePath, READ_LOCAL_FILE_BUFFER_SIZE);
+        try {
+            Publisher<byte[]> contentAsStream = moduleFileProvider.findBy(ModuleIdProvider.get(), finalFilePath, READ_LOCAL_FILE_BUFFER_SIZE);
 
-        TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
+            TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
-        return MessageBuilder.get().typedContent(content).build();
+            return MessageBuilder.get().typedContent(content).build();
+
+        } catch (FileNotFoundException e) {
+            throw new ESBException(e);
+        }
     }
 }

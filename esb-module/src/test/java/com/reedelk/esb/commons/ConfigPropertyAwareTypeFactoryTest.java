@@ -1,7 +1,7 @@
 package com.reedelk.esb.commons;
 
-import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.service.ConfigurationService;
+import com.reedelk.runtime.system.api.file.ModuleId;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
