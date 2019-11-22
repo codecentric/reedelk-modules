@@ -38,7 +38,6 @@ public class ServicesManager {
     private List<ServiceRegistration<?>> registeredServices = new ArrayList<>();
 
     private DefaultConfigurationService configurationService;
-    private ScriptEngine scriptEngineService;
 
     public ServicesManager(EventListener eventListener,
                            HotSwapListener hotSwapListener,
@@ -69,10 +68,6 @@ public class ServicesManager {
         return configurationService;
     }
 
-    public ScriptEngine scriptEngineService() {
-        return scriptEngineService;
-    }
-
     private void registerConfigurationService(BundleContext context) {
         configurationService = new DefaultConfigurationService(configurationAdmin, systemProperty);
         configurationService.initialize();
@@ -82,7 +77,7 @@ public class ServicesManager {
     }
 
     private void registerScriptEngineService(BundleContext context) {
-        scriptEngineService = ScriptEngine.INSTANCE;
+        ScriptEngine scriptEngineService = ScriptEngine.getInstance();
         ServiceRegistration<ScriptEngineService> registration =
                 context.registerService(ScriptEngineService.class, scriptEngineService, NO_PROPERTIES);
         registeredServices.add(registration);

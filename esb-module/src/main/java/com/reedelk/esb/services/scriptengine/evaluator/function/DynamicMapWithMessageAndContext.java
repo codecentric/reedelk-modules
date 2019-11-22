@@ -6,7 +6,7 @@ import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 
 import java.util.Map;
 
-public class EvaluateDynamicMapFunctionDefinitionBuilder implements FunctionDefinitionBuilder<DynamicMap<Object>> {
+public class DynamicMapWithMessageAndContext implements FunctionDefinitionBuilder<DynamicMap<Object>> {
 
     private static final String EVALUATE_MAP_SCRIPT =
             "function %s(message, context) {\n" +
@@ -15,9 +15,13 @@ public class EvaluateDynamicMapFunctionDefinitionBuilder implements FunctionDefi
 
     /**
      * This method builds the following script:
-     * {
-     *  key1:value1,
-     *  key2:value2
+     * The values are evaluated after the execution of the script.
+     *
+     * function fun_1ba-bf848432adf-abc(message, context) {
+     *  return {
+     *      key1: value1,
+     *      key2: value2
+     *  };
      * }
      */
     @Override

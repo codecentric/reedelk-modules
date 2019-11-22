@@ -76,6 +76,7 @@ public class ComponentDefinitionDeserializer {
             return context.create(enumClazz, componentDefinition, propertyName);
 
             // Primitive or Dynamic Value
+            // TODO: If clazz is Script, then use the context to resolve the script.
         } else {
             Class<?> clazz = setterArgument.getClazz();
             return context.create(clazz, componentDefinition, propertyName);

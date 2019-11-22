@@ -17,7 +17,7 @@ import static com.reedelk.esb.pubsub.Action.Module.Uninstalled;
 
 public class ScriptSourceEvaluator extends ScriptEngineServiceAdapter {
 
-    private final Map<Long, Collection<String>> MODULE_MODULE_NAMES_MAP = new HashMap<>();
+    private final Map<Long, Collection<String>> moduleIdAndScriptModuleNamesMap = new HashMap<>();
 
     public ScriptSourceEvaluator() {
         Event.operation.subscribe(Uninstalled, this);
@@ -28,7 +28,7 @@ public class ScriptSourceEvaluator extends ScriptEngineServiceAdapter {
         try (Reader reader = scriptSource.get()) {
             JavascriptEngineProvider.getInstance()
                     .eval(scriptSource.scriptModuleNames(), reader, scriptSource.bindings());
-            MODULE_MODULE_NAMES_MAP.put(scriptSource.moduleId(), scriptSource.scriptModuleNames());
+            moduleIdAndScriptModuleNamesMap.put(scriptSource.moduleId(), scriptSource.scriptModuleNames());
         } catch (IOException e) {
             throw new ESBException(e);
         }
@@ -37,8 +37,8 @@ public class ScriptSourceEvaluator extends ScriptEngineServiceAdapter {
     @OnMessage
     public void onModuleUninstalled(ActionModuleUninstalled action) {
         long moduleId = action.getMessage();
-        if (MODULE_MODULE_NAMES_MAP.containsKey(moduleId)) {
-            MODULE_MODULE_NAMES_MAP.remove(moduleId).forEach(scriptModuleName ->
+        if (moduleIdAndScriptModuleNamesMap.containsKey(moduleId)) {
+            moduleIdAndScriptModuleNamesMap.remove(moduleId).forEach(scriptModuleName ->
                     JavascriptEngineProvider.getInstance().removeModule(scriptModuleName));
         }
     }

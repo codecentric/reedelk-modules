@@ -106,6 +106,9 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
             } catch (Exception exception) {
 
+                // TODO: IF THIS ONE THROWS AN EXCEPTION WE CAN"T DO NOTHING! FIXIT otherwise the client
+                // TODO: would never get any answer!!
+
                 responseMapper.map(exception, response, flowContext);
 
                 Publisher<byte[]> body = bodyProvider.from(response, exception, flowContext);
@@ -127,6 +130,8 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                 realException = new ServerTooBusyException(errorMessage, exception);
             }
 
+            // TODO: IF THIS ONE THROWS AN EXCEPTION WE CAN"T DO NOTHING! FIXIT otherwise the client
+            // TODO: would never get any answer!!
             responseMapper.map(realException, response, flowContext);
 
             Publisher<byte[]> body = bodyProvider.from(response, realException, flowContext);

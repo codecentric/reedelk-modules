@@ -6,8 +6,6 @@ import com.reedelk.esb.pubsub.Event;
 import com.reedelk.esb.pubsub.OnMessage;
 import com.reedelk.esb.services.converter.DefaultConverterService;
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
-import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueErrorFunctionDefinitionBuilder;
-import com.reedelk.esb.services.scriptengine.evaluator.function.EvaluateDynamicValueFunctionDefinitionBuilder;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
@@ -24,9 +22,6 @@ import static com.reedelk.esb.pubsub.Action.Module.Uninstalled;
 import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STREAM_PROVIDER;
 
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
-
-    static final FunctionDefinitionBuilder<DynamicValue> ERROR_FUNCTION = new EvaluateDynamicValueErrorFunctionDefinitionBuilder();
-    static final FunctionDefinitionBuilder<DynamicValue> FUNCTION = new EvaluateDynamicValueFunctionDefinitionBuilder();
 
     private final Map<String, String> uuidFunctionNameMap = new HashMap<>();
     private final Map<Long, List<String>> moduleIdFunctionNamesMap = new HashMap<>();
@@ -106,14 +101,6 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    DefaultConverterService converterService() {
-        return DefaultConverterService.getInstance();
-    }
-
-    ScriptEngineProvider scriptEngine() {
-        return JavascriptEngineProvider.getInstance();
-    }
-
     @OnMessage
     public void onModuleUninstalled(Action.Module.ActionModuleUninstalled action) {
         long moduleId = action.getMessage();
@@ -121,5 +108,13 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             moduleIdFunctionNamesMap.get(moduleId).forEach(computedFunctionName ->
                     JavascriptEngineProvider.getInstance().removeFunction(computedFunctionName));
         }
+    }
+
+    DefaultConverterService converterService() {
+        return DefaultConverterService.getInstance();
+    }
+
+    ScriptEngineProvider scriptEngine() {
+        return JavascriptEngineProvider.getInstance();
     }
 }

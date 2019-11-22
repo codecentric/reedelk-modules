@@ -1,5 +1,8 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
+import com.reedelk.esb.services.scriptengine.evaluator.function.DynamicValueWithErrorAndContext;
+import com.reedelk.esb.services.scriptengine.evaluator.function.DynamicValueWithMessageAndContext;
+import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
@@ -9,6 +12,9 @@ import reactor.core.publisher.Mono;
 import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STREAM_PROVIDER;
 
 public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
+
+    private final FunctionDefinitionBuilder<DynamicValue> ERROR_FUNCTION = new DynamicValueWithErrorAndContext();
+    private final FunctionDefinitionBuilder<DynamicValue> FUNCTION = new DynamicValueWithMessageAndContext();
 
     @Override
     public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, FlowContext flowContext, Message message) {

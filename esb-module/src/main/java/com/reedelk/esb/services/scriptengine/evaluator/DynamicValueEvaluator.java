@@ -1,5 +1,8 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
+import com.reedelk.esb.services.scriptengine.evaluator.function.DynamicValueWithErrorAndContext;
+import com.reedelk.esb.services.scriptengine.evaluator.function.DynamicValueWithMessageAndContext;
+import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.commons.JavaType;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -11,6 +14,9 @@ import java.util.Optional;
 import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.OPTIONAL_PROVIDER;
 
 public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
+
+    private final FunctionDefinitionBuilder<DynamicValue> ERROR_FUNCTION = new DynamicValueWithErrorAndContext();
+    private final FunctionDefinitionBuilder<DynamicValue> FUNCTION = new DynamicValueWithMessageAndContext();
 
     @Override
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, FlowContext flowContext, Message message) {

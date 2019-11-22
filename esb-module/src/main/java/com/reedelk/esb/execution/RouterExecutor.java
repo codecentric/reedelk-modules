@@ -8,7 +8,6 @@ import com.reedelk.esb.services.scriptengine.ScriptEngine;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
-import com.reedelk.runtime.api.service.ScriptEngineService;
 import com.reedelk.runtime.component.Router;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -23,12 +22,9 @@ import static java.util.stream.Collectors.toList;
 
 public class RouterExecutor implements FlowExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(RouterExecutor.class);
-
-    private static final ScriptEngineService ENGINE = ScriptEngine.INSTANCE;
-
-    private static final Mono<Boolean> FALSE = Mono.just(false);
-    private static final Mono<Boolean> TRUE = Mono.just(true);
+    private final Logger logger = LoggerFactory.getLogger(RouterExecutor.class);
+    private final Mono<Boolean> FALSE = Mono.just(false);
+    private final Mono<Boolean> TRUE = Mono.just(true);
 
     @Override
     public Publisher<MessageAndContext> execute(Publisher<MessageAndContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
@@ -83,7 +79,7 @@ public class RouterExecutor implements FlowExecutor {
         try {
             return Router.DEFAULT_CONDITION.equals(expression) ?
                     TRUE :
-                    ENGINE.evaluate(expression, flowContext, message)
+                    ScriptEngine.getInstance().evaluate(expression, flowContext, message)
                             .map(resultAsString -> Mono.just(Boolean.parseBoolean(resultAsString)))
                             .orElse(FALSE);
         } catch (Exception e) {

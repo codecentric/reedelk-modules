@@ -17,20 +17,24 @@ import java.util.Optional;
 
 public class ScriptEngine implements ScriptEngineService {
 
-    public static final ScriptEngine INSTANCE = new ScriptEngine();
+    private static final ScriptEngine INSTANCE = new ScriptEngine();
 
     private DynamicValueStreamEvaluator dynamicValueStreamEvaluator;
     private DynamicValueEvaluator dynamicValueEvaluator;
-    private DynamicMapEvaluator dynamicMapEvaluator;
     private ScriptSourceEvaluator scriptSourceEvaluator;
+    private DynamicMapEvaluator dynamicMapEvaluator;
     private ScriptEvaluator scriptEvaluator;
 
     private ScriptEngine() {
         dynamicValueStreamEvaluator = new DynamicValueStreamEvaluator();
         dynamicValueEvaluator = new DynamicValueEvaluator();
-        dynamicMapEvaluator = new DynamicMapEvaluator();
         scriptSourceEvaluator = new ScriptSourceEvaluator();
+        dynamicMapEvaluator = new DynamicMapEvaluator();
         scriptEvaluator = new ScriptEvaluator();
+    }
+
+    public static ScriptEngine getInstance() {
+        return INSTANCE;
     }
 
     // Dynamic value
