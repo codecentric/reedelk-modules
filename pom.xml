@@ -8,7 +8,7 @@
         <groupId>com.reedelk</groupId>
         <artifactId>module-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../commons/module-parent</relativePath>
+        <relativePath>/module-parent</relativePath>
     </parent>
 
     <artifactId>modules</artifactId>
@@ -16,10 +16,6 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <json.version>20190722</json.version>
         <junit.version>5.5.2</junit.version>
         <jacoco.version>0.8.2</jacoco.version>
@@ -30,6 +26,7 @@
     </properties>
 
     <modules>
+        <module>module-parent</module>
         <module>admin-module</module>
         <module>esb-module</module>
         <module>rest-module</module>
@@ -123,5 +120,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
