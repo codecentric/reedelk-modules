@@ -27,7 +27,7 @@ public class ScriptSourceEvaluator extends ScriptEngineServiceAdapter {
     public void register(ScriptSource scriptSource) {
         try (Reader reader = scriptSource.get()) {
             JavascriptEngineProvider.getInstance()
-                    .eval(scriptSource.scriptModuleNames(), reader, scriptSource.bindings());
+                    .compile(scriptSource.scriptModuleNames(), reader, scriptSource.bindings());
             moduleIdAndScriptModuleNamesMap.put(scriptSource.moduleId(), scriptSource.scriptModuleNames());
         } catch (IOException e) {
             throw new ESBException(e);

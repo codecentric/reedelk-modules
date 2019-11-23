@@ -15,8 +15,8 @@ import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.OPT
 
 public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
 
-    private final FunctionDefinitionBuilder<DynamicValue> ERROR_FUNCTION = new DynamicValueWithErrorAndContext();
-    private final FunctionDefinitionBuilder<DynamicValue> FUNCTION = new DynamicValueWithMessageAndContext();
+    private final FunctionDefinitionBuilder<DynamicValue> errorFunctionBuilder = new DynamicValueWithErrorAndContext();
+    private final FunctionDefinitionBuilder<DynamicValue> functionBuilder = new DynamicValueWithMessageAndContext();
 
     @Override
     public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, FlowContext flowContext, Message message) {
@@ -32,9 +32,8 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
                 Object payload = message.payload();
                 return convert(payload, dynamicValue.getEvaluatedType(), OPTIONAL_PROVIDER);
             } else {
-                return execute(dynamicValue, OPTIONAL_PROVIDER, FUNCTION, message, flowContext);
+                return execute(dynamicValue, OPTIONAL_PROVIDER, functionBuilder, message, flowContext);
             }
-
         } else {
             // Not a script
             return Optional.ofNullable(dynamicValue.value());
@@ -48,7 +47,7 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
             return OPTIONAL_PROVIDER.empty();
         } else if (dynamicValue.isScript()) {
             // Script
-            return execute(dynamicValue, OPTIONAL_PROVIDER, ERROR_FUNCTION, exception, flowContext);
+            return execute(dynamicValue, OPTIONAL_PROVIDER, errorFunctionBuilder, exception, flowContext);
         } else {
             // Not a script
             return Optional.ofNullable(dynamicValue.value());
@@ -71,8 +70,7 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
                 Object payload = message.payload();
                 return convert(payload, JavaType.from(mimeType), OPTIONAL_PROVIDER);
             } else {
-                String functionName = functionNameOf(dynamicValue, FUNCTION);
-                Object evaluationResult = scriptEngine().invokeFunction(functionName, message, flowContext);
+                Object evaluationResult = invokeFunction(dynamicValue, functionBuilder, message, flowContext);
                 return convert(evaluationResult, JavaType.from(mimeType), OPTIONAL_PROVIDER);
             }
         } else {

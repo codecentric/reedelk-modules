@@ -57,14 +57,12 @@ public class ScriptEvaluator extends AbstractDynamicValueEvaluator {
     }
 
     private <T> T evaluateScript(Script script, Message message, FlowContext flowContext, Class<T> returnType, ValueProvider valueProvider) {
-        String functionName = functionNameOf(script, scriptWithMessageAndContext);
-        Object evaluationResult = scriptEngine().invokeFunction(functionName, message, flowContext);
+        Object evaluationResult = invokeFunction(script, scriptWithMessageAndContext, message, flowContext);
         return convert(evaluationResult, returnType, valueProvider);
     }
 
     private <T> T evaluateScript(Script script, List<Message> messages, FlowContext flowContext, Class<T> returnType, ValueProvider valueProvider) {
-        String functionName = functionNameOf(script, scriptWithMessagesAndContext);
-        Object evaluationResult = scriptEngine().invokeFunction(functionName, messages, flowContext);
+        Object evaluationResult = invokeFunction(script, scriptWithMessagesAndContext, messages, flowContext);
         return convert(evaluationResult, returnType, valueProvider);
     }
 }

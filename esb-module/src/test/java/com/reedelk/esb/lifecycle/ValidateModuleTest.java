@@ -59,7 +59,7 @@ class ValidateModuleTest {
         flows.add(FLOW_WITH_COMPONENTS.parse()); // by adding the same flow twice we simulate two flows with the same ID.
         flows.add(FLOW_WITH_COMPONENTS.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
@@ -76,7 +76,7 @@ class ValidateModuleTest {
 
         Set<JSONObject> flows = Collections.singleton(FLOW_WITHOUT_ID.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
@@ -95,7 +95,7 @@ class ValidateModuleTest {
         flows.add(FLOW_WITH_COMPONENTS.parse());
         flows.add(FLOW_WITH_ROUTER.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When

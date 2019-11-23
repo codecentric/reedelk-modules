@@ -13,8 +13,8 @@ import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STR
 
 public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
 
-    private final FunctionDefinitionBuilder<DynamicValue> ERROR_FUNCTION = new DynamicValueWithErrorAndContext();
-    private final FunctionDefinitionBuilder<DynamicValue> FUNCTION = new DynamicValueWithMessageAndContext();
+    private final FunctionDefinitionBuilder<DynamicValue> errorFunctionBuilder = new DynamicValueWithErrorAndContext();
+    private final FunctionDefinitionBuilder<DynamicValue> functionBuilder = new DynamicValueWithMessageAndContext();
 
     @Override
     public <T> TypedPublisher<T> evaluateStream(DynamicValue<T> dynamicValue, FlowContext flowContext, Message message) {
@@ -26,7 +26,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
             if (dynamicValue.isEvaluateMessagePayload()) {
                 return evaluateMessagePayload(dynamicValue.getEvaluatedType(), message);
             } else {
-                return TypedPublisher.from(execute(dynamicValue, STREAM_PROVIDER, FUNCTION, message, flowContext), dynamicValue.getEvaluatedType());
+                return TypedPublisher.from(execute(dynamicValue, STREAM_PROVIDER, functionBuilder, message, flowContext), dynamicValue.getEvaluatedType());
             }
         } else {
             // Not a script
@@ -42,7 +42,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
         } else if (dynamicValue.isScript()) {
             // Script
             return TypedPublisher.from(
-                    execute(dynamicValue, STREAM_PROVIDER, ERROR_FUNCTION, throwable, flowContext),
+                    execute(dynamicValue, STREAM_PROVIDER, errorFunctionBuilder, throwable, flowContext),
                     dynamicValue.getEvaluatedType());
         } else {
             // Not a script

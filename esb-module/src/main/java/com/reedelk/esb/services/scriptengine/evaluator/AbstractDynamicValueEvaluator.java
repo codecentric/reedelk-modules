@@ -1,12 +1,12 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
-import com.reedelk.esb.commons.FunctionName;
 import com.reedelk.esb.pubsub.Action;
 import com.reedelk.esb.pubsub.Event;
 import com.reedelk.esb.pubsub.OnMessage;
 import com.reedelk.esb.services.converter.DefaultConverterService;
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.ScriptBlock;
@@ -23,7 +23,6 @@ import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STR
 
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
 
-    private final Map<String, String> uuidFunctionNameMap = new HashMap<>();
     private final Map<Long, List<String>> moduleIdFunctionNamesMap = new HashMap<>();
 
     AbstractDynamicValueEvaluator() {
@@ -34,8 +33,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         if (dynamicValue.isEmpty()) {
             return provider.empty();
         } else {
-            String functionName = functionNameOf(dynamicValue, functionDefinitionBuilder);
-            Object evaluationResult = scriptEngine().invokeFunction(functionName, args);
+            Object evaluationResult = invokeFunction(dynamicValue, functionDefinitionBuilder, args);
             return convert(evaluationResult, dynamicValue.getEvaluatedType(), provider);
         }
     }
@@ -57,30 +55,48 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    <T extends ScriptBlock> String functionNameOf(T scriptBlock, FunctionDefinitionBuilder<T> functionDefinitionBuilder) {
-        String valueUUID = scriptBlock.uuid();
-        String functionName = uuidFunctionNameMap.get(valueUUID);
-        if (functionName != null) return functionName;
+    <T extends ScriptBlock> Object invokeFunction(T dynamicValue, FunctionDefinitionBuilder<T> functionDefinitionBuilder, Object... args) {
+        try {
+            return scriptEngine().invokeFunction(dynamicValue.functionName(), args);
+        } catch (NoSuchMethodException e) {
+            // The function has not been compiled yet, optimistic invocation
+            // failed. We compile the function and try to invoke it again.
+            compile(dynamicValue, functionDefinitionBuilder);
+            try {
+                return scriptEngine().invokeFunction(dynamicValue.functionName(), args);
+            } catch (NoSuchMethodException exception) {
+                // If no such method exception was again thrown, it means
+                // that something went wrong in the engine. In this case
+                // there is nothing we can do to fix it and therefore
+                // we rethrow the exception to the caller.
+                throw new ESBException(exception);
+            }
+        }
+    }
 
+    private <T extends ScriptBlock> void compile(T scriptBlock, FunctionDefinitionBuilder<T> functionDefinitionBuilder) {
         synchronized (this) {
-            String currentFunctionName = uuidFunctionNameMap.get(valueUUID);
-            if (currentFunctionName != null) return currentFunctionName;
 
-            String computedFunctionName = FunctionName.from(valueUUID);
-            String functionDefinition = functionDefinitionBuilder.from(computedFunctionName, scriptBlock);
-
-            // pre-compile the function definition.
-            scriptEngine().eval(functionDefinition);
-            uuidFunctionNameMap.put(valueUUID, computedFunctionName);
-
-            // add mapping between module id and function name so that we can remove
-            // the functions from the runtime when a module is un-deployed.
             long moduleId = scriptBlock.moduleId();
+
             if (!moduleIdFunctionNamesMap.containsKey(moduleId)) {
                 moduleIdFunctionNamesMap.put(moduleId, new ArrayList<>());
             }
-            moduleIdFunctionNamesMap.get(moduleId).add(computedFunctionName);
-            return computedFunctionName;
+            String functionName = scriptBlock.functionName();
+
+            if (moduleIdFunctionNamesMap.get(moduleId).contains(functionName)) {
+                // Already compiled by a previous call. This is needed because
+                // compile might have been called by multiple Threads for the
+                // same function, we prevent the function to be compiled twice.
+                return;
+            }
+
+            String functionDefinition = functionDefinitionBuilder.from(functionName, scriptBlock);
+            scriptEngine().compile(functionDefinition);
+
+            // Compilation was successful, we can add the function name
+            // to the list of functions registered for the given module id.
+            moduleIdFunctionNamesMap.get(moduleId).add(functionName);
         }
     }
 
@@ -103,6 +119,9 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
 
     @OnMessage
     public void onModuleUninstalled(Action.Module.ActionModuleUninstalled action) {
+        // No need to synchronize the access to 'moduleIdFunctionNamesMap' because
+        // this method is called always AFTER a module has been completely stopped,
+        // hence we are sure that none of its functions might be called.
         long moduleId = action.getMessage();
         if (moduleIdFunctionNamesMap.containsKey(moduleId)) {
             moduleIdFunctionNamesMap.get(moduleId).forEach(computedFunctionName ->

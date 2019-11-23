@@ -203,7 +203,7 @@ class BuildModuleTest {
         Set<JSONObject> flows = new HashSet<>();
         flows.add(FLOW_WITH_COMPONENTS.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         mockComponentWithServiceReference(TestInboundComponent.class);
@@ -257,7 +257,7 @@ class BuildModuleTest {
         flows.add(FLOW_WITH_NOT_WELL_FORMED_FORK.parse());
         flows.add(FLOW_WITH_NOT_WELL_FORMED_ROUTER.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         mockComponentWithServiceReference(AnotherInboundTestComponent.class);

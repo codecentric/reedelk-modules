@@ -23,17 +23,12 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
             return (Map<String, T>) emptyMap;
 
         } else {
-
-            String functionName = functionNameOf(dynamicMap, mapFunctionBuilder);
-
-            Map<String, T> evaluatedMap = (Map<String, T>) scriptEngine().invokeFunction(functionName, message, context);
-
-            // We map the values to the correct output value type
+            Map<String, T> evaluatedMap = (Map<String, T>) invokeFunction(dynamicMap, mapFunctionBuilder, message, context);
             evaluatedMap.forEach((key, value) -> {
+                // We map the values to the correct output value type
                 T converted = DefaultConverterService.getInstance().convert(value, dynamicMap.getEvaluatedType());
                 evaluatedMap.put(key, converted);
             });
-
             return evaluatedMap;
         }
     }

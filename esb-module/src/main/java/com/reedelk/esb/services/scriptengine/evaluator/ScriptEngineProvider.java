@@ -6,13 +6,14 @@ import java.util.Map;
 
 public interface ScriptEngineProvider {
 
-    void eval(Collection<String> modules, Reader reader, Map<String,Object> bindings);
+    void compile(String functionDefinition);
 
-    void eval(String functionDefinition);
+    void compile(Collection<String> modules, Reader reader, Map<String,Object> bindings);
 
+    // TODO: merge this remove module with remove function?
     void removeModule(String module);
 
     void removeFunction(String functionName);
 
-    Object invokeFunction(String functionName, Object ...args);
+    Object invokeFunction(String functionName, Object ...args) throws NoSuchMethodException;
 }

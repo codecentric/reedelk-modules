@@ -6,9 +6,13 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.runtime.api.component.Implementor;
+import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.script.Script;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.osgi.framework.Bundle;
+
+import static java.util.Optional.of;
 
 public class FlowBuilderContext {
 
@@ -56,5 +60,17 @@ public class FlowBuilderContext {
 
     public Object create(Class<?> genericType, JSONArray array, int index) {
         return typeFactory.create(genericType, array, index, bundle.getBundleId());
+    }
+
+    // TODO: Create a function for this task.
+    // IMPORTANT: The  given script in input contains in the body the path of the script resource
+    // in  the /resources/script folder.
+    public Script loadScriptBodyOf(Script script) {
+        return deserializedModule.getScripts()
+                .stream()
+                .filter(scriptResource -> scriptResource.getScriptFilePath().endsWith(script.body()))
+                .findFirst()
+                .flatMap(resource -> of(Script.from(resource.getBody(), script.moduleId())))
+                .orElseThrow(() -> new ESBException("Could not find script [" + script.body() + "]"));
     }
 }

@@ -4,6 +4,7 @@ import com.reedelk.esb.flow.FlowBuilderContext;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.commons.CollectionFactory;
 import com.reedelk.runtime.commons.JsonParser;
 import com.reedelk.runtime.system.api.file.ModuleId;
@@ -76,7 +77,16 @@ public class ComponentDefinitionDeserializer {
             return context.create(enumClazz, componentDefinition, propertyName);
 
             // Primitive or Dynamic Value
-            // TODO: If clazz is Script, then use the context to resolve the script.
+        } else if (Script.class.equals(setterArgument.getClazz())) {
+            // The context.create created a Script object with body, the
+            // name of the script in the module/resources/scripts folder.
+            // We must resolve that script with the resource and replace the
+            // script object with a new one containing the actual body from the
+            // specified file.
+            Class<?> clazz = setterArgument.getClazz();
+            Script script = (Script) context.create(clazz, componentDefinition, propertyName);
+            return context.loadScriptBodyOf(script);
+
         } else {
             Class<?> clazz = setterArgument.getClazz();
             return context.create(clazz, componentDefinition, propertyName);

@@ -2,6 +2,7 @@ package com.reedelk.esb.services.scriptengine;
 
 import com.reedelk.esb.exception.ScriptCompilationException;
 import com.reedelk.esb.services.scriptengine.evaluator.ScriptEngineProvider;
+import com.reedelk.runtime.api.exception.ESBException;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
@@ -34,16 +35,17 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     }
 
     @Override
-    public Object invokeFunction(String functionName, Object... args) {
+    public Object invokeFunction(String functionName, Object... args) throws NoSuchMethodException {
         try {
             return engine.invokeFunction(functionName, args);
-        } catch (ScriptException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
+        } catch (ScriptException e) {
+            // TODO: Create script invocation exception class here!??
+            throw new ESBException(e);
         }
     }
 
     @Override
-    public void eval(String functionDefinition) {
+    public void compile(String functionDefinition) {
         try {
 
             CompiledScript compiled = engine.compile(functionDefinition);
@@ -57,7 +59,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     }
 
     @Override
-    public void eval(Collection<String> moduleNames, Reader reader, Map<String, Object> customBindings) {
+    public void compile(Collection<String> moduleNames, Reader reader, Map<String, Object> customBindings) {
         try {
 
             // We create a temporary binding object just to pass custom initialization bindings

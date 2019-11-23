@@ -30,7 +30,9 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
 
         Collection<JSONObject> configurations = getConfigurations();
 
-        return new DeserializedModule(flows, subflows, configurations);
+        Collection<ScriptResource> scripts = getScripts();
+
+        return new DeserializedModule(flows, subflows, configurations, scripts);
     }
 
     protected abstract List<URL> getResources(String directory, String suffix);
@@ -49,6 +51,18 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
         return resourcesURL.stream()
                 .map(FileUtils.ReadFromURL::asString)
                 .map(JsonParser::from)
+                .collect(toSet());
+    }
+
+    // Must provide name of the script starting from root.
+    private Collection<ScriptResource> getScripts() {
+        List<URL> resourcesURL = getResources(Script.RESOURCE_DIRECTORY, SCRIPT.value());
+        return resourcesURL.stream()
+                .map(url -> {
+                    String scriptFilePath = url.getPath();
+                    String body = FileUtils.ReadFromURL.asString(url);
+                    return new ScriptResource(scriptFilePath, body);
+                })
                 .collect(toSet());
     }
 }
