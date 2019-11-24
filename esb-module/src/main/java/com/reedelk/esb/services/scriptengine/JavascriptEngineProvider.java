@@ -1,8 +1,6 @@
 package com.reedelk.esb.services.scriptengine;
 
-import com.reedelk.esb.exception.ScriptCompilationException;
 import com.reedelk.esb.services.scriptengine.evaluator.ScriptEngineProvider;
-import com.reedelk.runtime.api.exception.ESBException;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
@@ -13,8 +11,6 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.reedelk.esb.commons.Messages.Script.SCRIPT_COMPILATION_ERROR;
-import static com.reedelk.esb.commons.Messages.Script.SCRIPT_COMPILATION_ERROR_WITH_FUNCTION;
 import static javax.script.ScriptContext.ENGINE_SCOPE;
 
 public class JavascriptEngineProvider implements ScriptEngineProvider {
@@ -35,53 +31,31 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     }
 
     @Override
-    public Object invokeFunction(String functionName, Object... args) throws NoSuchMethodException {
-        try {
-            return engine.invokeFunction(functionName, args);
-        } catch (ScriptException e) {
-            // TODO: Create script invocation exception class here!??
-            throw new ESBException(e);
-        }
+    public Object invokeFunction(String functionName, Object... args) throws NoSuchMethodException, ScriptException {
+        return engine.invokeFunction(functionName, args);
     }
 
     @Override
-    public void compile(String functionDefinition) {
-        try {
-
-            CompiledScript compiled = engine.compile(functionDefinition);
-
-            compiled.eval(engine.getBindings(ENGINE_SCOPE));
-
-        } catch (ScriptException exception) {
-            String errorMessage = SCRIPT_COMPILATION_ERROR_WITH_FUNCTION.format(functionDefinition, exception.getMessage());
-            throw new ScriptCompilationException(errorMessage, exception);
-        }
+    public void compile(String functionDefinition) throws ScriptException {
+        CompiledScript compiled = engine.compile(functionDefinition);
+        compiled.eval(engine.getBindings(ENGINE_SCOPE));
     }
 
     @Override
-    public void compile(Collection<String> moduleNames, Reader reader, Map<String, Object> customBindings) {
-        try {
+    public void compile(Collection<String> moduleNames, Reader reader, Map<String, Object> customBindings) throws ScriptException {
+        // We create a temporary binding object just to pass custom initialization bindings
+        // to the module. They are not needed in the engine scope, but just for module initialization.
+        Bindings tmpBindings = engine.createBindings();
 
-            // We create a temporary binding object just to pass custom initialization bindings
-            // to the module. They are not needed in the engine scope, but just for module
-            // initialization.
+        tmpBindings.putAll(customBindings);
 
-            Bindings tmpBindings = engine.createBindings();
+        CompiledScript compiled = engine.compile(reader);
 
-            tmpBindings.putAll(customBindings);
+        compiled.eval(tmpBindings);
 
-            CompiledScript compiled = engine.compile(reader);
+        Bindings bindings = engine.getBindings(ENGINE_SCOPE);
 
-            compiled.eval(tmpBindings);
-
-            Bindings bindings = engine.getBindings(ENGINE_SCOPE);
-
-            moduleNames.forEach(moduleName -> bindings.put(moduleName, tmpBindings.get(moduleName)));
-
-        } catch (ScriptException exception) {
-            String errorMessage = SCRIPT_COMPILATION_ERROR.format(exception.getMessage());
-            throw new ScriptCompilationException(errorMessage, exception);
-        }
+        moduleNames.forEach(moduleName -> bindings.put(moduleName, tmpBindings.get(moduleName)));
     }
 
     @Override
@@ -100,9 +74,9 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
      * An approach to cleanup the bindings could be:
      * Bindings newBindings = engine.createBindings();
      * engine.getBindings(ENGINE_SCOPE).forEach((key, value) -> {
-     *    if (!key.equals(functionName)) {
-     *        newBindings.put(key, value);
-     *    }
+     *  if (!key.equals(functionName)) {
+     *      newBindings.put(key, value);
+     *  }
      * });
      * engine.setBindings(newBindings, ENGINE_SCOPE);
      * However this approach would require synchronization of the current script execution

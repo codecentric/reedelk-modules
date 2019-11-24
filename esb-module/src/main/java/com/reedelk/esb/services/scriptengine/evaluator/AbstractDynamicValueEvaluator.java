@@ -1,5 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
+import com.reedelk.esb.exception.ScriptCompilationException;
+import com.reedelk.esb.exception.ScriptExecutionException;
 import com.reedelk.esb.pubsub.Action;
 import com.reedelk.esb.pubsub.Event;
 import com.reedelk.esb.pubsub.OnMessage;
@@ -13,6 +15,7 @@ import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import org.reactivestreams.Publisher;
 
+import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.Map;
 import static com.reedelk.esb.pubsub.Action.Module.Uninstalled;
 import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STREAM_PROVIDER;
 
+// TODO: Test also that  all resources and dynamic scripts are removedfrom the maps when a module is being uninstalled!!
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
 
     private final Map<Long, List<String>> moduleIdFunctionNamesMap = new HashMap<>();
@@ -55,24 +59,36 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    // TODO: If the script was not executed succssfully, USE THE SCRIPT BLOCK CONTEXT TO LOG THE EXCEPTION!
-    //  log it  and rethrow it so that there is more context to understand why and where the script was wrong!
-    // TODO: Test also that  all resoruces and dynamic scripts are removedfrom the maps when a module is being uninstalled!!
     <T extends ScriptBlock> Object invokeFunction(T dynamicValue, FunctionDefinitionBuilder<T> functionDefinitionBuilder, Object... args) {
         try {
+
             return scriptEngine().invokeFunction(dynamicValue.functionName(), args);
+
+        }  catch (ScriptException scriptException) {
+            // We add some contextual information to the original exception such as
+            // module if, flow id, flow title and script body which failed the execution.
+            throw new ScriptExecutionException(dynamicValue, scriptException);
+
         } catch (NoSuchMethodException e) {
             // The function has not been compiled yet, optimistic invocation
             // failed. We compile the function and try to invoke it again.
             compile(dynamicValue, functionDefinitionBuilder);
+
             try {
+
                 return scriptEngine().invokeFunction(dynamicValue.functionName(), args);
-            } catch (NoSuchMethodException exception) {
+
+            }  catch (ScriptException scriptException) {
+                // We add some contextual information to the original exception such as
+                // module if, flow id, flow title and script body which failed the execution.
+                throw new ScriptExecutionException(dynamicValue, scriptException);
+
+            }  catch (NoSuchMethodException noSuchMethodException) {
                 // If no such method exception was again thrown, it means
                 // that something went wrong in the engine. In this case
                 // there is nothing we can do to fix it and therefore
                 // we rethrow the exception to the caller.
-                throw new ESBException(exception);
+                throw new ESBException(noSuchMethodException);
             }
         }
     }
@@ -95,7 +111,11 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             }
 
             String functionDefinition = functionDefinitionBuilder.from(functionName, scriptBlock);
-            scriptEngine().compile(functionDefinition);
+            try {
+                scriptEngine().compile(functionDefinition);
+            } catch (ScriptException scriptCompilationException) {
+                throw new ScriptCompilationException(scriptBlock, scriptCompilationException);
+            }
 
             // Compilation was successful, we can add the function name
             // to the list of functions registered for the given module id.
