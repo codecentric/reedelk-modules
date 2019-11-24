@@ -55,6 +55,9 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
+    // TODO: If the script was not executed succssfully, USE THE SCRIPT BLOCK CONTEXT TO LOG THE EXCEPTION!
+    //  log it  and rethrow it so that there is more context to understand why and where the script was wrong!
+    // TODO: Test also that  all resoruces and dynamic scripts are removedfrom the maps when a module is being uninstalled!!
     <T extends ScriptBlock> Object invokeFunction(T dynamicValue, FunctionDefinitionBuilder<T> functionDefinitionBuilder, Object... args) {
         try {
             return scriptEngine().invokeFunction(dynamicValue.functionName(), args);
