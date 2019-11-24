@@ -133,17 +133,17 @@ public class Messages {
 
         SCRIPT_BLOCK_COMPILATION_ERROR("%s\n" +
                 "--------------------------------\n" +
-                "Script compilation error info:\n- Error message=%s\n- Module id=%d \n- Flow id=%s \n- Flow title=%s\n- Script:\n\t%s\n" +
+                "Script compilation error info:\n- Module id=%d \n- Flow id=%s \n- Flow title=%s\n- Script:\n\t%s\n" +
                 "--------------------------------\n"),
 
         SCRIPT_SOURCE_COMPILATION_ERROR("%s\n" +
                 "--------------------------------\n" +
-                "Source compilation error info:\n- Error message=%s\n- Module id=%d \n- Module names=%s \n- Script resource=%s\n" +
+                "Source compilation error info:\n- Module id=%d \n- Module names=%s \n- Script resource=%s\n" +
                 "--------------------------------\n"),
 
         SCRIPT_EXECUTION_ERROR("%s\n" +
                 "--------------------------------\n" +
-                "Script execution error info:\n- Error message=%s\n- Module id=%d \n- Flow id=%s \n- Flow title=%s\n- Script:\n\t%s\n" +
+                "Script execution error info:\n- Module id=%d \n- Flow id=%s \n- Flow title=%s\n- Script:\n\t%s\n" +
                 "--------------------------------\n");
 
         private String msg;
