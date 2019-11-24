@@ -1,18 +1,21 @@
 package com.reedelk.esb.lifecycle;
 
-import com.reedelk.esb.commons.ConfigPropertyAwareTypeFactory;
 import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.flow.ErrorStateFlow;
 import com.reedelk.esb.flow.Flow;
-import com.reedelk.esb.flow.FlowBuilder;
-import com.reedelk.esb.flow.FlowBuilderContext;
+import com.reedelk.esb.flow.deserializer.FlowDeserializer;
+import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
+import com.reedelk.esb.flow.deserializer.typefactory.ConfigPropertyAwareTypeFactoryDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.ScriptBlockAwareTypeFactoryDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.ScriptFunctionBodyResolverDecorator;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.module.state.ModuleState;
 import com.reedelk.runtime.commons.JsonParser;
+import com.reedelk.runtime.commons.TypeFactory;
 import org.json.JSONObject;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
@@ -74,16 +77,16 @@ public class BuildModule extends AbstractStep<Module, Module> {
 
         ModulesManager modulesManager = modulesManager();
 
-        ConfigPropertyAwareTypeFactory typeFactory = new ConfigPropertyAwareTypeFactory(configurationService());
+        TypeFactory typeFactory = TypeFactory.getInstance();
+        typeFactory = new ScriptFunctionBodyResolverDecorator(typeFactory, deserializedModule);
+        typeFactory = new ConfigPropertyAwareTypeFactoryDecorator(configurationService(), typeFactory);
+        typeFactory = new ScriptBlockAwareTypeFactoryDecorator(typeFactory, bundle.getBundleId(), flowId, flowTitle);
 
         try {
-
-            FlowBuilderContext context = new FlowBuilderContext(bundle, modulesManager, deserializedModule, typeFactory);
-
-            FlowBuilder flowBuilder = new FlowBuilder(context);
-
-            flowBuilder.build(flowGraph, flowDefinition);
-
+            FlowDeserializerContext context =
+                    new FlowDeserializerContext(bundle, modulesManager, deserializedModule, typeFactory);
+            FlowDeserializer flowDeserializer = new FlowDeserializer(context);
+            flowDeserializer.deserialize(flowGraph, flowDefinition);
             return new Flow(flowId, flowTitle, flowGraph, executionEngine);
 
         } catch (Exception exception) {

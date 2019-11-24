@@ -1,6 +1,8 @@
-package com.reedelk.esb.commons;
+package com.reedelk.esb.flow.deserializer.typefactory;
 
 import com.reedelk.runtime.api.service.ConfigurationService;
+import com.reedelk.runtime.commons.TypeFactory;
+import com.reedelk.runtime.commons.TypeFactoryContext;
 import com.reedelk.runtime.system.api.file.ModuleId;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,18 +15,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ConfigPropertyAwareTypeFactoryTest {
-
-    private long testModuleId = 23;
+class ConfigPropertyAwareTypeFactoryDecoratorTest {
 
     @Mock
     private ConfigurationService configurationService;
 
-    private ConfigPropertyAwareTypeFactory typeFactory;
+    private ConfigPropertyAwareTypeFactoryDecorator typeFactory;
+    private TypeFactoryContext typeFactoryContext = new TypeFactoryContext(10L, "aabbcc", "Test flow");
 
     @BeforeEach
     void setUp() {
-        typeFactory = new ConfigPropertyAwareTypeFactory(configurationService);
+        typeFactory = new ConfigPropertyAwareTypeFactoryDecorator(configurationService, TypeFactory.getInstance());
     }
 
     @Test
@@ -40,7 +41,7 @@ class ConfigPropertyAwareTypeFactoryTest {
         componentDefinition.put(configKey, "${listener.port}");
 
         // When
-        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey, testModuleId);
+        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey, typeFactoryContext);
 
         // Then
         assertThat(typeInstance).isEqualTo(expectedValue);
@@ -58,7 +59,7 @@ class ConfigPropertyAwareTypeFactoryTest {
         componentDefinition.put(configKey, expectedValue);
 
         // When
-        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey, testModuleId);
+        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey, typeFactoryContext);
 
         // Then
         assertThat(typeInstance).isEqualTo(expectedValue);
@@ -68,14 +69,10 @@ class ConfigPropertyAwareTypeFactoryTest {
     @Test
     void shouldReturnModuleIdTypeInstance() {
         // When
-        Object typeInstance = typeFactory.create(ModuleId.class, null, null, testModuleId);
+        ModuleId typeInstance = typeFactory.create(ModuleId.class, null, null, typeFactoryContext);
 
         // Then
-        assertThat(typeInstance).isInstanceOf(ModuleId.class);
-
-        ModuleId actual = (ModuleId) typeInstance;
-        assertThat(actual.get()).isEqualTo(testModuleId);
-
+        assertThat(typeInstance.get()).isEqualTo(typeFactoryContext.getModuleId());
         verifyNoMoreInteractions(configurationService);
     }
 }

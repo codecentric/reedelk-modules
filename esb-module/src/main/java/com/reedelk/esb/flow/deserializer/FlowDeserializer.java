@@ -1,7 +1,7 @@
-package com.reedelk.esb.flow;
+package com.reedelk.esb.flow.deserializer;
 
 
-import com.reedelk.esb.flow.deserializer.ExecutionNodeDeserializer;
+import com.reedelk.esb.flow.deserializer.node.ExecutionNodeDeserializer;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.commons.JsonParser;
@@ -11,15 +11,15 @@ import org.json.JSONObject;
 
 import static com.reedelk.esb.commons.Preconditions.checkState;
 
-public class FlowBuilder {
+public class FlowDeserializer {
 
-    private final FlowBuilderContext context;
+    private final FlowDeserializerContext context;
 
-    public FlowBuilder(FlowBuilderContext context) {
+    public FlowDeserializer(FlowDeserializerContext context) {
         this.context = context;
     }
 
-    public void build(ExecutionGraph flowGraph, JSONObject flowStructure) {
+    public void deserialize(ExecutionGraph flowGraph, JSONObject flowStructure) {
         JSONArray flowComponents = JsonParser.Flow.flow(flowStructure);
 
         ExecutionNode current = null;

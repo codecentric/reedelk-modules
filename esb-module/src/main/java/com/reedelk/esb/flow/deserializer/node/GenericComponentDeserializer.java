@@ -1,6 +1,6 @@
-package com.reedelk.esb.flow.deserializer;
+package com.reedelk.esb.flow.deserializer.node;
 
-import com.reedelk.esb.flow.FlowBuilderContext;
+import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Component;
@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 public class GenericComponentDeserializer extends AbstractDeserializer {
 
-    GenericComponentDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
+    GenericComponentDeserializer(ExecutionGraph graph, FlowDeserializerContext context) {
         super(graph, context);
     }
 

@@ -2,6 +2,7 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.runtime.api.message.*;
+import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicFloatMap;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicIntegerMap;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
@@ -19,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class DynamicMapEvaluatorTest {
 
-    private final long testModuleId = 10L;
+    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L, "aabbcc", "Test flow");
 
     @Mock
     private FlowContext context;
@@ -31,7 +32,6 @@ class DynamicMapEvaluatorTest {
         evaluator = new DynamicMapEvaluator();
     }
 
-
     @Test
     void shouldCorrectlyEvaluateMapWithScriptAndTextAndNumericValues() {
         // Given
@@ -41,7 +41,7 @@ class DynamicMapEvaluatorTest {
         DynamicStringMap dynamicMap = DynamicStringMap.from(of(
                 "script", "#[message.attributes.propErty1]",
                 "text", "This is a text",
-                "numeric", "23532"), testModuleId);
+                "numeric", "23532"), scriptBlockContext);
 
         // When
         Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
@@ -82,7 +82,7 @@ class DynamicMapEvaluatorTest {
         // Given
         Message message = MessageBuilder.get().text("test").build();
         DynamicStringMap dynamicMap = DynamicStringMap.from(
-                of("text", "a simple text 'with quotes'"), testModuleId);
+                of("text", "a simple text 'with quotes'"), scriptBlockContext);
 
         // When
         Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
@@ -97,7 +97,7 @@ class DynamicMapEvaluatorTest {
         Message message = MessageBuilder.get().text("a text").build();
         DynamicIntegerMap dynamicMap = DynamicIntegerMap.from(of(
                 "aNumericValue", 23,
-                "aScriptedNumericValue", "#[45 + 23]"), testModuleId);
+                "aScriptedNumericValue", "#[45 + 23]"), scriptBlockContext);
 
         // When
         Map<String,Integer> evaluated = evaluator.evaluate(dynamicMap, context, message);
@@ -113,7 +113,7 @@ class DynamicMapEvaluatorTest {
         Message message = MessageBuilder.get().text("a text").build();
         DynamicFloatMap dynamicMap = DynamicFloatMap.from(of(
                 "aFloatValue", 23.23f,
-                "aScriptedFloatValue", "#[34.23 + 12.1]"), testModuleId);
+                "aScriptedFloatValue", "#[34.23 + 12.1]"), scriptBlockContext);
 
         // When
         Map<String,Float> evaluated = evaluator.evaluate(dynamicMap, context, message);

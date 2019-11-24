@@ -1,8 +1,8 @@
-package com.reedelk.esb.flow.deserializer;
+package com.reedelk.esb.flow.deserializer.node;
 
 import com.reedelk.esb.component.ForkWrapper;
 import com.reedelk.esb.execution.commons.FindFirstSuccessorLeadingTo;
-import com.reedelk.esb.flow.FlowBuilderContext;
+import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.component.Stop;
@@ -14,7 +14,7 @@ import static com.reedelk.runtime.commons.JsonParser.Implementor;
 
 class ForkDeserializer extends AbstractDeserializer {
 
-    ForkDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
+    ForkDeserializer(ExecutionGraph graph, FlowDeserializerContext context) {
         super(graph, context);
     }
 

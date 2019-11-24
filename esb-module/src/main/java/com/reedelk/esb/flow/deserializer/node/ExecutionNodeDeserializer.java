@@ -1,6 +1,6 @@
-package com.reedelk.esb.flow.deserializer;
+package com.reedelk.esb.flow.deserializer.node;
 
-import com.reedelk.esb.flow.FlowBuilderContext;
+import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -20,7 +20,7 @@ public class ExecutionNodeDeserializer {
 
     private ExecutionGraph graph;
     private ExecutionNode parent;
-    private FlowBuilderContext context;
+    private FlowDeserializerContext context;
     private JSONObject componentDefinition;
 
     private static final Class<? extends Deserializer> GENERIC_DESERIALIZER = GenericComponentDeserializer.class;
@@ -52,7 +52,7 @@ public class ExecutionNodeDeserializer {
         return this;
     }
 
-    public ExecutionNodeDeserializer context(FlowBuilderContext context) {
+    public ExecutionNodeDeserializer context(FlowDeserializerContext context) {
         this.context = context;
         return this;
     }
@@ -68,10 +68,10 @@ public class ExecutionNodeDeserializer {
         return instanceOf(graph, context, deserializerClazz).deserialize(parent, componentDefinition);
     }
 
-    private static Deserializer instanceOf(ExecutionGraph graph, FlowBuilderContext context, Class<? extends Deserializer> builderClazz) {
+    private static Deserializer instanceOf(ExecutionGraph graph, FlowDeserializerContext context, Class<? extends Deserializer> builderClazz) {
         try {
             return builderClazz
-                    .getDeclaredConstructor(ExecutionGraph.class, FlowBuilderContext.class)
+                    .getDeclaredConstructor(ExecutionGraph.class, FlowDeserializerContext.class)
                     .newInstance(graph, context);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new ESBException(e);

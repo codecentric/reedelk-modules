@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.deserializer;
+package com.reedelk.esb.flow.deserializer.node;
 
 import com.reedelk.esb.component.TryCatchWrapper;
 import com.reedelk.esb.graph.ExecutionNode;

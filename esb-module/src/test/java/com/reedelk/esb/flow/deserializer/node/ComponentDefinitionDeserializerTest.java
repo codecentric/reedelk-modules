@@ -1,12 +1,16 @@
-package com.reedelk.esb.flow.deserializer;
+package com.reedelk.esb.flow.deserializer.node;
 
+import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
+import com.reedelk.esb.flow.deserializer.typefactory.ScriptBlockAwareTypeFactoryDecorator;
 import com.reedelk.esb.graph.ExecutionNode;
+import com.reedelk.esb.module.DeserializedModule;
+import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.test.utils.*;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.api.script.dynamicmap.*;
 import com.reedelk.runtime.api.script.dynamicvalue.*;
-import com.reedelk.runtime.system.api.file.ModuleId;
+import com.reedelk.runtime.commons.TypeFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +34,6 @@ import java.util.Set;
 
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -38,17 +41,25 @@ import static org.mockito.Mockito.spy;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ComponentDefinitionDeserializerTest {
 
+    private long testModuleId = 10L;
+
     @Mock
-    private Bundle bundle;
+    private Bundle mockBundle;
     @Mock
     private ExecutionNode mockExecutionNode;
+    @Mock
+    private ModulesManager mockModulesManager;
+    @Mock
+    private DeserializedModule mockDeSerializedModule;
 
-    private MockFlowBuilderContext context;
+    private FlowDeserializerContext context;
     private ComponentDefinitionDeserializer deserializer;
 
     @BeforeEach
     void setUp() {
-        context = spy(new MockFlowBuilderContext(bundle));
+        TypeFactory factory = TypeFactory.getInstance();
+        factory = new ScriptBlockAwareTypeFactoryDecorator(factory, testModuleId, "aabbcc", "Test flow title");
+        context = spy(new FlowDeserializerContext(mockBundle, mockModulesManager, mockDeSerializedModule, factory));
         deserializer = new ComponentDefinitionDeserializer(mockExecutionNode, context);
     }
 
@@ -1172,10 +1183,6 @@ class ComponentDefinitionDeserializerTest {
 
         @Test
         void shouldCorrectlySetModuleIdProperty() {
-            // Given
-            long expectedModuleId = 234L;
-            doReturn((ModuleId) () -> expectedModuleId).when(context).create(eq(ModuleId.class));
-
             // When
             TestComponentWithModuleIdProperty component =
                     buildModuleIdComponent(
@@ -1183,7 +1190,7 @@ class ComponentDefinitionDeserializerTest {
                             "my test string");
 
             // Then
-            assertThat(component.getModuleId().get()).isEqualTo(expectedModuleId);
+            assertThat(component.getModuleId().get()).isEqualTo(testModuleId);
         }
     }
 

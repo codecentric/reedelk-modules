@@ -1,9 +1,9 @@
-package com.reedelk.esb.flow.deserializer;
+package com.reedelk.esb.flow.deserializer.node;
 
 
 import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.execution.commons.FindFirstSuccessorLeadingTo;
-import com.reedelk.esb.flow.FlowBuilderContext;
+import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
@@ -16,7 +16,7 @@ import static com.reedelk.runtime.commons.JsonParser.Router;
 
 class RouterDeserializer extends AbstractDeserializer {
 
-    RouterDeserializer(ExecutionGraph graph, FlowBuilderContext context) {
+    RouterDeserializer(ExecutionGraph graph, FlowDeserializerContext context) {
         super(graph, context);
     }
 
@@ -36,7 +36,6 @@ class RouterDeserializer extends AbstractDeserializer {
             ExecutionNode currentNode = routerExecutionNode;
 
             JSONObject component = when.getJSONObject(i);
-            String condition = Router.condition(component);
             JSONArray next = Router.next(component);
 
             for (int j = 0; j < next.length(); j++) {
@@ -51,7 +50,7 @@ class RouterDeserializer extends AbstractDeserializer {
                 // The first component of A GIVEN router path,
                 // must be added as a router expression pair.
                 if (j == 0) {
-                    DynamicString expression = DynamicString.from(condition, context.moduleId());
+                    DynamicString expression = context.typeFactory().create(DynamicString.class, component, Router.condition());
                     // 'lastNode' might be the last stop node from another scoped execution node (e.g. Fork, Router, Try-Catch).
                     // We must find the *FIRST* node leading to that stop node, otherwise we would not execute the nested
                     // scoped node components.

@@ -7,6 +7,7 @@ import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
+import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -33,7 +34,7 @@ import static org.junit.Assert.fail;
 @Tag(INTEGRATION)
 abstract class RestListenerAbstractTest {
 
-    final long testModuleId = 10L;
+    final ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L, "aabbcc", "Test floe");
 
     static final String TEST_JSON_BODY = "{\"name\":\"John\"}";
     static final String TEST_TEXT_BODY = "This is a sample text";

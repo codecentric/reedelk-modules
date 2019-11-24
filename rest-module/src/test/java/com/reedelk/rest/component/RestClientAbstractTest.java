@@ -9,6 +9,7 @@ import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.junit.jupiter.api.AfterAll;
@@ -30,8 +31,6 @@ import static org.junit.Assert.fail;
 @Tag(INTEGRATION)
 abstract class RestClientAbstractTest {
 
-    final long testModuleId = 10L;
-
     @Mock
     protected ScriptEngineService scriptEngine;
     @Mock
@@ -39,13 +38,14 @@ abstract class RestClientAbstractTest {
 
     static final int PORT = 8181;
     static final String HOST = "localhost";
-
     static final String PATH = "/v1/resource";
     static final String BASE_URL = "http://" + HOST + ":" + PORT;
 
+    final ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L, "aabbcc", "Test flow");;
+
     private static WireMockServer mockServer;
 
-    DynamicByteArray EVALUATE_PAYLOAD_BODY = DynamicByteArray.from(EVALUATE_PAYLOAD, testModuleId);
+    DynamicByteArray EVALUATE_PAYLOAD_BODY = DynamicByteArray.from(EVALUATE_PAYLOAD, scriptBlockContext);
 
     private HttpClientFactory clientFactory = new DefaultHttpClientFactory();
 

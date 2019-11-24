@@ -1,15 +1,21 @@
-package com.reedelk.esb.flow.deserializer;
+package com.reedelk.esb.flow.deserializer.node;
 
+import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
+import com.reedelk.esb.flow.deserializer.typefactory.ScriptBlockAwareTypeFactoryDecorator;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.esb.test.utils.MockFlowBuilderContext;
+import com.reedelk.esb.module.DeserializedModule;
+import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.test.utils.TestComponent;
+import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.component.Stop;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
+
+import java.util.UUID;
 
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.spy;
@@ -48,16 +54,21 @@ class AbstractDeserializerTest {
     protected ExecutionNode component7;
     @Mock
     protected ExecutionNode component8;
+    @Mock
+    private ModulesManager mockModulesManager;
+    @Mock
+    private DeserializedModule mockDeSerializedModule;
 
-    MockFlowBuilderContext context;
+    FlowDeserializerContext context;
 
     ExecutionNode stopNode1 = new ExecutionNode(new ExecutionNode.ReferencePair<>(new Stop()));
     ExecutionNode stopNode2 = new ExecutionNode(new ExecutionNode.ReferencePair<>(new Stop()));
 
     @BeforeEach
     void setUp() {
-        lenient().doReturn(5L).when(bundle).getBundleId();
-        context = spy(new MockFlowBuilderContext(bundle));
+        TypeFactory typeFactory = TypeFactory.getInstance();
+        typeFactory = new ScriptBlockAwareTypeFactoryDecorator(typeFactory, 10L, UUID.randomUUID().toString(), "Test flow");
+        context = spy(new FlowDeserializerContext(bundle, mockModulesManager, mockDeSerializedModule, typeFactory));
 
         lenient().doReturn(new TestComponent()).when(component1).getComponent();
         lenient().doReturn(new TestComponent()).when(component2).getComponent();

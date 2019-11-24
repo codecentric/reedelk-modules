@@ -184,7 +184,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     void shouldReturnErrorResponseContent() throws IOException {
         // Given
         String errorMessage = "my error";
-        DynamicByteArray errorResponseBody = DynamicByteArray.from("#[error]", testModuleId);
+        DynamicByteArray errorResponseBody = DynamicByteArray.from("#[error]", scriptBlockContext);
         IllegalStateException exception = new IllegalStateException(errorMessage);
 
         // Status
@@ -215,7 +215,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         String json = "{\"name\":\"John\"}";
         Message responseMessage = MessageBuilder.get().json(json).build();
 
-        DynamicByteArray responseBody = DynamicByteArray.from("#[message.payload()]", testModuleId);
+        DynamicByteArray responseBody = DynamicByteArray.from("#[message.payload()]", scriptBlockContext);
         Response listenerResponse = new Response();
         listenerResponse.setBody(responseBody);
 

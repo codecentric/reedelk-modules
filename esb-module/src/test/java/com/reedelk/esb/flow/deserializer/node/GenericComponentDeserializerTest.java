@@ -1,6 +1,6 @@
-package com.reedelk.esb.flow.deserializer;
+package com.reedelk.esb.flow.deserializer.node;
 
-import com.reedelk.esb.flow.FlowBuilderContext;
+import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
@@ -26,7 +26,7 @@ class GenericComponentDeserializerTest {
     @Mock
     private ExecutionNode parent;
     @Mock
-    private FlowBuilderContext context;
+    private FlowDeserializerContext context;
 
     private GenericComponentDeserializer builder;
 

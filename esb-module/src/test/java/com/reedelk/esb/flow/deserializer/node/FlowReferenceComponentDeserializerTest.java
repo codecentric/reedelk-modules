@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.deserializer;
+package com.reedelk.esb.flow.deserializer.node;
 
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeserializedModule;

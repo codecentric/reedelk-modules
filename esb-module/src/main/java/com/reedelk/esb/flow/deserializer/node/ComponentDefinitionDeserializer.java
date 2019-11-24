@@ -1,10 +1,9 @@
-package com.reedelk.esb.flow.deserializer;
+package com.reedelk.esb.flow.deserializer.node;
 
-import com.reedelk.esb.flow.FlowBuilderContext;
+import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.commons.CollectionFactory;
 import com.reedelk.runtime.commons.JsonParser;
 import com.reedelk.runtime.system.api.file.ModuleId;
@@ -22,12 +21,13 @@ import static com.reedelk.runtime.commons.JsonParser.Component;
 import static com.reedelk.runtime.commons.JsonParser.Config;
 import static com.reedelk.runtime.commons.ReflectionUtils.*;
 
+// TODO: MERGE THIS with the GenericComponentDeserializer!!
 public class ComponentDefinitionDeserializer {
 
     private final ExecutionNode executionNode;
-    private final FlowBuilderContext context;
+    private final FlowDeserializerContext context;
 
-    ComponentDefinitionDeserializer(final ExecutionNode executionNode, final FlowBuilderContext context) {
+    ComponentDefinitionDeserializer(final ExecutionNode executionNode, final FlowDeserializerContext context) {
         this.executionNode = executionNode;
         this.context = context;
     }
@@ -51,7 +51,7 @@ public class ComponentDefinitionDeserializer {
         // as the  ModuleFileProvider  in order to discover the files within the
         // Module/resources folder.
         getSetterByArgumentType(implementor, ModuleId.class).ifPresent(method -> {
-            Object moduleId = context.create(ModuleId.class);
+            Object moduleId = context.typeFactory().create(ModuleId.class);
             setProperty(implementor, method, moduleId);
         });
     }
@@ -74,22 +74,12 @@ public class ComponentDefinitionDeserializer {
             // Enum
         } else if (setterArgument.isEnum()){
             Class enumClazz = setterArgument.getClazz();
-            return context.create(enumClazz, componentDefinition, propertyName);
+            return context.typeFactory().create(enumClazz, componentDefinition, propertyName);
 
             // Primitive or Dynamic Value
-        } else if (Script.class.equals(setterArgument.getClazz())) {
-            // The context.create created a Script object with body, the
-            // name of the script in the module/resources/scripts folder.
-            // We must resolve that script with the resource and replace the
-            // script object with a new one containing the actual body from the
-            // specified file.
-            Class<?> clazz = setterArgument.getClazz();
-            Script script = (Script) context.create(clazz, componentDefinition, propertyName);
-            return context.loadScriptBodyOf(script);
-
         } else {
             Class<?> clazz = setterArgument.getClazz();
-            return context.create(clazz, componentDefinition, propertyName);
+            return context.typeFactory().create(clazz, componentDefinition, propertyName);
         }
     }
 
@@ -106,7 +96,7 @@ public class ComponentDefinitionDeserializer {
             // be used by the Script engine as a reference for the pre-compiled script
             // to be used at runtime evaluation.
             Class<?> clazz = setterArgument.getClazz();
-            return context.create(clazz, componentDefinition, propertyName);
+            return context.typeFactory().create(clazz, componentDefinition, propertyName);
         } else {
             // It is a complex type implementing implementor interface.
             // We expect that this JSONObject satisfies the properties
@@ -126,7 +116,7 @@ public class ComponentDefinitionDeserializer {
         Collection collection = CollectionFactory.from(clazz);
         Class<?> genericType = argument.getGenericType();
         for (int index = 0; index < array.length(); index++) {
-            Object converted = context.create(genericType, array, index);
+            Object converted = context.typeFactory().create(genericType, array, index);
             collection.add(converted);
         }
         return collection;

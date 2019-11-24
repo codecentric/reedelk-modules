@@ -19,8 +19,6 @@ import static org.mockito.Mockito.doReturn;
 
 class RestClientRequestUriTest extends RestClientAbstractTest {
 
-    private final long testModuleId = 10L;
-
     @ParameterizedTest
     @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
     void shouldCorrectlyBuildRequestUriWithPathParams(String method) {
@@ -30,7 +28,7 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
 
         DynamicStringMap pathParameters = DynamicStringMap.from(of(
                 "id", "aabbccddeeff",
-                "group", "user"), testModuleId);
+                "group", "user"), scriptBlockContext);
 
         // Expect
         assertExpectedPath(method, path, expectedPath, pathParameters, null);
@@ -45,7 +43,7 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
 
         DynamicStringMap queryParameters = DynamicStringMap.from(of(
                 "query1", "value1",
-                "query2", "value2"), testModuleId);
+                "query2", "value2"), scriptBlockContext);
 
         // Expect
         assertExpectedPath(method, path, expectedPath, null, queryParameters);
@@ -58,8 +56,8 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
         String path = "/resource/{id}/title/{title}";
         String expectedPath = "/resource/aabb1122/title/manager?query1=value1&query2=value2";
 
-        DynamicStringMap queryParameters = DynamicStringMap.from(of("query1", "value1", "query2", "value2"), testModuleId);
-        DynamicStringMap pathParameters = DynamicStringMap.from(of("id", "aabb1122", "title", "manager"), testModuleId);
+        DynamicStringMap queryParameters = DynamicStringMap.from(of("query1", "value1", "query2", "value2"), scriptBlockContext);
+        DynamicStringMap pathParameters = DynamicStringMap.from(of("id", "aabb1122", "title", "manager"), scriptBlockContext);
 
         // Expect
         assertExpectedPath(method, path, expectedPath, pathParameters, queryParameters);

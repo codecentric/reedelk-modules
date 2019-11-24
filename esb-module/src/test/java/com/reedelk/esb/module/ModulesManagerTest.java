@@ -1,8 +1,5 @@
-package com.reedelk.esb.flow;
+package com.reedelk.esb.module;
 
-import com.reedelk.esb.module.Module;
-import com.reedelk.esb.module.ModuleDeserializer;
-import com.reedelk.esb.module.ModulesManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

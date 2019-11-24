@@ -19,8 +19,6 @@ import static org.mockito.Mockito.doReturn;
 
 class RestClientCustomHeadersTest extends RestClientAbstractTest {
 
-    private final long testModule = 10L;
-
     @ParameterizedTest
     @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
     void shouldCorrectlyAddCustomHeaders(String method) {
@@ -30,7 +28,7 @@ class RestClientCustomHeadersTest extends RestClientAbstractTest {
         Map<String,String> additionalHeaders = new HashMap<>();
         additionalHeaders.put("X-Token", "123456789");
         additionalHeaders.put("Source", "test source");
-        DynamicStringMap additionalHeadersMap = DynamicStringMap.from(additionalHeaders, testModule);
+        DynamicStringMap additionalHeadersMap = DynamicStringMap.from(additionalHeaders, scriptBlockContext);
         component.setHeaders(additionalHeadersMap);
 
         doReturn(additionalHeaders)
