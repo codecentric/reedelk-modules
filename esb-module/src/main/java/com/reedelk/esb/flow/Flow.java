@@ -19,6 +19,7 @@ import static com.reedelk.esb.commons.Preconditions.checkState;
 public class Flow implements InboundEventListener {
 
     private final long moduleId;
+    private final String moduleName;
     private final String flowId;
     private final String flowTitle;
 
@@ -27,8 +28,14 @@ public class Flow implements InboundEventListener {
 
     private boolean started = false;
 
-    public Flow(final long moduleId, final String flowId, final String flowTitle, final ExecutionGraph executionGraph, final FlowExecutorEngine executionEngine) {
+    public Flow(final long moduleId,
+                final String moduleName,
+                final String flowId,
+                final String flowTitle,
+                final ExecutionGraph executionGraph,
+                final FlowExecutorEngine executionEngine) {
         this.moduleId = moduleId;
+        this.moduleName = moduleName;
         this.flowId = flowId;
         this.flowTitle = flowTitle;
         this.executionGraph = executionGraph;
@@ -115,7 +122,7 @@ public class Flow implements InboundEventListener {
 
         @Override
         public void onError(Throwable throwable, FlowContext flowContext) {
-            FlowExecutionException wrapped = new FlowExecutionException(moduleId, flowId, flowTitle, throwable);
+            FlowExecutionException wrapped = new FlowExecutionException(moduleId, moduleName, flowId, flowTitle, throwable);
             delegate.onError(wrapped,flowContext);
         }
     }

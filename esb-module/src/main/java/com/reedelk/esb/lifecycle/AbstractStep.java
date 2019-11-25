@@ -82,8 +82,6 @@ public abstract class AbstractStep<I, O> implements Step<I, O> {
             String message = DESERIALIZATION_ERROR.format(
                     module.id(),
                     module.name(),
-                    module.version(),
-                    module.filePath(),
                     rootCauseMessage);
 
             ModuleDeserializationException moduleDeserializationException = new ModuleDeserializationException(message, exception);

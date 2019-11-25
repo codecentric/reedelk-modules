@@ -76,16 +76,21 @@ class BuildModuleTest {
     private ConfigurationService configurationService;
     @Mock
     private ServiceReference<Component> serviceReference;
+    @Mock
+    private Module module;
     @Spy
     private BuildModule step;
 
     @BeforeEach
     void setUp() {
+        doReturn(moduleId).when(bundle).getBundleId();
         doReturn(bundle).when(step).bundle();
         doReturn(modulesManager).when(step).modulesManager();
         doReturn(configurationService).when(step).configurationService();
         doReturn(bundleContext).when(bundle).getBundleContext();
         doReturn(bundle).when(bundleContext).getBundle(moduleId);
+        doReturn(module).when(modulesManager).getModuleById(moduleId);
+        doReturn(moduleId).when(module).id();
     }
 
     @Test
@@ -244,7 +249,7 @@ class BuildModuleTest {
         Module module = step.run(inputModule);
 
         // Then
-        String expectedMessage = "Error de-serializing module with id=[232], name=[TestModule], version=[1.0.0-SNAPSHOT], module file path=[file://location/test]: JSON could not be parsed";
+        String expectedMessage = "Error de-serializing module with id=[232], name=[TestModule]: JSON could not be parsed";
         assertModuleErrorStateWith(module, expectedMessage);
     }
 

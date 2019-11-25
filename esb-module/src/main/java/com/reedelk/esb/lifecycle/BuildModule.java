@@ -71,26 +71,26 @@ public class BuildModule extends AbstractStep<Module, Module> {
         ExecutionGraph flowGraph = ExecutionGraph.build();
         FlowExecutorEngine executionEngine = new FlowExecutorEngine(flowGraph);
 
-        String flowId = id(flowDefinition);
-        String flowTitle = hasTitle(flowDefinition) ? title(flowDefinition) : null;
-
         ModulesManager modulesManager = modulesManager();
+        Module module = modulesManager.getModuleById(bundle.getBundleId());
 
         TypeFactory typeFactory = TypeFactory.getInstance();
         typeFactory = new ScriptFunctionBodyResolverDecorator(typeFactory, deserializedModule);
         typeFactory = new ConfigPropertyAwareTypeFactoryDecorator(configurationService(), typeFactory);
-        typeFactory = new TypeFactoryContextAwareDecorator(typeFactory, bundle.getBundleId());
+        typeFactory = new TypeFactoryContextAwareDecorator(typeFactory, module.id());
+
+        String flowId = id(flowDefinition);
+        String flowTitle = hasTitle(flowDefinition) ? title(flowDefinition) : null;
 
         try {
             FlowDeserializerContext context = new FlowDeserializerContext(bundle, modulesManager, deserializedModule, typeFactory);
             FlowDeserializer flowDeserializer = new FlowDeserializer(context);
             flowDeserializer.deserialize(flowGraph, flowDefinition);
-
-            return new Flow(bundle.getBundleId(), flowId, flowTitle, flowGraph, executionEngine);
+            return new Flow(module.id(), module.name(), flowId, flowTitle, flowGraph, executionEngine);
 
         } catch (Exception exception) {
             Log.buildException(logger, flowDefinition, flowId, exception);
-            return new ErrorStateFlow(bundle.getBundleId(), flowId, flowTitle, flowGraph, executionEngine, exception);
+            return new ErrorStateFlow(module.id(), module.name(), flowId, flowTitle, flowGraph, executionEngine, exception);
         }
     }
 }

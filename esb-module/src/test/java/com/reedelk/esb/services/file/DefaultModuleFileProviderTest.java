@@ -107,7 +107,7 @@ class DefaultModuleFileProviderTest {
                 () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
 
         assertThat(thrown)
-                .hasMessage("Error, could not find file=[/tests/sample.txt] in module with id=[234], name=[test-module], version=[1.0.0-SNAPSHOT], module file path=[/users/user/test-module-1.0.0-SNAPSHOT.jar].");
+                .hasMessage("Could not find local file file=[/tests/sample.txt] in module with id=[234], name=[test-module].");
     }
 
     @Test
@@ -126,7 +126,7 @@ class DefaultModuleFileProviderTest {
                 () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
 
         assertThat(thrown)
-                .hasMessage("Error, could not find file=[/tests/sample.txt] in module with id=[234], name=[test-module], version=[1.0.0-SNAPSHOT], module file path=[/users/user/test-module-1.0.0-SNAPSHOT.jar].");
+                .hasMessage("Could not find local file file=[/tests/sample.txt] in module with id=[234], name=[test-module].");
     }
 
     @Test
@@ -145,6 +145,6 @@ class DefaultModuleFileProviderTest {
                 () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
 
         assertThat(thrown)
-                .hasMessage("Error, an error occurred while looking for file=[/tests/sample.txt] in module with id=[234], name=[test-module], version=[1.0.0-SNAPSHOT], module file path=[/users/user/test-module-1.0.0-SNAPSHOT.jar]: Error while reading data");
+                .hasMessage("An I/O occurred while reading file=[/tests/sample.txt] in module with id=[234], name=[test-module]: Error while reading data");
     }
 }

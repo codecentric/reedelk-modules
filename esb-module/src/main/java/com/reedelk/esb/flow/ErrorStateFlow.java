@@ -7,8 +7,8 @@ public class ErrorStateFlow extends Flow {
 
     private final Exception exception;
 
-    public ErrorStateFlow(long moduleId, String flowId, String flowTitle, ExecutionGraph executionGraph, FlowExecutorEngine executionEngine, Exception exception) {
-        super(moduleId, flowId, flowTitle, executionGraph, executionEngine);
+    public ErrorStateFlow(long moduleId, String moduleName, String flowId, String flowTitle, ExecutionGraph executionGraph, FlowExecutorEngine executionEngine, Exception exception) {
+        super(moduleId, moduleName, flowId, flowTitle, executionGraph, executionEngine);
         this.exception = exception;
     }
 

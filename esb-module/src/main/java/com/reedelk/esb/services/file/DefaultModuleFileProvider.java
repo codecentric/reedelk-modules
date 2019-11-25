@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-import static com.reedelk.esb.commons.Messages.Module.FILE_FIND_ERROR;
+import static com.reedelk.esb.commons.Messages.Module.FILE_FIND_IO_ERROR;
 import static com.reedelk.esb.commons.Messages.Module.FILE_NOT_FOUND_ERROR;
 
 public class DefaultModuleFileProvider implements ModuleFileProvider {
@@ -41,9 +41,7 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
                 String message = FILE_NOT_FOUND_ERROR.format(
                         path,
                         module.id(),
-                        module.name(),
-                        module.version(),
-                        module.filePath());
+                        module.name());
                 throw new FileNotFoundException(message);
             }
 
@@ -52,12 +50,10 @@ public class DefaultModuleFileProvider implements ModuleFileProvider {
 
         } catch (IOException exception) {
             String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
-            String message = FILE_FIND_ERROR.format(
+            String message = FILE_FIND_IO_ERROR.format(
                     path,
                     module.id(),
                     module.name(),
-                    module.version(),
-                    module.filePath(),
                     rootCauseMessage);
             throw new ESBException(message, exception);
         }

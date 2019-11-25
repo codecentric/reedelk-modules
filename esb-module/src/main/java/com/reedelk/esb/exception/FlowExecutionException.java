@@ -7,15 +7,18 @@ import static com.reedelk.esb.commons.Messages.Flow.EXECUTION_ERROR;
 public class FlowExecutionException extends ESBException {
 
     private final long moduleId;
+    private final String moduleName;
     private final String flowId;
     private final String flowTitle;
 
     public FlowExecutionException(long moduleId,
+                                  String moduleName,
                                   String flowId,
                                   String flowTitle,
                                   Throwable exception) {
-        super(formatMessage(moduleId, flowId, flowTitle, exception), exception);
+        super(formatMessage(moduleId, moduleName, flowId, flowTitle, exception), exception);
         this.moduleId = moduleId;
+        this.moduleName = moduleName;
         this.flowId = flowId;
         this.flowTitle = flowTitle;
     }
@@ -32,9 +35,14 @@ public class FlowExecutionException extends ESBException {
         return flowTitle;
     }
 
-    private static String formatMessage(long moduleId, String flowId, String flowTitle, Throwable throwable) {
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    private static String formatMessage(long moduleId, String moduleName, String flowId, String flowTitle, Throwable throwable) {
         return EXECUTION_ERROR.format(
                 moduleId,
+                moduleName,
                 flowId,
                 flowTitle,
                 throwable.getClass().getName(),

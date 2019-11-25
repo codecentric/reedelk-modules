@@ -40,6 +40,7 @@ class FlowTest {
     private final String flowId = UUID.randomUUID().toString();
     private final String flowTitle = "Test flow";
     private final long moduleId = 10L;
+    private final String moduleName = "Test module";
 
     @Mock
     private Bundle bundle;
@@ -63,7 +64,7 @@ class FlowTest {
     @Test
     void shouldReturnCorrectFlowId() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
 
         // When
         String actualFlowId = flow.getFlowId();
@@ -75,7 +76,7 @@ class FlowTest {
     @Test
     void shouldReturnCorrectFlowTitle() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
 
         // When
         Optional<String> actualFlowTitle = flow.getFlowTitle();
@@ -87,7 +88,7 @@ class FlowTest {
     @Test
     void shouldReturnAbsentFlowTitle() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, null, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, null, mockExecutionGraph, executionEngine);
 
         // When
         Optional<String> actualFlowTitle = flow.getFlowTitle();
@@ -99,7 +100,7 @@ class FlowTest {
     @Test
     void shouldIsUsingComponentThrowExceptionWhenTargetComponentIsNull() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
 
         // Expect
         IllegalArgumentException illegalArgumentException = Assertions.assertThrows(IllegalArgumentException.class,
@@ -113,7 +114,7 @@ class FlowTest {
     @Test
     void shouldIsUsingComponentReturnFalse() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
         doReturn(Optional.empty()).when(mockExecutionGraph).findOne(ArgumentMatchers.any());
 
         // When
@@ -126,7 +127,7 @@ class FlowTest {
     @Test
     void shouldIsUsingComponentReturnTrue() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
 
         TestComponent testComponent = new TestComponent();
         ServiceReference<Component> serviceReference = mock(ServiceReference.class);
@@ -144,7 +145,7 @@ class FlowTest {
     @Test
     void shouldReleaseReferencesDelegateToGraphTheCorrectConsumer() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
 
         // When
         flow.releaseReferences(bundle);
@@ -156,7 +157,7 @@ class FlowTest {
     @Test
     void shouldFlowStartCallComponentOnStartAndAddInboundEventListener() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
 
@@ -171,7 +172,7 @@ class FlowTest {
     @Test
     void shouldReturnIsStartedFalseWhenNotStarted() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
 
         // When
         boolean actualIsStarted = flow.isStarted();
@@ -183,7 +184,7 @@ class FlowTest {
     @Test
     void shouldReturnIsStartedTrueWhenStarted() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
         flow.start();
@@ -198,7 +199,7 @@ class FlowTest {
     @Test
     void shouldStopFlowCallComponentOnShutdownAndRemoveListener() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
         flow.start();
@@ -214,7 +215,7 @@ class FlowTest {
     @Test
     void shouldStopFlowNotCallComponentOnShutdownIfAlreadyStarted() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
 
@@ -229,7 +230,7 @@ class FlowTest {
     @Test
     void shouldForceStopCallComponentOnShutdownAndRemoveListenerIfNotStarted() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
 
@@ -244,7 +245,7 @@ class FlowTest {
     @Test
     void shouldForceStopCallComponentOnShutdownAndRemoveListenerIfStarted() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
         flow.start();
@@ -260,7 +261,7 @@ class FlowTest {
     @Test
     void shouldOnEventDelegateExecutionToExecutor() {
         // Given
-        Flow flow = new Flow(moduleId, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
 

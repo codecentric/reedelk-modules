@@ -29,10 +29,11 @@ public class Messages {
         EXECUTION_ERROR("an error has occurred while executing flow:" +
                 "\n----------------------------------------------------------\n" +
                 "- Module id=%d\n" +
+                "- Module name=%s\n" +
                 "- Flow id=%s\n" +
                 "- Flow title=%s\n" +
                 "- Error type=%s\n" +
-                "- Error cause:\n\n" +
+                "- Error message:\n" +
                 "%s" +
                 "\n----------------------------------------------------------\n");
 
@@ -84,9 +85,9 @@ public class Messages {
 
     public enum Module implements FormattedMessage {
 
-        DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s], version=[%s], module file path=[%s]: %s"),
-        FILE_NOT_FOUND_ERROR("Error, could not find file=[%s] in module with id=[%d], name=[%s], version=[%s], module file path=[%s]."),
-        FILE_FIND_ERROR("Error, an error occurred while looking for file=[%s] in module with id=[%d], name=[%s], version=[%s], module file path=[%s]: %s");
+        DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s]: %s"),
+        FILE_NOT_FOUND_ERROR("Could not find local file file=[%s] in module with id=[%d], name=[%s]."),
+        FILE_FIND_IO_ERROR("An I/O occurred while reading file=[%s] in module with id=[%d], name=[%s]: %s");
 
         private String msg;
 
