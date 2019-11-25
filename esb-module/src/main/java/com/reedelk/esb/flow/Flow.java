@@ -4,6 +4,7 @@ import com.reedelk.esb.commons.Messages;
 import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
+import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.component.Inbound;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
@@ -11,6 +12,8 @@ import com.reedelk.runtime.api.exception.FlowExecutionException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -18,6 +21,8 @@ import static com.reedelk.esb.commons.Preconditions.checkArgument;
 import static com.reedelk.esb.commons.Preconditions.checkState;
 
 public class Flow implements InboundEventListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(Flow.class);
 
     private final long moduleId;
     private final String moduleName;
@@ -108,6 +113,11 @@ public class Flow implements InboundEventListener {
         return (Inbound) executionGraph.getRoot().getComponent();
     }
 
+    /**
+     * A wrapper which takes the original exception and it adds some contextual information
+     * to it, such as module id, module name, flow id and flow title from which the exception
+     * was thrown. The wrapper logs the exception as well.
+     */
     class OnResultFlowExceptionWrapper implements OnResult {
 
         private final OnResult delegate;
@@ -123,9 +133,13 @@ public class Flow implements InboundEventListener {
 
         @Override
         public void onError(Throwable throwable, FlowContext flowContext) {
+
             String error = Messages.Flow.EXECUTION_ERROR.format(moduleId, moduleName, flowId, flowTitle,
                     throwable.getClass().getName(), throwable.getMessage());
             FlowExecutionException wrapped = new FlowExecutionException(moduleId, moduleName, flowId, flowTitle, error, throwable);
+
+            logger.error(StackTraceUtils.asString(wrapped));
+
             delegate.onError(wrapped,flowContext);
         }
     }
