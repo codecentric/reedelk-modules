@@ -182,6 +182,7 @@ class ExecutionNodeTest {
         assertThat(actualIsUsingComponent).isFalse();
     }
 
+    @SuppressWarnings("unchecked")
     private ReferencePair<Implementor> mockReferencePair(Implementor implementor) {
         ServiceReference<Implementor> dependencyServiceReference = mock(ServiceReference.class);
         return new ReferencePair<>(implementor, dependencyServiceReference);

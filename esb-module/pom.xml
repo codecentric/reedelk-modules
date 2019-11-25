@@ -97,7 +97,6 @@
                         <Import-Package>
                             com.reedelk.runtime.api.*,
                             com.reedelk.runtime.system.api.*,
-                            com.reedelk.runtime.system.api.file.*,
                             com.reedelk.runtime.commons.*,
                             sun.misc,
                             javax.script,
