@@ -25,20 +25,26 @@ public class FlowExecutorEngine {
 
         DefaultFlowContext defaultContext = DefaultFlowContext.from(message);
 
-        MessageAndContext event = new MessageAndContext(message, defaultContext);
+        try {
 
-        Publisher<MessageAndContext> publisher =
-                Mono.just(event).publishOn(SchedulerProvider.flow());
+            MessageAndContext event = new MessageAndContext(message, defaultContext);
 
-        ExecutionNode root = graph.getRoot();
+            Publisher<MessageAndContext> publisher =
+                    Mono.just(event).publishOn(SchedulerProvider.flow());
 
-        ExecutionNode nodeAfterRoot = nextNode(root, graph);
+            ExecutionNode root = graph.getRoot();
 
-        Publisher<MessageAndContext> resultingPublisher =
-                FlowExecutorFactory.get().execute(publisher, nodeAfterRoot, graph);
+            ExecutionNode nodeAfterRoot = nextNode(root, graph);
 
-        Mono.from(resultingPublisher)
-                .doOnError(throwable -> onResult.onError(throwable, defaultContext))
-                .subscribe(messageContext -> onResult.onResult(messageContext.getMessage(), defaultContext));
+            Publisher<MessageAndContext> result =
+                    FlowExecutorFactory.get().execute(publisher, nodeAfterRoot, graph);
+
+            Mono.from(result)
+                    .doOnError(throwable -> onResult.onError(throwable, defaultContext))
+                    .subscribe(messageContext -> onResult.onResult(messageContext.getMessage(), defaultContext));
+
+        } catch (Exception exception) {
+            onResult.onError(exception, defaultContext);
+        }
     }
 }

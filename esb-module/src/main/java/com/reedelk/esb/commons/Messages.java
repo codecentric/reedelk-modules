@@ -14,7 +14,6 @@ public class Messages {
     }
 
     public enum Flow implements FormattedMessage {
-        EXECUTION_ERROR("An error has occurred while executing flow with id=[%s]: %s"),
         FORCE_STOP("Error forcing stop flow with id=[%s]: %s"),
         FORCE_STOP_WITH_TITLE("Error forcing stop flow with id=[%s] and title '%s': %s"),
         START("Flow with id=[%s] started."),
@@ -26,7 +25,16 @@ public class Messages {
         BUILD_ERROR("Error building flow with id=[%s]: %s"),
         BUILD_ERROR_WITH_TITLE("Error building flow with id=[%s] and title '%s': %s"),
         VALIDATION_ID_NOT_UNIQUE("Error validating module with name=[%s]: There are at least two flows with the same ID. Flow IDs must be unique."),
-        VALIDATION_ID_NOT_VALID("Error validating module with name=[%s]: The 'id' property must be defined and not empty in any JSON flow definition.");
+        VALIDATION_ID_NOT_VALID("Error validating module with name=[%s]: The 'id' property must be defined and not empty in any JSON flow definition."),
+        EXECUTION_ERROR("an error has occurred while executing flow:" +
+                "\n----------------------------------------------------------\n" +
+                "- Module id=%d\n" +
+                "- Flow id=%s\n" +
+                "- Flow title=%s\n" +
+                "- Error type=%s\n" +
+                "- Error cause:\n\n" +
+                "%s" +
+                "\n----------------------------------------------------------\n");
 
         private String msg;
 
@@ -131,9 +139,9 @@ public class Messages {
 
     public enum Script implements FormattedMessage {
 
-        SCRIPT_BLOCK_COMPILATION_ERROR("Could not compile script: %s,\nScript:\n%s\n"),
-        SCRIPT_SOURCE_COMPILATION_ERROR("Could not compile script source: %s, \nSource: %s\nModule names: %s\n"),
-        SCRIPT_EXECUTION_ERROR("Could not execute script: %s,\nScript:\n%s\n");
+        SCRIPT_BLOCK_COMPILATION_ERROR("Could not compile script: %s,\n- Script code:\n%s"),
+        SCRIPT_SOURCE_COMPILATION_ERROR("Could not compile script source: %s, \n- Source: %s\nModule names: %s"),
+        SCRIPT_EXECUTION_ERROR("Could not execute script: %s,\n- Script code:\n%s");
 
         private String msg;
 
