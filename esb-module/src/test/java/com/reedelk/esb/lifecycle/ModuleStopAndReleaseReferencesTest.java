@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class StopModuleAndReleaseReferencesTest {
+class ModuleStopAndReleaseReferencesTest {
 
     private final long moduleId = 33L;
     private final String testModuleName = "StopTestModule";
@@ -46,11 +46,11 @@ class StopModuleAndReleaseReferencesTest {
     @Mock
     private ModuleDeserializer deserializer;
 
-    private StopModuleAndReleaseReferences step;
+    private ModuleStopAndReleaseReferences step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new StopModuleAndReleaseReferences());
+        step = spy(new ModuleStopAndReleaseReferences());
         doReturn(bundle).when(step).bundle();
         doReturn(context).when(bundle).getBundleContext();
     }

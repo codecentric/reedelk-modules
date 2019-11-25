@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class StartModuleTest {
+class ModuleStartTest {
 
     @Mock
     private Flow flow2;
@@ -36,7 +36,7 @@ class StartModuleTest {
     @Mock
     private Module module;
 
-    private StartModule step;
+    private ModuleStart step;
 
     @Captor
     private ArgumentCaptor<Collection<Flow>> flowsCaptor;
@@ -45,7 +45,7 @@ class StartModuleTest {
 
     @BeforeEach
     void setUp() {
-        step = spy(new StartModule());
+        step = spy(new ModuleStart());
         doReturn(bundle).when(step).bundle();
         doReturn(bundleContext).when(bundle).getBundleContext();
         doReturn(asList(flow1, flow2)).when(module).flows();

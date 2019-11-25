@@ -9,7 +9,7 @@ import com.reedelk.runtime.commons.JsonParser;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class ResolveModuleDependencies extends AbstractStep<Module, Module> {
+public class ModuleResolveDependencies extends AbstractStep<Module, Module> {
 
     @Override
     public Module run(Module module) {

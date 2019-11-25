@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateRegisteredComponentTest {
+class ModuleUpdateRegisteredComponentTest {
 
     private final long moduleId = 232L;
     private final String testModuleName = "TestModule";
@@ -48,7 +48,7 @@ class UpdateRegisteredComponentTest {
         module.unresolve(unresolvedComponents, resolvedComponents);
 
         // When (component 2 is resolved)
-        UpdateRegisteredComponent step = new UpdateRegisteredComponent(component1);
+        ModuleUpdateRegisteredComponent step = new ModuleUpdateRegisteredComponent(component1);
         Module unresolvedModule = step.run(module);
 
         // Then
@@ -73,7 +73,7 @@ class UpdateRegisteredComponentTest {
         module.unresolve(unresolvedComponents, resolvedComponents);
 
         // When (component 3 is resolved)
-        UpdateRegisteredComponent step = new UpdateRegisteredComponent(component3);
+        ModuleUpdateRegisteredComponent step = new ModuleUpdateRegisteredComponent(component3);
         Module resolvedModule = step.run(module);
 
         // Then
@@ -91,10 +91,9 @@ class UpdateRegisteredComponentTest {
                 .deserializer(deserializer)
                 .moduleFilePath(testLocation)
                 .build();
-        UpdateRegisteredComponent step = new UpdateRegisteredComponent(component3);
+        ModuleUpdateRegisteredComponent step = new ModuleUpdateRegisteredComponent(component3);
 
         // Expect
         assertThrows(IllegalStateException.class, () -> step.run(module));
     }
-
 }

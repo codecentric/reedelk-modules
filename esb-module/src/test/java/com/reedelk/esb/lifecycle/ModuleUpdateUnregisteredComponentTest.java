@@ -18,7 +18,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateUnregisteredComponentTest {
+class ModuleUpdateUnregisteredComponentTest {
 
     private final long moduleId = 232L;
     private final String testModuleName = "TestModule";
@@ -51,7 +51,7 @@ class UpdateUnregisteredComponentTest {
         module.resolve(resolvedComponents);
 
         // When (component 4 is removed from the system)
-        UpdateUnregisteredComponent step = new UpdateUnregisteredComponent(component4);
+        ModuleUpdateUnregisteredComponent step = new ModuleUpdateUnregisteredComponent(component4);
         Module unresolvedModule = step.run(module);
 
         // Then
@@ -76,7 +76,7 @@ class UpdateUnregisteredComponentTest {
         module.unresolve(unresolvedComponents, resolvedComponents);
 
         // When (component 4 is removed from the system)
-        UpdateUnregisteredComponent step = new UpdateUnregisteredComponent(component4);
+        ModuleUpdateUnregisteredComponent step = new ModuleUpdateUnregisteredComponent(component4);
         Module unresolvedModule = step.run(module);
 
         // Then
@@ -103,7 +103,7 @@ class UpdateUnregisteredComponentTest {
         module.error(new Exception());
 
         // When
-        UpdateUnregisteredComponent step = new UpdateUnregisteredComponent(component4);
+        ModuleUpdateUnregisteredComponent step = new ModuleUpdateUnregisteredComponent(component4);
         Module unresolvedModule = step.run(module);
 
         // Then
@@ -119,7 +119,7 @@ class UpdateUnregisteredComponentTest {
         // Expect
         assertThrows(IllegalStateException.class, () -> {
             // When
-            UpdateUnregisteredComponent step = new UpdateUnregisteredComponent(component4);
+            ModuleUpdateUnregisteredComponent step = new ModuleUpdateUnregisteredComponent(component4);
             step.run(module);
         });
     }
@@ -133,7 +133,7 @@ class UpdateUnregisteredComponentTest {
         // Expect
         assertThrows(IllegalStateException.class, () -> {
             // When
-            UpdateUnregisteredComponent step = new UpdateUnregisteredComponent(component4);
+            ModuleUpdateUnregisteredComponent step = new ModuleUpdateUnregisteredComponent(component4);
             step.run(module);
         });
     }
@@ -147,9 +147,8 @@ class UpdateUnregisteredComponentTest {
         // Expect
         assertThrows(IllegalStateException.class, () -> {
             // When
-            UpdateUnregisteredComponent step = new UpdateUnregisteredComponent(component4);
+            ModuleUpdateUnregisteredComponent step = new ModuleUpdateUnregisteredComponent(component4);
             step.run(module);
         });
     }
-
 }

@@ -16,9 +16,9 @@ import static com.reedelk.esb.commons.Messages.Flow.STOP_ERROR_WITH_TITLE;
 import static com.reedelk.esb.module.state.ModuleState.STARTED;
 import static com.reedelk.runtime.api.commons.StringUtils.EMPTY;
 
-public class StopModuleAndReleaseReferences extends AbstractStep<Module, Module> {
+public class ModuleStopAndReleaseReferences extends AbstractStep<Module, Module> {
 
-    private static final Logger logger = LoggerFactory.getLogger(StopModuleAndReleaseReferences.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModuleStopAndReleaseReferences.class);
 
     @Override
     public Module run(Module module) {

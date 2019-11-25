@@ -11,16 +11,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AddModuleTest {
+class ModuleAddTest {
 
     @Mock
     private ModulesManager modulesManager;
 
-    private AddModule step;
+    private ModuleAdd step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new AddModule());
+        step = spy(new ModuleAdd());
     }
 
     @Test

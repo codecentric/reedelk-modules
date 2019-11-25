@@ -50,7 +50,7 @@ import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class BuildModuleTest {
+class ModuleBuildTest {
 
     private final long moduleId = 232L;
     private final String testModuleName = "TestModule";
@@ -79,7 +79,7 @@ class BuildModuleTest {
     @Mock
     private Module module;
     @Spy
-    private BuildModule step;
+    private ModuleBuild step;
 
     @BeforeEach
     void setUp() {

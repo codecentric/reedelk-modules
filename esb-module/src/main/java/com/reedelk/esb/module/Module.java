@@ -2,6 +2,7 @@ package com.reedelk.esb.module;
 
 import com.reedelk.esb.commons.ModuleStateLogger;
 import com.reedelk.esb.flow.Flow;
+import com.reedelk.esb.lifecycle.ModuleResolveDependencies;
 import com.reedelk.esb.module.state.Error;
 import com.reedelk.esb.module.state.*;
 
@@ -102,7 +103,7 @@ public class Module implements State {
      * transition to Unresolved state from error when a component is unregistered.
      *
      * @param exceptions the exception/s which caused this module to transition to error state.
-     * @see com.reedelk.esb.lifecycle.ResolveModuleDependencies#run
+     * @see ModuleResolveDependencies#run
      */
     public void error(Collection<Exception> exceptions) {
         isAllowedTransition(Error.class);

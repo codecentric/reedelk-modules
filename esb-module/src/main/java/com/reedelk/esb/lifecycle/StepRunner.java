@@ -61,7 +61,7 @@ public class StepRunner {
     public void execute(long moduleId) {
         // When we install a module, we don't have the Module
         // already registered in the manager, therefore the module
-        // manager is not needed (e.g ResolveModuleDependencies).
+        // manager is not needed (e.g ModuleResolveDependencies).
         // In all the other cases, by default, the first step must
         // accept in input the module to be processed.
         Object output = modulesManager.getModuleById(moduleId);

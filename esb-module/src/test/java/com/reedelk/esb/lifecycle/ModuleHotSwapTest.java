@@ -18,18 +18,18 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
-class HotSwapModuleTest {
+class ModuleHotSwapTest {
 
     private final Void VOID = null;
 
     @Mock
     private Bundle bundle;
 
-    private HotSwapModule step;
+    private ModuleHotSwap step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new HotSwapModule("/Users/test/dir"));
+        step = spy(new ModuleHotSwap("/Users/test/dir"));
     }
 
     @Test
@@ -55,5 +55,4 @@ class HotSwapModuleTest {
         ModuleDeserializer deserializer = EXTRACTION.fieldValue("deserializer", ModuleDeserializer.class, created);
         assertThat(deserializer).isInstanceOf(FileSystemDeserializer.class);
     }
-
 }

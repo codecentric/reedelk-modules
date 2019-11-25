@@ -9,11 +9,11 @@ import static com.reedelk.esb.commons.Preconditions.checkState;
 import static com.reedelk.esb.module.state.ModuleState.UNRESOLVED;
 import static java.lang.String.format;
 
-public class UpdateRegisteredComponent extends AbstractStep<Module, Module> {
+public class ModuleUpdateRegisteredComponent extends AbstractStep<Module, Module> {
 
     private final String componentName;
 
-    public UpdateRegisteredComponent(String componentName) {
+    public ModuleUpdateRegisteredComponent(String componentName) {
         this.componentName = componentName;
     }
 

@@ -10,11 +10,11 @@ import java.util.HashSet;
 import static com.reedelk.esb.commons.Preconditions.checkState;
 import static com.reedelk.esb.module.state.ModuleState.*;
 
-public class UpdateUnregisteredComponent extends AbstractStep<Module, Module> {
+public class ModuleUpdateUnregisteredComponent extends AbstractStep<Module, Module> {
 
     private final String componentName;
 
-    public UpdateUnregisteredComponent(String componentName) {
+    public ModuleUpdateUnregisteredComponent(String componentName) {
         this.componentName = componentName;
     }
 

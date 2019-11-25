@@ -26,9 +26,9 @@ import static com.reedelk.runtime.commons.JsonParser.Flow.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-public class BuildModule extends AbstractStep<Module, Module> {
+public class ModuleBuild extends AbstractStep<Module, Module> {
 
-    private static final Logger logger = LoggerFactory.getLogger(BuildModule.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModuleBuild.class);
 
     @Override
     public Module run(Module module) {

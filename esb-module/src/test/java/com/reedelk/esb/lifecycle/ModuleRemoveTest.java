@@ -15,18 +15,18 @@ import static java.util.Collections.emptySet;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RemoveModuleTest {
+class ModuleRemoveTest {
 
     @Mock
     private ModulesManager modulesManager;
     @Mock
     private ModuleDeserializer deserializer;
 
-    private RemoveModule step;
+    private ModuleRemove step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new RemoveModule());
+        step = spy(new ModuleRemove());
     }
 
     @Test
@@ -77,5 +77,4 @@ class RemoveModuleTest {
         org.assertj.core.api.Assertions.assertThat(thrown.getMessage())
                 .contains("Module with id=[14], name=[TestModule] could not be removed: its state is [STARTED]");
     }
-
 }

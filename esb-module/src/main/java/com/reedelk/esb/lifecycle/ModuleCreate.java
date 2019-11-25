@@ -1,19 +1,13 @@
 package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.module.Module;
-import com.reedelk.esb.module.deserializer.FileSystemDeserializer;
+import com.reedelk.esb.module.deserializer.BundleDeserializer;
 import org.osgi.framework.Bundle;
 
-public class HotSwapModule extends AbstractStep<Void, Module> {
-
-    private final String resourcesRootDirectory;
-
-    public HotSwapModule(String resourcesRootDirectory) {
-        this.resourcesRootDirectory = resourcesRootDirectory;
-    }
+public class ModuleCreate extends AbstractStep<Void, Module> {
 
     @Override
-    public Module run(Void nothing) {
+    public Module run(Void input) {
         final Bundle bundle = bundle();
 
         // The state of the Module just created is INSTALLED.
@@ -22,7 +16,7 @@ public class HotSwapModule extends AbstractStep<Void, Module> {
                 .name(bundle.getSymbolicName())
                 .moduleFilePath(bundle.getLocation())
                 .version(bundle.getVersion().toString())
-                .deserializer(new FileSystemDeserializer(resourcesRootDirectory))
+                .deserializer(new BundleDeserializer(bundle))
                 .build();
     }
 }

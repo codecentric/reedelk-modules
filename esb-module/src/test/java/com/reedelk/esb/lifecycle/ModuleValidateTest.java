@@ -28,7 +28,7 @@ import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class ValidateModuleTest {
+class ModuleValidateTest {
 
     private final long moduleId = 232L;
     private final String testModuleName = "TestModule";
@@ -42,7 +42,7 @@ class ValidateModuleTest {
     @Mock
     private ModuleDeserializer deserializer;
     @Spy
-    private ValidateModule step;
+    private ModuleValidate step;
 
     @BeforeEach
     void setUp() {

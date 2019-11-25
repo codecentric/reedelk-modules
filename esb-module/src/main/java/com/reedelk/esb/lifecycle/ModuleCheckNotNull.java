@@ -5,7 +5,7 @@ import org.osgi.framework.Bundle;
 
 import static com.reedelk.esb.commons.Preconditions.checkState;
 
-public class CheckModuleNotNull extends AbstractStep<Module, Module> {
+public class ModuleCheckNotNull extends AbstractStep<Module, Module> {
 
     @Override
     public Module run(Module module) {

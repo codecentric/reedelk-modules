@@ -3,7 +3,7 @@ package com.reedelk.esb.lifecycle;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.state.ModuleState;
 
-public class TransitionToInstalled extends AbstractStep<Module, Module> {
+public class ModuleTransitionToInstalled extends AbstractStep<Module, Module> {
 
     @Override
     public Module run(Module module) {

@@ -18,9 +18,9 @@ import static com.reedelk.esb.commons.Messages.Flow.START_ERROR;
 import static com.reedelk.esb.commons.Messages.Flow.START_ERROR_WITH_TITLE;
 import static com.reedelk.runtime.api.commons.StringUtils.EMPTY;
 
-public class StartModule extends AbstractStep<Module, Module> {
+public class ModuleStart extends AbstractStep<Module, Module> {
 
-    private static final Logger logger = LoggerFactory.getLogger(StartModule.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModuleStart.class);
 
     @Override
     public Module run(Module module) {

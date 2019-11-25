@@ -17,16 +17,16 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TransitionToInstalledTest {
+class ModuleTransitionToInstalledTest {
 
     @Mock
     private ModuleDeserializer deserializer;
 
-    private TransitionToInstalled step;
+    private ModuleTransitionToInstalled step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new TransitionToInstalled());
+        step = spy(new ModuleTransitionToInstalled());
     }
 
     @Test

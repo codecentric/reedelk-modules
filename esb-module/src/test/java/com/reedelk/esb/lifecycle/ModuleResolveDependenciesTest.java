@@ -31,19 +31,19 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class ResolveModuleDependenciesTest {
+class ModuleResolveDependenciesTest {
 
     @Mock
     private ModuleDeserializer deserializer;
     @Mock
     private ComponentRegistry componentRegistry;
 
-    private ResolveModuleDependencies step;
+    private ModuleResolveDependencies step;
     private Module aModule;
 
     @BeforeEach
     void setUp() {
-        step = spy(new ResolveModuleDependencies());
+        step = spy(new ModuleResolveDependencies());
         doReturn(componentRegistry).when(step).componentRegistry();
         aModule = Module.builder()
                 .name("test")

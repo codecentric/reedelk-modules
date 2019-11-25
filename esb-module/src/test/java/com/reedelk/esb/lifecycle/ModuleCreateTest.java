@@ -18,17 +18,17 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
-class CreateModuleTest {
+class ModuleCreateTest {
 
     private final Void VOID = null;
 
     @Mock
     private Bundle bundle;
-    private CreateModule step;
+    private ModuleCreate step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new CreateModule());
+        step = spy(new ModuleCreate());
     }
 
     @Test

@@ -64,8 +64,8 @@ public class ESB implements EventListener, HotSwapListener {
     @Override
     public synchronized void moduleInstalled(long moduleId) {
         StepRunner.get(context, modulesManager, componentRegistry)
-                .next(new CreateModule())
-                .next(new AddModule())
+                .next(new ModuleCreate())
+                .next(new ModuleAdd())
                 .execute(moduleId);
     }
 
@@ -89,11 +89,11 @@ public class ESB implements EventListener, HotSwapListener {
     public synchronized void moduleStarted(long moduleId) {
         if (!modulesManager.isModuleStarted(moduleId)) {
             StepRunner.get(context, modulesManager, componentRegistry, servicesManager.configurationService())
-                    .next(new CheckModuleNotNull())
-                    .next(new ValidateModule())
-                    .next(new ResolveModuleDependencies())
-                    .next(new BuildModule())
-                    .next(new StartModule())
+                    .next(new ModuleCheckNotNull())
+                    .next(new ModuleValidate())
+                    .next(new ModuleResolveDependencies())
+                    .next(new ModuleBuild())
+                    .next(new ModuleStart())
                     .execute(moduleId);
         }
     }
@@ -101,9 +101,9 @@ public class ESB implements EventListener, HotSwapListener {
     @Override
     public synchronized void moduleStopping(long moduleId) {
         StepRunner.get(context, modulesManager)
-                .next(new CheckModuleNotNull())
-                .next(new StopModuleAndReleaseReferences())
-                .next(new TransitionToInstalled())
+                .next(new ModuleCheckNotNull())
+                .next(new ModuleStopAndReleaseReferences())
+                .next(new ModuleTransitionToInstalled())
                 .execute(moduleId);
     }
 
@@ -117,9 +117,9 @@ public class ESB implements EventListener, HotSwapListener {
     public synchronized void moduleStopped(long moduleId) {
         if (modulesManager.isModuleStarted(moduleId)) {
             StepRunner.get(context, modulesManager)
-                    .next(new CheckModuleNotNull())
-                    .next(new StopModuleAndReleaseReferences())
-                    .next(new TransitionToInstalled())
+                    .next(new ModuleCheckNotNull())
+                    .next(new ModuleStopAndReleaseReferences())
+                    .next(new ModuleTransitionToInstalled())
                     .execute(moduleId);
         }
         // Important: module uninstalled event *must* be fired even if a module
@@ -133,7 +133,7 @@ public class ESB implements EventListener, HotSwapListener {
     public synchronized void moduleUninstalled(long moduleId) {
         if (modulesManager.isModuleRegistered(moduleId)) {
             StepRunner.get(context, modulesManager)
-                    .next(new RemoveModule())
+                    .next(new ModuleRemove())
                     .execute(moduleId);
         }
         // Important: module uninstalled event *must* be fired even if a module
@@ -149,10 +149,10 @@ public class ESB implements EventListener, HotSwapListener {
 
         modulesManager.findUnresolvedModules().forEach(unresolvedModule ->
                 StepRunner.get(context, modulesManager, servicesManager.configurationService())
-                        .next(new CheckModuleNotNull())
-                        .next(new UpdateRegisteredComponent(componentName))
-                        .next(new BuildModule())
-                        .next(new StartModule())
+                        .next(new ModuleCheckNotNull())
+                        .next(new ModuleUpdateRegisteredComponent(componentName))
+                        .next(new ModuleBuild())
+                        .next(new ModuleStart())
                         .execute(unresolvedModule.id()));
     }
 
@@ -162,25 +162,24 @@ public class ESB implements EventListener, HotSwapListener {
 
         modulesManager.findModulesUsingComponent(componentName).forEach(moduleUsingComponent ->
                 StepRunner.get(context, modulesManager)
-                        .next(new CheckModuleNotNull())
-                        .next(new StopModuleAndReleaseReferences())
-                        .next(new UpdateUnregisteredComponent(componentName))
+                        .next(new ModuleCheckNotNull())
+                        .next(new ModuleStopAndReleaseReferences())
+                        .next(new ModuleUpdateUnregisteredComponent(componentName))
                         .execute(moduleUsingComponent.id()));
     }
 
-    // TODO: Rename all the steps with ModuleXXXXXX
     @Override
     public synchronized void hotSwap(long moduleId, String resourcesRootDirectory) {
         StepRunner.get(context, modulesManager, componentRegistry, servicesManager.configurationService())
-                .next(new CheckModuleNotNull())
-                .next(new StopModuleAndReleaseReferences())
-                .next(new RemoveModule())
-                .next(new HotSwapModule(resourcesRootDirectory))
-                .next(new AddModule())
-                .next(new ValidateModule())
-                .next(new ResolveModuleDependencies())
-                .next(new BuildModule())
-                .next(new StartModule())
+                .next(new ModuleCheckNotNull())
+                .next(new ModuleStopAndReleaseReferences())
+                .next(new ModuleRemove())
+                .next(new ModuleHotSwap(resourcesRootDirectory))
+                .next(new ModuleAdd())
+                .next(new ModuleValidate())
+                .next(new ModuleResolveDependencies())
+                .next(new ModuleBuild())
+                .next(new ModuleStart())
                 .execute(moduleId);
     }
 }

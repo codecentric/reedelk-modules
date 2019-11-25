@@ -13,15 +13,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CheckModuleNotNullTest {
+class ModuleCheckNotNullTest {
 
     @Mock
     private Bundle bundle;
-    private CheckModuleNotNull step;
+    private ModuleCheckNotNull step;
 
     @BeforeEach
     void setUp() {
-        step = spy(new CheckModuleNotNull());
+        step = spy(new ModuleCheckNotNull());
     }
 
     @Test
@@ -45,5 +45,4 @@ class CheckModuleNotNullTest {
 
         assertThrows(IllegalStateException.class, () -> step.run(null));
     }
-
 }

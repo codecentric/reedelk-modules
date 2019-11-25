@@ -16,9 +16,9 @@ import static com.reedelk.runtime.api.commons.StringUtils.EMPTY;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static com.reedelk.runtime.commons.JsonParser.*;
 
-public class ValidateModule extends AbstractStep<Module, Module> {
+public class ModuleValidate extends AbstractStep<Module, Module> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ValidateModule.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModuleValidate.class);
 
     @Override
     public Module run(Module module) {
