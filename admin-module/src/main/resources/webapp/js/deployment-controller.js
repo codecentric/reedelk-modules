@@ -18,7 +18,7 @@ let IndexController = (function () {
             type: 'POST',
             success: function (response) {
 
-                Messages.Success('Module deployed');
+                Messages.Success('Module deployed, updating modules list ...');
 
                 clearTableBody();
                 showSpinner();
@@ -44,7 +44,7 @@ let IndexController = (function () {
             data: body,
             success: function (result) {
 
-                Messages.Success('Module "' + moduleName + '" updated');
+                Messages.Success('Module "' + moduleName + '" updated, updating modules list ...');
 
                 clearTableBody();
                 showSpinner();
@@ -70,7 +70,7 @@ let IndexController = (function () {
             data: body,
             success: function (result) {
 
-                Messages.Success('Module "' + moduleName + '" removed');
+                Messages.Success('Module "' + moduleName + '" removed, updating modules list ...');
 
                 clearTableBody();
                 showSpinner();
