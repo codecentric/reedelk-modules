@@ -18,6 +18,7 @@
         <osgi.core.version>6.0.0</osgi.core.version>
         <osgi.service.cm.version>1.6.0</osgi.service.cm.version>
         <osgi.service.component.version>1.4.0</osgi.service.component.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <pax.logging.logback.version>1.10.1</pax.logging.logback.version>
         <reactor.version>3.2.12.RELEASE</reactor.version>
     </properties>
