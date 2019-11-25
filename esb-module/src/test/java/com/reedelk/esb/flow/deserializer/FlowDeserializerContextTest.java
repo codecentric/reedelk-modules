@@ -2,9 +2,9 @@ package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.flow.deserializer.typefactory.ConfigPropertyAwareTypeFactoryDecorator;
 import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextAwareDecorator;
+import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.commons.TypeFactory;
-import com.reedelk.runtime.system.api.file.ModuleId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -9,8 +9,8 @@ import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.rest.api.InternalAPI;
 import com.reedelk.runtime.rest.api.hotswap.v1.HotSwapPOSTReq;
 import com.reedelk.runtime.rest.api.hotswap.v1.HotSwapPOSTRes;
-import com.reedelk.runtime.system.api.BundleNotFoundException;
 import com.reedelk.runtime.system.api.HotSwapService;
+import com.reedelk.runtime.system.api.ModuleNotFoundException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -42,7 +42,7 @@ public class ModuleHotSwap implements ProcessorSync {
         long hotSwappedModuleId;
         try {
             hotSwappedModuleId = hotSwapService.hotSwap(hotSwapReq.getModuleFilePath(), hotSwapReq.getResourcesRootDirectory());
-        } catch (BundleNotFoundException e) {
+        } catch (ModuleNotFoundException e) {
             // If we  tried to Hot swap a module which was
             // not installed in the runtime, we return
             // status code 'Not Found' - 404.

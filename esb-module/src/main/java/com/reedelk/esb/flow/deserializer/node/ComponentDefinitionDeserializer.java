@@ -4,9 +4,9 @@ import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.commons.CollectionFactory;
 import com.reedelk.runtime.commons.JsonParser;
-import com.reedelk.runtime.system.api.file.ModuleId;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -49,7 +49,9 @@ public class ComponentDefinitionDeserializer {
         // we set an object containing the ModuleId of this module. This is needed
         // because some services require the ID of the bundle to get some data such
         // as the  ModuleFileProvider  in order to discover the files within the
-        // Module/resources folder.
+        // Module/resources folder. We must look for setters of this type because
+        // the module id is not a property provided by the user in the JSON definition,
+        // but it is provided by the runtime.
         getSetterByArgumentType(implementor, ModuleId.class).ifPresent(method -> {
             Object moduleId = context.typeFactory().create(ModuleId.class);
             setProperty(implementor, method, moduleId);

@@ -1,6 +1,6 @@
 package com.reedelk.esb.services.hotswap;
 
-import com.reedelk.runtime.system.api.BundleNotFoundException;
+import com.reedelk.runtime.system.api.ModuleNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +30,7 @@ class DefaultHotSwapServiceTest {
     }
 
     @Test
-    void shouldTestSomething() throws BundleNotFoundException {
+    void shouldReturnIdOfTheHotSwappedModule() throws ModuleNotFoundException {
         // Given
         String modulePath = "file:/Users/myuser/module/path/test-module-1.0.0.jar";
         String resourcesRootDirectory = "/Users/myuser/module/src/main/resources";

@@ -1,12 +1,13 @@
 package com.reedelk.esb.flow;
 
-import com.reedelk.esb.exception.FlowExecutionException;
+import com.reedelk.esb.commons.Messages;
 import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Inbound;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
+import com.reedelk.runtime.api.exception.FlowExecutionException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import org.osgi.framework.Bundle;
@@ -122,7 +123,9 @@ public class Flow implements InboundEventListener {
 
         @Override
         public void onError(Throwable throwable, FlowContext flowContext) {
-            FlowExecutionException wrapped = new FlowExecutionException(moduleId, moduleName, flowId, flowTitle, throwable);
+            String error = Messages.Flow.EXECUTION_ERROR.format(moduleId, moduleName, flowId, flowTitle,
+                    throwable.getClass().getName(), throwable.getMessage());
+            FlowExecutionException wrapped = new FlowExecutionException(moduleId, moduleName, flowId, flowTitle, error, throwable);
             delegate.onError(wrapped,flowContext);
         }
     }

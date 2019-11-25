@@ -171,4 +171,20 @@ public class Messages {
             return formatMessage(msg, args);
         }
     }
+
+    public enum HotSwap implements FormattedMessage {
+
+        MODULE_NOT_FOUND("Hot Swap failed: could not find registered module from target file path=%s");
+
+        private String msg;
+
+        HotSwap(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+    }
 }

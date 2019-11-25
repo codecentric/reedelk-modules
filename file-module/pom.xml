@@ -16,7 +16,6 @@
 
     <properties>
         <runtime.commons.version>1.0.0-SNAPSHOT</runtime.commons.version>
-        <runtime.system.api.version>1.0.0-SNAPSHOT</runtime.system.api.version>
     </properties>
 
 
@@ -25,12 +24,6 @@
             <groupId>com.reedelk</groupId>
             <artifactId>runtime-commons</artifactId>
             <version>${runtime.commons.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.reedelk</groupId>
-            <artifactId>runtime-system-api</artifactId>
-            <version>${runtime.system.api.version}</version>
             <scope>provided</scope>
         </dependency>
 

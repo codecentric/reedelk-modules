@@ -1,9 +1,9 @@
 package com.reedelk.esb.test.utils;
 
 import com.reedelk.runtime.api.component.ProcessorSync;
+import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.system.api.file.ModuleId;
 
 public class TestComponentWithModuleIdProperty implements ProcessorSync {
 

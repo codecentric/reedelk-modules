@@ -1,9 +1,9 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
+import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
-import com.reedelk.runtime.system.api.file.ModuleId;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
