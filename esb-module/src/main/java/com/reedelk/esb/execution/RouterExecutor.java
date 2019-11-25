@@ -23,8 +23,8 @@ import static java.util.stream.Collectors.toList;
 public class RouterExecutor implements FlowExecutor {
 
     private final Logger logger = LoggerFactory.getLogger(RouterExecutor.class);
-    private final Mono<Boolean> FALSE = Mono.just(false);
-    private final Mono<Boolean> TRUE = Mono.just(true);
+    private final Mono<Boolean> unmatchedCondition = Mono.just(false);
+    private final Mono<Boolean> matchedCondition = Mono.just(true);
 
     @Override
     public Publisher<MessageAndContext> execute(Publisher<MessageAndContext> publisher, ExecutionNode currentNode, ExecutionGraph graph) {
@@ -78,13 +78,13 @@ public class RouterExecutor implements FlowExecutor {
     private Mono<Boolean> evaluate(DynamicString expression, Message message, FlowContext flowContext) {
         try {
             return Router.DEFAULT_CONDITION.equals(expression) ?
-                    TRUE :
+                    matchedCondition :
                     ScriptEngine.getInstance().evaluate(expression, flowContext, message)
                             .map(resultAsString -> Mono.just(Boolean.parseBoolean(resultAsString)))
-                            .orElse(FALSE);
+                            .orElse(unmatchedCondition);
         } catch (Exception e) {
             logger.error(String.format("Could not evaluate Router path expression (%s)", expression), e);
-            return FALSE;
+            return unmatchedCondition;
         }
     }
 }
