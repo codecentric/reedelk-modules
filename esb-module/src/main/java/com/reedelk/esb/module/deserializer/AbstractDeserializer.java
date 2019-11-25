@@ -54,12 +54,16 @@ abstract class AbstractDeserializer implements ModuleDeserializer {
                 .collect(toSet());
     }
 
-    // Must provide name of the script starting from root.
+    // Must provide name of the script starting from resources/scripts.
     private Collection<ScriptResource> getScripts() {
         List<URL> resourcesURL = getResources(Script.RESOURCE_DIRECTORY, SCRIPT.value());
         return resourcesURL.stream()
                 .map(url -> {
-                    String scriptFilePath = url.getPath();
+                    // The path starts from src/main/resources/scripts.
+                    // e.g If the project contains:
+                    // src/main/resources/scripts/my_scripts/test.js
+                    // then script file path would be "my_scripts/test.js.
+                    String scriptFilePath = url.getPath().substring(Script.RESOURCE_DIRECTORY.length() + 1);
                     String body = FileUtils.ReadFromURL.asString(url);
                     return new ScriptResource(scriptFilePath, body);
                 })

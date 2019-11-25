@@ -87,7 +87,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
      * The current approach (setting the value to null) make sense in this case because
      * functions names are randomly generated with a UUID, therefore they will never be
      * called anymore after a module has been un-installed.
-     * // ----------------------------------------------------------------------
+     * ----------------------------------------------------------------------
      *
      * @param functionName the name of the function to be cleaned up (set to null)
      */
