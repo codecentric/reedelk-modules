@@ -10,6 +10,9 @@ import static com.reedelk.esb.commons.Messages.Execution.ERROR_FIRST_SUCCESSOR_L
 
 public class FindFirstSuccessorLeadingTo {
 
+    private FindFirstSuccessorLeadingTo() {
+    }
+
     public static ExecutionNode of(ExecutionGraph graph, ExecutionNode start, ExecutionNode end) {
         Collection<ExecutionNode> successors = graph.successors(start);
         for (ExecutionNode firstSuccessorOfStart : successors) {

@@ -19,7 +19,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
-class AbstractDeserializerTest {
+abstract class AbstractDeserializerTest {
 
     final String component1Name = TestComponent.class.getName() + "1";
     final String component2Name = TestComponent.class.getName() + "2";

@@ -1,5 +1,8 @@
 package com.reedelk.esb.pubsub;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -7,11 +10,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.reedelk.esb.commons.Messages.PubSub.ERROR_DELIVERING_MESSAGE;
 import static com.reedelk.esb.pubsub.Action.Module.Uninstalled;
 
 public class Event {
 
-    public static Event operation;
+    private static final Logger logger = LoggerFactory.getLogger(Event.class);
+
+    public static final Event operation;
     static {
         channels = new ConcurrentHashMap<>();
         operation = new Event();
@@ -63,7 +69,7 @@ public class Event {
                 method.invoke(subscriber, message);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(ERROR_DELIVERING_MESSAGE.format(), e);
         }
     }
 }

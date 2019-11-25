@@ -187,4 +187,20 @@ public class Messages {
             return formatMessage(msg, args);
         }
     }
+
+    public enum PubSub implements FormattedMessage {
+
+        ERROR_DELIVERING_MESSAGE("Could not deliver Service Bus Message");
+
+        private String msg;
+
+        PubSub(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+    }
 }
