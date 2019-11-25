@@ -24,7 +24,6 @@ import java.util.Map;
 import static com.reedelk.esb.pubsub.Action.Module.Uninstalled;
 import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STREAM_PROVIDER;
 
-// TODO: Test also that  all resources and dynamic scripts are removedfrom the maps when a module is being uninstalled!!
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
 
     private final Map<Long, List<String>> moduleIdFunctionNamesMap = new HashMap<>();
