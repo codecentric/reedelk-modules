@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class DynamicMapWithMessageAndContext implements FunctionDefinitionBuilder<DynamicMap<Object>> {
 
-    private static final String EVALUATE_MAP_SCRIPT =
+    private static final String TEMPLATE =
             "function %s(message, context) {\n" +
                     "  return %s\n" +
                     "};";
@@ -46,6 +46,6 @@ public class DynamicMapWithMessageAndContext implements FunctionDefinitionBuilde
         // Remove final space and comma (,) character
         if (!map.isEmpty()) builder.delete(builder.length() - 2, builder.length() - 1);
         builder.append("};");
-        return String.format(EVALUATE_MAP_SCRIPT, functionName, builder.toString());
+        return String.format(TEMPLATE, functionName, builder.toString());
     }
 }

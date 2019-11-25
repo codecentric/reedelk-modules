@@ -5,7 +5,7 @@ import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 
 public class DynamicValueWithMessageAndContext implements FunctionDefinitionBuilder<DynamicValue> {
 
-    private static final String EVALUATE_FUNCTION =
+    private static final String TEMPLATE =
             "function %s(message, context) {\n" +
                     "  return %s\n" +
                     "};";
@@ -13,6 +13,6 @@ public class DynamicValueWithMessageAndContext implements FunctionDefinitionBuil
     @Override
     public String from(String functionName, DynamicValue dynamicValue) {
         String functionBody = ScriptUtils.unwrap(dynamicValue.body());
-        return String.format(EVALUATE_FUNCTION, functionName, functionBody);
+        return String.format(TEMPLATE, functionName, functionBody);
     }
 }

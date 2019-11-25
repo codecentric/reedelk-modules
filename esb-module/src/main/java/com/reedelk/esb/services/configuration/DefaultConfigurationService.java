@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -329,7 +328,7 @@ public class DefaultConfigurationService implements ConfigurationService {
                 .collect(toList());
     }
 
-    <T> T getConfigAdminProperty(String configPid, String configKey, T defaultValue, Function<Object, T> mapper) {
+    <T> T getConfigAdminProperty(String configPid, String configKey, T defaultValue, InputMapper<T> mapper) {
         try {
             Configuration configuration = configurationAdmin.getConfiguration(configPid);
             Dictionary<String, Object> properties = configuration.getProperties();
@@ -341,7 +340,7 @@ public class DefaultConfigurationService implements ConfigurationService {
         }
     }
 
-    <T> T getConfigAdminPropertyOrThrow(String configPid, String configKey, Function<Object, T> mapper) {
+    <T> T getConfigAdminPropertyOrThrow(String configPid, String configKey, InputMapper<T> mapper) {
         try {
             Configuration configuration = configurationAdmin.getConfiguration(configPid);
             Dictionary<String, Object> properties = configuration.getProperties();
@@ -351,16 +350,16 @@ public class DefaultConfigurationService implements ConfigurationService {
         }
     }
 
-    private <T> T getPropertyOrThrow(Dictionary<String, Object> dictionary, String configKey, Function<Object, T> mapper) {
+    private <T> T getPropertyOrThrow(Dictionary<String, Object> dictionary, String configKey, InputMapper<T> mapper) {
         if (dictionary != null && list(dictionary.keys()).contains(configKey)) {
-            return mapper.apply(dictionary.get(configKey));
+            return mapper.map(dictionary.get(configKey));
         }
         throw new ConfigPropertyException(ConfigProperty.NOT_FOUND_WITH_KEY.format(configKey));
     }
 
-    private <T> T getPropertyOrDefault(Dictionary<String, Object> dictionary, String configKey, T defaultValue, Function<Object, T> mapper) {
+    private <T> T getPropertyOrDefault(Dictionary<String, Object> dictionary, String configKey, T defaultValue, InputMapper<T> mapper) {
         return list(dictionary.keys()).contains(configKey) ?
-                mapper.apply(dictionary.get(configKey)) :
+                mapper.map(dictionary.get(configKey)) :
                 defaultValue;
     }
 
@@ -398,12 +397,16 @@ public class DefaultConfigurationService implements ConfigurationService {
         MAP = Collections.unmodifiableMap(tmp);
     }
 
-    private static final Function<Object, String> TO_STRING = input -> (String) input;
-    private static final Function<Object, Boolean> TO_BOOLEAN = input -> input instanceof String ? Boolean.valueOf((String) input) : (Boolean) input;
-    private static final Function<Object, Integer> TO_INT = input -> input instanceof String ? Integer.valueOf((String) input) : (Integer) input;
-    private static final Function<Object, Long> TO_LONG = input -> input instanceof String ? Long.valueOf((String) input) : (Long) input;
-    private static final Function<Object, Double> TO_DOUBLE = input -> input instanceof String ? Double.valueOf((String) input) : (Double) input;
-    private static final Function<Object, Float> TO_FLOAT = input -> input instanceof String ? Float.valueOf((String) input) : (Float) input;
-    private static final Function<Object, BigDecimal> TO_BIG_DECIMAL = input -> input instanceof String ? new BigDecimal((String) input) : (BigDecimal) input;
-    private static final Function<Object, BigInteger> TO_BIG_INTEGER = input -> input instanceof String ? new BigInteger((String) input) : (BigInteger) input;
+    private static final InputMapper<String> TO_STRING = input -> (String) input;
+    private static final InputMapper<Boolean> TO_BOOLEAN = input -> input instanceof String ? Boolean.valueOf((String) input) : (Boolean) input;
+    private static final InputMapper<Integer> TO_INT = input -> input instanceof String ? Integer.valueOf((String) input) : (Integer) input;
+    private static final InputMapper<Long> TO_LONG = input -> input instanceof String ? Long.valueOf((String) input) : (Long) input;
+    private static final InputMapper<Double> TO_DOUBLE = input -> input instanceof String ? Double.valueOf((String) input) : (Double) input;
+    private static final InputMapper<Float> TO_FLOAT = input -> input instanceof String ? Float.valueOf((String) input) : (Float) input;
+    private static final InputMapper<BigDecimal> TO_BIG_DECIMAL = input -> input instanceof String ? new BigDecimal((String) input) : (BigDecimal) input;
+    private static final InputMapper<BigInteger> TO_BIG_INTEGER = input -> input instanceof String ? new BigInteger((String) input) : (BigInteger) input;
+
+    interface InputMapper<T> {
+        T map(Object input);
+    }
 }

@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.function.Function;
 
+import static com.reedelk.esb.services.configuration.DefaultConfigurationService.InputMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,7 +28,7 @@ class DefaultConfigurationServiceBigIntegerTest extends BaseDefaultConfiguration
 
         doReturn(defaultValue)
                 .when(service)
-                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(Function.class));
+                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(InputMapper.class));
 
         // When
         BigInteger actualConfigProperty = service.getBigIntegerFrom(customConfigFile, TEST_CONFIG_KEY, defaultValue);
@@ -46,7 +46,7 @@ class DefaultConfigurationServiceBigIntegerTest extends BaseDefaultConfiguration
 
         doReturn(expectedValue)
                 .when(service)
-                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(Function.class));
+                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(InputMapper.class));
 
         // When
         BigInteger actualConfigProperty = service.getBigIntegerFrom(customConfigFile, TEST_CONFIG_KEY, defaultValue);
@@ -64,7 +64,7 @@ class DefaultConfigurationServiceBigIntegerTest extends BaseDefaultConfiguration
 
         doThrow(new ConfigPropertyException("Could not find property"))
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(InputMapper.class));
         // When
         ConfigPropertyException thrown =
                 assertThrows(ConfigPropertyException.class, () -> service.getBigIntegerFrom(customConfigFile, TEST_CONFIG_KEY));
@@ -80,7 +80,7 @@ class DefaultConfigurationServiceBigIntegerTest extends BaseDefaultConfiguration
 
         doReturn(expectedValue)
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(InputMapper.class));
 
         // When
         BigInteger actualConfigProperty = service.getBigIntegerFrom(customConfigFile, TEST_CONFIG_KEY);
@@ -171,7 +171,7 @@ class DefaultConfigurationServiceBigIntegerTest extends BaseDefaultConfiguration
         // Given
         doThrow(new ConfigPropertyException("Could not find property"))
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(InputMapper.class));
 
         // When
         ConfigPropertyException thrown =
@@ -187,7 +187,7 @@ class DefaultConfigurationServiceBigIntegerTest extends BaseDefaultConfiguration
 
         doReturn(expectedValue)
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(InputMapper.class));
 
         // When
         BigInteger actualConfigProperty = service.getBigInteger(TEST_CONFIG_KEY);

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.reedelk.esb.pubsub.Action.Module.Uninstalled;
+import static com.reedelk.esb.pubsub.Action.Module.UN_INSTALLED;
 import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STREAM_PROVIDER;
 
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
@@ -29,7 +29,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     private final Map<Long, List<String>> moduleIdFunctionNamesMap = new HashMap<>();
 
     AbstractDynamicValueEvaluator() {
-        Event.operation.subscribe(Uninstalled, this);
+        Event.operation.subscribe(UN_INSTALLED, this);
     }
 
     <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider provider, FunctionDefinitionBuilder<DynamicValue> functionDefinitionBuilder, Object... args) {

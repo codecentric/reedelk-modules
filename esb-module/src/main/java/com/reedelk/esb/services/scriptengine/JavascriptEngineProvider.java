@@ -19,7 +19,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
 
     private JavascriptEngineProvider() {
         this.engine = (NashornScriptEngine) new NashornScriptEngineFactory()
-                .getScriptEngine(new String[]{"--optimistic-types=false"});
+                .getScriptEngine("--optimistic-types=false");
     }
 
     private static class ScriptEngineProviderHelper {

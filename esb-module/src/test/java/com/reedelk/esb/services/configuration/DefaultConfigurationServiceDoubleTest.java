@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.function.Function;
 
+import static com.reedelk.esb.services.configuration.DefaultConfigurationService.InputMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +27,7 @@ class DefaultConfigurationServiceDoubleTest extends BaseDefaultConfigurationServ
 
         doReturn(defaultValue)
                 .when(service)
-                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(Function.class));
+                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(InputMapper.class));
 
         // When
         double actualConfigProperty = service.getDoubleFrom(customConfigFile, TEST_CONFIG_KEY, defaultValue);
@@ -44,7 +44,7 @@ class DefaultConfigurationServiceDoubleTest extends BaseDefaultConfigurationServ
 
         doReturn(23.3d)
                 .when(service)
-                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(Function.class));
+                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(InputMapper.class));
 
         // When
         double actualConfigProperty = service.getDoubleFrom(customConfigFile, TEST_CONFIG_KEY, defaultValue);
@@ -62,7 +62,7 @@ class DefaultConfigurationServiceDoubleTest extends BaseDefaultConfigurationServ
 
         doThrow(new ConfigPropertyException("Could not find property"))
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(InputMapper.class));
         // When
         ConfigPropertyException thrown =
                 assertThrows(ConfigPropertyException.class, () -> service.getDoubleFrom(customConfigFile, TEST_CONFIG_KEY));
@@ -77,7 +77,7 @@ class DefaultConfigurationServiceDoubleTest extends BaseDefaultConfigurationServ
 
         doReturn(88.23d)
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(InputMapper.class));
 
         // When
         double actualConfigProperty = service.getDoubleFrom(customConfigFile, TEST_CONFIG_KEY);
@@ -166,7 +166,7 @@ class DefaultConfigurationServiceDoubleTest extends BaseDefaultConfigurationServ
         // Given
         doThrow(new ConfigPropertyException("Could not find property"))
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(InputMapper.class));
 
         // When
         ConfigPropertyException thrown =
@@ -180,7 +180,7 @@ class DefaultConfigurationServiceDoubleTest extends BaseDefaultConfigurationServ
         // Given
         doReturn(35000.1d)
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(InputMapper.class));
 
         // When
         double actualConfigProperty = service.getDouble(TEST_CONFIG_KEY);

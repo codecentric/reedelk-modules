@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.reedelk.esb.commons.Messages.PubSub.ERROR_DELIVERING_MESSAGE;
-import static com.reedelk.esb.pubsub.Action.Module.Uninstalled;
+import static com.reedelk.esb.pubsub.Action.Module.UN_INSTALLED;
 
 public class Event {
 
@@ -30,7 +30,7 @@ public class Event {
 
     public static void fireModuleUninstalled(long moduleId) {
         Action.Module.ActionModuleUninstalled message = new Action.Module.ActionModuleUninstalled(moduleId);
-        Event.operation.publish(Uninstalled, message);
+        Event.operation.publish(UN_INSTALLED, message);
     }
 
     public void subscribe(String channelName, Object subscriber) {

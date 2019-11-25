@@ -8,8 +8,8 @@ import org.mockito.quality.Strictness;
 import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.function.Function;
 
+import static com.reedelk.esb.services.configuration.DefaultConfigurationService.InputMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,7 +31,7 @@ class DefaultConfigurationServiceIntegerTest extends BaseDefaultConfigurationSer
 
         doReturn(defaultValue)
                 .when(service)
-                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(Function.class));
+                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(InputMapper.class));
 
         // When
         int actualConfigProperty = service.getIntFrom(customConfigFile, TEST_CONFIG_KEY, defaultValue);
@@ -48,7 +48,7 @@ class DefaultConfigurationServiceIntegerTest extends BaseDefaultConfigurationSer
 
         doReturn(67)
                 .when(service)
-                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(Function.class));
+                .getConfigAdminProperty(eq(customConfigFile), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(InputMapper.class));
 
         // When
         int actualConfigProperty = service.getIntFrom(customConfigFile, TEST_CONFIG_KEY, defaultValue);
@@ -66,7 +66,7 @@ class DefaultConfigurationServiceIntegerTest extends BaseDefaultConfigurationSer
 
         doThrow(new ConfigPropertyException("Could not find property"))
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(InputMapper.class));
         // When
         ConfigPropertyException thrown =
                 assertThrows(ConfigPropertyException.class, () -> service.getIntFrom(customConfigFile, TEST_CONFIG_KEY));
@@ -81,7 +81,7 @@ class DefaultConfigurationServiceIntegerTest extends BaseDefaultConfigurationSer
 
         doReturn(88)
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(customConfigFile), eq(TEST_CONFIG_KEY), any(InputMapper.class));
 
         // When
         int actualConfigProperty = service.getIntFrom(customConfigFile, TEST_CONFIG_KEY);
@@ -170,7 +170,7 @@ class DefaultConfigurationServiceIntegerTest extends BaseDefaultConfigurationSer
         // Given
         doThrow(new ConfigPropertyException("Could not find property"))
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(InputMapper.class));
         // When
         ConfigPropertyException thrown =
                 assertThrows(ConfigPropertyException.class, () -> service.getInt(TEST_CONFIG_KEY));
@@ -183,7 +183,7 @@ class DefaultConfigurationServiceIntegerTest extends BaseDefaultConfigurationSer
         // Given
         doReturn(35000)
                 .when(service)
-                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(Function.class));
+                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(InputMapper.class));
 
         // When
         int actualConfigProperty = service.getInt(TEST_CONFIG_KEY);

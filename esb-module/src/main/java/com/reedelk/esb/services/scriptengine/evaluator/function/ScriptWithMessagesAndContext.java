@@ -6,13 +6,13 @@ import static java.lang.String.format;
 
 public class ScriptWithMessagesAndContext implements FunctionDefinitionBuilder<Script> {
 
-    private final String scriptWithMessagesAndContextFunction =
+    private static final String TEMPLATE =
             "function %s(messages, context) {\n" +
                     "%s\n" +
                     "};";
 
     @Override
     public String from(String functionName, Script script) {
-        return format(scriptWithMessagesAndContextFunction, functionName, script.body());
+        return format(TEMPLATE, functionName, script.body());
     }
 }
