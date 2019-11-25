@@ -20,7 +20,7 @@ public class GenericComponentDeserializer extends AbstractDeserializer {
         ExecutionNode executionNode = context.instantiateComponent(componentName);
         Component component = executionNode.getComponent();
 
-        ComponentDefinitionDeserializer deserializer = new ComponentDefinitionDeserializer(executionNode, context);
+        GenericComponentDefinitionDeserializer deserializer = new GenericComponentDefinitionDeserializer(executionNode, context);
         deserializer.deserialize(componentDefinition, component);
 
         graph.putEdge(parent, executionNode);

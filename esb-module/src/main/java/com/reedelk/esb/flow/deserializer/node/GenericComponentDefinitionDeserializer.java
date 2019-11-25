@@ -21,13 +21,12 @@ import static com.reedelk.runtime.commons.JsonParser.Component;
 import static com.reedelk.runtime.commons.JsonParser.Config;
 import static com.reedelk.runtime.commons.ReflectionUtils.*;
 
-// TODO: MERGE THIS with the GenericComponentDeserializer!!
-public class ComponentDefinitionDeserializer {
+public class GenericComponentDefinitionDeserializer {
 
     private final ExecutionNode executionNode;
     private final FlowDeserializerContext context;
 
-    ComponentDefinitionDeserializer(final ExecutionNode executionNode, final FlowDeserializerContext context) {
+    GenericComponentDefinitionDeserializer(final ExecutionNode executionNode, final FlowDeserializerContext context) {
         this.executionNode = executionNode;
         this.context = context;
     }

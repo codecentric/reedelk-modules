@@ -39,7 +39,7 @@ import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class ComponentDefinitionDeserializerTest {
+class GenericComponentDefinitionDeserializerTest {
 
     private long testModuleId = 10L;
 
@@ -53,14 +53,14 @@ class ComponentDefinitionDeserializerTest {
     private DeserializedModule mockDeSerializedModule;
 
     private FlowDeserializerContext context;
-    private ComponentDefinitionDeserializer deserializer;
+    private GenericComponentDefinitionDeserializer deserializer;
 
     @BeforeEach
     void setUp() {
         TypeFactory factory = TypeFactory.getInstance();
         factory = new TypeFactoryContextAwareDecorator(factory, testModuleId);
         context = spy(new FlowDeserializerContext(mockBundle, mockModulesManager, mockDeSerializedModule, factory));
-        deserializer = new ComponentDefinitionDeserializer(mockExecutionNode, context);
+        deserializer = new GenericComponentDefinitionDeserializer(mockExecutionNode, context);
     }
 
     @Nested
