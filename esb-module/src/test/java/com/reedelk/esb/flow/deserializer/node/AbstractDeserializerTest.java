@@ -1,7 +1,7 @@
 package com.reedelk.esb.flow.deserializer.node;
 
 import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
-import com.reedelk.esb.flow.deserializer.typefactory.ScriptBlockAwareTypeFactoryDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextAwareDecorator;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeserializedModule;
@@ -14,8 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
-
-import java.util.UUID;
 
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.spy;
@@ -67,7 +65,7 @@ class AbstractDeserializerTest {
     @BeforeEach
     void setUp() {
         TypeFactory typeFactory = TypeFactory.getInstance();
-        typeFactory = new ScriptBlockAwareTypeFactoryDecorator(typeFactory, 10L, UUID.randomUUID().toString(), "Test flow");
+        typeFactory = new TypeFactoryContextAwareDecorator(typeFactory, 10L);
         context = spy(new FlowDeserializerContext(bundle, mockModulesManager, mockDeSerializedModule, typeFactory));
 
         lenient().doReturn(new TestComponent()).when(component1).getComponent();

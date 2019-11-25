@@ -55,7 +55,7 @@ public class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
         routerWrapper.setEndOfRouterStopNode(endOfRouter);
         for (ConditionWithSequence item : conditionWithSequences) {
             if (item.sequence.size() > 0) {
-                routerWrapper.addExpressionAndPathPair(DynamicString.from(item.condition, new ScriptBlockContext(testModuleId, "aabbcc", "Test Flow")), item.sequence.get(0));
+                routerWrapper.addExpressionAndPathPair(DynamicString.from(item.condition, new ScriptBlockContext(testModuleId)), item.sequence.get(0));
                 buildSequence(graph, router, endOfRouter, item.sequence);
             }
         }

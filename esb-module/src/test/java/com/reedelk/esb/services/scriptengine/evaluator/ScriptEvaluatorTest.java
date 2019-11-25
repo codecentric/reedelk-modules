@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class ScriptEvaluatorTest {
 
-    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L, "aabbcc", "Test flow");
+    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L);
 
     private FlowContext context;
     private ScriptEvaluator evaluator;

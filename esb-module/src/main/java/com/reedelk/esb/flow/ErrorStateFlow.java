@@ -7,18 +7,12 @@ public class ErrorStateFlow extends Flow {
 
     private final Exception exception;
 
-    public ErrorStateFlow(String flowId, String flowTitle, ExecutionGraph executionGraph, FlowExecutorEngine executionEngine, Exception exception) {
-        super(flowId, flowTitle, executionGraph, executionEngine);
-        this.exception = exception;
-    }
-
-    public ErrorStateFlow(ExecutionGraph executionGraph, FlowExecutorEngine executionEngine, Exception exception) {
-        super(null, null, executionGraph, executionEngine);
+    public ErrorStateFlow(long moduleId, String flowId, String flowTitle, ExecutionGraph executionGraph, FlowExecutorEngine executionEngine, Exception exception) {
+        super(moduleId, flowId, flowTitle, executionGraph, executionEngine);
         this.exception = exception;
     }
 
     public Exception getException() {
         return this.exception;
     }
-
 }

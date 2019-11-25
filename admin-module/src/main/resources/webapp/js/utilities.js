@@ -1,7 +1,7 @@
 var Utilities = {
 
     Capitalize: function (string) {
-        if (typeof string !== 'string') return ''
+        if (typeof string !== 'string') return '';
         var lowercased = string.toLowerCase();
         return lowercased.charAt(0).toUpperCase() + lowercased.slice(1);
     },

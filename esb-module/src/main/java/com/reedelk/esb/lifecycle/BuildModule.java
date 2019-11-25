@@ -7,14 +7,13 @@ import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.flow.deserializer.FlowDeserializer;
 import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
 import com.reedelk.esb.flow.deserializer.typefactory.ConfigPropertyAwareTypeFactoryDecorator;
-import com.reedelk.esb.flow.deserializer.typefactory.ScriptBlockAwareTypeFactoryDecorator;
 import com.reedelk.esb.flow.deserializer.typefactory.ScriptFunctionBodyResolverDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextAwareDecorator;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.module.state.ModuleState;
-import com.reedelk.runtime.commons.JsonParser;
 import com.reedelk.runtime.commons.TypeFactory;
 import org.json.JSONObject;
 import org.osgi.framework.Bundle;
@@ -23,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
+import static com.reedelk.runtime.commons.JsonParser.Flow.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -71,27 +71,26 @@ public class BuildModule extends AbstractStep<Module, Module> {
         ExecutionGraph flowGraph = ExecutionGraph.build();
         FlowExecutorEngine executionEngine = new FlowExecutorEngine(flowGraph);
 
-        String flowId = JsonParser.Flow.id(flowDefinition);
-        String flowTitle = JsonParser.Flow.hasTitle(flowDefinition) ?
-                JsonParser.Flow.title(flowDefinition) : null;
+        String flowId = id(flowDefinition);
+        String flowTitle = hasTitle(flowDefinition) ? title(flowDefinition) : null;
 
         ModulesManager modulesManager = modulesManager();
 
         TypeFactory typeFactory = TypeFactory.getInstance();
         typeFactory = new ScriptFunctionBodyResolverDecorator(typeFactory, deserializedModule);
         typeFactory = new ConfigPropertyAwareTypeFactoryDecorator(configurationService(), typeFactory);
-        typeFactory = new ScriptBlockAwareTypeFactoryDecorator(typeFactory, bundle.getBundleId(), flowId, flowTitle);
+        typeFactory = new TypeFactoryContextAwareDecorator(typeFactory, bundle.getBundleId());
 
         try {
-            FlowDeserializerContext context =
-                    new FlowDeserializerContext(bundle, modulesManager, deserializedModule, typeFactory);
+            FlowDeserializerContext context = new FlowDeserializerContext(bundle, modulesManager, deserializedModule, typeFactory);
             FlowDeserializer flowDeserializer = new FlowDeserializer(context);
             flowDeserializer.deserialize(flowGraph, flowDefinition);
-            return new Flow(flowId, flowTitle, flowGraph, executionEngine);
+
+            return new Flow(bundle.getBundleId(), flowId, flowTitle, flowGraph, executionEngine);
 
         } catch (Exception exception) {
             Log.buildException(logger, flowDefinition, flowId, exception);
-            return new ErrorStateFlow(flowId, flowTitle, flowGraph, executionEngine, exception);
+            return new ErrorStateFlow(bundle.getBundleId(), flowId, flowTitle, flowGraph, executionEngine, exception);
         }
     }
 }

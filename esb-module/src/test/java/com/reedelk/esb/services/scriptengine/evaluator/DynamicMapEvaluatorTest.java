@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class DynamicMapEvaluatorTest {
 
-    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L, "aabbcc", "Test flow");
+    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L);
 
     @Mock
     private FlowContext context;

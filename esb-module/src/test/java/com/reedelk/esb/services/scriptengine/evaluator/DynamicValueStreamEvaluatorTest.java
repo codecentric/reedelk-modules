@@ -33,7 +33,7 @@ class DynamicValueStreamEvaluatorTest {
     private FlowContext context;
 
     private DynamicValueStreamEvaluator evaluator;
-    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L, "aabbcc", "Test flow");
+    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L);
 
     @BeforeEach
     void setUp() {

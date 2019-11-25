@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MessageHttpResponseMapperTest {
 
-    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L, "aabbcc", "Test flow");
+    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L);
 
     @Mock
     private FlowContext flowContext;

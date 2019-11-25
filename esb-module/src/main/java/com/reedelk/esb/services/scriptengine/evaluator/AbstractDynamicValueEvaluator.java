@@ -96,7 +96,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     private <T extends ScriptBlock> void compile(T scriptBlock, FunctionDefinitionBuilder<T> functionDefinitionBuilder) {
         synchronized (this) {
 
-            long moduleId = scriptBlock.moduleId();
+            long moduleId = scriptBlock.context().getModuleId();
 
             if (!moduleIdFunctionNamesMap.containsKey(moduleId)) {
                 moduleIdFunctionNamesMap.put(moduleId, new ArrayList<>());

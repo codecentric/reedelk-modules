@@ -1,7 +1,7 @@
 package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.flow.deserializer.typefactory.ConfigPropertyAwareTypeFactoryDecorator;
-import com.reedelk.esb.flow.deserializer.typefactory.ScriptBlockAwareTypeFactoryDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextAwareDecorator;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.system.api.file.ModuleId;
@@ -29,7 +29,7 @@ class FlowDeserializerContextTest {
     @BeforeEach
     void setUp() {
         typeFactory = new ConfigPropertyAwareTypeFactoryDecorator(configurationService, TypeFactory.getInstance());
-        typeFactory = new ScriptBlockAwareTypeFactoryDecorator(typeFactory, testModuleId, "aabbcc", "Test flow");
+        typeFactory = new TypeFactoryContextAwareDecorator(typeFactory, testModuleId);
     }
 
     @Test

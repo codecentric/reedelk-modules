@@ -5,18 +5,14 @@ import com.reedelk.runtime.commons.TypeFactoryContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ScriptBlockAwareTypeFactoryDecorator implements TypeFactory {
+public class TypeFactoryContextAwareDecorator implements TypeFactory {
 
     private final long moduleId;
-    private final String flowId;
-    private final String flowTitle;
     private final TypeFactory delegate;
 
-    public ScriptBlockAwareTypeFactoryDecorator(TypeFactory delegate, long moduleId, String flowId, String flowTitle) {
+    public TypeFactoryContextAwareDecorator(TypeFactory delegate, long moduleId) {
         this.delegate = delegate;
         this.moduleId = moduleId;
-        this.flowId = flowId;
-        this.flowTitle = flowTitle;
     }
 
     @Override
@@ -26,13 +22,13 @@ public class ScriptBlockAwareTypeFactoryDecorator implements TypeFactory {
 
     @Override
     public <T> T create(Class<T> expectedClass, JSONObject jsonObject, String propertyName) {
-        TypeFactoryContext context = new TypeFactoryContext(moduleId, flowId, flowTitle);
+        TypeFactoryContext context = new TypeFactoryContext(moduleId);
         return create(expectedClass, jsonObject, propertyName, context);
     }
 
     @Override
     public <T> T create(Class<T> expectedClass, JSONArray jsonArray, int index) {
-        TypeFactoryContext context = new TypeFactoryContext(moduleId, flowId, flowTitle);
+        TypeFactoryContext context = new TypeFactoryContext(moduleId);
         return create(expectedClass, jsonArray, index, context);
     }
 

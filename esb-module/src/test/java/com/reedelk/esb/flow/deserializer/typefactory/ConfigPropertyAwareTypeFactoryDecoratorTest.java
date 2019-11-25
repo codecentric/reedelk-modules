@@ -21,7 +21,7 @@ class ConfigPropertyAwareTypeFactoryDecoratorTest {
     private ConfigurationService configurationService;
 
     private ConfigPropertyAwareTypeFactoryDecorator typeFactory;
-    private TypeFactoryContext typeFactoryContext = new TypeFactoryContext(10L, "aabbcc", "Test flow");
+    private TypeFactoryContext typeFactoryContext = new TypeFactoryContext(10L);
 
     @BeforeEach
     void setUp() {

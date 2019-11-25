@@ -34,7 +34,7 @@ import static org.junit.Assert.fail;
 @Tag(INTEGRATION)
 abstract class RestListenerAbstractTest {
 
-    final ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L, "aabbcc", "Test floe");
+    final ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L);
 
     static final String TEST_JSON_BODY = "{\"name\":\"John\"}";
     static final String TEST_TEXT_BODY = "This is a sample text";

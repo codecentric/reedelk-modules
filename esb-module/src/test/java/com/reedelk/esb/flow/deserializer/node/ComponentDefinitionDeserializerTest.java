@@ -1,7 +1,7 @@
 package com.reedelk.esb.flow.deserializer.node;
 
 import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
-import com.reedelk.esb.flow.deserializer.typefactory.ScriptBlockAwareTypeFactoryDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextAwareDecorator;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.ModulesManager;
@@ -58,7 +58,7 @@ class ComponentDefinitionDeserializerTest {
     @BeforeEach
     void setUp() {
         TypeFactory factory = TypeFactory.getInstance();
-        factory = new ScriptBlockAwareTypeFactoryDecorator(factory, testModuleId, "aabbcc", "Test flow title");
+        factory = new TypeFactoryContextAwareDecorator(factory, testModuleId);
         context = spy(new FlowDeserializerContext(mockBundle, mockModulesManager, mockDeSerializedModule, factory));
         deserializer = new ComponentDefinitionDeserializer(mockExecutionNode, context);
     }

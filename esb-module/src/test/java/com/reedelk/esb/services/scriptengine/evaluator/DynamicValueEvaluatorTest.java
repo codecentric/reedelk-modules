@@ -38,7 +38,7 @@ class DynamicValueEvaluatorTest {
     @BeforeEach
     void setUp() {
         evaluator = new DynamicValueEvaluator();
-        scriptBlockContext = new ScriptBlockContext(10L, "aabbcc", "Test flow");
+        scriptBlockContext = new ScriptBlockContext(10L);
     }
 
     @Nested

@@ -106,7 +106,7 @@ public class URIEvaluator {
 
         public URIEvaluator build() {
             URIEvaluator evaluator = new URIEvaluator();
-            evaluator.scriptEngine = requireNotNull(scriptEngine, "script engine");;
+            evaluator.scriptEngine = requireNotNull(scriptEngine, "script engine");
             evaluator.pathParameters = pathParameters;
             evaluator.queryParameters = queryParameters;
             evaluator.pathComponent = isBlank(path) ?

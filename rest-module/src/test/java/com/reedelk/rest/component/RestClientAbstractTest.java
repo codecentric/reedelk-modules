@@ -41,7 +41,7 @@ abstract class RestClientAbstractTest {
     static final String PATH = "/v1/resource";
     static final String BASE_URL = "http://" + HOST + ":" + PORT;
 
-    final ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L, "aabbcc", "Test flow");;
+    final ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L);
 
     private static WireMockServer mockServer;
 

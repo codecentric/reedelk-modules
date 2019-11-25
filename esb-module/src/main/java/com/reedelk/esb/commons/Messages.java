@@ -131,20 +131,9 @@ public class Messages {
 
     public enum Script implements FormattedMessage {
 
-        SCRIPT_BLOCK_COMPILATION_ERROR("%s\n" +
-                "--------------------------------\n" +
-                "Script compilation error info:\n- Module id=%d \n- Flow id=%s \n- Flow title=%s\n- Script:\n\t%s\n" +
-                "--------------------------------\n"),
-
-        SCRIPT_SOURCE_COMPILATION_ERROR("%s\n" +
-                "--------------------------------\n" +
-                "Source compilation error info:\n- Module id=%d \n- Module names=%s \n- Script resource=%s\n" +
-                "--------------------------------\n"),
-
-        SCRIPT_EXECUTION_ERROR("%s\n" +
-                "--------------------------------\n" +
-                "Script execution error info:\n- Module id=%d \n- Flow id=%s \n- Flow title=%s\n- Script:\n\t%s\n" +
-                "--------------------------------\n");
+        SCRIPT_BLOCK_COMPILATION_ERROR("Could not compile script: %s,\nScript:\n%s\n"),
+        SCRIPT_SOURCE_COMPILATION_ERROR("Could not compile script source: %s, \nSource: %s\nModule names: %s\n"),
+        SCRIPT_EXECUTION_ERROR("Could not execute script: %s,\nScript:\n%s\n");
 
         private String msg;
 

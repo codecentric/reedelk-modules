@@ -1,5 +1,6 @@
 package com.reedelk.esb.flow;
 
+import com.reedelk.esb.exception.FlowExecutionException;
 import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -7,6 +8,7 @@ import com.reedelk.runtime.api.component.Inbound;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
@@ -22,6 +24,7 @@ public class Flow implements InboundEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(Flow.class);
 
+    private final long moduleId;
     private final String flowId;
     private final String flowTitle;
     private final ExecutionGraph executionGraph;
@@ -29,7 +32,8 @@ public class Flow implements InboundEventListener {
 
     private boolean started = false;
 
-    public Flow(final String flowId, final String flowTitle, final ExecutionGraph executionGraph, final FlowExecutorEngine executionEngine) {
+    public Flow(final long moduleId, final String flowId, final String flowTitle, final ExecutionGraph executionGraph, final FlowExecutorEngine executionEngine) {
+        this.moduleId = moduleId;
         this.flowId = flowId;
         this.flowTitle = flowTitle;
         this.executionGraph = executionGraph;
@@ -95,7 +99,22 @@ public class Flow implements InboundEventListener {
     @Override
     public void onEvent(Message message, OnResult onResult) {
         try {
-            executionEngine.onEvent(message, onResult);
+            executionEngine.onEvent(message, new OnResult() {
+
+                @Override
+                public void onResult(Message message, FlowContext flowContext) {
+                    onResult.onResult(message, flowContext);
+                }
+
+                @Override
+                public void onError(Throwable throwable, FlowContext flowContext) {
+                    String error = String.format("Error occurred for module id %d, flow id %s, flow title %s. %s",
+                            moduleId, flowId, flowTitle, throwable.getMessage());
+                    FlowExecutionException wrapped = new FlowExecutionException(error, throwable);
+                    onResult.onError(wrapped,flowContext);
+                }
+            });
+
         } catch (Exception exception) {
             String error = EXECUTION_ERROR.format(flowId, exception.getMessage());
             logger.debug(error, exception);
