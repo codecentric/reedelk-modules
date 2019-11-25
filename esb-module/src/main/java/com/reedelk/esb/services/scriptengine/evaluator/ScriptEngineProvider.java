@@ -11,10 +11,9 @@ public interface ScriptEngineProvider {
 
     void compile(Collection<String> modules, Reader reader, Map<String,Object> bindings) throws ScriptException;
 
-    // TODO: merge this remove module with remove function?
-    void removeModule(String module);
-
-    void removeFunction(String functionName);
-
     Object invokeFunction(String functionName, Object ...args) throws NoSuchMethodException, ScriptException;
+
+    void undefineModule(String module);
+
+    void undefineFunction(String functionName);
 }

@@ -44,7 +44,7 @@ public class ScriptSourceEvaluator extends ScriptEngineServiceAdapter {
         long moduleId = action.getMessage();
         if (moduleIdAndScriptModuleNamesMap.containsKey(moduleId)) {
             moduleIdAndScriptModuleNamesMap.remove(moduleId).forEach(scriptModuleName ->
-                    JavascriptEngineProvider.getInstance().removeModule(scriptModuleName));
+                    JavascriptEngineProvider.getInstance().undefineModule(scriptModuleName));
         }
     }
 }

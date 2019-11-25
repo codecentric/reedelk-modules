@@ -31,11 +31,6 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     }
 
     @Override
-    public Object invokeFunction(String functionName, Object... args) throws NoSuchMethodException, ScriptException {
-        return engine.invokeFunction(functionName, args);
-    }
-
-    @Override
     public void compile(String functionDefinition) throws ScriptException {
         CompiledScript compiled = engine.compile(functionDefinition);
         compiled.eval(engine.getBindings(ENGINE_SCOPE));
@@ -59,7 +54,12 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
     }
 
     @Override
-    public void removeModule(String moduleName) {
+    public Object invokeFunction(String functionName, Object... args) throws NoSuchMethodException, ScriptException {
+        return engine.invokeFunction(functionName, args);
+    }
+
+    @Override
+    public void undefineModule(String moduleName) {
         engine.getBindings(ENGINE_SCOPE).remove(moduleName);
     }
 
@@ -92,7 +92,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
      * @param functionName the name of the function to be cleaned up (set to null)
      */
     @Override
-    public void removeFunction(String functionName) {
+    public void undefineFunction(String functionName) {
         engine.getBindings(ENGINE_SCOPE).put(functionName, null);
     }
 }
