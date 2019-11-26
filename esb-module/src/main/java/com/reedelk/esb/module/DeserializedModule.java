@@ -37,7 +37,7 @@ public class DeserializedModule {
         return configurations;
     }
 
-    public Collection<ScriptResource> getScripts() {
+    public Collection<ScriptResource> getScriptResources() {
         return scripts;
     }
 }

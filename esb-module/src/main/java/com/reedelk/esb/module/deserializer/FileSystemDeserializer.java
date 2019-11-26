@@ -8,14 +8,17 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static com.reedelk.esb.commons.FunctionWrapper.unchecked;
-import static java.lang.String.format;
+import static com.reedelk.esb.commons.Messages.Deserializer.ERROR_READING_FILES_FROM_RESOURCE_FOLDER;
 import static java.util.stream.Collectors.toList;
 
 public class FileSystemDeserializer extends AbstractModuleDeserializer {
+
+    private static final List<URL> EMPTY = Collections.emptyList();
 
     private final String resourcesRootDirectory;
 
@@ -26,6 +29,8 @@ public class FileSystemDeserializer extends AbstractModuleDeserializer {
     @Override
     protected List<URL> getResources(String directory, String suffix) {
         Path targetPath = Paths.get(resourcesRootDirectory, directory);
+        if (!targetPath.toFile().exists()) return EMPTY;
+
         try (Stream<Path> walk = Files.walk(targetPath)) {
             return walk
                     .filter(path -> path.toFile().isFile())
@@ -33,7 +38,8 @@ public class FileSystemDeserializer extends AbstractModuleDeserializer {
                     .map(unchecked(path -> path.toFile().toURI().toURL()))
                     .collect(toList());
         } catch (IOException e) {
-            throw new ESBException(format("Error reading files from resource folder [%s]", targetPath), e);
+            String errorMessage = ERROR_READING_FILES_FROM_RESOURCE_FOLDER.format(targetPath.toString());
+            throw new ESBException(errorMessage, e);
         }
     }
 }

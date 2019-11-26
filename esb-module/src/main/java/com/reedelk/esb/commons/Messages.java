@@ -110,7 +110,8 @@ public class Messages {
     public enum Deserializer implements FormattedMessage {
 
         UNSUPPORTED_COLLECTION_TYPE("Error while mapping property=[%s]: not a supported collection type."),
-        CONFIGURATION_NOT_FOUND("Could not find configuration with id=[%s]");
+        CONFIGURATION_NOT_FOUND("Could not find configuration with id=[%s]"),
+        ERROR_READING_FILES_FROM_RESOURCE_FOLDER("Error reading files from resource folder, target path=[%s]");
 
         private String msg;
 

@@ -59,11 +59,7 @@ abstract class AbstractModuleDeserializer implements ModuleDeserializer {
         List<URL> resourcesURL = getResources(Script.RESOURCE_DIRECTORY, SCRIPT.value());
         return resourcesURL.stream()
                 .map(url -> {
-                    // The path starts from src/main/resources/scripts.
-                    // e.g If the project contains:
-                    // src/main/resources/scripts/my_scripts/test.js
-                    // then script file path would be "my_scripts/test.js.
-                    String scriptFilePath = url.getPath().substring(Script.RESOURCE_DIRECTORY.length() + 1);
+                    String scriptFilePath = url.getPath();
                     String body = FileUtils.ReadFromURL.asString(url);
                     return new ScriptResource(scriptFilePath, body);
                 })

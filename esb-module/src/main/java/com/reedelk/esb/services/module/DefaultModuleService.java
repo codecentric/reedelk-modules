@@ -51,7 +51,9 @@ public class DefaultModuleService implements ModuleService {
             executeOperation(bundleAtPath, Bundle::stop, Bundle::update, Bundle::start);
         }
 
-        logger.info(UPDATED.format(bundleAtPath.getSymbolicName()));
+        if (logger.isInfoEnabled()) {
+            logger.info(UPDATED.format(bundleAtPath.getSymbolicName()));
+        }
 
         return bundleAtPath.getBundleId();
     }
@@ -64,7 +66,9 @@ public class DefaultModuleService implements ModuleService {
         listener.moduleStopping(bundleAtPath.getBundleId());
         executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall);
 
-        logger.info(UNINSTALLED.format(bundleAtPath.getSymbolicName()));
+        if (logger.isInfoEnabled()) {
+            logger.info(UNINSTALLED.format(bundleAtPath.getSymbolicName()));
+        }
 
         return bundleAtPath.getBundleId();
     }
@@ -75,7 +79,11 @@ public class DefaultModuleService implements ModuleService {
         checkState(!optionalBundle.isPresent(), format("Install failed: the bundle in target file path=%s is already installed. Did you mean update?", modulePath));
         try {
             Bundle installedBundle = context.installBundle(modulePath);
-            logger.info(INSTALLED.format(installedBundle.getSymbolicName()));
+
+            if (logger.isInfoEnabled()) {
+                logger.info(INSTALLED.format(installedBundle.getSymbolicName()));
+            }
+
             return start(installedBundle);
         } catch (BundleException e) {
             String errorMessage = INSTALL_FAILED.format(modulePath);
@@ -108,7 +116,11 @@ public class DefaultModuleService implements ModuleService {
         try {
             checkNotNull(installedBundle, "installedBundle");
             installedBundle.start();
-            logger.info(STARTED.format(installedBundle.getSymbolicName()));
+
+            if (logger.isInfoEnabled()) {
+                logger.info(STARTED.format(installedBundle.getSymbolicName()));
+            }
+            
             return installedBundle.getBundleId();
         } catch (BundleException e) {
             String errorMessage = START_FAILED.format(installedBundle.getSymbolicName());

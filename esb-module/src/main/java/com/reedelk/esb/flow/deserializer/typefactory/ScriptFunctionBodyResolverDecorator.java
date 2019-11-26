@@ -41,9 +41,9 @@ public class ScriptFunctionBodyResolverDecorator implements TypeFactory {
     }
 
     private Script loadScriptBodyOf(Script script) {
-        return deserializedModule.getScripts()
+        return deserializedModule.getScriptResources()
                 .stream()
-                .filter(scriptResource -> scriptResource.getScriptFilePath().endsWith(script.body()))
+                .filter(resource -> resource.getScriptFilePath().endsWith(script.body()))
                 .findFirst()
                 .flatMap(resource -> of(Script.from(resource.getBody(), script.context())))
                 .orElseThrow(() -> new ESBException("Could not find script [" + script.body() + "]"));
