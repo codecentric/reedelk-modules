@@ -138,7 +138,9 @@ public class Flow implements InboundEventListener {
                     throwable.getClass().getName(), throwable.getMessage());
             FlowExecutionException wrapped = new FlowExecutionException(moduleId, moduleName, flowId, flowTitle, error, throwable);
 
-            logger.error(StackTraceUtils.asString(wrapped));
+            if (logger.isErrorEnabled()) {
+                logger.error(StackTraceUtils.asString(wrapped));
+            }
 
             delegate.onError(wrapped,flowContext);
         }

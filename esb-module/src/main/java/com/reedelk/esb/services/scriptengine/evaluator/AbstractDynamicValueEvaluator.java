@@ -2,7 +2,6 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.exception.ScriptCompilationException;
 import com.reedelk.esb.exception.ScriptExecutionException;
-import com.reedelk.esb.pubsub.Action;
 import com.reedelk.esb.pubsub.Event;
 import com.reedelk.esb.pubsub.OnMessage;
 import com.reedelk.esb.services.converter.DefaultConverterService;
@@ -21,12 +20,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.reedelk.esb.pubsub.Action.Module.ActionModuleUninstalled;
 import static com.reedelk.esb.pubsub.Action.Module.UN_INSTALLED;
 import static com.reedelk.esb.services.scriptengine.evaluator.ValueProviders.STREAM_PROVIDER;
 
 abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter {
 
-    private final Map<Long, List<String>> moduleIdFunctionNamesMap = new HashMap<>();
+    final Map<Long, List<String>> moduleIdFunctionNamesMap = new HashMap<>();
 
     AbstractDynamicValueEvaluator() {
         Event.operation.subscribe(UN_INSTALLED, this);
@@ -44,17 +44,32 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
     <S> S convert(Object value, Class<?> targetClazz, ValueProvider provider) {
         if (value == null) {
             return provider.empty();
-
         } else if (value instanceof TypedPublisher<?>) {
             // Value is a typed stream
             TypedPublisher<?> typedPublisher = (TypedPublisher<?>) value;
             Object converted = converterService().convert(typedPublisher, targetClazz);
             return provider.from(converted);
-
         } else {
             // Value is NOT a typed stream
             Object converted = converterService().convert(value, targetClazz);
             return provider.from(converted);
+        }
+    }
+
+    /**
+     * Evaluate the payload without invoking the script engine. This is an optimization
+     * since we can get the payload directly from Java without making an expensive call
+     * to the script engine.
+     */
+    <T> TypedPublisher<T> evaluateMessagePayload(Class<T> targetType, Message message) {
+        if (message.getContent().isStream()) {
+            // We don't resolve the stream, but we still might need to
+            // map its content from source type to a target type.
+            TypedPublisher<?> stream = message.getContent().stream();
+            return convert(stream, targetType, STREAM_PROVIDER);
+        } else {
+            Publisher<T> converted = convert(message.payload(), targetType, STREAM_PROVIDER);
+            return TypedPublisher.from(converted, targetType);
         }
     }
 
@@ -64,8 +79,8 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
             return scriptEngine().invokeFunction(dynamicValue.functionName(), args);
 
         }  catch (ScriptException scriptException) {
-            // We add some contextual information to the original exception such as
-            // module if, flow id, flow title and script body which failed the execution.
+            // We add to the original exception the body of the script so that
+            // it will be easy to identify which script failed in the flow.
             throw new ScriptExecutionException(dynamicValue, scriptException);
 
         } catch (NoSuchMethodException e) {
@@ -92,7 +107,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    private <T extends ScriptBlock> void compile(T scriptBlock, FunctionDefinitionBuilder<T> functionDefinitionBuilder) {
+    <T extends ScriptBlock> void compile(T scriptBlock, FunctionDefinitionBuilder<T> functionDefinitionBuilder) {
         synchronized (this) {
 
             long moduleId = scriptBlock.context().getModuleId();
@@ -109,7 +124,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
                 return;
             }
 
-            String functionDefinition = functionDefinitionBuilder.from(functionName, scriptBlock);
+            String functionDefinition = functionDefinitionBuilder.from(scriptBlock);
             try {
                 scriptEngine().compile(functionDefinition);
             } catch (ScriptException scriptCompilationException) {
@@ -122,40 +137,24 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    /**
-     * Evaluate the payload without invoking the script engine. This is an optimization
-     * since we can get the payload directly from Java without making an expensive call
-     * to the script engine.
-     */
-    <T> TypedPublisher<T> evaluateMessagePayload(Class<T> targetType, Message message) {
-        if (message.getContent().isStream()) {
-            // We don't resolve the stream, but we still might need to
-            // map its content from source type to a target type.
-            TypedPublisher<?> stream = message.getContent().stream();
-            return convert(stream, targetType, STREAM_PROVIDER);
-        } else {
-            Publisher<T> converted = convert(message.payload(), targetType, STREAM_PROVIDER);
-            return TypedPublisher.from(converted, targetType);
-        }
-    }
-
     @OnMessage
-    public void onModuleUninstalled(Action.Module.ActionModuleUninstalled action) {
+    public void onModuleUninstalled(ActionModuleUninstalled action) {
         // No need to synchronize the access to 'moduleIdFunctionNamesMap' because
         // this method is called always AFTER a module has been completely stopped,
         // hence we are sure that none of its functions might be called.
         long moduleId = action.getMessage();
         if (moduleIdFunctionNamesMap.containsKey(moduleId)) {
             moduleIdFunctionNamesMap.get(moduleId).forEach(computedFunctionName ->
-                    JavascriptEngineProvider.getInstance().undefineFunction(computedFunctionName));
+                    scriptEngine().undefineFunction(computedFunctionName));
+            moduleIdFunctionNamesMap.remove(moduleId);
         }
-    }
-
-    DefaultConverterService converterService() {
-        return DefaultConverterService.getInstance();
     }
 
     ScriptEngineProvider scriptEngine() {
         return JavascriptEngineProvider.getInstance();
+    }
+
+    private DefaultConverterService converterService() {
+        return DefaultConverterService.getInstance();
     }
 }

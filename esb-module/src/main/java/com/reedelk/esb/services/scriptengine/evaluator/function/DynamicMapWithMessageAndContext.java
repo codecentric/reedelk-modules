@@ -17,7 +17,7 @@ public class DynamicMapWithMessageAndContext implements FunctionDefinitionBuilde
      * This method builds the following script:
      * The values are evaluated after the execution of the script.
      *
-     * function fun_1ba-bf848432adf-abc(message, context) {
+     * function fun_21_1ba-bf848432adf-abc(message, context) {
      *  return {
      *      key1: value1,
      *      key2: value2
@@ -25,7 +25,7 @@ public class DynamicMapWithMessageAndContext implements FunctionDefinitionBuilde
      * }
      */
     @Override
-    public String from(String functionName, DynamicMap<Object> map) {
+    public String from(DynamicMap<Object> map) {
         StringBuilder builder = new StringBuilder("{");
 
         for (Map.Entry<String,Object> entry : map.entrySet()) {
@@ -46,6 +46,6 @@ public class DynamicMapWithMessageAndContext implements FunctionDefinitionBuilde
         // Remove final space and comma (,) character
         if (!map.isEmpty()) builder.delete(builder.length() - 2, builder.length() - 1);
         builder.append("};");
-        return String.format(TEMPLATE, functionName, builder.toString());
+        return String.format(TEMPLATE, map.functionName(), builder.toString());
     }
 }

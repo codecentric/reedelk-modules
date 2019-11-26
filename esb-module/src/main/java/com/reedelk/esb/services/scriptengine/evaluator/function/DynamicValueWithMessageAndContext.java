@@ -11,8 +11,8 @@ public class DynamicValueWithMessageAndContext implements FunctionDefinitionBuil
                     "};";
 
     @Override
-    public String from(String functionName, DynamicValue dynamicValue) {
+    public String from(DynamicValue dynamicValue) {
         String functionBody = ScriptUtils.unwrap(dynamicValue.body());
-        return String.format(TEMPLATE, functionName, functionBody);
+        return String.format(TEMPLATE, dynamicValue.functionName(), functionBody);
     }
 }

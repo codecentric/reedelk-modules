@@ -12,7 +12,7 @@ public class ScriptWithMessageAndContext implements FunctionDefinitionBuilder<Sc
                     "};";
 
     @Override
-    public String from(String functionName, Script script) {
-        return format(TEMPLATE, functionName, script.body());
+    public String from(Script script) {
+        return format(TEMPLATE, script.functionName(), script.body());
     }
 }
