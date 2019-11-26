@@ -87,7 +87,13 @@ public class Messages {
 
         DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s]: %s"),
         FILE_NOT_FOUND_ERROR("Could not find local file file=[%s] in module with id=[%d], name=[%s]."),
-        FILE_FIND_IO_ERROR("An I/O occurred while reading file=[%s] in module with id=[%d], name=[%s]: %s");
+        FILE_FIND_IO_ERROR("An I/O occurred while reading file=[%s] in module with id=[%d], name=[%s]: %s"),
+        INSTALL_FAILED("Could not install module from path=[%s]"),
+        START_FAILED("Could not start module named=[%s]"),
+        INSTALLED("Module [%s] installed"),
+        UNINSTALLED("Module [%s] uninstalled"),
+        UPDATED("Module [%s] updated"),
+        STARTED("Module [%s] started");
 
         private String msg;
 

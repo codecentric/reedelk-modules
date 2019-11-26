@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.reedelk.esb.commons.FunctionWrapper.uncheckedConsumer;
+import static com.reedelk.esb.commons.Messages.Module.*;
 import static com.reedelk.esb.commons.Preconditions.*;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
@@ -50,7 +51,7 @@ public class DefaultModuleService implements ModuleService {
             executeOperation(bundleAtPath, Bundle::stop, Bundle::update, Bundle::start);
         }
 
-        logger.info("Module [{}] updated", bundleAtPath.getSymbolicName());
+        logger.info(UPDATED.format(bundleAtPath.getSymbolicName()));
 
         return bundleAtPath.getBundleId();
     }
@@ -63,7 +64,7 @@ public class DefaultModuleService implements ModuleService {
         listener.moduleStopping(bundleAtPath.getBundleId());
         executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall);
 
-        logger.info("Module [{}] uninstalled", bundleAtPath.getSymbolicName());
+        logger.info(UNINSTALLED.format(bundleAtPath.getSymbolicName()));
 
         return bundleAtPath.getBundleId();
     }
@@ -74,11 +75,11 @@ public class DefaultModuleService implements ModuleService {
         checkState(!optionalBundle.isPresent(), format("Install failed: the bundle in target file path=%s is already installed. Did you mean update?", modulePath));
         try {
             Bundle installedBundle = context.installBundle(modulePath);
-            logger.info("Module [{}] installed", installedBundle.getSymbolicName());
+            logger.info(INSTALLED.format(installedBundle.getSymbolicName()));
             return start(installedBundle);
         } catch (BundleException e) {
-            logger.error(format("Could not install module from path [%s]", modulePath), e);
-            throw new ESBException(e);
+            String errorMessage = INSTALL_FAILED.format(modulePath);
+            throw new ESBException(errorMessage, e);
         }
     }
 
@@ -107,11 +108,11 @@ public class DefaultModuleService implements ModuleService {
         try {
             checkNotNull(installedBundle, "installedBundle");
             installedBundle.start();
-            logger.info("Module [{}] started", installedBundle.getSymbolicName());
+            logger.info(STARTED.format(installedBundle.getSymbolicName()));
             return installedBundle.getBundleId();
         } catch (BundleException e) {
-            logger.error(format("Could not start module [%s]", installedBundle.getSymbolicName()), e);
-            throw new ESBException(e);
+            String errorMessage = START_FAILED.format(installedBundle.getSymbolicName());
+            throw new ESBException(errorMessage, e);
         }
     }
 
