@@ -19,6 +19,7 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -191,6 +192,27 @@ class AbstractDynamicValueEvaluatorTest {
         verify(mockEngineProvider).undefineFunction(dynamicValue2.functionName());
         verify(mockEngineProvider, times(2)).compile(anyString());
         verifyNoMoreInteractions(mockEngineProvider);
+    }
+
+    @Test
+    void shouldDoNothingWhenModuleUninstalledDidNotHaveAnyFunctionRegisteredInTheScriptEngine() {
+        // Given
+        DynamicString dynamicValue1 = DynamicString.from("#['evaluation result']", scriptBlockContext);
+        DynamicString dynamicValue2 = DynamicString.from("#['another evaluation result']", scriptBlockContext);
+
+        evaluator.compile(dynamicValue1, testFunctionBuilder);
+        evaluator.compile(dynamicValue2, testFunctionBuilder);
+
+        assumeTrue(evaluator.moduleIdFunctionNamesMap.containsKey(testModuleId));
+
+        // When: we use a different module id from the one which was used to compile the dynamic values)
+        long notExistingModuleId = testModuleId + 1;
+        ActionModuleUninstalled actionModuleUninstalled = new ActionModuleUninstalled(notExistingModuleId);
+        evaluator.onModuleUninstalled(actionModuleUninstalled);
+
+        // Then
+        assertThat(evaluator.moduleIdFunctionNamesMap).doesNotContainKey(notExistingModuleId);
+        assertThat(evaluator.moduleIdFunctionNamesMap).containsOnlyKeys(testModuleId);
     }
 
     private class TestAwareAbstractDynamicValueEvaluatorTest extends AbstractDynamicValueEvaluator {
