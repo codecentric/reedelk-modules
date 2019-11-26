@@ -7,7 +7,6 @@ import com.reedelk.esb.pubsub.OnMessage;
 import com.reedelk.esb.services.converter.DefaultConverterService;
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
-import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.ScriptBlock;
@@ -92,17 +91,15 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
 
                 return scriptEngine().invokeFunction(dynamicValue.functionName(), args);
 
-            }  catch (ScriptException scriptException) {
+            }  catch (ScriptException | NoSuchMethodException scriptException) {
                 // We add some contextual information to the original exception such as
                 // module if, flow id, flow title and script body which failed the execution.
-                throw new ScriptExecutionException(dynamicValue, scriptException);
 
-            }  catch (NoSuchMethodException noSuchMethodException) {
                 // If no such method exception was again thrown, it means
                 // that something went wrong in the engine. In this case
                 // there is nothing we can do to fix it and therefore
                 // we rethrow the exception to the caller.
-                throw new ESBException(noSuchMethodException);
+                throw new ScriptExecutionException(dynamicValue, scriptException);
             }
         }
     }

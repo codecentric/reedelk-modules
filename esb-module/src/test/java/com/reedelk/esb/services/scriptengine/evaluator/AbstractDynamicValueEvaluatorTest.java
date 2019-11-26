@@ -94,6 +94,31 @@ class AbstractDynamicValueEvaluatorTest {
     }
 
     @Test
+    void shouldThrowExceptionWhenScriptCouldNotBeInvokedAfterCompilation() throws NoSuchMethodException, ScriptException {
+        // Given
+        DynamicString dynamicValue = DynamicString.from("#['Script' + unknown]", scriptBlockContext);
+
+        when(mockEngineProvider
+                .invokeFunction(dynamicValue.functionName()))
+                .thenThrow(new NoSuchMethodException("method not found"))
+                .thenThrow(new ScriptException("variable not found 'unknown'"));
+
+
+        // When
+        ScriptExecutionException thrown = assertThrows(ScriptExecutionException.class,
+                () -> evaluator.invokeFunction(dynamicValue, testFunctionBuilder));
+
+        // Then
+
+        verify(mockEngineProvider, times(2)).invokeFunction(dynamicValue.functionName());
+        verify(mockEngineProvider).compile(anyString());
+        verifyNoMoreInteractions(mockEngineProvider);
+        assertThat(thrown).hasMessage("Could not execute script: variable not found 'unknown',\n" +
+                "- Script code:\n" +
+                "#['Script' + unknown]");
+    }
+
+    @Test
     void shouldRethrowExceptionWithScriptBodyWhenScriptExceptionIsThrown() throws NoSuchMethodException, ScriptException {
         // Given
         DynamicString dynamicValue = DynamicString.from("#['test' + unknownVariable]", scriptBlockContext);
