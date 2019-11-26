@@ -42,7 +42,6 @@ class ScriptSourceEvaluatorTest {
 
         stringReader = new StringReader("test source code");
         doReturn(stringReader).when(scriptSource).get();
-        doReturn(testResource).when(scriptSource).resource();
         doReturn(testBindings).when(scriptSource).bindings();
         doReturn(testModules).when(scriptSource).scriptModuleNames();
     }
@@ -60,6 +59,7 @@ class ScriptSourceEvaluatorTest {
     @Test
     void shouldThrowExceptionWhenScriptSourceCouldNotBeCompiled() throws ScriptException {
         // Given
+        doReturn(testResource).when(scriptSource).resource();
         doThrow(new ScriptException("expected var but ' found"))
                 .when(mockEngineProvider)
                 .compile(testModules, stringReader, testBindings);

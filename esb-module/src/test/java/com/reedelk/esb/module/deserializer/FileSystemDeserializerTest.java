@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class FileSystemDeserializerTest {
 
-    private static final String EMTPY_FLOW_CONTENT = "{}";
+    private static final String EMPTY_FLOW_CONTENT = "{}";
 
     private String tmpDir;
 
@@ -39,11 +39,11 @@ class FileSystemDeserializerTest {
         Path somethingDir = Paths.get(tmpDir, "something");
         Path nestedDirectory = Paths.get(somethingDir.toString(), "nested");
 
-        URL flow1 = FileUtils.createFile(somethingDir.toString(), "flow1.flow", EMTPY_FLOW_CONTENT);
-        URL flow2 = FileUtils.createFile(somethingDir.toString(), "flow2.flow", EMTPY_FLOW_CONTENT);
-        URL flow3 = FileUtils.createFile(somethingDir.toString(), "flow3.txt", EMTPY_FLOW_CONTENT);
-        URL flow4 = FileUtils.createFile(somethingDir.toString(), "flow4.flow", EMTPY_FLOW_CONTENT);
-        URL flow5 = FileUtils.createFile(nestedDirectory.toString(), "flow5.json", EMTPY_FLOW_CONTENT);
+        URL flow1 = FileUtils.createFile(somethingDir.toString(), "flow1.flow", EMPTY_FLOW_CONTENT);
+        URL flow2 = FileUtils.createFile(somethingDir.toString(), "flow2.flow", EMPTY_FLOW_CONTENT);
+        URL flow3 = FileUtils.createFile(somethingDir.toString(), "flow3.txt", EMPTY_FLOW_CONTENT);
+        URL flow4 = FileUtils.createFile(somethingDir.toString(), "flow4.flow", EMPTY_FLOW_CONTENT);
+        URL flow5 = FileUtils.createFile(nestedDirectory.toString(), "flow5.json", EMPTY_FLOW_CONTENT);
 
 
         FileSystemDeserializer deserializer = new FileSystemDeserializer(tmpDir);
