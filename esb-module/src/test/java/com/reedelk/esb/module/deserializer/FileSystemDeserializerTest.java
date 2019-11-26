@@ -120,11 +120,11 @@ class FileSystemDeserializerTest {
     void shouldDeserializeScripts() throws IOException {
         // Given
         String script1Body = "return 'aaa'";
-        createProjectFile(Paths.get("scripts", "script1.js"), script1Body);
-        createProjectFile(Paths.get("scripts", "script2.js"), "return 'bbb'");
-        createProjectFile(Paths.get("scripts", "script3.js"), "return 'ccc'");
-        createProjectFile(Paths.get("scripts", "script4.js"), "return 'ddd'");
-        createProjectFile(Paths.get("scripts", "nested", "script5.js"), "return 'eee'");
+        createProjectFile(Paths.get("com/reedelk/esb/lifecycle/scripts", "script1.js"), script1Body);
+        createProjectFile(Paths.get("com/reedelk/esb/lifecycle/scripts", "script2.js"), "return 'bbb'");
+        createProjectFile(Paths.get("com/reedelk/esb/lifecycle/scripts", "script3.js"), "return 'ccc'");
+        createProjectFile(Paths.get("com/reedelk/esb/lifecycle/scripts", "script4.js"), "return 'ddd'");
+        createProjectFile(Paths.get("com/reedelk/esb/lifecycle/scripts", "nested", "script5.js"), "return 'eee'");
 
         FileSystemDeserializer deserializer = new FileSystemDeserializer(projectDir.toString());
 
@@ -133,7 +133,7 @@ class FileSystemDeserializerTest {
 
         // Then
         Collection<ScriptResource> scriptResources = deserializedModule.getScriptResources();
-        assertExist(scriptResources,  Paths.get(projectDir.toString(), "scripts", "script1.js"), script1Body);
+        assertExist(scriptResources,  Paths.get(projectDir.toString(), "com/reedelk/esb/lifecycle/scripts", "script1.js"), script1Body);
         assertThat(scriptResources).hasSize(5);
 
         assertThat(deserializedModule.getFlows()).isEmpty();
