@@ -141,7 +141,7 @@ public class Messages {
     public enum Script implements FormattedMessage {
 
         SCRIPT_BLOCK_COMPILATION_ERROR("Could not compile script: %s,\n- Script code:\n%s"),
-        SCRIPT_SOURCE_COMPILATION_ERROR("Could not compile script source: %s, \n- Source: %s\nModule names: %s"),
+        SCRIPT_SOURCE_COMPILATION_ERROR("Could not compile script source: %s, \n- Source: %s\n- Module names: %s"),
         SCRIPT_EXECUTION_ERROR("Could not execute script: %s,\n- Script code:\n%s");
 
         private String msg;
