@@ -28,9 +28,7 @@ public class ScriptSourceEvaluator extends ScriptEngineServiceAdapter {
     @Override
     public void register(ScriptSource scriptSource) {
         try (Reader reader = scriptSource.get()) {
-            JavascriptEngineProvider
-                    .getInstance()
-                    .compile(scriptSource.scriptModuleNames(), reader, scriptSource.bindings());
+            scriptEngine().compile(scriptSource.scriptModuleNames(), reader, scriptSource.bindings());
             moduleIdAndScriptModuleNamesMap.put(scriptSource.moduleId(), scriptSource.scriptModuleNames());
         } catch (IOException e) {
             throw new ESBException(e);
@@ -43,8 +41,12 @@ public class ScriptSourceEvaluator extends ScriptEngineServiceAdapter {
     public void onModuleUninstalled(ActionModuleUninstalled action) {
         long moduleId = action.getMessage();
         if (moduleIdAndScriptModuleNamesMap.containsKey(moduleId)) {
-            moduleIdAndScriptModuleNamesMap.remove(moduleId).forEach(scriptModuleName ->
-                    JavascriptEngineProvider.getInstance().undefineModule(scriptModuleName));
+            moduleIdAndScriptModuleNamesMap.remove(moduleId)
+                    .forEach(scriptModuleName -> scriptEngine().undefineModule(scriptModuleName));
         }
+    }
+
+    ScriptEngineProvider scriptEngine() {
+        return JavascriptEngineProvider.getInstance();
     }
 }

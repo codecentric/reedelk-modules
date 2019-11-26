@@ -15,7 +15,7 @@ import static com.reedelk.esb.commons.FunctionWrapper.unchecked;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
-public class FileSystemDeserializer extends AbstractDeserializer {
+public class FileSystemDeserializer extends AbstractModuleDeserializer {
 
     private final String resourcesRootDirectory;
 

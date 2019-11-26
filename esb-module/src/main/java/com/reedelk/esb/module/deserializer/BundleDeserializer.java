@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-public class BundleDeserializer extends AbstractDeserializer {
+public class BundleDeserializer extends AbstractModuleDeserializer {
 
     private static final boolean RECURSIVE = true;
 
@@ -24,5 +24,4 @@ public class BundleDeserializer extends AbstractDeserializer {
                 Collections.emptyList() :
                 Collections.list(entryPaths);
     }
-
 }

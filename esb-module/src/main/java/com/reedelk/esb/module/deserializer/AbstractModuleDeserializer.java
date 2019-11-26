@@ -15,7 +15,7 @@ import static com.reedelk.runtime.commons.FileExtension.*;
 import static com.reedelk.runtime.commons.ModuleProperties.*;
 import static java.util.stream.Collectors.toSet;
 
-abstract class AbstractDeserializer implements ModuleDeserializer {
+abstract class AbstractModuleDeserializer implements ModuleDeserializer {
 
     @Override
     public DeserializedModule deserialize() {
