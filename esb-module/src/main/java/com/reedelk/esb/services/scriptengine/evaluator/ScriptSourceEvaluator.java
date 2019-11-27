@@ -19,7 +19,7 @@ import static com.reedelk.esb.pubsub.Action.Module.UN_INSTALLED;
 
 public class ScriptSourceEvaluator extends ScriptEngineServiceAdapter {
 
-    private final Map<Long, Collection<String>> moduleIdAndScriptModuleNamesMap = new HashMap<>();
+    final Map<Long, Collection<String>> moduleIdAndScriptModuleNamesMap = new HashMap<>();
 
     public ScriptSourceEvaluator() {
         Event.operation.subscribe(UN_INSTALLED, this);

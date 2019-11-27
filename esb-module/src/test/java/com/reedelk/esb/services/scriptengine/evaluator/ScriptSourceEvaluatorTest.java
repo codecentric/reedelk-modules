@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.reedelk.esb.pubsub.Action.Module.ActionModuleUninstalled;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,6 +25,7 @@ class ScriptSourceEvaluatorTest {
 
     private ScriptSourceEvaluator evaluator;
 
+    private long testModuleId = 10L;
     private String testResource = "/functions/utils.js";
     private Collection<String> testModules = asList("Module1", "Module2");
     private Map<String, Object> testBindings = new HashMap<>();
@@ -48,12 +50,17 @@ class ScriptSourceEvaluatorTest {
 
     @Test
     void shouldCorrectlyCompileScriptSourceModule() throws ScriptException {
+        // Given
+        doReturn(testModuleId).when(scriptSource).moduleId();
+
         // When
         evaluator.register(scriptSource);
 
         // Then
         verify(mockEngineProvider).compile(testModules, stringReader, testBindings);
         verifyNoMoreInteractions(mockEngineProvider);
+
+        assertThat(evaluator.moduleIdAndScriptModuleNamesMap).containsEntry(testModuleId, testModules);
     }
 
     @Test
@@ -72,5 +79,36 @@ class ScriptSourceEvaluatorTest {
         assertThat(thrown).hasMessage("Could not compile script source: expected var but ' found, \n" +
                 "- Source: /functions/utils.js\n" +
                 "- Module names: [Module1, Module2]");
+    }
+
+    @Test
+    void shouldOnModuleUninstalledRemoveModuleReferencesFromModuleIdAndNamesMap() {
+        // Given
+        doReturn(testModuleId).when(scriptSource).moduleId();
+        evaluator.register(scriptSource);
+        ActionModuleUninstalled actionModuleUninstalled = new ActionModuleUninstalled(testModuleId);
+
+        // When
+        evaluator.onModuleUninstalled(actionModuleUninstalled);
+
+        // Then
+        assertThat(evaluator.moduleIdAndScriptModuleNamesMap).doesNotContainKey(testModuleId);
+    }
+
+    @Test
+    void shouldOnModuleUninstalledUndefineAllModulesFromScriptEngineProvider() throws ScriptException {
+        // Given
+        doReturn(testModuleId).when(scriptSource).moduleId();
+        evaluator.register(scriptSource);
+        ActionModuleUninstalled actionModuleUninstalled = new ActionModuleUninstalled(testModuleId);
+
+        // When
+        evaluator.onModuleUninstalled(actionModuleUninstalled);
+
+        // Then
+        verify(mockEngineProvider).compile(testModules, stringReader, testBindings);
+        verify(mockEngineProvider).undefineModule("Module1");
+        verify(mockEngineProvider).undefineModule("Module2");
+        verifyNoMoreInteractions(mockEngineProvider);
     }
 }
