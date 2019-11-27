@@ -4,6 +4,7 @@ import com.reedelk.runtime.api.file.ModuleId;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,5 +75,26 @@ class ConfigPropertyAwareTypeFactoryDecoratorTest {
         // Then
         assertThat(typeInstance.get()).isEqualTo(typeFactoryContext.getModuleId());
         verifyNoMoreInteractions(configurationService);
+    }
+
+    @Test
+    void shouldReturnArrayPropertyWhenValueItIsNotConfigProperty() {
+        // Given
+        int expectedValue = 54;
+
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(42);
+        jsonArray.put("${array.config.property.name}");
+        jsonArray.put(100);
+
+        doReturn(expectedValue)
+                .when(configurationService)
+                .get("array.config.property.name", int.class);
+
+        // When
+        Integer instance = typeFactory.create(int.class, jsonArray, 1, typeFactoryContext);
+
+        // Then
+        assertThat(instance).isEqualTo(expectedValue);
     }
 }

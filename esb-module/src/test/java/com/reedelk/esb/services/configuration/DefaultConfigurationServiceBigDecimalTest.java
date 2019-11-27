@@ -195,4 +195,39 @@ class DefaultConfigurationServiceBigDecimalTest extends BaseDefaultConfiguration
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
     }
+
+    // BigDecimal get(String configKey, T defaultValue, Class<T> type)
+
+    @Test
+    void shouldReturnBigDecimalFromGenericConfigProviderAndDefaultConfigFile() {
+        // Given
+        BigDecimal expectedValue = new BigDecimal(35000.1d);
+
+        doReturn(expectedValue)
+                .when(service)
+                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(InputMapper.class));
+
+        // When
+        BigDecimal actualConfigProperty = service.get(TEST_CONFIG_KEY, BigDecimal.class);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(expectedValue);
+    }
+
+    @Test
+    void shouldReturnBigDecimalDefaultValueFromGenericConfigProviderAndDefaultConfigFile() {
+        // Given
+        BigDecimal defaultValue = new BigDecimal(294032.23454);
+
+        doReturn(defaultValue)
+                .when(service)
+                .getConfigAdminProperty(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(InputMapper.class));
+
+
+        // When
+        BigDecimal actualConfigProperty = service.get(TEST_CONFIG_KEY, defaultValue, BigDecimal.class);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(defaultValue);
+    }
 }
