@@ -36,10 +36,8 @@ public class FunctionWrapper {
             try {
                 consumer.accept(arg);
             } catch (Exception e) {
-                logger.error("", e);
                 throw new ESBException(e);
             }
         };
     }
-
 }
