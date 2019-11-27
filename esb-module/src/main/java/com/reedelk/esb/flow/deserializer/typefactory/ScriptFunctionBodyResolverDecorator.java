@@ -8,6 +8,7 @@ import com.reedelk.runtime.commons.TypeFactoryContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import static com.reedelk.esb.commons.Messages.Deserializer.SCRIPT_SOURCE_NOT_FOUND;
 import static java.util.Optional.of;
 
 public class ScriptFunctionBodyResolverDecorator implements TypeFactory {
@@ -46,6 +47,6 @@ public class ScriptFunctionBodyResolverDecorator implements TypeFactory {
                 .filter(resource -> resource.getScriptFilePath().endsWith(script.body()))
                 .findFirst()
                 .flatMap(resource -> of(Script.from(resource.getBody(), script.context())))
-                .orElseThrow(() -> new ESBException("Could not find script [" + script.body() + "]"));
+                .orElseThrow(() -> new ESBException(SCRIPT_SOURCE_NOT_FOUND.format(script.body())));
     }
 }

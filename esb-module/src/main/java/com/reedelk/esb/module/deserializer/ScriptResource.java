@@ -5,7 +5,7 @@ public class ScriptResource {
     private final String scriptFilePath;
     private final String body;
 
-    ScriptResource(String scriptFilePath, String body) {
+    public ScriptResource(String scriptFilePath, String body) {
         this.scriptFilePath = scriptFilePath;
         this.body = body;
     }

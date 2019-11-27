@@ -111,7 +111,8 @@ public class Messages {
 
         UNSUPPORTED_COLLECTION_TYPE("Error while mapping property=[%s]: not a supported collection type."),
         CONFIGURATION_NOT_FOUND("Could not find configuration with id=[%s]"),
-        ERROR_READING_FILES_FROM_RESOURCE_FOLDER("Error reading files from resource folder, target path=[%s]");
+        ERROR_READING_FILES_FROM_RESOURCE_FOLDER("Error reading files from resource folder, target path=[%s]"),
+        SCRIPT_SOURCE_NOT_FOUND("Could not find script named=[%s] defined in resources/scripts folder. Please make sure that the referenced script exists.");
 
         private String msg;
 
