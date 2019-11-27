@@ -90,4 +90,20 @@ class ScriptFunctionBodyResolverDecoratorTest {
         // Then
         assertThat(thrown).hasMessage("Could not find script named=[/integration/not_existent.js] defined in resources/scripts folder. Please make sure that the referenced script exists.");
     }
+
+    @Test
+    void shouldThrowExceptionWhenScriptFunctionBodyCouldNotBeLoadedBecauseScriptPathIsEmpty() {
+        // Given
+        String propertyName = "integrationScript";
+
+        JSONObject componentDefinition = new JSONObject();
+        componentDefinition.put(propertyName, "");
+
+        // When
+        ESBException thrown = assertThrows(ESBException.class,
+                () -> decorator.create(Script.class, componentDefinition, propertyName, factoryContext));
+
+        // Then
+        assertThat(thrown).hasMessage("A script resource file must not be null or empty");
+    }
 }

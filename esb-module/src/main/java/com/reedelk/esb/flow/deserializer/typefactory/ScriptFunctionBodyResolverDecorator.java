@@ -8,7 +8,9 @@ import com.reedelk.runtime.commons.TypeFactoryContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import static com.reedelk.esb.commons.Messages.Deserializer.SCRIPT_SOURCE_EMPTY;
 import static com.reedelk.esb.commons.Messages.Deserializer.SCRIPT_SOURCE_NOT_FOUND;
+import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static java.util.Optional.of;
 
 public class ScriptFunctionBodyResolverDecorator implements TypeFactory {
@@ -42,6 +44,9 @@ public class ScriptFunctionBodyResolverDecorator implements TypeFactory {
     }
 
     private Script loadScriptBodyOf(Script script) {
+        if (isBlank(script.body())) {
+            throw new  ESBException(SCRIPT_SOURCE_EMPTY.format());
+        }
         return deserializedModule.getScriptResources()
                 .stream()
                 .filter(resource -> resource.getScriptFilePath().endsWith(script.body()))
