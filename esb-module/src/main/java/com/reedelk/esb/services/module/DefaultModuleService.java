@@ -120,7 +120,7 @@ public class DefaultModuleService implements ModuleService {
             if (logger.isInfoEnabled()) {
                 logger.info(STARTED.format(installedBundle.getSymbolicName()));
             }
-            
+
             return installedBundle.getBundleId();
         } catch (BundleException e) {
             String errorMessage = START_FAILED.format(installedBundle.getSymbolicName());
@@ -137,9 +137,8 @@ public class DefaultModuleService implements ModuleService {
     }
 
     private void executeOperation(Bundle bundle, Operation... operations) {
-        stream(operations)
-                .forEachOrdered(
-                        uncheckedConsumer(operation -> operation.execute(bundle), logger));
+        stream(operations).forEachOrdered(
+                uncheckedConsumer(operation -> operation.execute(bundle)));
 
     }
 }

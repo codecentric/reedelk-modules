@@ -1,7 +1,6 @@
 package com.reedelk.esb.commons;
 
 import com.reedelk.runtime.api.exception.ESBException;
-import org.slf4j.Logger;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -22,16 +21,6 @@ public class FunctionWrapper {
     }
 
     public static <T, E extends Exception> Consumer<T> uncheckedConsumer(ConsumerWithException<T, E> consumer) {
-        return arg -> {
-            try {
-                consumer.accept(arg);
-            } catch (Exception e) {
-                throw new ESBException(e);
-            }
-        };
-    }
-
-    public static <T, E extends Exception> Consumer<T> uncheckedConsumer(ConsumerWithException<T, E> consumer, Logger logger) {
         return arg -> {
             try {
                 consumer.accept(arg);
