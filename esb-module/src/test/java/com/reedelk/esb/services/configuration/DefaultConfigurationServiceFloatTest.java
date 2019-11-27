@@ -188,4 +188,40 @@ class DefaultConfigurationServiceFloatTest extends BaseDefaultConfigurationServi
         // Then
         assertThat(actualConfigProperty).isEqualTo(35000.1f);
     }
+
+    // float get(String configKey, Class<T> type)
+
+    @Test
+    void shouldReturnFloatFromGenericConfigProviderAndDefaultConfigFile() {
+        // Given
+        float expectedValue = 35000.1f;
+
+        doReturn(expectedValue)
+                .when(service)
+                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(InputMapper.class));
+
+        // When
+        float actualConfigProperty = service.get(TEST_CONFIG_KEY, float.class);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(expectedValue);
+    }
+
+    // float get(String configKey, T defaultValue, Class<T> type)
+
+    @Test
+    void shouldReturnFloatDefaultValueFromGenericConfigProviderAndDefaultConfigFile() {
+        // Given
+        float defaultValue = 35000.14323f;
+
+        doReturn(defaultValue)
+                .when(service)
+                .getConfigAdminProperty(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(InputMapper.class));
+
+        // When
+        float actualConfigProperty = service.get(TEST_CONFIG_KEY, defaultValue, float.class);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(defaultValue);
+    }
 }
