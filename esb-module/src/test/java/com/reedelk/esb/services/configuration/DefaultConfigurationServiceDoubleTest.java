@@ -188,4 +188,40 @@ class DefaultConfigurationServiceDoubleTest extends BaseDefaultConfigurationServ
         // Then
         assertThat(actualConfigProperty).isEqualTo(35000.1d);
     }
+
+    // double get(String configKey, Class<T> type)
+
+    @Test
+    void shouldReturnDoubleFromGenericConfigProviderAndDefaultConfigFile() {
+        // Given
+        double expectedValue = 35000.1d;
+
+        doReturn(expectedValue)
+                .when(service)
+                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(InputMapper.class));
+
+        // When
+        double actualConfigProperty = service.get(TEST_CONFIG_KEY, double.class);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(expectedValue);
+    }
+
+    // double get(String configKey, T defaultValue, Class<T> type)
+
+    @Test
+    void shouldReturnDoubleDefaultValueFromGenericConfigProviderAndDefaultConfigFile() {
+        // Given
+        double defaultValue = 35000.14323d;
+
+        doReturn(defaultValue)
+                .when(service)
+                .getConfigAdminProperty(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(InputMapper.class));
+
+        // When
+        double actualConfigProperty = service.get(TEST_CONFIG_KEY, defaultValue, double.class);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(defaultValue);
+    }
 }
