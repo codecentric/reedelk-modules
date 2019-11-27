@@ -195,4 +195,41 @@ class DefaultConfigurationServiceBigIntegerTest extends BaseDefaultConfiguration
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
     }
+
+    // BigInteger get(String configKey, Class<T> type)
+
+    @Test
+    void shouldReturnBigIntegerFromGenericConfigProviderAndDefaultConfigFile() {
+        // Given
+        BigInteger expectedValue = new BigInteger("35000");
+
+        doReturn(expectedValue)
+                .when(service)
+                .getConfigAdminPropertyOrThrow(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), any(InputMapper.class));
+
+        // When
+        BigInteger actualConfigProperty = service.get(TEST_CONFIG_KEY, BigInteger.class);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(expectedValue);
+    }
+
+    // BigInteger get(String configKey, T defaultValue, Class<T> type)
+
+    @Test
+    void shouldReturnBigIntegerDefaultValueFromGenericConfigProviderAndDefaultConfigFile() {
+        // Given
+        BigInteger defaultValue = new BigInteger("12300");
+
+        doReturn(defaultValue)
+                .when(service)
+                .getConfigAdminProperty(eq(DEFAULT_CONFIG_FILE), eq(TEST_CONFIG_KEY), eq(defaultValue),  any(InputMapper.class));
+
+
+        // When
+        BigInteger actualConfigProperty = service.get(TEST_CONFIG_KEY, defaultValue, BigInteger.class);
+
+        // Then
+        assertThat(actualConfigProperty).isEqualTo(defaultValue);
+    }
 }

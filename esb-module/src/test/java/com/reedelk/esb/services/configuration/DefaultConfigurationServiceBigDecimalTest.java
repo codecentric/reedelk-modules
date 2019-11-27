@@ -196,7 +196,7 @@ class DefaultConfigurationServiceBigDecimalTest extends BaseDefaultConfiguration
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
     }
 
-    // BigDecimal get(String configKey, T defaultValue, Class<T> type)
+    // BigDecimal get(String configKey, Class<T> type)
 
     @Test
     void shouldReturnBigDecimalFromGenericConfigProviderAndDefaultConfigFile() {
@@ -213,6 +213,8 @@ class DefaultConfigurationServiceBigDecimalTest extends BaseDefaultConfiguration
         // Then
         assertThat(actualConfigProperty).isEqualTo(expectedValue);
     }
+
+    // BigDecimal get(String configKey, T defaultValue, Class<T> type)
 
     @Test
     void shouldReturnBigDecimalDefaultValueFromGenericConfigProviderAndDefaultConfigFile() {
