@@ -40,8 +40,7 @@ class ContentTypeTest {
     void shouldReturnEmptyWhenMessageContentHasNullMimeType() {
         // Given
         TypedContent<?> content = new StringContent("test", null);
-        Message message = new Message();
-        message.setContent(content);
+        Message message = MessageBuilder.get().typedContent(content).build();
 
         // When
         Optional<String> maybeContentType = ContentType.from(message);

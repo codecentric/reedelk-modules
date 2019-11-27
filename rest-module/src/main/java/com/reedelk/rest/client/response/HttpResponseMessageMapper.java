@@ -30,15 +30,13 @@ public class HttpResponseMessageMapper {
 
         DefaultMessageAttributes responseAttributes = new DefaultMessageAttributes(RestClient.class, attributes);
 
-        Message message = MessageBuilder.get()
-                .attributes(responseAttributes)
-                .build();
-
         MimeType mimeType = MimeTypeExtract.from(response.getAllHeaders());
 
         TypedContent<?> content = TypedContentFrom.stream(bytesStream, mimeType);
 
-        message.setContent(content);
-        return message;
+        return MessageBuilder.get()
+                .attributes(responseAttributes)
+                .typedContent(content)
+                .build();
     }
 }
