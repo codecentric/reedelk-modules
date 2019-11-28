@@ -107,6 +107,9 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
             } catch (Exception exception) {
 
+                // An exception happened while executing the response mapping.
+                // We handle the error before sending it to the client.
+
                 handleErrorResponse(exception, flowContext);
 
             }
