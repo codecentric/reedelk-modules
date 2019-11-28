@@ -10,6 +10,7 @@ import com.reedelk.rest.server.body.BodyProviderStreamAuto;
 import com.reedelk.rest.server.body.BodyProviderStreamNone;
 import com.reedelk.rest.server.mapper.HttpRequestMessageMapper;
 import com.reedelk.rest.server.mapper.MessageHttpResponseMapper;
+import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
@@ -106,14 +107,8 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
             } catch (Exception exception) {
 
-                // TODO: IF THIS ONE THROWS AN EXCEPTION WE CAN"T DO NOTHING! FIXIT otherwise the client
-                // TODO: would never get any answer!!
+                handleErrorResponse(exception, flowContext);
 
-                responseMapper.map(exception, response, flowContext);
-
-                Publisher<byte[]> body = bodyProvider.from(response, exception, flowContext);
-
-                sink.success(body);
             }
         }
 
@@ -130,13 +125,30 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
                 realException = new ServerTooBusyException(errorMessage, exception);
             }
 
-            // TODO: IF THIS ONE THROWS AN EXCEPTION WE CAN"T DO NOTHING! FIXIT otherwise the client
-            // TODO: would never get any answer!!
-            responseMapper.map(realException, response, flowContext);
+            handleErrorResponse(realException, flowContext);
 
-            Publisher<byte[]> body = bodyProvider.from(response, realException, flowContext);
+        }
 
-            sink.success(body);
+        private void handleErrorResponse(Throwable exception, FlowContext flowContext) {
+
+            try {
+                responseMapper.map(exception, response, flowContext);
+
+                Publisher<byte[]> body = bodyProvider.from(response, exception, flowContext);
+
+                sink.success(body);
+
+            } catch (Exception e) {
+                // Mapping an error might thrown an exception too! This for instance might
+                // happen when the Error response body script contains an error and therefore
+                // the 'responseMapper.map' call above might throw an exception as well. In that
+                // case we cannot do nothing and return an internal server error to the client.
+                response.status(INTERNAL_SERVER_ERROR);
+
+                Publisher<byte[]> body = StackTraceUtils.asByteStream(e);
+
+                sink.success(body);
+            }
         }
     }
 

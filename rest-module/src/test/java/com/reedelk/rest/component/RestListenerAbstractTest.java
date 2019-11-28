@@ -10,6 +10,7 @@ import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -84,15 +85,6 @@ abstract class RestListenerAbstractTest {
         return listener;
     }
 
-    void assertContentIs(HttpResponse response, String expected) throws IOException {
-        String content = EntityUtils.toString(response.getEntity());
-        assertThat(content).isEqualTo(expected);
-    }
-
-    void assertStatusCodeIs(HttpResponse response, int expected) {
-        assertThat(response.getStatusLine().getStatusCode()).isEqualTo(expected);
-    }
-
     void assertContentTypeIs(HttpResponse response, String expectedContentType) {
         ContentType contentType = ContentType.get(response.getEntity());
         String actualContentType = contentType.toString();
@@ -108,10 +100,10 @@ abstract class RestListenerAbstractTest {
         }
     }
 
-    void assertContentIs(HttpUriRequest request, String expected) throws IOException {
+    void assertContentIs(HttpUriRequest request, String expected) {
         try {
-            HttpResponse response = HttpClientBuilder.create().build().execute(request);
-            assertContentIs(response, expected);
+            String content = makeCall(request);
+            assertThat(content).isEqualTo(expected);
         } catch (IOException e) {
             Assertions.fail(String.format("Error asserting content=[%s] for request=[%s]", expected, request), e);
         }
@@ -141,6 +133,15 @@ abstract class RestListenerAbstractTest {
 
         // Execute http request
         HttpClientBuilder.create().build().execute(request);
+    }
+
+    String makeCall(HttpUriRequest request) throws IOException {
+        CloseableHttpResponse response = HttpClientBuilder.create().build().execute(request);
+        return EntityUtils.toString(response.getEntity());
+    }
+
+    private void assertStatusCodeIs(HttpResponse response, int expected) {
+        assertThat(response.getStatusLine().getStatusCode()).isEqualTo(expected);
     }
 
     private void setField(RestListener client, String fieldName, Object object) {

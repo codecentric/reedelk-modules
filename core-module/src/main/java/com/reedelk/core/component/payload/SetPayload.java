@@ -1,6 +1,9 @@
 package com.reedelk.core.component.payload;
 
-import com.reedelk.runtime.api.annotation.*;
+import com.reedelk.runtime.api.annotation.Default;
+import com.reedelk.runtime.api.annotation.ESBComponent;
+import com.reedelk.runtime.api.annotation.MimeTypeCombo;
+import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -28,7 +31,7 @@ public class SetPayload implements ProcessorSync {
     private String mimeType;
 
     @Property("Payload")
-    @Hint("payload text value")
+    @Default("#[]")
     private DynamicObject payload;
 
     @Override

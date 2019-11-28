@@ -3,11 +3,15 @@ package com.reedelk.rest.component;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import com.reedelk.rest.configuration.listener.Response;
+import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageAttributes;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
+import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -30,7 +34,10 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.apache.http.HttpStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 class RestListenerGetTest extends RestListenerAbstractTest {
 
@@ -144,6 +151,35 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     }
 
     @Test
+    void shouldReturn500WhenSuccessResponseBodyThrowsExceptionWhenEvaluated() {
+        // Given
+        DynamicByteArray scriptWithSyntaxError = DynamicByteArray.from("#[unknownVariable]", new ScriptBlockContext(10L));
+        Response response = new Response();
+        response.setBody(scriptWithSyntaxError);
+
+        RestListener listener = listenerWith(GET, defaultConfiguration);
+        listener.addEventListener((message, callback) -> callback.onResult(message, context));
+        listener.setResponse(response);
+        listener.setPath("/");
+        listener.onStart();
+
+        HttpUriRequest request = new HttpGet("http://" + DEFAULT_HOST + ":"+ DEFAULT_PORT + "/");
+
+        DynamicValue nullValue = null;
+
+        doReturn(Optional.empty())
+                .when(scriptEngine)
+                .evaluate(eq(nullValue), eq(context), any(Message.class));
+
+        doThrow(new ESBException("Script error"))
+                .when(scriptEngine)
+                .evaluate(eq(scriptWithSyntaxError), eq(context), any(Message.class));
+
+        // Expect
+        assertStatusCodeIs(request, 500);
+    }
+
+    @Test
     void shouldReturn404() {
         // Given
         RestListener listener = listenerWith(GET, defaultConfiguration);
@@ -168,7 +204,113 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     }
 
     @Test
-    void shouldReturnEmptyResponseContent() throws IOException {
+    void shouldReturn500WithCustomResponseBody() throws IOException {
+        // Given
+        IllegalStateException thrownException = new IllegalStateException("flow error");
+
+        DynamicByteArray errorResponseBody = DynamicByteArray.from("#['custom error']", new ScriptBlockContext(10L));
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setBody(errorResponseBody);
+
+        RestListener listener = listenerWith(GET, defaultConfiguration);
+        listener.setErrorResponse(errorResponse);
+        listener.addEventListener((message, callback) -> callback.onError(thrownException, context));
+        listener.onStart();
+
+        doReturn(Optional.of("custom error".getBytes()))
+                .when(scriptEngine)
+                .evaluate(errorResponseBody, context, thrownException);
+
+        doReturn(Optional.empty())
+                .when(scriptEngine)
+                .evaluate(null, context, thrownException);
+
+        // Expect
+        assertContentIs(getRequest, "custom error");
+    }
+
+    @Test
+    void shouldReturn504CustomErrorResponseCode() {
+        // Given
+        IllegalStateException thrownException = new IllegalStateException("flow error");
+        DynamicInteger errorResponseCode = DynamicInteger.from("#[504]", new ScriptBlockContext(10L));
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setStatus(errorResponseCode);
+
+        RestListener listener = listenerWith(GET, defaultConfiguration);
+        listener.setErrorResponse(errorResponse);
+        listener.addEventListener((message, callback) -> callback.onError(thrownException, context));
+        listener.onStart();
+
+        doReturn(Optional.of(504))
+                .when(scriptEngine)
+                .evaluate(errorResponseCode, context, thrownException);
+
+        doReturn(Optional.empty())
+                .when(scriptEngine)
+                .evaluate(null, context, thrownException);
+
+        // Expect
+        assertStatusCodeIs(getRequest, 504);
+    }
+
+    @Test
+    void shouldReturnErrorWhenEvaluateErrorResponseBodyThrowsError() throws IOException {
+        // Given
+        IllegalStateException thrownException = new IllegalStateException("flow error");
+
+        DynamicByteArray errorResponseBody = DynamicByteArray.from("#[unknownVariable]", new ScriptBlockContext(10L));
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setBody(errorResponseBody);
+
+        RestListener listener = listenerWith(GET, defaultConfiguration);
+        listener.setErrorResponse(errorResponse);
+        listener.addEventListener((message, callback) -> callback.onError(thrownException, context));
+        listener.onStart();
+
+        ESBException evaluationException = new ESBException("Could not evaluate script");
+        doThrow(evaluationException)
+                .when(scriptEngine)
+                .evaluate(errorResponseBody, context, thrownException);
+
+        doReturn(Optional.empty())
+                .when(scriptEngine)
+                .evaluate(null, context, thrownException);
+
+        // Expect
+        String result = makeCall(getRequest);
+        assertThat(result).contains(evaluationException.getMessage());
+    }
+
+    @Test
+    void shouldReturnErrorWhenEvaluateErrorResponseStatusThrowsError() throws IOException {
+        // Given
+        IllegalStateException thrownException = new IllegalStateException("flow error");
+
+        DynamicInteger errorResponseStatus = DynamicInteger.from("#[unknownVariable]", new ScriptBlockContext(10L));
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setStatus(errorResponseStatus);
+
+        RestListener listener = listenerWith(GET, defaultConfiguration);
+        listener.setErrorResponse(errorResponse);
+        listener.addEventListener((message, callback) -> callback.onError(thrownException, context));
+        listener.onStart();
+
+        ESBException evaluationException = new ESBException("Could not evaluate script");
+        doThrow(evaluationException)
+                .when(scriptEngine)
+                .evaluate(errorResponseStatus, context, thrownException);
+
+        // Expect
+        assertStatusCodeIs(getRequest, 500);
+    }
+
+    @Test
+    void shouldReturnEmptyResponseContent() {
         // Given
         Message emptyMessage = MessageBuilder.get().empty().build();
 
@@ -181,7 +323,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     }
 
     @Test
-    void shouldReturnErrorResponseContent() throws IOException {
+    void shouldReturnErrorResponseContent() {
         // Given
         String errorMessage = "my error";
         DynamicByteArray errorResponseBody = DynamicByteArray.from("#[error]", scriptBlockContext);
