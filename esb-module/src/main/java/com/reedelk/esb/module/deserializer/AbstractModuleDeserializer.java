@@ -47,7 +47,7 @@ abstract class AbstractModuleDeserializer implements ModuleDeserializer {
     }
 
     private Collection<JSONObject> getConfigurations() {
-        List<URL> resourcesURL = getResources(Config.RESOURCE_DIRECTORY, FLOW_CONFIG.value());
+        List<URL> resourcesURL = getResources(Config.RESOURCE_DIRECTORY, CONFIG.value());
         return resourcesURL.stream()
                 .map(FileUtils.ReadFromURL::asString)
                 .map(JsonParser::from)
