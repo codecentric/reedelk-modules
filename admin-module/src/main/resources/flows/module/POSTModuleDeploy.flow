@@ -1,7 +1,7 @@
 {
   "id": "a64ef96e-af71-4fa3-8428-2d04fac44ec5",
   "title": "Module Deploy",
-  "description": "Module Deploy Flow",
+  "description": "Deploys a module into the {runtime}/modules folder and installs it",
   "flow": [
     {
       "implementor": "com.reedelk.rest.component.RestListener",

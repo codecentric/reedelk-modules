@@ -1,7 +1,7 @@
 {
   "id": "1913058d-6c6d-4089-b93f-d139d8d6da95",
   "title": "Module GET",
-  "description": "GET Modules Flow",
+  "description": "Returns a list of installed modules",
   "flow": [
     {
       "implementor": "com.reedelk.rest.component.RestListener",

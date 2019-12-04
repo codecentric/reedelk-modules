@@ -1,7 +1,7 @@
 {
   "id": "1b38b327-b354-402b-b789-8a3cbec7c665",
   "title": "Module DELETE",
-  "description": "Removes a module from the ESB",
+  "description": "Uninstall a module from the ESB",
   "flow": [
     {
       "implementor": "com.reedelk.rest.component.RestListener",
@@ -20,7 +20,7 @@
       }
     },
     {
-      "implementor": "com.reedelk.admin.console.ModuleRemove",
+      "implementor": "com.reedelk.admin.console.ModuleUninstall",
       "description": "Remove module from ESB"
     }
   ]

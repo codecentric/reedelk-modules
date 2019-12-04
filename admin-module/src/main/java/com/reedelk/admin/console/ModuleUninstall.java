@@ -18,9 +18,9 @@ import java.net.URI;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Remove module")
-@Component(service = ModuleRemove.class, scope = PROTOTYPE)
-public class ModuleRemove implements ProcessorSync {
+@ESBComponent("Uninstall module")
+@Component(service = ModuleUninstall.class, scope = PROTOTYPE)
+public class ModuleUninstall implements ProcessorSync {
 
     @Reference
     private SystemProperty systemProperty;

@@ -60,17 +60,14 @@ public class DefaultModuleService implements ModuleService {
 
     @Override
     public long uninstall(String modulePath) {
-        Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
-        Bundle bundleAtPath = checkIsPresentAndGetOrThrow(optionalBundle, "Uninstall failed: could not find registered bundle in target file path=%s", modulePath);
-
-        listener.moduleStopping(bundleAtPath.getBundleId());
-        executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall);
-
-        if (logger.isInfoEnabled()) {
-            logger.info(UNINSTALLED.format(bundleAtPath.getSymbolicName()));
-        }
-
-        return bundleAtPath.getBundleId();
+        return getModuleAtPath(modulePath).map(bundleAtPath -> {
+            listener.moduleStopping(bundleAtPath.getBundleId());
+            executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall);
+            if (logger.isInfoEnabled()) {
+                logger.info(UNINSTALLED.format(bundleAtPath.getSymbolicName()));
+            }
+            return bundleAtPath.getBundleId();
+        }).orElse(-1L);
     }
 
     @Override
