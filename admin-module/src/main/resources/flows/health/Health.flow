@@ -16,7 +16,8 @@
       },
       "errorResponse": {
         "body": "#[error.getMessage()]",
-        "status": 500
+        "status": 500,
+        "headers": {"content-type": "application/json"}
       }
     },
     {

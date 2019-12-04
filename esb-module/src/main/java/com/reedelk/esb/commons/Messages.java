@@ -26,16 +26,17 @@ public class Messages {
         BUILD_ERROR_WITH_TITLE("Error building flow with id=[%s] and title '%s': %s"),
         VALIDATION_ID_NOT_UNIQUE("Error validating module with name=[%s]: There are at least two flows with the same ID. Flow IDs must be unique."),
         VALIDATION_ID_NOT_VALID("Error validating module with name=[%s]: The 'id' property must be defined and not empty in any JSON flow definition."),
-        EXECUTION_ERROR("an error has occurred while executing flow:" +
-                "\n----------------------------------------------------------\n" +
-                "- Module id=%d\n" +
-                "- Module name=%s\n" +
-                "- Flow id=%s\n" +
-                "- Flow title=%s\n" +
-                "- Error type=%s\n" +
-                "- Error message:\n" +
-                "%s" +
-                "\n----------------------------------------------------------\n");
+
+        // The error message is JSON so that clients can always
+        // parse the error whenever error.getMessage() is returned.
+        EXECUTION_ERROR("{\n" +
+                "   \"moduleId\": %d,\n" +
+                "   \"moduleName\": \"%s\",\n" +
+                "   \"flowId\": \"%s\",\n" +
+                "   \"flowTitle\": \"%s\",\n" +
+                "   \"errorType\": \"%s\",\n" +
+                "   \"errorMessage\": \"%s\"\n" +
+                "}");
 
         private String msg;
 
