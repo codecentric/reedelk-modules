@@ -3,6 +3,8 @@ package com.reedelk.esb.commons;
 import com.reedelk.runtime.api.commons.FlowError;
 import org.json.JSONObject;
 
+import static com.reedelk.runtime.api.commons.FlowError.Properties.*;
+
 public class Messages {
 
     private Messages() {
@@ -23,8 +25,15 @@ public class Messages {
 
         @Override
         public String format(Object... args) {
-            return new JSONObject(new FlowError((long) args[0], (String) args[1], (String) args[2], (String) args[3], (String) args[4], (String) args[5]),
-                    new String[] { "moduleId", "moduleName", "flowId", "flowTitle", "errorType", "errorMessage" }).toString(2);
+            return new JSONObject(new FlowError(
+                    (long) args[0],
+                    (String) args[1],
+                    (String) args[2],
+                    (String) args[3],
+                    (String) args[4],
+                    (String) args[5]),
+                    new String[] { moduleId, moduleName, flowId, flowTitle, errorType, errorMessage })
+                    .toString(2);
         }
     }
 
