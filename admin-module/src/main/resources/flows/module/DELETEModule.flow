@@ -15,7 +15,7 @@
         "status": 200
       },
       "errorResponse": {
-        "body": "#[error]",
+        "body": "#[error.getMessage()]",
         "status": 500
       }
     },

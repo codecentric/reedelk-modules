@@ -15,7 +15,7 @@
         "status": "#[context.responseCode != null ? context.responseCode : 200]"
       },
       "errorResponse": {
-        "body": "#[error]",
+        "body": "#[error.getMessage()]",
         "status": 500
       }
     },
