@@ -1,5 +1,8 @@
 package com.reedelk.esb.commons;
 
+import com.reedelk.runtime.api.commons.FlowError;
+import org.json.JSONObject;
+
 public class Messages {
 
     private Messages() {
@@ -13,7 +16,20 @@ public class Messages {
         String format(Object ...args);
     }
 
+    // The error message is in JSON format so that clients can always
+    // parse the error whenever error.getMessage() is used in a script.
+    public enum FlowErrorMessage implements FormattedMessage {
+        DEFAULT;
+
+        @Override
+        public String format(Object... args) {
+            return new JSONObject(new FlowError((long) args[0], (String) args[1], (String) args[2], (String) args[3], (String) args[4], (String) args[5]),
+                    new String[] { "moduleId", "moduleName", "flowId", "flowTitle", "errorType", "errorMessage" }).toString(2);
+        }
+    }
+
     public enum Flow implements FormattedMessage {
+
         FORCE_STOP("Error forcing stop flow with id=[%s]: %s"),
         FORCE_STOP_WITH_TITLE("Error forcing stop flow with id=[%s] and title '%s': %s"),
         START("Flow with id=[%s] started."),
@@ -25,18 +41,7 @@ public class Messages {
         BUILD_ERROR("Error building flow with id=[%s]: %s"),
         BUILD_ERROR_WITH_TITLE("Error building flow with id=[%s] and title '%s': %s"),
         VALIDATION_ID_NOT_UNIQUE("Error validating module with name=[%s]: There are at least two flows with the same ID. Flow IDs must be unique."),
-        VALIDATION_ID_NOT_VALID("Error validating module with name=[%s]: The 'id' property must be defined and not empty in any JSON flow definition."),
-
-        // The error message is JSON so that clients can always
-        // parse the error whenever error.getMessage() is returned.
-        EXECUTION_ERROR("{\n" +
-                "   \"moduleId\": %d,\n" +
-                "   \"moduleName\": \"%s\",\n" +
-                "   \"flowId\": \"%s\",\n" +
-                "   \"flowTitle\": \"%s\",\n" +
-                "   \"errorType\": \"%s\",\n" +
-                "   \"errorMessage\": \"%s\"\n" +
-                "}");
+        VALIDATION_ID_NOT_VALID("Error validating module with name=[%s]: The 'id' property must be defined and not empty in any JSON flow definition.");
 
         private String msg;
 

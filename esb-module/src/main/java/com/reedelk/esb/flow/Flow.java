@@ -1,6 +1,5 @@
 package com.reedelk.esb.flow;
 
-import com.reedelk.esb.commons.Messages;
 import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -17,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+import static com.reedelk.esb.commons.Messages.FlowErrorMessage;
 import static com.reedelk.esb.commons.Preconditions.checkArgument;
 import static com.reedelk.esb.commons.Preconditions.checkState;
 
@@ -134,7 +134,7 @@ public class Flow implements InboundEventListener {
         @Override
         public void onError(Throwable throwable, FlowContext flowContext) {
 
-            String error = Messages.Flow.EXECUTION_ERROR.format(moduleId, moduleName, flowId, flowTitle,
+            String error = FlowErrorMessage.DEFAULT.format(moduleId, moduleName, flowId, flowTitle,
                     throwable.getClass().getName(), throwable.getMessage());
             FlowExecutionException wrapped = new FlowExecutionException(moduleId, moduleName, flowId, flowTitle, error, throwable);
 
