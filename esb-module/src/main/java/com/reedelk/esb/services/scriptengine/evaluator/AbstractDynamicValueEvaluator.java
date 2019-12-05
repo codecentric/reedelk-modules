@@ -31,7 +31,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         Event.operation.subscribe(UN_INSTALLED, this);
     }
 
-    <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider provider, FunctionDefinitionBuilder<DynamicValue> functionDefinitionBuilder, Object... args) {
+    <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider provider, FunctionDefinitionBuilder<ScriptBlock> functionDefinitionBuilder, Object... args) {
         if (dynamicValue.isEmpty()) {
             return provider.empty();
         } else {
@@ -72,24 +72,24 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    <T extends ScriptBlock> Object invokeFunction(T dynamicValue, FunctionDefinitionBuilder<T> functionDefinitionBuilder, Object... args) {
+    Object invokeFunction(ScriptBlock scriptBlock, FunctionDefinitionBuilder<ScriptBlock> functionDefinitionBuilder, Object... args) {
         try {
 
-            return scriptEngine().invokeFunction(dynamicValue.functionName(), args);
+            return scriptEngine().invokeFunction(scriptBlock.functionName(), args);
 
         }  catch (ScriptException scriptException) {
             // We add to the original exception the body of the script so that
             // it will be easy to identify which script failed in the flow.
-            throw new ScriptExecutionException(dynamicValue, scriptException);
+            throw new ScriptExecutionException(scriptBlock, scriptException);
 
         } catch (NoSuchMethodException e) {
             // The function has not been compiled yet, optimistic invocation
             // failed. We compile the function and try to invoke it again.
-            compile(dynamicValue, functionDefinitionBuilder);
+            compile(scriptBlock, functionDefinitionBuilder);
 
             try {
 
-                return scriptEngine().invokeFunction(dynamicValue.functionName(), args);
+                return scriptEngine().invokeFunction(scriptBlock.functionName(), args);
 
             }  catch (ScriptException | NoSuchMethodException scriptException) {
                 // We add some contextual information to the original exception such as
@@ -99,12 +99,12 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
                 // that something went wrong in the engine. In this case
                 // there is nothing we can do to fix it and therefore
                 // we rethrow the exception to the caller.
-                throw new ScriptExecutionException(dynamicValue, scriptException);
+                throw new ScriptExecutionException(scriptBlock, scriptException);
             }
         }
     }
 
-    <T extends ScriptBlock> void compile(T scriptBlock, FunctionDefinitionBuilder<T> functionDefinitionBuilder) {
+    void compile(ScriptBlock scriptBlock, FunctionDefinitionBuilder<ScriptBlock> functionDefinitionBuilder) {
         synchronized (this) {
 
             long moduleId = scriptBlock.context().getModuleId();

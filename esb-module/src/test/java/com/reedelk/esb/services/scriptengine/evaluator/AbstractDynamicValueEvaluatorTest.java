@@ -3,9 +3,10 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 import com.reedelk.esb.exception.ScriptCompilationException;
 import com.reedelk.esb.exception.ScriptExecutionException;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
+import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.ScriptBlockContext;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
-import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.script.ScriptException;
 
 import static com.reedelk.esb.pubsub.Action.Module.ActionModuleUninstalled;
+import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -215,10 +217,38 @@ class AbstractDynamicValueEvaluatorTest {
         assertThat(evaluator.moduleIdFunctionNamesMap).containsOnlyKeys(testModuleId);
     }
 
+    @Test
+    void shouldThrowExceptionWhenDynamicMapCouldNotBeCompiled() throws NoSuchMethodException, ScriptException {
+        // Given
+        DynamicStringMap dynamicStringMap = DynamicStringMap.from(
+                of("X-Correlation-ID", "#[notValid'Script']"), scriptBlockContext);
+
+        when(mockEngineProvider
+                .invokeFunction(dynamicStringMap.functionName()))
+                .thenThrow(new NoSuchMethodException("method not found"));
+
+        doThrow(new ScriptException("Could not find '-'"))
+                .when(mockEngineProvider)
+                .compile(anyString());
+
+        // When
+        ScriptCompilationException thrown = assertThrows(ScriptCompilationException.class,
+                () -> evaluator.invokeFunction(dynamicStringMap, testFunctionBuilder));
+
+        // Then
+
+        verify(mockEngineProvider).invokeFunction(anyString());
+        verify(mockEngineProvider).compile(anyString());
+        verifyNoMoreInteractions(mockEngineProvider);
+        assertThat(thrown).hasMessage("Could not compile script: Could not find '-',\n" +
+                "- Script code:\n" +
+                "{X-Correlation-ID=#[notValid'Script']}");
+    }
+
     private class TestAwareAbstractDynamicValueEvaluatorTest extends AbstractDynamicValueEvaluator {
     }
 
-    class TestFunctionBuilder implements FunctionDefinitionBuilder<DynamicValue> {
+    class TestFunctionBuilder implements FunctionDefinitionBuilder {
 
         private static final String TEMPLATE =
                 "function %s() {\n" +
@@ -226,7 +256,7 @@ class AbstractDynamicValueEvaluatorTest {
                         "};";
 
         @Override
-        public String from(DynamicValue dynamicValue) {
+        public String from(ScriptBlock dynamicValue) {
             return format(TEMPLATE, dynamicValue.functionName(), dynamicValue.body());
         }
     }
