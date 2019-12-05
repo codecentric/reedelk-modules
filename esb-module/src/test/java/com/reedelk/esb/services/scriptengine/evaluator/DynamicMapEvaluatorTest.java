@@ -193,6 +193,25 @@ class DynamicMapEvaluatorTest {
         assertThat(evaluated.get("Key1")).isEqualTo("");
     }
 
+    @Test
+    void shouldCorrectlyEvaluateMapWithEmptyKey() {
+        // Given
+        MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
+        Message message = MessageBuilder.get().text("test").attributes(attributes).build();
+
+        DynamicStringMap dynamicMap = DynamicStringMap.from(of(
+                "", "myValue", "key2", "value2"),
+                scriptBlockContext);
+
+        // When
+        Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
+
+        // Then
+        assertThat(evaluated).hasSize(2);
+        assertThat(evaluated).containsEntry("key2", "value2");
+        assertThat(evaluated).containsEntry("", "myValue");
+    }
+
 
     private class TestableFlowContext extends HashMap<String, Serializable> implements FlowContext {
 
