@@ -67,6 +67,11 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, FlowContext context, Throwable throwable) {
+        throw new UnsupportedOperationException();
+    }
+
     // Register Function
 
     @Override

@@ -109,6 +109,9 @@ public class HttpRequestHandler implements BiFunction<HttpServerRequest, HttpSer
 
                 // An exception happened while executing the response mapping.
                 // We handle the error before sending it to the client.
+                // We must clear up all the response headers since we might have
+                // partially added them during the mapping.
+                response.responseHeaders().clear();
 
                 handleErrorResponse(exception, flowContext);
 

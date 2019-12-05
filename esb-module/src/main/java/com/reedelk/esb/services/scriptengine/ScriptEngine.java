@@ -88,6 +88,11 @@ public class ScriptEngine implements ScriptEngineService {
         return dynamicMapEvaluator.evaluate(dynamicMap, context, message);
     }
 
+    @Override
+    public <T> Map<String, T> evaluate(DynamicMap<T> dynamicMap, FlowContext context, Throwable throwable) {
+        return dynamicMapEvaluator.evaluate(dynamicMap, context, throwable);
+    }
+
     // Register Function
 
     @Override

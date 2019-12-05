@@ -5,12 +5,13 @@ import com.reedelk.rest.configuration.listener.Response;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.MimeType;
-import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import reactor.netty.http.server.HttpServerResponse;
+
+import java.util.Map;
 
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
@@ -55,9 +56,11 @@ public class MessageHttpResponseMapper {
                 .ifPresent(contentType -> serverResponse.addHeader(CONTENT_TYPE, contentType));
 
         // 3. Headers (which might override headers above)
-        DynamicStringMap responseHeaders = ofNullable(response)
-                .map(Response::getHeaders).orElse(null);
-        AdditionalHeader.addAll(serverResponse, responseHeaders);
+        Map<String,String> evaluatedResponseHeaders = ofNullable(response)
+                .map(Response::getHeaders)
+                .map(dynamicStringMap -> scriptEngine.evaluate(dynamicStringMap, flowContext, message))
+                .orElse(null);
+        AdditionalHeader.addAll(serverResponse, evaluatedResponseHeaders);
     }
 
     /**
@@ -90,8 +93,10 @@ public class MessageHttpResponseMapper {
         }
 
         // 3. Headers (which might override headers above)
-        DynamicStringMap responseHeaders = ofNullable(errorResponse)
-                .map(ErrorResponse::getHeaders).orElse(null);
-        AdditionalHeader.addAll(serverResponse, responseHeaders);
+        Map<String,String> evaluatedResponseHeaders = ofNullable(errorResponse)
+                .map(ErrorResponse::getHeaders)
+                .map(dynamicStringMap -> scriptEngine.evaluate(dynamicStringMap, flowContext, exception))
+                .orElse(null);
+        AdditionalHeader.addAll(serverResponse, evaluatedResponseHeaders);
     }
 }

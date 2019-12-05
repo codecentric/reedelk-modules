@@ -40,12 +40,16 @@ public class DynamicMapWithMessageAndContext implements FunctionDefinitionBuilde
                 value = ("'" + StringUtils.escapeQuotes((String) value) + "'");
             }
 
-            builder.append(key).append(": ").append(value).append(", ");
+            builder.append("'").append(key).append("'").append(": ").append(value).append(", ");
         }
 
         // Remove final space and comma (,) character
         if (!map.isEmpty()) builder.delete(builder.length() - 2, builder.length() - 1);
         builder.append("};");
-        return String.format(TEMPLATE, map.functionName(), builder.toString());
+        return String.format(getTemplate(), map.functionName(), builder.toString());
+    }
+
+    protected String getTemplate() {
+        return TEMPLATE;
     }
 }
