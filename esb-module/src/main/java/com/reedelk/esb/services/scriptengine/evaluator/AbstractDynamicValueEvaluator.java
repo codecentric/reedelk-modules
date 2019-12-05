@@ -31,7 +31,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         Event.operation.subscribe(UN_INSTALLED, this);
     }
 
-    <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider provider, FunctionDefinitionBuilder<ScriptBlock> functionDefinitionBuilder, Object... args) {
+    <S, T> S execute(DynamicValue<T> dynamicValue, ValueProvider provider, FunctionDefinitionBuilder<? extends ScriptBlock> functionDefinitionBuilder, Object... args) {
         if (dynamicValue.isEmpty()) {
             return provider.empty();
         } else {
@@ -72,7 +72,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    Object invokeFunction(ScriptBlock scriptBlock, FunctionDefinitionBuilder<ScriptBlock> functionDefinitionBuilder, Object... args) {
+    Object invokeFunction(ScriptBlock scriptBlock, FunctionDefinitionBuilder<? extends ScriptBlock> functionDefinitionBuilder, Object... args) {
         try {
 
             return scriptEngine().invokeFunction(scriptBlock.functionName(), args);
@@ -104,7 +104,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         }
     }
 
-    void compile(ScriptBlock scriptBlock, FunctionDefinitionBuilder<ScriptBlock> functionDefinitionBuilder) {
+    void compile(ScriptBlock scriptBlock, FunctionDefinitionBuilder<? extends ScriptBlock> functionDefinitionBuilder) {
         synchronized (this) {
 
             long moduleId = scriptBlock.context().getModuleId();
