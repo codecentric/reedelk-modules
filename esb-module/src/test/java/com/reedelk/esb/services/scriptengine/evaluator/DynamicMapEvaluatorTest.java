@@ -163,6 +163,37 @@ class DynamicMapEvaluatorTest {
         assertThat(evaluated.get("X-Message-Text")).isEqualTo("This is an error");
     }
 
+    @Test
+    void shouldCorrectlyEvaluateMapWithEmptyDynamicScriptValue() {
+        // Given
+        MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
+        Message message = MessageBuilder.get().text("test").attributes(attributes).build();
+
+        DynamicStringMap dynamicMap = DynamicStringMap.from(of("Key1", "#[]"), scriptBlockContext);
+
+        // When
+        Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
+
+        // Then
+        assertThat(evaluated.get("Key1")).isEqualTo("");
+    }
+
+    @Test
+    void shouldCorrectlyEvaluateMapWithEmptyValue() {
+        // Given
+        MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
+        Message message = MessageBuilder.get().text("test").attributes(attributes).build();
+
+        DynamicStringMap dynamicMap = DynamicStringMap.from(of("Key1", ""), scriptBlockContext);
+
+        // When
+        Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
+
+        // Then
+        assertThat(evaluated.get("Key1")).isEqualTo("");
+    }
+
+
     private class TestableFlowContext extends HashMap<String, Serializable> implements FlowContext {
 
     }

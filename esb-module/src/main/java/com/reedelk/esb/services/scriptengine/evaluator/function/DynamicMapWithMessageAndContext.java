@@ -35,6 +35,9 @@ public class DynamicMapWithMessageAndContext implements FunctionDefinitionBuilde
             if (value instanceof String && ScriptUtils.isScript((String) value)) {
                 // If it is a script, we need to unwrap it.
                 value = ScriptUtils.unwrap((String) value);
+                if (StringUtils.isBlank((String) value)) {
+                    value = "''"; // The map value *MUST* never be empty.
+                }
             } else if (value instanceof String) {
                 // If it is text we need to surround the values with quotes.
                 value = ("'" + StringUtils.escapeQuotes((String) value) + "'");
