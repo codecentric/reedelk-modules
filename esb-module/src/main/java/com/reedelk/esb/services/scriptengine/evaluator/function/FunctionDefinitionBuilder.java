@@ -4,6 +4,6 @@ import com.reedelk.runtime.api.script.ScriptBlock;
 
 public interface FunctionDefinitionBuilder<T extends ScriptBlock> {
 
-    String from(ScriptBlock scriptBlock);
+    String from(T scriptBlock);
 
 }

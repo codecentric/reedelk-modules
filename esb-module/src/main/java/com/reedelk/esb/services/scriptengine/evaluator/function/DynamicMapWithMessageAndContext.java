@@ -2,7 +2,6 @@ package com.reedelk.esb.services.scriptengine.evaluator.function;
 
 import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.commons.StringUtils;
-import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 
 import java.util.Map;
@@ -25,10 +24,8 @@ public class DynamicMapWithMessageAndContext implements FunctionDefinitionBuilde
      *  };
      * }
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public String from(ScriptBlock scriptBlock) {
-        DynamicMap<Object> map = (DynamicMap<Object>) scriptBlock;
+    public String from(DynamicMap<Object> map) {
         StringBuilder builder = new StringBuilder("{");
 
         for (Map.Entry<String,Object> entry : map.entrySet()) {
