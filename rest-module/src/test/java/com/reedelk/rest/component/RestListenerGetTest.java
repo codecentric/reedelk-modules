@@ -9,6 +9,7 @@ import com.reedelk.runtime.api.message.MessageAttributes;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.script.ScriptBlockContext;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
@@ -208,10 +209,12 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         // Given
         IllegalStateException thrownException = new IllegalStateException("flow error");
 
+        DynamicStringMap errorResponseHeaders = DynamicStringMap.empty();
         DynamicByteArray errorResponseBody = DynamicByteArray.from("#['custom error']", new ScriptBlockContext(10L));
 
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setBody(errorResponseBody);
+        errorResponse.setHeaders(errorResponseHeaders);
 
         RestListener listener = listenerWith(GET, defaultConfiguration);
         listener.setErrorResponse(errorResponse);
@@ -222,9 +225,14 @@ class RestListenerGetTest extends RestListenerAbstractTest {
                 .when(scriptEngine)
                 .evaluate(errorResponseBody, context, thrownException);
 
-        doReturn(Optional.empty())
+        doReturn(new HashMap<>()) // Empty map
                 .when(scriptEngine)
-                .evaluate(null, context, thrownException);
+                .evaluate(errorResponseHeaders, context, thrownException);
+
+        DynamicValue nullDynamicValue = null;
+        doReturn(Optional.empty()) // Empty value
+                .when(scriptEngine)
+                .evaluate(nullDynamicValue, context, thrownException);
 
         // Expect
         assertContentIs(getRequest, "custom error");
@@ -234,9 +242,12 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     void shouldReturn504CustomErrorResponseCode() {
         // Given
         IllegalStateException thrownException = new IllegalStateException("flow error");
+
+        DynamicStringMap errorResponseHeaders = DynamicStringMap.empty();
         DynamicInteger errorResponseCode = DynamicInteger.from("#[504]", new ScriptBlockContext(10L));
 
         ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setHeaders(errorResponseHeaders);
         errorResponse.setStatus(errorResponseCode);
 
         RestListener listener = listenerWith(GET, defaultConfiguration);
@@ -248,9 +259,9 @@ class RestListenerGetTest extends RestListenerAbstractTest {
                 .when(scriptEngine)
                 .evaluate(errorResponseCode, context, thrownException);
 
-        doReturn(Optional.empty())
+        doReturn(new HashMap<>()) // Empty map
                 .when(scriptEngine)
-                .evaluate(null, context, thrownException);
+                .evaluate(errorResponseHeaders, context, thrownException);
 
         // Expect
         assertStatusCodeIs(getRequest, 504);
@@ -261,9 +272,11 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         // Given
         IllegalStateException thrownException = new IllegalStateException("flow error");
 
+        DynamicStringMap errorResponseHeaders = DynamicStringMap.empty();
         DynamicByteArray errorResponseBody = DynamicByteArray.from("#[unknownVariable]", new ScriptBlockContext(10L));
 
         ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setHeaders(errorResponseHeaders);
         errorResponse.setBody(errorResponseBody);
 
         RestListener listener = listenerWith(GET, defaultConfiguration);
@@ -276,9 +289,15 @@ class RestListenerGetTest extends RestListenerAbstractTest {
                 .when(scriptEngine)
                 .evaluate(errorResponseBody, context, thrownException);
 
-        doReturn(Optional.empty())
+        doReturn(new HashMap<>()) // Empty map
                 .when(scriptEngine)
-                .evaluate(null, context, thrownException);
+                .evaluate(errorResponseHeaders, context, thrownException);
+
+        // Status
+        DynamicValue nullDynamicValue = null;
+        doReturn(Optional.empty()) // Empty map
+                .when(scriptEngine)
+                .evaluate(nullDynamicValue, context, thrownException);
 
         // Expect
         String result = makeCall(getRequest);
@@ -326,21 +345,30 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     void shouldReturnErrorResponseContent() {
         // Given
         String errorMessage = "my error";
+        DynamicStringMap errorResponseHeaders = DynamicStringMap.empty();
         DynamicByteArray errorResponseBody = DynamicByteArray.from("#[error]", scriptBlockContext);
         IllegalStateException exception = new IllegalStateException(errorMessage);
 
-        // Status
-        doReturn(Optional.empty())
-                .when(scriptEngine)
-                .evaluate(null, context, exception);
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setHeaders(errorResponseHeaders);
+        errorResponse.setBody(errorResponseBody);
+
 
         // Evaluation of error message
         doReturn(Optional.of(errorMessage.getBytes()))
                 .when(scriptEngine)
                 .evaluate(errorResponseBody, context, exception);
 
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setBody(errorResponseBody);
+        // Status
+        DynamicValue nullDynamicValue = null;
+        doReturn(Optional.empty()) // Empty map
+                .when(scriptEngine)
+                .evaluate(nullDynamicValue, context, exception);
+
+        // Headers
+        doReturn(new HashMap<>()) // Empty map
+                .when(scriptEngine)
+                .evaluate(errorResponseHeaders, context, exception);
 
         RestListener listener = listenerWith(GET, defaultConfiguration);
         listener.addEventListener((message, callback) -> callback.onError(exception, context));

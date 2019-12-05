@@ -11,6 +11,7 @@ import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -25,10 +26,12 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.netty.http.server.HttpServerResponse;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import static com.reedelk.rest.commons.HttpHeader.CONTENT_TYPE;
+import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static com.reedelk.runtime.api.commons.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -117,6 +120,10 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().text("my text body").build();
 
+                doReturn(new HashMap<>())
+                        .when(scriptEngine)
+                        .evaluate(DynamicStringMap.empty(), flowContext, message);
+
                 // When
                 mapper.map(message, response, flowContext);
 
@@ -145,6 +152,10 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().build();
 
+                doReturn(new HashMap<>())
+                        .when(scriptEngine)
+                        .evaluate(DynamicStringMap.empty(), flowContext, message);
+
                 // When
                 mapper.map(message, response, flowContext);
 
@@ -159,6 +170,10 @@ class MessageHttpResponseMapperTest {
                 DynamicByteArray body = DynamicByteArray.from(null, scriptBlockContext);
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().build();
+
+                doReturn(new HashMap<>())
+                        .when(scriptEngine)
+                        .evaluate(DynamicStringMap.empty(), flowContext, message);
 
                 // When
                 mapper.map(message, response, flowContext);
@@ -187,6 +202,10 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithAdditionalHeaders(headers);
                 Message message = MessageBuilder.get().build();
 
+                doReturn(of("header1", "my header 1", "header2", "my header 2"))
+                        .when(scriptEngine)
+                        .evaluate(headers, flowContext, message);
+
                 // When
                 mapper.map(message, response, flowContext);
 
@@ -209,6 +228,10 @@ class MessageHttpResponseMapperTest {
 
                 MessageHttpResponseMapper mapper = newMapperWithAdditionalHeaders(headers);
                 Message message = MessageBuilder.get().build();
+
+                doReturn(of("coNteNt-TyPe", "new content type"))
+                        .when(scriptEngine)
+                        .evaluate(headers, flowContext, message);
 
                 // When
                 mapper.map(message, response, flowContext);
@@ -304,8 +327,14 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
+                DynamicValue nullDynamicValue = null;
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, flowContext, exception);
+                        .when(scriptEngine)
+                        .evaluate(nullDynamicValue, flowContext, exception);
+
+                doReturn(new HashMap<>())
+                        .when(scriptEngine)
+                        .evaluate(DynamicStringMap.empty(), flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -318,12 +347,14 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeHeaderWhenBodyIsText() {
                 // Given
+                DynamicValue nullDynamicValue = null;
+
                 DynamicByteArray errorBody = DynamicByteArray.from("my text body", scriptBlockContext);
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, flowContext, exception);
+                        .when(scriptEngine).evaluate(nullDynamicValue, flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -339,8 +370,14 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
+                DynamicValue nullDynamicValue = null;
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, flowContext, exception);
+                        .when(scriptEngine)
+                        .evaluate(nullDynamicValue, flowContext, exception);
+
+                doReturn(new HashMap<>())
+                        .when(scriptEngine)
+                        .evaluate(DynamicStringMap.empty(), flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -357,8 +394,14 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
+                DynamicValue nullDynamicValue = null;
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, flowContext, exception);
+                        .when(scriptEngine)
+                        .evaluate(nullDynamicValue, flowContext, exception);
+
+                doReturn(new HashMap<>())
+                        .when(scriptEngine)
+                        .evaluate(DynamicStringMap.empty(), flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -374,8 +417,14 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(null);
                 Throwable exception = new ESBException("Error while processing JSON");
 
+                DynamicValue nullDynamicValue = null;
                 doReturn(Optional.empty())
-                        .when(scriptEngine).evaluate(null, flowContext, exception);
+                        .when(scriptEngine).evaluate(nullDynamicValue, flowContext, exception);
+
+                DynamicStringMap emptyMap = DynamicStringMap.empty();
+                doReturn(new HashMap<>())
+                        .when(scriptEngine)
+                        .evaluate(emptyMap, flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
@@ -404,6 +453,15 @@ class MessageHttpResponseMapperTest {
                 MessageHttpResponseMapper mapper = newMapperWithErrorAdditionalHeaders(headers);
                 Throwable exception = new ESBException("Error while processing JSON");
 
+                doReturn(of("header1", "my header 1", "header2", "my header 2"))
+                        .when(scriptEngine)
+                        .evaluate(headers, flowContext, exception);
+
+                DynamicValue nullDynamicValue = null;
+                doReturn(Optional.empty())
+                        .when(scriptEngine)
+                        .evaluate(nullDynamicValue, flowContext, exception);
+
                 // When
                 mapper.map(exception, response, flowContext);
 
@@ -425,6 +483,15 @@ class MessageHttpResponseMapperTest {
 
                 MessageHttpResponseMapper mapper = newMapperWithErrorAdditionalHeaders(headers);
                 Throwable exception = new ESBException("Error while processing JSON");
+
+                doReturn(of("coNteNt-TyPe", "new content type"))
+                        .when(scriptEngine)
+                        .evaluate(headers, flowContext, exception);
+
+                DynamicValue nullDynamicValue = null;
+                doReturn(Optional.empty())
+                        .when(scriptEngine)
+                        .evaluate(nullDynamicValue, flowContext, exception);
 
                 // When
                 mapper.map(exception, response, flowContext);
