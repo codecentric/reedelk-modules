@@ -38,6 +38,10 @@ public class Defaults {
             return actual == null ? DEFAULT_COMPRESS : actual;
         }
 
+        public static boolean validateHeaders(Boolean actual) {
+            return actual == null ? DEFAULT_VALIDATE_HEADERS : actual;
+        }
+
         public static int maxChunkSize(Integer actual) {
             return actual == null ? DEFAULT_MAX_CHUNK_SIZE : actual;
         }
@@ -46,11 +50,13 @@ public class Defaults {
             return actual == null ? DEFAULT_MAX_HEADER_SIZE : actual;
         }
 
+        private static final boolean DEFAULT_VALIDATE_HEADERS = false;
         private static final boolean DEFAULT_COMPRESS = false;
         private static final String DEFAULT_HOST = "localhost";
         private static final int DEFAULT_HTTP_PORT = 8080;
         private static final int DEFAULT_HTTPS_PORT = 8443;
         private static final int DEFAULT_MAX_CHUNK_SIZE = HttpDecoderSpec.DEFAULT_MAX_CHUNK_SIZE;
         private static final int DEFAULT_MAX_HEADER_SIZE = HttpDecoderSpec.DEFAULT_MAX_HEADER_SIZE;
+
     }
 }
