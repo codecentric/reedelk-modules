@@ -1,6 +1,5 @@
 package com.reedelk.rest.server.mapper;
 
-import com.reedelk.runtime.api.commons.StringUtils;
 import io.netty.handler.codec.http.HttpHeaders;
 import reactor.netty.http.server.HttpServerResponse;
 
@@ -15,21 +14,18 @@ class AdditionalHeader {
      * @param response the current http response object.
      * @param additionalHeaders additional user defined headers.
      */
-    static void addAll(HttpServerResponse response, Map<String,String> additionalHeaders) {
+    static void addAll(HttpServerResponse response, Map<String, String> additionalHeaders) {
         if (additionalHeaders == null) return;
 
         HttpHeaders currentHeaders = response.responseHeaders();
         additionalHeaders.forEach((headerName, headerValue) -> {
-            // We cannot add headers with empty header key, so we just ignore it.
-            if (StringUtils.isNotBlank(headerName)) {
-                Optional<String> optionalMatchingHeaderName = matchingHeader(currentHeaders, headerName);
-                if (optionalMatchingHeaderName.isPresent()) {
-                    String matchingHeaderName = optionalMatchingHeaderName.get();
-                    currentHeaders.remove(matchingHeaderName);
-                    currentHeaders.add(headerName.toLowerCase(), headerValue);
-                } else {
-                    currentHeaders.add(headerName.toLowerCase(), headerValue);
-                }
+            Optional<String> optionalMatchingHeaderName = matchingHeader(currentHeaders, headerName);
+            if (optionalMatchingHeaderName.isPresent()) {
+                String matchingHeaderName = optionalMatchingHeaderName.get();
+                currentHeaders.remove(matchingHeaderName);
+                currentHeaders.add(headerName.toLowerCase(), headerValue);
+            } else {
+                currentHeaders.add(headerName.toLowerCase(), headerValue);
             }
         });
     }
