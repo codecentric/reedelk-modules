@@ -33,7 +33,7 @@ public class ServerConfigurer {
         server = server.port(Defaults.RestListener.port(configuration.getPort(), configuration.getProtocol()));
         server = server.compress(Defaults.RestListener.compress(configuration.getCompress()));
         return server.httpRequestDecoder(decoder -> {
-            decoder.validateHeaders(Defaults.RestListener.validateHeaders(configuration.getValidateHeaders()));
+            decoder.validateHeaders(Defaults.RestListener.validateHeaders());
             decoder.maxChunkSize(Defaults.RestListener.maxChunkSize(configuration.getMaxChunkSize()));
             decoder.maxHeaderSize(Defaults.RestListener.maxHeaderSize(configuration.getMaxLengthOfAllHeaders()));
             return decoder;

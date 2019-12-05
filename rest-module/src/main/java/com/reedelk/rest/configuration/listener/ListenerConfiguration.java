@@ -36,9 +36,6 @@ public class ListenerConfiguration implements Implementor {
     @Property("Compress response")
     private Boolean compress;
 
-    @Property("Validate headers")
-    private Boolean validateHeaders;
-
     @Property("Read timeout millis")
     private Integer readTimeoutMillis;
 
@@ -112,14 +109,6 @@ public class ListenerConfiguration implements Implementor {
 
     public void setCompress(Boolean compress) {
         this.compress = compress;
-    }
-
-    public Boolean getValidateHeaders() {
-        return validateHeaders;
-    }
-
-    public void setValidateHeaders(Boolean validateHeaders) {
-        this.validateHeaders = validateHeaders;
     }
 
     public Integer getSocketBacklog() {

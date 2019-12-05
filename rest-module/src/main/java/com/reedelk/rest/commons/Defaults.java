@@ -38,8 +38,8 @@ public class Defaults {
             return actual == null ? DEFAULT_COMPRESS : actual;
         }
 
-        public static boolean validateHeaders(Boolean actual) {
-            return actual == null ? DEFAULT_VALIDATE_HEADERS : actual;
+        public static boolean validateHeaders() {
+            return DEFAULT_VALIDATE_HEADERS;
         }
 
         public static int maxChunkSize(Integer actual) {
