@@ -32,11 +32,14 @@ public class JoinWithScript implements Join {
 
 
     @Property("Script")
-    @Variable(variableName = "messages")
+    @AutocompleteContributor(message = false, contributions = {
+            "messages[VARIABLE:Message[]]",
+            "messages.size()[FUNCTION:int]"})
     private Script script;
 
     @Override
     public Message apply(List<Message> messagesToJoin, FlowContext flowContext) {
+
         Optional<Object> result = service.evaluate(script, flowContext, messagesToJoin, Object.class);
         if (result.isPresent()) {
             MimeType mimeType = MimeType.parse(this.mimeType);

@@ -3,6 +3,7 @@ package com.reedelk.core.component.script;
 import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.script.Script;
 
+// TODO: Create a component using this approach.
 class ScriptEnhancer extends Script {
 
     private static final String EXECUTION_SCRIPT_TEMPLATE =
