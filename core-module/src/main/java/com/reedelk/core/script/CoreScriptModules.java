@@ -1,7 +1,7 @@
 package com.reedelk.core.script;
 
 import com.reedelk.core.component.logger.ScriptLogger;
-import com.reedelk.runtime.api.annotation.AutocompleteContributor1;
+import com.reedelk.runtime.api.annotation.AutoCompleteContributor;
 import com.reedelk.runtime.api.script.ScriptSource;
 
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
-@AutocompleteContributor1(contributions = {
+@AutoCompleteContributor(contributions = {
         "Util[VARIABLE:Util]",
         "Util.tmpdir()[FUNCTION:String]",
         "Util.uuid()[FUNCTION:String]",

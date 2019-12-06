@@ -32,7 +32,7 @@ public class JoinWithScript implements Join {
 
 
     @Property("Script")
-    @AutocompleteContributor1(message = false, contributions = {
+    @AutoCompleteContributor(message = false, contributions = {
             "messages[VARIABLE:Message[]]",
             "messages.size()[FUNCTION:int]"})
     private Script script;
