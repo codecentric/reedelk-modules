@@ -1,6 +1,6 @@
 package com.reedelk.rest.server.body;
 
-import com.reedelk.rest.commons.IsEvaluateMessagePayload;
+import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
@@ -19,7 +19,7 @@ public class BodyProviderStreamAuto implements BodyProvider {
     public BodyProviderStreamAuto(ScriptEngineService scriptEngine,
                            DynamicByteArray responseBody,
                            DynamicByteArray errorResponseBody) {
-        isEvaluateMessagePayload = IsEvaluateMessagePayload.from(responseBody);
+        isEvaluateMessagePayload = ScriptUtils.isEvaluateMessagePayload(responseBody);
         streamNone = new BodyProviderStreamNone(scriptEngine, responseBody, errorResponseBody);
         streamAlways = new BodyProviderStreamAlways(scriptEngine, responseBody, errorResponseBody);
     }

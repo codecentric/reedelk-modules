@@ -8,7 +8,7 @@ import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.test.utils.*;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Implementor;
-import com.reedelk.runtime.api.script.dynamicmap.*;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.*;
 import com.reedelk.runtime.commons.TypeFactory;
 import org.json.JSONArray;
@@ -1017,66 +1017,6 @@ class GenericComponentDefinitionDeserializerTest {
     class DynamicMapTests {
 
         @Test
-        void shouldCorrectlySetDynamicLongMapProperty() {
-            // Given
-            JSONObject expectedValue = new JSONObject();
-            expectedValue.put("one", 1);
-            expectedValue.put("two", 2);
-            expectedValue.put("three", "#[3]");
-
-            // When
-            TestComponentWithDynamicMapProperty component =
-                    buildDynamicMapComponentWith("dynamicLongMapProperty", expectedValue);
-
-            // Then
-            DynamicLongMap property = component.getDynamicLongMapProperty();
-            assertThat(property).containsEntry("one", 1);
-            assertThat(property).containsEntry("two", 2);
-            assertThat(property).containsEntry("three", "#[3]");
-            assertThat(property).hasSize(3);
-        }
-
-        @Test
-        void shouldCorrectlySetDynamicFloatMapProperty() {
-            // Given
-            JSONObject expectedValue = new JSONObject();
-            expectedValue.put("one", 234.2);
-            expectedValue.put("two", 134.154);
-            expectedValue.put("three", "#[23.43]");
-
-            // When
-            TestComponentWithDynamicMapProperty component =
-                    buildDynamicMapComponentWith("dynamicFloatMapProperty", expectedValue);
-
-            // Then
-            DynamicFloatMap property = component.getDynamicFloatMapProperty();
-            assertThat(property).containsEntry("one", 234.2);
-            assertThat(property).containsEntry("two", 134.154);
-            assertThat(property).containsEntry("three", "#[23.43]");
-            assertThat(property).hasSize(3);
-        }
-
-        @Test
-        void shouldCorrectlySetDynamicDoubleMapProperty() {
-            // Given
-            JSONObject expectedValue = new JSONObject();
-            expectedValue.put("one", 234.2);
-            expectedValue.put("two", 134.154);
-            expectedValue.put("three", "#[23.43]");
-
-            // When
-            TestComponentWithDynamicMapProperty component =
-                    buildDynamicMapComponentWith("dynamicDoubleMapProperty", expectedValue);
-
-            // Then
-            DynamicDoubleMap property = component.getDynamicDoubleMapProperty();
-            assertThat(property).containsEntry("one", 234.2);
-            assertThat(property).containsEntry("two", 134.154);
-            assertThat(property).containsEntry("three", "#[23.43]");
-            assertThat(property).hasSize(3);
-        }
-
-        @Test
         void shouldCorrectlySetDynamicStringMapProperty() {
             // Given
             JSONObject expectedValue = new JSONObject();
@@ -1093,86 +1033,6 @@ class GenericComponentDefinitionDeserializerTest {
             assertThat(property).containsEntry("one", "one value");
             assertThat(property).containsEntry("two", "two value");
             assertThat(property).containsEntry("three", "#['three value']");
-            assertThat(property).hasSize(3);
-        }
-
-        @Test
-        void shouldCorrectlySetDynamicBooleanMapProperty() {
-            // Given
-            JSONObject expectedValue = new JSONObject();
-            expectedValue.put("one", true);
-            expectedValue.put("two", true);
-            expectedValue.put("three", false);
-
-            // When
-            TestComponentWithDynamicMapProperty component =
-                    buildDynamicMapComponentWith("dynamicBooleanMapProperty", expectedValue);
-
-            // Then
-            DynamicBooleanMap property = component.getDynamicBooleanMapProperty();
-            assertThat(property).containsEntry("one", true);
-            assertThat(property).containsEntry("two", true);
-            assertThat(property).containsEntry("three", false);
-            assertThat(property).hasSize(3);
-        }
-
-        @Test
-        void shouldCorrectlySetDynamicIntegerMapProperty() {
-            // Given
-            JSONObject expectedValue = new JSONObject();
-            expectedValue.put("one", 54);
-            expectedValue.put("two", 22);
-            expectedValue.put("three", 875);
-
-            // When
-            TestComponentWithDynamicMapProperty component =
-                    buildDynamicMapComponentWith("dynamicIntegerMapProperty", expectedValue);
-
-            // Then
-            DynamicIntegerMap property = component.getDynamicIntegerMapProperty();
-            assertThat(property).containsEntry("one", 54);
-            assertThat(property).containsEntry("two", 22);
-            assertThat(property).containsEntry("three", 875);
-            assertThat(property).hasSize(3);
-        }
-
-        @Test
-        void shouldCorrectlySetDynamicBigDecimalMapProperty() {
-            // Given
-            JSONObject expectedValue = new JSONObject();
-            expectedValue.put("one", 54.32);
-            expectedValue.put("two", 22.001);
-            expectedValue.put("three", 875.1);
-
-            // When
-            TestComponentWithDynamicMapProperty component =
-                    buildDynamicMapComponentWith("dynamicBigDecimalMapProperty", expectedValue);
-
-            // Then
-            DynamicBigDecimalMap property = component.getDynamicBigDecimalMapProperty();
-            assertThat(property).containsEntry("one", 54.32);
-            assertThat(property).containsEntry("two", 22.001);
-            assertThat(property).containsEntry("three", 875.1);
-            assertThat(property).hasSize(3);
-        }
-
-        @Test
-        void shouldCorrectlySetDynamicBigIntegerMapProperty() {
-            // Given
-            JSONObject expectedValue = new JSONObject();
-            expectedValue.put("one", 5411);
-            expectedValue.put("two", 2211);
-            expectedValue.put("three", 8751);
-
-            // When
-            TestComponentWithDynamicMapProperty component =
-                    buildDynamicMapComponentWith("dynamicBigIntegerMapProperty", expectedValue);
-
-            // Then
-            DynamicBigIntegerMap property = component.getDynamicBigIntegerMapProperty();
-            assertThat(property).containsEntry("one", 5411);
-            assertThat(property).containsEntry("two", 2211);
-            assertThat(property).containsEntry("three", 8751);
             assertThat(property).hasSize(3);
         }
     }

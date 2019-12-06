@@ -3,6 +3,7 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 import com.reedelk.esb.services.scriptengine.evaluator.function.DynamicValueWithErrorAndContext;
 import com.reedelk.esb.services.scriptengine.evaluator.function.DynamicValueWithMessageAndContext;
 import com.reedelk.runtime.api.commons.JavaType;
+import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.MimeType;
@@ -24,7 +25,7 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
             return OPTIONAL_PROVIDER.empty();
         } else if (dynamicValue.isScript()) {
             // Script
-            if (dynamicValue.isEvaluateMessagePayload()) {
+            if (ScriptUtils.isEvaluateMessagePayload(dynamicValue)) {
                 // we avoid evaluating the payload with the script engine (optimization)
                 // note that by calling message.payload(), if it is a stream we are
                 // automatically resolving it.
@@ -62,7 +63,7 @@ public class DynamicValueEvaluator extends AbstractDynamicValueEvaluator {
             if (dynamicValue.isEmpty()) {
                 return OPTIONAL_PROVIDER.empty();
                 // Script
-            } else if (dynamicValue.isEvaluateMessagePayload()) {
+            } else if (ScriptUtils.isEvaluateMessagePayload(dynamicValue)) {
                 // we avoid evaluating the payload with the script engine (optimization)
                 // note that by calling message.payload(), if it is a stream we are
                 // automatically resolving it.

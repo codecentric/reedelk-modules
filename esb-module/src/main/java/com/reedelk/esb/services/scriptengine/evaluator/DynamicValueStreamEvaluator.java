@@ -2,6 +2,7 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.services.scriptengine.evaluator.function.DynamicValueWithErrorAndContext;
 import com.reedelk.esb.services.scriptengine.evaluator.function.DynamicValueWithMessageAndContext;
+import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
@@ -22,7 +23,7 @@ public class DynamicValueStreamEvaluator extends AbstractDynamicValueEvaluator {
             return null;
         } else if (dynamicValue.isScript()) {
             // Script
-            if (dynamicValue.isEvaluateMessagePayload()) {
+            if (ScriptUtils.isEvaluateMessagePayload(dynamicValue)) {
                 return evaluateMessagePayload(dynamicValue.getEvaluatedType(), message);
             } else {
                 return TypedPublisher.from(execute(dynamicValue, STREAM_PROVIDER, functionBuilder, message, flowContext), dynamicValue.getEvaluatedType());

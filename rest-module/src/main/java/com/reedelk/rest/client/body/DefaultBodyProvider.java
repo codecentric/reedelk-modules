@@ -1,6 +1,6 @@
 package com.reedelk.rest.client.body;
 
-import com.reedelk.rest.commons.IsEvaluateMessagePayload;
+import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
@@ -16,7 +16,7 @@ public class DefaultBodyProvider implements BodyProvider {
     DefaultBodyProvider(ScriptEngineService scriptEngine, DynamicByteArray body) {
         this.body = body;
         this.scriptEngine = scriptEngine;
-        this.isEvaluateMessagePayloadBody = IsEvaluateMessagePayload.from(body);
+        this.isEvaluateMessagePayloadBody = ScriptUtils.isEvaluateMessagePayload(body);
     }
 
     @Override

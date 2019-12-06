@@ -1,8 +1,8 @@
 package com.reedelk.rest.client.header;
 
 import com.reedelk.rest.commons.ContentType;
-import com.reedelk.rest.commons.IsEvaluateMessagePayload;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
+import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
@@ -31,7 +31,7 @@ public class HeadersEvaluator {
     public HeaderProvider provider(Message message, FlowContext flowContext) {
         Map<String, String> headers = new HashMap<>();
 
-        if (IsEvaluateMessagePayload.from(body)) {
+        if (ScriptUtils.isEvaluateMessagePayload(body)) {
             ContentType.from(message)
                     .ifPresent(contentType -> headers.put(CONTENT_TYPE, contentType));
         }
