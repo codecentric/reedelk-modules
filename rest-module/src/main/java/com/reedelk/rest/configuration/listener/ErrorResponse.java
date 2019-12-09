@@ -15,15 +15,18 @@ public class ErrorResponse implements Implementor {
 
     @Hint("error body text")
     @Default("#[error]")
+    @AutoCompleteContributor(error = true, message = false)
     @Property("Response body")
     private DynamicByteArray body;
 
     @Hint("500")
     @Default("500")
+    @AutoCompleteContributor(error = true, message = false)
     @Property("Response status")
     private DynamicInteger status;
 
     @TabGroup("Headers")
+    @AutoCompleteContributor(error = true, message = false)
     @Property("Additional Headers")
     private DynamicStringMap headers = DynamicStringMap.empty();
 
