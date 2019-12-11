@@ -16,11 +16,11 @@ import static java.util.Collections.unmodifiableList;
         "Util.tmpdir()[FUNCTION:String]",
         "Util.uuid()[FUNCTION:String]",
         "Log[VARIABLE:Log]",
-        "Log.info('')[FUNCTION:void]",
-        "Log.debug('')[FUNCTION:void]",
-        "Log.warn('')[FUNCTION:void]",
-        "Log.error('')[FUNCTION:void]",
-        "Log.trace('')[FUNCTION:void]"
+        "Log.info('')[FUNCTION:void:2]",
+        "Log.debug('')[FUNCTION:void:2]",
+        "Log.warn('')[FUNCTION:void:2]",
+        "Log.error('')[FUNCTION:void:2]",
+        "Log.trace('')[FUNCTION:void:2]"
 })
 public class CoreScriptModules implements ScriptSource {
 
