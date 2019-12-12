@@ -10,7 +10,7 @@ public class ScriptDefinitionBuilder implements FunctionDefinitionBuilder<Script
 
     @Override
     public String from(Script script) {
-        String body = script.body(); // Script body contains the full function;
+        String body = script.body();
         return FUNCTION_NAME_CAPTURE.matcher(body).replaceFirst(script.functionName());
     }
 }
