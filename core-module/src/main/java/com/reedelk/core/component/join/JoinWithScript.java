@@ -32,6 +32,7 @@ public class JoinWithScript implements Join {
 
 
     @Property("Script")
+    @ScriptSignature(arguments = {"context","messages"})
     @AutoCompleteContributor(message = false, contributions = {
             "messages[VARIABLE:Message[]]",
             "messages.size()[FUNCTION:int]"})
