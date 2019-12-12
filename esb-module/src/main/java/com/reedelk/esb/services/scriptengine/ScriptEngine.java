@@ -11,7 +11,6 @@ import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -67,18 +66,13 @@ public class ScriptEngine implements ScriptEngineService {
     // Script
 
     @Override
-    public <T> Optional<T> evaluate(Script script, FlowContext flowContext, List<Message> messages, Class<T> returnType) {
-        return scriptEvaluator.evaluate(script, flowContext, messages, returnType);
+    public <T> Optional<T> evaluate(Script script, Class<T> returnType, Object ...args) {
+        return scriptEvaluator.evaluate(script, returnType, args);
     }
 
     @Override
-    public <T> Optional<T> evaluate(Script script, FlowContext flowContext, Message message, Class<T> returnType) {
-        return scriptEvaluator.evaluate(script, flowContext, message, returnType);
-    }
-
-    @Override
-    public <T> TypedPublisher<T> evaluateStream(Script script, FlowContext flowContext, Message message, Class<T> returnType) {
-        return scriptEvaluator.evaluateStream(script, flowContext, message, returnType);
+    public <T> TypedPublisher<T> evaluateStream(Script script, Class<T> returnType, Object ...args) {
+        return scriptEvaluator.evaluateStream(script, returnType, args);
     }
 
     // Dynamic map

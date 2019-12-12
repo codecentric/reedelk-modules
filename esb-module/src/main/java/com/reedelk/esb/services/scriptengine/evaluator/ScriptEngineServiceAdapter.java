@@ -10,7 +10,6 @@ import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,17 +45,12 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
     // Script
 
     @Override
-    public <T> Optional<T> evaluate(Script script, FlowContext flowContext, Message message, Class<T> returnType) {
+    public <T> Optional<T> evaluate(Script script, Class<T> returnType, Object ...args) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T> Optional<T> evaluate(Script script, FlowContext flowContext, List<Message> messages, Class<T> returnType) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T> TypedPublisher<T> evaluateStream(Script script, FlowContext flowContext, Message message, Class<T> returnType) {
+    public <T> TypedPublisher<T> evaluateStream(Script script, Class<T> returnType, Object ...args) {
         throw new UnsupportedOperationException();
     }
 

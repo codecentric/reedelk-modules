@@ -46,10 +46,10 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyEvaluateScriptAndReturnOptional() {
             // Given
-            Script stringConcatenation = Script.from("return 'one' + ' ' + 'two'", scriptBlockContext);
+            Script stringConcatenation = Script.from(wrapAsTestFunction("return 'one' + ' ' + 'two'"), scriptBlockContext);
 
             // When
-            Optional<String> actual = evaluator.evaluate(stringConcatenation, context, emptyMessage, String.class);
+            Optional<String> actual = evaluator.evaluate(stringConcatenation, String.class, context, emptyMessage);
 
             // Then
             assertThat(actual).isPresent().contains("one two");
@@ -61,7 +61,7 @@ class ScriptEvaluatorTest {
             Script emptyScript = Script.from("", scriptBlockContext);
 
             // When
-            Optional<String> actual = evaluator.evaluate(emptyScript, context, emptyMessage, String.class);
+            Optional<String> actual = evaluator.evaluate(emptyScript, String.class, context, emptyMessage);
 
             // Then
             assertThat(actual).isNotPresent();
@@ -73,7 +73,7 @@ class ScriptEvaluatorTest {
             Script nullScript = null;
 
             // When
-            Optional<String> actual = evaluator.evaluate(nullScript, context, emptyMessage, String.class);
+            Optional<String> actual = evaluator.evaluate(nullScript, String.class, context, emptyMessage);
 
             // Then
             assertThat(actual).isNotPresent();
@@ -82,11 +82,11 @@ class ScriptEvaluatorTest {
         @Test
         void shouldThrowExceptionWhenScriptIsNotValid() {
             // Given
-            Script invalidScript = Script.from("return 'hello", scriptBlockContext);
+            Script invalidScript = Script.from(wrapAsTestFunction("return 'hello"), scriptBlockContext);
 
             // When
             ESBException exception = Assertions.assertThrows(ESBException.class,
-                    () -> evaluator.evaluate(invalidScript, context, emptyMessage, String.class));
+                    () -> evaluator.evaluate(invalidScript, String.class, context, emptyMessage));
 
             // Then
             assertThat(exception).isNotNull();
@@ -95,10 +95,10 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyConvertIntegerResultToString() {
             // Given
-            Script intScript = Script.from("return 2351", scriptBlockContext);
+            Script intScript = Script.from(wrapAsTestFunction("return 2351"), scriptBlockContext);
 
             // When
-            Optional<Integer> actual = evaluator.evaluate(intScript, context, emptyMessage, Integer.class);
+            Optional<Integer> actual = evaluator.evaluate(intScript, Integer.class, context, emptyMessage);
 
             // Then
             assertThat(actual).isPresent().contains(2351);
@@ -107,11 +107,11 @@ class ScriptEvaluatorTest {
         @Test
         void shouldCorrectlyEvaluateMessagePayload() {
             // Given
-            Script payloadScript = Script.from("return message.payload()", scriptBlockContext);
+            Script payloadScript = Script.from(wrapAsTestFunction("return message.payload()"), scriptBlockContext);
             Message message = MessageBuilder.get().text("my payload as text").build();
 
             // When
-            Optional<String> actual = evaluator.evaluate(payloadScript, context, message, String.class);
+            Optional<String> actual = evaluator.evaluate(payloadScript, String.class, context, message);
 
             // Then
             assertThat(actual).isPresent().contains("my payload as text");
@@ -121,10 +121,10 @@ class ScriptEvaluatorTest {
         void shouldCorrectlyEvaluateContextVariable() {
             // Given
             context.put("messageVar", "my sample");
-            Script contextVariableScript = Script.from("return context.messageVar", scriptBlockContext);
+            Script contextVariableScript = Script.from(wrapAsTestFunction("return context.messageVar"), scriptBlockContext);
 
             // When
-            Optional<String> actual = evaluator.evaluate(contextVariableScript, context, emptyMessage, String.class);
+            Optional<String> actual = evaluator.evaluate(contextVariableScript, String.class, context, emptyMessage);
 
             // Then
             assertThat(actual).isPresent().contains("my sample");
@@ -153,10 +153,10 @@ class ScriptEvaluatorTest {
                     "   }" +
                     "}" +
                     "return result;";
-            Script stringConcatenation = Script.from(concatenateMessagesScript, scriptBlockContext);
+            Script stringConcatenation = Script.from(wrapAsTestFunctionWithMessages(concatenateMessagesScript), scriptBlockContext);
 
             // When
-            Optional<String> actual = evaluator.evaluate(stringConcatenation, context, messages, String.class);
+            Optional<String> actual = evaluator.evaluate(stringConcatenation, String.class, context, messages);
 
             // Then
             assertThat(actual).isPresent().contains("one;two;three");
@@ -168,7 +168,7 @@ class ScriptEvaluatorTest {
             Script emptyScript = Script.from("", scriptBlockContext);
 
             // When
-            Optional<String> actual = evaluator.evaluate(emptyScript, context, messages, String.class);
+            Optional<String> actual = evaluator.evaluate(emptyScript, String.class, context, messages);
 
             // Then
             assertThat(actual).isNotPresent();
@@ -180,7 +180,7 @@ class ScriptEvaluatorTest {
             Script nullScript = null;
 
             // When
-            Optional<String> actual = evaluator.evaluate(nullScript, context, messages, String.class);
+            Optional<String> actual = evaluator.evaluate(nullScript, String.class, context, messages);
 
             // Then
             assertThat(actual).isNotPresent();
@@ -193,7 +193,7 @@ class ScriptEvaluatorTest {
 
             // When
             ESBException exception = Assertions.assertThrows(ESBException.class,
-                    () -> evaluator.evaluate(notValidScript, context, messages, String.class));
+                    () -> evaluator.evaluate(notValidScript, String.class, context, messages));
 
             // Then
             assertThat(exception).isNotNull();
@@ -207,10 +207,10 @@ class ScriptEvaluatorTest {
         @Test
         void shouldReturnByteStreamFromString() {
             // Given
-            Script textValuedScript = Script.from("return 'my test';", scriptBlockContext);
+            Script textValuedScript = Script.from(wrapAsTestFunction("return 'my test';"), scriptBlockContext);
 
             // When
-            TypedPublisher<byte[]> actual = evaluator.evaluateStream(textValuedScript, context, emptyMessage, byte[].class);
+            TypedPublisher<byte[]> actual = evaluator.evaluateStream(textValuedScript, byte[].class, context, emptyMessage);
 
             // Then
             assertThat(actual.getType()).isEqualTo(byte[].class);
@@ -226,10 +226,10 @@ class ScriptEvaluatorTest {
             ByteArrayContent byteArrayContent = new ByteArrayContent(stream, MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(byteArrayContent).build();
 
-            Script extractStreamScript = Script.from("return message.payload()", scriptBlockContext);
+            Script extractStreamScript = Script.from(wrapAsTestFunction("return message.payload()"), scriptBlockContext);
 
             // When
-            TypedPublisher<byte[]> actual = evaluator.evaluateStream(extractStreamScript, context, message, byte[].class);
+            TypedPublisher<byte[]> actual = evaluator.evaluateStream(extractStreamScript, byte[].class, context, message);
 
             // Then
             assertThat(actual.getType()).isEqualTo(byte[].class);
@@ -244,7 +244,7 @@ class ScriptEvaluatorTest {
             Script nullScript = null;
 
             // When
-            Publisher<byte[]> actual = evaluator.evaluateStream(nullScript, context, emptyMessage, byte[].class);
+            Publisher<byte[]> actual = evaluator.evaluateStream(nullScript, byte[].class, context, emptyMessage);
 
             // Then
             assertThat(actual).isNull();
@@ -256,7 +256,7 @@ class ScriptEvaluatorTest {
             Script emptyScript = Script.from("", scriptBlockContext);
 
             // When
-            Publisher<byte[]> actual = evaluator.evaluateStream(emptyScript, context, emptyMessage, byte[].class);
+            Publisher<byte[]> actual = evaluator.evaluateStream(emptyScript, byte[].class, context, emptyMessage);
 
             // Then
             StepVerifier.create(actual).verifyComplete();
@@ -265,13 +265,25 @@ class ScriptEvaluatorTest {
         @Test
         void shouldReturnEmptyStreamWhenScriptReturnsNull() {
             // Given
-            Script scriptReturningNull = Script.from("return null", scriptBlockContext);
+            Script scriptReturningNull = Script.from(wrapAsTestFunction("return null"), scriptBlockContext);
 
             // When
-            Publisher<byte[]> actual = evaluator.evaluateStream(scriptReturningNull, context, emptyMessage, byte[].class);
+            Publisher<byte[]> actual = evaluator.evaluateStream(scriptReturningNull, byte[].class, context, emptyMessage);
 
             // Then
             StepVerifier.create(actual).verifyComplete();
         }
+    }
+
+    private static String wrapAsTestFunction(String code) {
+        return String.format("function myTestFunction(context,message) {" +
+                "%s" +
+                "}", code);
+    }
+
+    private static String wrapAsTestFunctionWithMessages(String code) {
+        return String.format("function myTestFunction(context,messages) {" +
+                "%s" +
+                "}", code);
     }
 }
