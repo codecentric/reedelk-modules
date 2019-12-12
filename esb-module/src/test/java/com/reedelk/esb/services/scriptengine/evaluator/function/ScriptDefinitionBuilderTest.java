@@ -19,7 +19,7 @@ class ScriptDefinitionBuilderTest {
     }
 
     @Test
-    void shouldCorrectlyReplaceFunction() {
+    void shouldCorrectlyReplaceOriginalFunctionNameWithGeneratedFunctionName() {
         // Given
         String myFunction = "function myFunction(message,context) {\n" +
                 "   return 'This is a test';\n" +
@@ -35,7 +35,7 @@ class ScriptDefinitionBuilderTest {
         String replaced = builder.from(script);
 
         // Then
-        assertThat(replaced).isEqualTo(format(expectedReplaced, script.functionName()));
+        String randomlyGeneratedFunctionName = script.functionName();
+        assertThat(replaced).isEqualTo(format(expectedReplaced, randomlyGeneratedFunctionName));
     }
-
 }
