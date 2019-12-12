@@ -399,7 +399,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[message.content]", scriptBlockContext);
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.TEXT);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.TEXT, context, message);
 
             // Then
             assertThat(result).isPresent().contains(typedContent.toString());
@@ -415,7 +415,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[message.content.type()]", scriptBlockContext);
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.APPLICATION_BINARY);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.APPLICATION_BINARY, context, message);
 
             // Then
             assertThat(result).isPresent().contains(ObjectToBytes.from(typedContent.type()));
@@ -432,7 +432,7 @@ class DynamicValueEvaluatorTest {
 
             // When
             ESBException thrown = assertThrows(ESBException.class,
-                    () -> evaluator.evaluate(dynamicObject, context, message, MimeType.APPLICATION_BINARY));
+                    () -> evaluator.evaluate(dynamicObject, MimeType.APPLICATION_BINARY, context, message));
 
             // Then
             assertThat(thrown).isNotNull();
@@ -447,7 +447,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = null;
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.APPLICATION_BINARY);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.APPLICATION_BINARY, context, message);
 
             // Then
             assertThat(result).isNotPresent();
@@ -461,7 +461,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[]", scriptBlockContext);
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.APPLICATION_JSON);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.APPLICATION_JSON, context, message);
 
             // Then
             assertThat(result).isNotPresent();
@@ -477,7 +477,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from(testObject, scriptBlockContext);
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.TEXT);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.TEXT, context, message);
 
             // Then
             assertThat(result).isPresent().contains(testObject.toString());
@@ -494,7 +494,7 @@ class DynamicValueEvaluatorTest {
             DynamicObject dynamicObject = DynamicObject.from("#[message.payload()]", scriptBlockContext);
 
             // When
-            Optional<Object> result = evaluator.evaluate(dynamicObject, context, message, MimeType.TEXT);
+            Optional<Object> result = evaluator.evaluate(dynamicObject, MimeType.TEXT, context, message);
 
             // Then
             assertThat(result).isPresent().contains(testObject.toString());

@@ -49,8 +49,8 @@ public class ScriptEngine implements ScriptEngineService {
     }
 
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> dynamicObject, FlowContext flowContext, Message message, MimeType mimeType) {
-        return dynamicValueEvaluator.evaluate(dynamicObject, flowContext, message, mimeType);
+    public <T> Optional<T> evaluate(DynamicValue<T> dynamicObject, MimeType mimeType, FlowContext flowContext, Message message) {
+        return dynamicValueEvaluator.evaluate(dynamicObject, mimeType, flowContext, message);
     }
 
     @Override

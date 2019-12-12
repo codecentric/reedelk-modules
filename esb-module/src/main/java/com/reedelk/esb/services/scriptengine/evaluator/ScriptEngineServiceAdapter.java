@@ -28,7 +28,7 @@ public class ScriptEngineServiceAdapter implements ScriptEngineService {
     }
 
     @Override
-    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, FlowContext flowContext, Message message, MimeType mimeType) {
+    public <T> Optional<T> evaluate(DynamicValue<T> dynamicValue, MimeType mimeType, FlowContext flowContext, Message message) {
         throw new UnsupportedOperationException();
     }
 
