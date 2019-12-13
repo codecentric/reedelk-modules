@@ -1,5 +1,6 @@
 package com.reedelk.esb;
 
+import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.component.ComponentRegistry;
 import com.reedelk.esb.component.RuntimeComponents;
 import com.reedelk.esb.configuration.ApplyRuntimeConfiguration;
@@ -17,11 +18,15 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
 
 @Component(service = ESB.class, scope = SINGLETON, immediate = true)
 public class ESB implements EventListener, HotSwapListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(ESB.class);
 
     @Reference
     private SystemProperty systemProperty;
@@ -146,6 +151,7 @@ public class ESB implements EventListener, HotSwapListener {
     @Override
     public synchronized void componentRegistered(String componentName) {
         componentRegistry.registerComponent(componentName);
+        Log.componentRegistered(logger, componentName);
 
         modulesManager.findUnresolvedModules().forEach(unresolvedModule ->
                 StepRunner.get(context, modulesManager, servicesManager.configurationService())
@@ -159,6 +165,7 @@ public class ESB implements EventListener, HotSwapListener {
     @Override
     public synchronized void componentUnregistering(String componentName) {
         componentRegistry.unregisterComponent(componentName);
+        Log.componentUnRegistered(logger, componentName);
 
         modulesManager.findModulesUsingComponent(componentName).forEach(moduleUsingComponent ->
                 StepRunner.get(context, modulesManager)

@@ -1,5 +1,6 @@
 package com.reedelk.esb.lifecycle;
 
+import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.exception.FlowStopException;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.module.Module;
@@ -31,6 +32,7 @@ public class ModuleStopAndReleaseReferences extends AbstractStep<Module, Module>
         for (Flow flow : flows) {
             try {
                 flow.stopIfStarted();
+                Log.flowStopped(logger, flow);
             } catch (Exception exception) {
                 String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
 

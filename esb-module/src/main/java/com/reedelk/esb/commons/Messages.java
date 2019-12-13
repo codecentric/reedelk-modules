@@ -45,6 +45,8 @@ public class Messages {
         START_WITH_TITLE("Flow with id=[%s] and title '%s' started."),
         START_ERROR("Error starting flow with id=[%s]: %s"),
         START_ERROR_WITH_TITLE("Error starting flow with id=[%s] and title '%s': %s"),
+        STOP_WITH_TITLE("Flow with id=[%s] and title '%s' stopped."),
+        STOP("Flow with id=[%s] stopped."),
         STOP_ERROR("Error stopping flow with id=[%s]: %s"),
         STOP_ERROR_WITH_TITLE("Error stopping flow with id=[%s] and title '%s': %s"),
         BUILD_ERROR("Error building flow with id=[%s]: %s"),
@@ -146,6 +148,24 @@ public class Messages {
             return formatMessage(msg, args);
         }
     }
+
+    public enum Component implements FormattedMessage {
+
+        REGISTERED("Registered component=[%s]"),
+        UN_REGISTERED("UnRegistered component=[%s]");
+
+        private String msg;
+
+        Component(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+    }
+
 
     public enum ConfigProperty implements FormattedMessage {
 
