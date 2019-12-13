@@ -18,8 +18,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <runtime.rest.api.version>1.0.0-SNAPSHOT</runtime.rest.api.version>
-        <runtime.system.api.version>1.0.0-SNAPSHOT</runtime.system.api.version>
-        <json.version>20190722</json.version>
     </properties>
 
     <dependencies>
@@ -37,18 +35,12 @@
         <dependency>
             <groupId>com.reedelk</groupId>
             <artifactId>runtime-commons</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${runtime.commons.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.reedelk</groupId>
             <artifactId>rest-module</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.reedelk</groupId>
-            <artifactId>core-module</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>

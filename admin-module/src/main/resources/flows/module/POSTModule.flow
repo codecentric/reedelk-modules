@@ -1,7 +1,7 @@
 {
   "id": "3e929ba2-c0ea-443f-9a2c-b5942cb2e21e",
   "title": "Module POST",
-  "description": "Installs or Update a module from the given path without copying the module file into the {runtime}/modules folder",
+  "description": "Install or Update a module from the given path without copying the module file into the {runtime}/modules folder",
   "flow": [
     {
       "implementor": "com.reedelk.rest.component.RestListener",

@@ -15,8 +15,6 @@
     <artifactId>esb-module</artifactId>
 
     <properties>
-        <runtime.commons.version>1.0.0-SNAPSHOT</runtime.commons.version>
-        <runtime.system.api.version>1.0.0-SNAPSHOT</runtime.system.api.version>
         <runtime.components.version>1.0.0-SNAPSHOT</runtime.components.version>
     </properties>
 
