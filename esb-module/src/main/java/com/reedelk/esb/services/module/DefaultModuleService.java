@@ -164,15 +164,16 @@ public class DefaultModuleService implements ModuleService {
 
         @Override
         public void execute(Bundle toDelete) {
-            // The 'toBeUninstalled' location is a URI, but we need the file path.
+            // The 'toDelete' bundle's  location is a URI, but we need the file path.
             URI uri = URI.create(toDelete.getLocation());
             String filePath = uri.getPath();
             // We remove the file if and only if it belongs to the modules directory.
             if (filePath.startsWith(systemProperty.modulesDirectory())) {
-                boolean delete = new File(uri.getPath()).delete();
-                if (delete && logger.isInfoEnabled()) {
-                    String message = REMOVED_FROM_MODULES_DIRECTORY.format(toDelete.getSymbolicName(), toDelete.getVersion());
-                    logger.info(message);
+                boolean deleteSuccess = new File(filePath).delete();
+                if (!deleteSuccess && logger.isWarnEnabled()) {
+                    String message = REMOVE_MODULE_FROM_DIRECTORY_ERROR
+                            .format(toDelete.getSymbolicName(), toDelete.getVersion(), filePath);
+                    logger.error(message);
                 }
             }
         }

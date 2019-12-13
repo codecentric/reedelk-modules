@@ -108,12 +108,12 @@ public class Messages {
         INSTALL_FAILED("Install failed: could not install module from path=[%s]"),
         INSTALL_FAILED_MODULE_ALREADY_INSTALLED("Install failed: module from file path=[%s] is already installed. Did you mean update?"),
         INSTALL_FAILED_MODULE_NAME_NOT_FOUND("Install failed: could not find module name from file path=[%s]"),
-        INSTALL_MODULE_DIFFERENT_VERSION_PRESENT("Module [%s] with version [%s] is already installed: it will be replaced by version [%s]"),
+        INSTALL_MODULE_DIFFERENT_VERSION_PRESENT("Module [%s], version [%s] is replaced by version [%s]"),
         UNINSTALL_SUCCESS("Module [%s] uninstalled"),
         UPDATE_SUCCESS("Module [%s] updated"),
         UPDATE_FAILED_MODULE_NOT_FOUND("Update failed: could not find registered module in target file path=[%s]"),
         START_SUCCESS("Module [%s] started"),
-        REMOVED_FROM_MODULES_DIRECTORY("Module [%s] with version [%s] has been removed from runtime modules directory");
+        REMOVE_MODULE_FROM_DIRECTORY_ERROR("Module [%s], version [%s], file path=[%s] could not be removed from runtime modules directory");
 
         private String msg;
 
