@@ -29,11 +29,11 @@ public class ServicesManager {
 
     private static final Dictionary<String, ?> NO_PROPERTIES = new Hashtable<>();
 
-    private final ConfigurationAdmin configurationAdmin;
-    private final HotSwapListener hotSwapListener;
-    private final ModulesManager modulesManager;
-    private final SystemProperty systemProperty;
     private final EventListener eventListener;
+    private final SystemProperty systemProperty;
+    private final ModulesManager modulesManager;
+    private final HotSwapListener hotSwapListener;
+    private final ConfigurationAdmin configurationAdmin;
 
     private List<ServiceRegistration<?>> registeredServices = new ArrayList<>();
 
@@ -44,11 +44,11 @@ public class ServicesManager {
                            ModulesManager modulesManager,
                            SystemProperty systemProperty,
                            ConfigurationAdmin configurationAdmin) {
-        this.configurationAdmin = configurationAdmin;
-        this.hotSwapListener = hotSwapListener;
+        this.eventListener = eventListener;
         this.systemProperty = systemProperty;
         this.modulesManager = modulesManager;
-        this.eventListener = eventListener;
+        this.hotSwapListener = hotSwapListener;
+        this.configurationAdmin = configurationAdmin;
     }
 
     public void registerServices(BundleContext context) {
@@ -91,7 +91,7 @@ public class ServicesManager {
     }
 
     private void registerModuleService(BundleContext context) {
-        DefaultModuleService service = new DefaultModuleService(context, modulesManager, eventListener);
+        DefaultModuleService service = new DefaultModuleService(context, modulesManager, systemProperty, eventListener);
         ServiceRegistration<ModuleService> registration =
                 context.registerService(ModuleService.class, service, NO_PROPERTIES);
         registeredServices.add(registration);

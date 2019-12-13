@@ -1,6 +1,6 @@
 let IndexController = (function () {
 
-    const REFRESH_WAIT = 1000; // ms
+    const REFRESH_WAIT = 2000; // ms
 
     let listModules = function () {
         $.get(Constants.ModuleApiPath, function (data) {

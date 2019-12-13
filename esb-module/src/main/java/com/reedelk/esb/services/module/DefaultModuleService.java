@@ -5,6 +5,7 @@ import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.system.api.ModuleDto;
 import com.reedelk.runtime.system.api.ModuleService;
 import com.reedelk.runtime.system.api.ModulesDto;
+import com.reedelk.runtime.system.api.SystemProperty;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -16,31 +17,35 @@ import java.util.Set;
 
 import static com.reedelk.esb.commons.FunctionWrapper.uncheckedConsumer;
 import static com.reedelk.esb.commons.Messages.Module.*;
-import static com.reedelk.esb.commons.Preconditions.*;
-import static java.lang.String.format;
+import static com.reedelk.esb.commons.Preconditions.checkNotNull;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toSet;
 
 public class DefaultModuleService implements ModuleService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultModuleService.class);
+    private static final long NOTHING_UNINSTALLED_MODULE_ID =  -1L;
 
-    private final ModulesMapper mapper = new ModulesMapper();
-
+    private final ModulesMapper mapper;
     private final EventListener listener;
     private final BundleContext context;
     private final ModulesManager modulesManager;
+    private final SyncModuleService syncModuleService;
 
-    public DefaultModuleService(BundleContext context, ModulesManager modulesManager, EventListener listener) {
+    public DefaultModuleService(BundleContext context, ModulesManager modulesManager, SystemProperty systemProperty, EventListener listener) {
         this.modulesManager = modulesManager;
         this.listener = listener;
         this.context = context;
+        this.mapper = new ModulesMapper();
+        this.syncModuleService = new SyncModuleService(this, systemProperty, context);
     }
 
     @Override
-    public long update(String modulePath) {
-        Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
-        Bundle bundleAtPath = checkIsPresentAndGetOrThrow(optionalBundle, "Update failed: could not find registered bundle in target file path=%s", modulePath);
+    public long update(String moduleJarPath) {
+        Bundle bundleAtPath = getModuleAtPath(moduleJarPath).orElseThrow(() -> {
+            String errorMessage = UPDATE_FAILED_MODULE_NOT_FOUND.format(moduleJarPath);
+            throw new IllegalStateException(errorMessage);
+        });
 
         if (Bundle.INSTALLED == bundleAtPath.getState()) {
             // It is installed but not started (we don't have to call listener's moduleStopping event)
@@ -52,76 +57,78 @@ public class DefaultModuleService implements ModuleService {
         }
 
         if (logger.isInfoEnabled()) {
-            logger.info(UPDATED.format(bundleAtPath.getSymbolicName()));
+            logger.info(UPDATE_SUCCESS.format(bundleAtPath.getSymbolicName()));
         }
 
         return bundleAtPath.getBundleId();
     }
 
     @Override
-    public long uninstall(String modulePath) {
-        return getModuleAtPath(modulePath).map(bundleAtPath -> {
+    public long uninstall(String moduleJarPath) {
+        return getModuleAtPath(moduleJarPath).map(bundleAtPath -> {
             listener.moduleStopping(bundleAtPath.getBundleId());
             executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall);
             if (logger.isInfoEnabled()) {
-                logger.info(UNINSTALLED.format(bundleAtPath.getSymbolicName()));
+                logger.info(UNINSTALL_SUCCESS.format(bundleAtPath.getSymbolicName()));
             }
             return bundleAtPath.getBundleId();
-        }).orElse(-1L);
+        }).orElse(NOTHING_UNINSTALLED_MODULE_ID);
     }
 
     @Override
-    public long install(String modulePath) {
-        Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
-        checkState(!optionalBundle.isPresent(), format("Install failed: the bundle in target file path=%s is already installed. Did you mean update?", modulePath));
+    public long install(String moduleJarPath) {
+        if (getModuleAtPath(moduleJarPath).isPresent()) {
+            String errorMessage = INSTALL_FAILED_MODULE_ALREADY_INSTALLED.format(moduleJarPath);
+            throw new IllegalStateException(errorMessage);
+        }
+
+        // If the module to be installed at the given module jar path has a symbolic name of an already
+        // installed module, then we must uninstall from the runtime the existing module before installing
+        // the new one. This is needed to prevent having in the runtime two modules with exactly the same
+        // components but with different versions.
+        syncModuleService.unInstallIfModuleExistsAlready(moduleJarPath);
+
         try {
-            Bundle installedBundle = context.installBundle(modulePath);
-
+            Bundle installedBundle = context.installBundle(moduleJarPath);
             if (logger.isInfoEnabled()) {
-                logger.info(INSTALLED.format(installedBundle.getSymbolicName()));
+                logger.info(INSTALL_SUCCESS.format(installedBundle.getSymbolicName()));
             }
-
             return start(installedBundle);
         } catch (BundleException e) {
-            String errorMessage = INSTALL_FAILED.format(modulePath);
+            String errorMessage = INSTALL_FAILED.format(moduleJarPath);
             throw new ESBException(errorMessage, e);
         }
     }
 
     @Override
-    public long installOrUpdate(String modulePath) {
-        Optional<Bundle> optionalBundle = getModuleAtPath(modulePath);
-        if (optionalBundle.isPresent()) {
-            return update(modulePath);
-        } else {
-            return install(modulePath);
-        }
+    public long installOrUpdate(String moduleJarPath) {
+        return getModuleAtPath(moduleJarPath)
+                .map(bundle -> update(moduleJarPath))
+                .orElseGet(() -> install(moduleJarPath));
     }
 
     @Override
     public ModulesDto modules() {
-        Set<ModuleDto> mappedModuleDtos = modulesManager.allModules()
+        Set<ModuleDto> moduleDTOs = modulesManager.allModules()
                 .stream()
                 .map(mapper::map)
                 .collect(toSet());
         ModulesDto modulesDto = new ModulesDto();
-        modulesDto.setModuleDtos(mappedModuleDtos);
+        modulesDto.setModuleDtos(moduleDTOs);
         return modulesDto;
     }
 
     private long start(Bundle installedBundle) {
+        checkNotNull(installedBundle, "installedBundle");
         try {
-            checkNotNull(installedBundle, "installedBundle");
             installedBundle.start();
-
             if (logger.isInfoEnabled()) {
-                logger.info(STARTED.format(installedBundle.getSymbolicName()));
+                logger.info(START_SUCCESS.format(installedBundle.getSymbolicName()));
             }
-
             return installedBundle.getBundleId();
-        } catch (BundleException e) {
+        } catch (BundleException exception) {
             String errorMessage = START_FAILED.format(installedBundle.getSymbolicName());
-            throw new ESBException(errorMessage, e);
+            throw new ESBException(errorMessage, exception);
         }
     }
 
