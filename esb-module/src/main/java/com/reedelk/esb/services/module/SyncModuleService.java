@@ -3,30 +3,29 @@ package com.reedelk.esb.services.module;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.commons.ModuleUtils;
 import com.reedelk.runtime.system.api.ModuleService;
-import com.reedelk.runtime.system.api.SystemProperty;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URI;
 import java.util.Optional;
 
-import static com.reedelk.esb.commons.Messages.Module.*;
+import static com.reedelk.esb.commons.Messages.Module.INSTALL_FAILED_MODULE_NAME_NOT_FOUND;
+import static com.reedelk.esb.commons.Messages.Module.INSTALL_MODULE_DIFFERENT_VERSION_PRESENT;
 import static java.util.Arrays.stream;
 
+// TODO: Testme
 class SyncModuleService {
 
+    private static final String UNKNOWN_VERSION = "UNKNOWN_VERSION";
     private static final Logger logger = LoggerFactory.getLogger(SyncModuleService.class);
 
     private final BundleContext context;
     private final ModuleService moduleService;
-    private final SystemProperty systemProperty;
 
-    SyncModuleService(ModuleService moduleService, SystemProperty systemProperty, BundleContext context) {
+    SyncModuleService(ModuleService moduleService, BundleContext context) {
         this.moduleService = moduleService;
-        this.systemProperty = systemProperty;
         this.context = context;
     }
 
@@ -43,7 +42,7 @@ class SyncModuleService {
                 String message = INSTALL_MODULE_DIFFERENT_VERSION_PRESENT.format(
                         toBeInstalledModuleName,
                         installedBundle.getVersion(),
-                        ModuleUtils.getModuleVersion(filePath).orElse("UNKNOWN"));
+                        ModuleUtils.getModuleVersion(filePath).orElse(UNKNOWN_VERSION));
                 logger.info(message);
             }
 
@@ -53,21 +52,6 @@ class SyncModuleService {
             // again the next time the system restarts.
             String toBeUninstalled = installedBundle.getLocation();
             moduleService.uninstall(toBeUninstalled);
-
-            // The 'toBeUninstalled' location is a URI, but we need the file path.
-            URI uri = URI.create(toBeUninstalled);
-            String toBeUninstalledFilePath = uri.getPath();
-
-            // We remove the file if and only if it belongs to the modules directory.
-            if (toBeUninstalledFilePath.startsWith(systemProperty.modulesDirectory())) {
-                boolean delete = new File(uri.getPath()).delete();
-                if (delete && logger.isInfoEnabled()) {
-                    String message = REMOVED_FROM_MODULES_DIRECTORY.format(
-                            toBeInstalledModuleName,
-                            installedBundle.getVersion());
-                    logger.info(message);
-                }
-            }
         });
     }
 

@@ -12,6 +12,8 @@ import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.net.URI;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,6 +23,7 @@ import static com.reedelk.esb.commons.Preconditions.checkNotNull;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toSet;
 
+// TODO: Testme
 public class DefaultModuleService implements ModuleService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultModuleService.class);
@@ -31,13 +34,15 @@ public class DefaultModuleService implements ModuleService {
     private final BundleContext context;
     private final ModulesManager modulesManager;
     private final SyncModuleService syncModuleService;
+    private final SystemProperty systemProperty;
 
     public DefaultModuleService(BundleContext context, ModulesManager modulesManager, SystemProperty systemProperty, EventListener listener) {
         this.modulesManager = modulesManager;
         this.listener = listener;
         this.context = context;
+        this.systemProperty = systemProperty;
         this.mapper = new ModulesMapper();
-        this.syncModuleService = new SyncModuleService(this, systemProperty, context);
+        this.syncModuleService = new SyncModuleService(this, context);
     }
 
     @Override
@@ -67,7 +72,7 @@ public class DefaultModuleService implements ModuleService {
     public long uninstall(String moduleJarPath) {
         return getModuleAtPath(moduleJarPath).map(bundleAtPath -> {
             listener.moduleStopping(bundleAtPath.getBundleId());
-            executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall);
+            executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall, new DeleteModuleJar(systemProperty));
             if (logger.isInfoEnabled()) {
                 logger.info(UNINSTALL_SUCCESS.format(bundleAtPath.getSymbolicName()));
             }
@@ -144,5 +149,32 @@ public class DefaultModuleService implements ModuleService {
         stream(operations).forEachOrdered(
                 uncheckedConsumer(operation -> operation.execute(bundle)));
 
+    }
+
+    /**
+     * Removes a Module Jar file if and only if it belongs to the modules directory.
+     */
+    class DeleteModuleJar implements Operation {
+
+        private final SystemProperty systemProperty;
+
+        DeleteModuleJar(SystemProperty systemProperty) {
+            this.systemProperty = systemProperty;
+        }
+
+        @Override
+        public void execute(Bundle toDelete) {
+            // The 'toBeUninstalled' location is a URI, but we need the file path.
+            URI uri = URI.create(toDelete.getLocation());
+            String filePath = uri.getPath();
+            // We remove the file if and only if it belongs to the modules directory.
+            if (filePath.startsWith(systemProperty.modulesDirectory())) {
+                boolean delete = new File(uri.getPath()).delete();
+                if (delete && logger.isInfoEnabled()) {
+                    String message = REMOVED_FROM_MODULES_DIRECTORY.format(toDelete.getSymbolicName(), toDelete.getVersion());
+                    logger.info(message);
+                }
+            }
+        }
     }
 }
