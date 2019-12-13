@@ -72,7 +72,7 @@ public class DefaultModuleService implements ModuleService {
     public long uninstall(String moduleJarPath) {
         return getModuleAtPath(moduleJarPath).map(bundleAtPath -> {
             listener.moduleStopping(bundleAtPath.getBundleId());
-            executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall, new DeleteModuleJar(systemProperty));
+            executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall, new DeleteModuleBundleJar(systemProperty));
             if (logger.isInfoEnabled()) {
                 logger.info(UNINSTALL_SUCCESS.format(bundleAtPath.getSymbolicName()));
             }
@@ -152,13 +152,13 @@ public class DefaultModuleService implements ModuleService {
     }
 
     /**
-     * Removes a Module Jar file if and only if it belongs to the modules directory.
+     * Removes a Module Bundle Jar file if and only if it belongs to the modules directory.
      */
-    class DeleteModuleJar implements Operation {
+    class DeleteModuleBundleJar implements Operation {
 
         private final SystemProperty systemProperty;
 
-        DeleteModuleJar(SystemProperty systemProperty) {
+        DeleteModuleBundleJar(SystemProperty systemProperty) {
             this.systemProperty = systemProperty;
         }
 
