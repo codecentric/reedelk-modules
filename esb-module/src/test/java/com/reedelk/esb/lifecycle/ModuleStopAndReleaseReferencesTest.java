@@ -154,9 +154,14 @@ class ModuleStopAndReleaseReferencesTest {
         // Then
         assertThat(actualModule.state()).isEqualTo(RESOLVED);
 
+        verify(flow1).getFlowId();
+        verify(flow1).getFlowTitle();
         verify(flow1).stopIfStarted();
-        verify(flow2).stopIfStarted();
         verify(flow1).releaseReferences(bundle);
+
+        verify(flow2).getFlowId();
+        verify(flow2).getFlowTitle();
+        verify(flow2).stopIfStarted();
         verify(flow2).releaseReferences(bundle);
 
         verifyNoMoreInteractions(flow1, flow2);
@@ -197,17 +202,19 @@ class ModuleStopAndReleaseReferencesTest {
         // Then
         assertThat(actualModule.state()).isEqualTo(ERROR);
 
+        verify(flow1).getFlowId();
+        verify(flow1).getFlowTitle();
         verify(flow1).stopIfStarted();
-        verify(flow2).stopIfStarted();
-        verify(flow3).stopIfStarted();
-        verify(flow2).getFlowId();
-        verify(flow3).getFlowId();
-
-        verify(flow2).getFlowTitle();
-        verify(flow3).getFlowTitle();
-
         verify(flow1).releaseReferences(bundle);
+
+        verify(flow2).getFlowId();
+        verify(flow2).getFlowTitle();
+        verify(flow2).stopIfStarted();
         verify(flow2).releaseReferences(bundle);
+
+        verify(flow3).getFlowId();
+        verify(flow3).getFlowTitle();
+        verify(flow3).stopIfStarted();
         verify(flow3).releaseReferences(bundle);
 
         verifyNoMoreInteractions(flow1, flow2, flow3);
