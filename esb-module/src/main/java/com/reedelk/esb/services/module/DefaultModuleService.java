@@ -23,7 +23,6 @@ import static com.reedelk.esb.commons.Preconditions.checkNotNull;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toSet;
 
-// TODO: Testme
 public class DefaultModuleService implements ModuleService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultModuleService.class);
@@ -88,9 +87,9 @@ public class DefaultModuleService implements ModuleService {
         }
 
         // If the module to be installed at the given module jar path has a symbolic name of an already
-        // installed module, then we must uninstall from the runtime the existing module before installing
-        // the new one. This is needed to prevent having in the runtime two modules with exactly the same
-        // components but with different versions.
+        // installed module, then we must uninstall it from the runtime before installing the new one.
+        // This is needed to prevent having in the runtime two modules with exactly the same components
+        // but with different versions.
         syncModuleService.unInstallIfModuleExistsAlready(moduleJarPath);
 
         try {

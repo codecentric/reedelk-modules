@@ -15,7 +15,6 @@ import static com.reedelk.esb.commons.Messages.Module.INSTALL_FAILED_MODULE_NAME
 import static com.reedelk.esb.commons.Messages.Module.INSTALL_MODULE_DIFFERENT_VERSION_PRESENT;
 import static java.util.Arrays.stream;
 
-// TODO: Testme
 class SyncModuleService {
 
     private static final String UNKNOWN_VERSION = "UNKNOWN_VERSION";
@@ -29,15 +28,23 @@ class SyncModuleService {
         this.context = context;
     }
 
+    /**
+     * Checks whether the given module jar has a module name equal to a module already
+     * installed in the runtime. If a module exists in the runtime with the same name,
+     * it is then un-installed.
+     * @param moduleJarPath the jar path of the module to test.
+     */
     void unInstallIfModuleExistsAlready(String moduleJarPath) {
         String filePath = URI.create(moduleJarPath).getPath();
-        String toBeInstalledModuleName = ModuleUtils.getModuleName(filePath).orElseThrow(() -> {
+        String toBeInstalledModuleName = moduleNameOf(filePath).orElseThrow(() -> {
             String errorMessage = INSTALL_FAILED_MODULE_NAME_NOT_FOUND.format(moduleJarPath);
             return new ESBException(errorMessage);
         });
 
-        findInstalledBundleMatchingModuleName(toBeInstalledModuleName).ifPresent(installedBundle -> {
 
+        findInstalledBundleMatchingModuleName(toBeInstalledModuleName).ifPresent(installedBundle -> {
+            // The installed module has a different version, otherwise it would be just an update
+            // and 'unInstallIfModuleExistsAlready' method would never be called.
             if (logger.isInfoEnabled()) {
                 String message = INSTALL_MODULE_DIFFERENT_VERSION_PRESENT.format(
                         toBeInstalledModuleName,
@@ -59,5 +66,9 @@ class SyncModuleService {
         return stream(context.getBundles())
                 .filter(installedBundle -> installedBundle.getSymbolicName().equals(targetModuleName))
                 .findFirst();
+    }
+
+    Optional<String> moduleNameOf(String moduleJarPath) {
+        return ModuleUtils.getModuleName(moduleJarPath);
     }
 }
