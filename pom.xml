@@ -29,12 +29,12 @@
 
     <modules>
         <module>module-parent</module>
-        <module>admin-module</module>
-        <module>esb-module</module>
-        <module>rest-module</module>
-        <module>core-module</module>
-        <module>scheduler-module</module>
-        <module>file-module</module>
+        <module>module-admin</module>
+        <module>module-esb</module>
+        <module>module-rest</module>
+        <module>module-core</module>
+        <module>module-scheduler</module>
+        <module>module-file</module>
     </modules>
 
     <dependencyManagement>

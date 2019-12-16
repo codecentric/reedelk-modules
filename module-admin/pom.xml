@@ -13,7 +13,7 @@
 
     <packaging>bundle</packaging>
     <version>1.0.0-SNAPSHOT</version>
-    <artifactId>admin-module</artifactId>
+    <artifactId>module-admin</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,7 +40,7 @@
         </dependency>
         <dependency>
             <groupId>com.reedelk</groupId>
-            <artifactId>rest-module</artifactId>
+            <artifactId>module-rest</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>

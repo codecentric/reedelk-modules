@@ -10,16 +10,31 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>core-module</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>module-file</artifactId>
+
+    <properties>
+        <runtime.commons.version>1.0.0-SNAPSHOT</runtime.commons.version>
+    </properties>
+
 
     <dependencies>
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>${json.version}</version>
+            <groupId>com.reedelk</groupId>
+            <artifactId>runtime-commons</artifactId>
+            <version>${runtime.commons.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
         </dependency>
     </dependencies>
 
