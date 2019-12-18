@@ -1,6 +1,6 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
-import com.reedelk.runtime.api.file.ModuleId;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
@@ -22,7 +22,7 @@ class ConfigPropertyAwareTypeFactoryDecoratorTest {
     private ConfigurationService configurationService;
 
     private ConfigPropertyAwareTypeFactoryDecorator typeFactory;
-    private TypeFactoryContext typeFactoryContext = new TypeFactoryContext(10L);
+    private TypeFactoryContext typeFactoryContext = new TypeFactoryContext(new ModuleId(10L));
 
     @BeforeEach
     void setUp() {
@@ -73,7 +73,7 @@ class ConfigPropertyAwareTypeFactoryDecoratorTest {
         ModuleId typeInstance = typeFactory.create(ModuleId.class, null, null, typeFactoryContext);
 
         // Then
-        assertThat(typeInstance.get()).isEqualTo(typeFactoryContext.getModuleId());
+        assertThat(typeInstance.get()).isEqualTo(typeFactoryContext.getModuleId().get());
         verifyNoMoreInteractions(configurationService);
     }
 

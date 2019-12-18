@@ -1,6 +1,8 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.test.utils.TestComponent;
+import com.reedelk.runtime.api.commons.ModuleContext;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.*;
@@ -9,7 +11,6 @@ import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.StringContent;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
-import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.script.dynamicvalue.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,11 +30,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class DynamicValueStreamEvaluatorTest {
 
+    private final ModuleId moduleId = new ModuleId(10L);
+    private final ModuleContext moduleContext = new ModuleContext(moduleId);
+
     @Mock
     private FlowContext context;
 
     private DynamicValueStreamEvaluator evaluator;
-    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L);
 
     @BeforeEach
     void setUp() {
@@ -49,7 +52,7 @@ class DynamicValueStreamEvaluatorTest {
             // Given
             MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
             Message message = MessageBuilder.get().text("this is a test").attributes(attributes).build();
-            DynamicString dynamicString = DynamicString.from("#[message.attributes.pRoperty1]", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#[message.attributes.pRoperty1]", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -64,7 +67,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateTextPayload() {
             // Given
             Message message = MessageBuilder.get().text("this is a test").build();
-            DynamicString dynamicString = DynamicString.from("#[message.payload()]", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#[message.payload()]", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -81,7 +84,7 @@ class DynamicValueStreamEvaluatorTest {
             TypedContent<String> typedContent = new StringContent(Flux.just("one", "two"), MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicString dynamicString = DynamicString.from("#[message.payload()]", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#[message.payload()]", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -103,7 +106,7 @@ class DynamicValueStreamEvaluatorTest {
             TypedContent<String> typedContent = new StringContent(content, MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -121,7 +124,7 @@ class DynamicValueStreamEvaluatorTest {
             TypedContent<String> typedContent = new StringContent(payload, MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#[message.content.data() + ' test.']", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -137,7 +140,7 @@ class DynamicValueStreamEvaluatorTest {
             // Given
             Message message = MessageBuilder.get().text("test").build();
 
-            DynamicString dynamicString = DynamicString.from("#['evaluation test']", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#['evaluation test']", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -152,7 +155,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldReturnTextFromDynamicValue() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicString dynamicString = DynamicString.from("Expected text", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("Expected text", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -167,7 +170,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldReturnEmptyString() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicString dynamicString = DynamicString.from("", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -195,7 +198,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldResultNotBePresentWhenDynamicValueScriptIsEmpty() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicString dynamicString = DynamicString.from("#[]", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#[]", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -209,7 +212,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldResultNotBePresentWhenDynamicValueStringIsNull() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicString dynamicString = DynamicString.from(null, scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from(null, moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -223,7 +226,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateInteger() {
             // Given
             Message message = MessageBuilder.get().javaObject(23432).build();
-            DynamicString dynamicString = DynamicString.from("#[message.payload()]", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#[message.payload()]", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -243,7 +246,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateInteger() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicInteger dynamicInteger = DynamicInteger.from("#[506]", scriptBlockContext);
+            DynamicInteger dynamicInteger = DynamicInteger.from("#[506]", moduleContext);
 
             // When
             TypedPublisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, context, message);
@@ -260,7 +263,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlySumNumber() {
             // Given
             Message message = MessageBuilder.get().text("12").build();
-            DynamicInteger dynamicInteger = DynamicInteger.from("#[parseInt(message.payload()) + 10]", scriptBlockContext);
+            DynamicInteger dynamicInteger = DynamicInteger.from("#[parseInt(message.payload()) + 10]", moduleContext);
 
             // When
             TypedPublisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, context, message);
@@ -275,7 +278,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateIntegerFromText() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicInteger dynamicInteger = DynamicInteger.from(53, scriptBlockContext);
+            DynamicInteger dynamicInteger = DynamicInteger.from(53, moduleContext);
 
             // When
             TypedPublisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, context, message);
@@ -290,7 +293,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateIntegerFromMessagePayload() {
             // Given
             Message message = MessageBuilder.get().javaObject(120).build();
-            DynamicInteger dynamicInteger = DynamicInteger.from("#[message.payload()]", scriptBlockContext);
+            DynamicInteger dynamicInteger = DynamicInteger.from("#[message.payload()]", moduleContext);
 
             // When
             TypedPublisher<Integer> publisher = evaluator.evaluateStream(dynamicInteger, context, message);
@@ -310,7 +313,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateBoolean() {
             // Given
             Message message = MessageBuilder.get().text("a test").build();
-            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[1 == 1]", scriptBlockContext);
+            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[1 == 1]", moduleContext);
 
             // When
             TypedPublisher<Boolean> publisher = evaluator.evaluateStream(dynamicBoolean, context, message);
@@ -325,7 +328,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateBooleanFromPayload() {
             // Given
             Message message = MessageBuilder.get().text("true").build();
-            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[message.payload()]", scriptBlockContext);
+            DynamicBoolean dynamicBoolean = DynamicBoolean.from("#[message.payload()]", moduleContext);
 
             // When
             TypedPublisher<Boolean> publisher = evaluator.evaluateStream(dynamicBoolean, context, message);
@@ -346,7 +349,7 @@ class DynamicValueStreamEvaluatorTest {
             // Given
             String payload = "My sample payload";
             Message message = MessageBuilder.get().text(payload).build();
-            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]", scriptBlockContext);
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]", moduleContext);
 
             // When
             TypedPublisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, context, message);
@@ -363,7 +366,7 @@ class DynamicValueStreamEvaluatorTest {
             Flux<byte[]> stream = Flux.just("one".getBytes(), "two".getBytes());
             ByteArrayContent streamContent = new ByteArrayContent(stream, MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(streamContent).build();
-            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]", scriptBlockContext);
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]", moduleContext);
 
             // When
             TypedPublisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, context, message);
@@ -381,7 +384,7 @@ class DynamicValueStreamEvaluatorTest {
             Flux<String> stream =  Flux.just("one","two");
             StringContent streamContent = new StringContent(stream, MimeType.TEXT);
             Message message = MessageBuilder.get().typedContent(streamContent).build();
-            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]", scriptBlockContext);
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[message.payload()]", moduleContext);
 
             // When
             TypedPublisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, context, message);
@@ -406,7 +409,7 @@ class DynamicValueStreamEvaluatorTest {
 
             Message message = MessageBuilder.get().typedContent(typedContent).build();
 
-            DynamicObject dynamicObject = DynamicObject.from("#[message.content]", scriptBlockContext);
+            DynamicObject dynamicObject = DynamicObject.from("#[message.content]", moduleContext);
 
             // When
             TypedPublisher<Object> publisher = evaluator.evaluateStream(dynamicObject, context, message);
@@ -421,7 +424,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateMessage() {
             // Given
             Message message = MessageBuilder.get().text("test").build();
-            DynamicObject dynamicString = DynamicObject.from("#[message]", scriptBlockContext);
+            DynamicObject dynamicString = DynamicObject.from("#[message]", moduleContext);
 
             // When
             TypedPublisher<Object> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -437,7 +440,7 @@ class DynamicValueStreamEvaluatorTest {
             // Given
             MyObject given = new MyObject();
             Message message = MessageBuilder.get().javaObject(given).build();
-            DynamicObject dynamicString = DynamicObject.from("#[message.payload()]", scriptBlockContext);
+            DynamicObject dynamicString = DynamicObject.from("#[message.payload()]", moduleContext);
 
             // When
             TypedPublisher<Object> publisher = evaluator.evaluateStream(dynamicString, context, message);
@@ -457,7 +460,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateErrorPayload() {
             // Given
             Throwable myException = new ESBException("Test error");
-            DynamicString dynamicString = DynamicString.from("#[error]", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#[error]", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, myException);
@@ -472,7 +475,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateExceptionMessage() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicString dynamicString = DynamicString.from("#[error.getMessage()]", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#[error.getMessage()]", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, myException);
@@ -487,7 +490,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldReturnEmptyWhenScriptIsEmpty() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicString dynamicString = DynamicString.from("#[]", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("#[]", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, myException);
@@ -501,7 +504,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldReturnEmptyWhenNullString() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicString dynamicString = DynamicString.from(null, scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from(null, moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, myException);
@@ -515,7 +518,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldReturnStringValue() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicString dynamicString = DynamicString.from("my text", scriptBlockContext);
+            DynamicString dynamicString = DynamicString.from("my text", moduleContext);
 
             // When
             TypedPublisher<String> publisher = evaluator.evaluateStream(dynamicString, context, myException);
@@ -548,7 +551,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateDynamicObject() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicObject dynamicObject = DynamicObject.from("#[error]", scriptBlockContext);
+            DynamicObject dynamicObject = DynamicObject.from("#[error]", moduleContext);
 
             // When
             TypedPublisher<Object> publisher = evaluator.evaluateStream(dynamicObject, context, myException);
@@ -563,7 +566,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldReturnStringDynamicObject() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicObject dynamicObject = DynamicObject.from("my text", scriptBlockContext);
+            DynamicObject dynamicObject = DynamicObject.from("my text", moduleContext);
 
             // When
             TypedPublisher<Object> publisher = evaluator.evaluateStream(dynamicObject, context, myException);
@@ -583,7 +586,7 @@ class DynamicValueStreamEvaluatorTest {
         void shouldCorrectlyEvaluateDynamicByteArrayFromException() {
             // Given
             Throwable myException = new ESBException("My exception message");
-            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[error]", scriptBlockContext);
+            DynamicByteArray dynamicByteArray = DynamicByteArray.from("#[error]", moduleContext);
 
             // When
             TypedPublisher<byte[]> publisher = evaluator.evaluateStream(dynamicByteArray, context, myException);

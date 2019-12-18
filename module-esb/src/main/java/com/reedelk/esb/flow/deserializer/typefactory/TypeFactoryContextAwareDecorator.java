@@ -1,5 +1,6 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
 import org.json.JSONArray;
@@ -7,10 +8,10 @@ import org.json.JSONObject;
 
 public class TypeFactoryContextAwareDecorator implements TypeFactory {
 
-    private final long moduleId;
+    private final ModuleId moduleId;
     private final TypeFactory delegate;
 
-    public TypeFactoryContextAwareDecorator(TypeFactory delegate, long moduleId) {
+    public TypeFactoryContextAwareDecorator(TypeFactory delegate, ModuleId moduleId) {
         this.delegate = delegate;
         this.moduleId = moduleId;
     }

@@ -2,7 +2,7 @@ package com.reedelk.esb.flow.deserializer;
 
 import com.reedelk.esb.flow.deserializer.typefactory.ConfigPropertyAwareTypeFactoryDecorator;
 import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextAwareDecorator;
-import com.reedelk.runtime.api.file.ModuleId;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.commons.TypeFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class FlowDeserializerContextTest {
 
-    private long testModuleId = 997L;
+    private final ModuleId testModuleId = new ModuleId(997L);
 
     @Mock
     private Bundle bundle;
@@ -41,6 +41,6 @@ class FlowDeserializerContextTest {
         ModuleId actualModuleId = context.typeFactory().create(ModuleId.class);
 
         // Then
-        assertThat(actualModuleId.get()).isEqualTo(testModuleId);
+        assertThat(actualModuleId.get()).isEqualTo(testModuleId.get());
     }
 }

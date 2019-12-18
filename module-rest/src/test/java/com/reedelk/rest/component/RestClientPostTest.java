@@ -126,7 +126,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         @Test
         void shouldNotSetContentTypeHeaderAndSendEmptyPayloadWhenBodyIsEmptyString() {
             // Given
-            DynamicByteArray body = DynamicByteArray.from(" ", scriptBlockContext);
+            DynamicByteArray body = DynamicByteArray.from(" ", moduleContext);
             Message emptyPayload = MessageBuilder.get().build();
 
             // Expect
@@ -136,7 +136,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         @Test
         void shouldNotSetContentTypeHeaderAndSendEmptyPayloadWhenBodyIsEmptyScript() {
             // Given
-            DynamicByteArray body = DynamicByteArray.from("#[]", scriptBlockContext);
+            DynamicByteArray body = DynamicByteArray.from("#[]", moduleContext);
             Message emptyPayload = MessageBuilder.get().build();
 
             // Expect
@@ -146,7 +146,7 @@ class RestClientPostTest extends RestClientAbstractTest {
         @Test
         void shouldNotSetContentTypeHeaderWhenPayloadIsScript() {
             // Given
-            DynamicByteArray body = DynamicByteArray.from("#['hello this is a script']", scriptBlockContext);
+            DynamicByteArray body = DynamicByteArray.from("#['hello this is a script']", moduleContext);
             String expectedResponseBody = "POST was successful";
             RestClient component = clientWith(POST, BASE_URL, PATH, body);
 

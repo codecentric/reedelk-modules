@@ -1,6 +1,9 @@
 package com.reedelk.admin.console;
 
 import com.reedelk.runtime.api.annotation.ESBComponent;
+import com.reedelk.runtime.api.annotation.Hidden;
+import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.file.ModuleFileProvider;
@@ -31,6 +34,10 @@ public class LocalFileRead implements ProcessorSync {
     private final String pathParamPage = "page";
     private final String pathParamAttribute = "pathParams";
 
+    @Hidden
+    @Property("Module Id")
+    private ModuleId moduleId;
+
     @Reference
     private ModuleFileProvider moduleFileProvider;
 
@@ -48,7 +55,7 @@ public class LocalFileRead implements ProcessorSync {
         MimeType actualMimeType = MimeType.fromFileExtension(pageFileExtension);
 
         try {
-            Publisher<byte[]> contentAsStream = moduleFileProvider.findBy(ModuleIdProvider.get(), finalFilePath, READ_LOCAL_FILE_BUFFER_SIZE);
+            Publisher<byte[]> contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, READ_LOCAL_FILE_BUFFER_SIZE);
 
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 
@@ -57,5 +64,9 @@ public class LocalFileRead implements ProcessorSync {
         } catch (FileNotFoundException e) {
             throw new ESBException(e);
         }
+    }
+
+    public void setModuleId(ModuleId moduleId) {
+        this.moduleId = moduleId;
     }
 }

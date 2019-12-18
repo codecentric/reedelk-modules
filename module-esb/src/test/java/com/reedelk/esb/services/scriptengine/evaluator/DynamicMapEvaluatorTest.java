@@ -1,9 +1,10 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.test.utils.TestComponent;
+import com.reedelk.runtime.api.commons.ModuleContext;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.*;
-import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class DynamicMapEvaluatorTest {
 
-    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L);
+    private final ModuleId moduleId = new ModuleId(10L);
+    private final ModuleContext moduleContext = new ModuleContext(moduleId);
 
     private FlowContext context;
 
@@ -41,7 +43,7 @@ class DynamicMapEvaluatorTest {
         DynamicStringMap dynamicMap = DynamicStringMap.from(of(
                 "script", "#[message.attributes.propErty1]",
                 "text", "This is a text",
-                "numeric", "23532"), scriptBlockContext);
+                "numeric", "23532"), moduleContext);
 
         // When
         Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
@@ -82,7 +84,7 @@ class DynamicMapEvaluatorTest {
         // Given
         Message message = MessageBuilder.get().text("test").build();
         DynamicStringMap dynamicMap = DynamicStringMap.from(
-                of("text", "a simple text 'with quotes'"), scriptBlockContext);
+                of("text", "a simple text 'with quotes'"), moduleContext);
 
         // When
         Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
@@ -100,7 +102,7 @@ class DynamicMapEvaluatorTest {
                 "script", "#[context.myVariable]",
                 "text", "This is a text",
                 "evaluateError", "#[error.getMessage()]"),
-                scriptBlockContext);
+                moduleContext);
 
         ESBException myException = new ESBException("This is an error");
 
@@ -118,7 +120,7 @@ class DynamicMapEvaluatorTest {
         // Given
         DynamicStringMap dynamicMap = DynamicStringMap.from(
                 of("X-Message-Text", "#[error.getMessage()]"),
-                scriptBlockContext);
+                moduleContext);
 
         ESBException myException = new ESBException("This is an error");
 
@@ -135,7 +137,7 @@ class DynamicMapEvaluatorTest {
         MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
         Message message = MessageBuilder.get().text("test").attributes(attributes).build();
 
-        DynamicStringMap dynamicMap = DynamicStringMap.from(of("Key1", "#[]"), scriptBlockContext);
+        DynamicStringMap dynamicMap = DynamicStringMap.from(of("Key1", "#[]"), moduleContext);
 
         // When
         Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
@@ -150,7 +152,7 @@ class DynamicMapEvaluatorTest {
         MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
         Message message = MessageBuilder.get().text("test").attributes(attributes).build();
 
-        DynamicStringMap dynamicMap = DynamicStringMap.from(of("Key1", ""), scriptBlockContext);
+        DynamicStringMap dynamicMap = DynamicStringMap.from(of("Key1", ""), moduleContext);
 
         // When
         Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);
@@ -167,7 +169,7 @@ class DynamicMapEvaluatorTest {
 
         DynamicStringMap dynamicMap = DynamicStringMap.from(of(
                 "", "myValue", "key2", "value2"),
-                scriptBlockContext);
+                moduleContext);
 
         // When
         Map<String, String> evaluated = evaluator.evaluate(dynamicMap, context, message);

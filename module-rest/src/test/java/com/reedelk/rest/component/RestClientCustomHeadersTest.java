@@ -28,7 +28,7 @@ class RestClientCustomHeadersTest extends RestClientAbstractTest {
         Map<String,String> additionalHeaders = new HashMap<>();
         additionalHeaders.put("X-Token", "123456789");
         additionalHeaders.put("Source", "test source");
-        DynamicStringMap additionalHeadersMap = DynamicStringMap.from(additionalHeaders, scriptBlockContext);
+        DynamicStringMap additionalHeadersMap = DynamicStringMap.from(additionalHeaders, moduleContext);
         component.setHeaders(additionalHeadersMap);
 
         doReturn(additionalHeaders)

@@ -6,6 +6,7 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.test.utils.*;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
@@ -41,7 +42,7 @@ import static org.mockito.Mockito.spy;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class GenericComponentDefinitionDeserializerTest {
 
-    private long testModuleId = 10L;
+    private final ModuleId testModuleId = new ModuleId(10L);
 
     @Mock
     private Bundle mockBundle;
@@ -1050,7 +1051,7 @@ class GenericComponentDefinitionDeserializerTest {
                             "my test string");
 
             // Then
-            assertThat(component.getModuleId().get()).isEqualTo(testModuleId);
+            assertThat(component.getModuleId().get()).isEqualTo(testModuleId.get());
         }
     }
 

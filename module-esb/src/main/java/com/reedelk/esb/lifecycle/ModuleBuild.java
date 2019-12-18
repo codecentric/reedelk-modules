@@ -14,6 +14,7 @@ import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.module.state.ModuleState;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.commons.TypeFactory;
 import org.json.JSONObject;
 import org.osgi.framework.Bundle;
@@ -73,11 +74,12 @@ public class ModuleBuild extends AbstractStep<Module, Module> {
 
         ModulesManager modulesManager = modulesManager();
         Module module = modulesManager.getModuleById(bundle.getBundleId());
+        ModuleId moduleId = new ModuleId(module.id());
 
         TypeFactory typeFactory = TypeFactory.getInstance();
         typeFactory = new ScriptFunctionBodyResolverDecorator(typeFactory, deserializedModule);
         typeFactory = new ConfigPropertyAwareTypeFactoryDecorator(configurationService(), typeFactory);
-        typeFactory = new TypeFactoryContextAwareDecorator(typeFactory, module.id());
+        typeFactory = new TypeFactoryContextAwareDecorator(typeFactory, moduleId);
 
         String flowId = id(flowDefinition);
         String flowTitle = hasTitle(flowDefinition) ? title(flowDefinition) : null;

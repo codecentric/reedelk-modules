@@ -5,9 +5,9 @@ import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.test.utils.FileUtils;
 import com.reedelk.esb.test.utils.TmpDir;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.file.ModuleFileProvider;
-import com.reedelk.runtime.api.file.ModuleId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,7 +69,7 @@ class DefaultModuleFileProviderTest {
         String tmpDirectory = TmpDir.get();
 
         String resource = "/tests/sample.txt";
-        ModuleId moduleId = () -> testModuleId;
+        ModuleId moduleId = new ModuleId(testModuleId);
 
         doReturn(bundle).when(context).getBundle(testModuleId);
         doReturn(module).when(modulesManager).getModuleById(testModuleId);
@@ -93,7 +93,7 @@ class DefaultModuleFileProviderTest {
     void shouldThrowFileNotFoundException() throws IOException {
         // Given
         String resource = "/tests/sample.txt";
-        ModuleId moduleId = () -> testModuleId;
+        ModuleId moduleId = new ModuleId(testModuleId);
 
         doReturn(bundle).when(context).getBundle(testModuleId);
         doReturn(module).when(modulesManager).getModuleById(testModuleId);
@@ -114,7 +114,7 @@ class DefaultModuleFileProviderTest {
     void shouldThrowFileNotFoundExceptionWhenResourcesAreNull() throws IOException {
         // Given
         String resource = "/tests/sample.txt";
-        ModuleId moduleId = () -> testModuleId;
+        ModuleId moduleId = new ModuleId(testModuleId);
 
         doReturn(bundle).when(context).getBundle(testModuleId);
         doReturn(module).when(modulesManager).getModuleById(testModuleId);
@@ -133,7 +133,7 @@ class DefaultModuleFileProviderTest {
     void shouldThrowExceptionWhenErrorWhileReadingDataFromBundle() throws IOException {
         // Given
         String resource = "/tests/sample.txt";
-        ModuleId moduleId = () -> testModuleId;
+        ModuleId moduleId = new ModuleId(testModuleId);
 
         doReturn(bundle).when(context).getBundle(testModuleId);
         doReturn(module).when(modulesManager).getModuleById(testModuleId);

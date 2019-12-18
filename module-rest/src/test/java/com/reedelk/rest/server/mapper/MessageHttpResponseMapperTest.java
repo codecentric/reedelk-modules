@@ -2,12 +2,13 @@ package com.reedelk.rest.server.mapper;
 
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.Response;
+import com.reedelk.runtime.api.commons.ModuleContext;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
-import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
@@ -39,7 +40,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MessageHttpResponseMapperTest {
 
-    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(10L);
+    private final ModuleId moduleId = new ModuleId(10L);
+    private final ModuleContext moduleContext = new ModuleContext(moduleId);
 
     @Mock
     private FlowContext flowContext;
@@ -59,7 +61,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromString() {
                 // Given
-                DynamicInteger status = DynamicInteger.from("201", scriptBlockContext);
+                DynamicInteger status = DynamicInteger.from("201", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithStatus(status);
                 Message message = MessageBuilder.get().text("a body").build();
 
@@ -76,7 +78,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromScript() {
                 // Given
-                DynamicInteger status = DynamicInteger.from("#[myStatusCodeVar]", scriptBlockContext);
+                DynamicInteger status = DynamicInteger.from("#[myStatusCodeVar]", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithStatus(status);
                 Message message = MessageBuilder.get().text("a body").build();
 
@@ -116,7 +118,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeHeaderFromMessageContentTypeWhenBodyIsPayload() {
                 // Given
-                DynamicByteArray body = DynamicByteArray.from("#[message.payload()]", scriptBlockContext);
+                DynamicByteArray body = DynamicByteArray.from("#[message.payload()]", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().text("my text body").build();
 
@@ -135,7 +137,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldNotSetContentTypeHeaderWhenBodyIsEmptyText() {
                 // Given
-                MessageHttpResponseMapper mapper = newMapperWithBody(DynamicByteArray.from("", scriptBlockContext));
+                MessageHttpResponseMapper mapper = newMapperWithBody(DynamicByteArray.from("", moduleContext));
                 Message message = MessageBuilder.get().build();
 
                 // When
@@ -167,7 +169,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldNotSetContentTypeHeaderWhenBodyIsNullBody() {
                 // Given
-                DynamicByteArray body = DynamicByteArray.from(null, scriptBlockContext);
+                DynamicByteArray body = DynamicByteArray.from(null, moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
                 Message message = MessageBuilder.get().build();
 
@@ -271,7 +273,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromString() {
                 // Given
-                DynamicInteger status = DynamicInteger.from("#[507]", scriptBlockContext);
+                DynamicInteger status = DynamicInteger.from("#[507]", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithErrorStatus(status);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -288,7 +290,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetHttpResponseStatusFromScript() {
                 // Given
-                DynamicInteger errorStatus = DynamicInteger.from("#[myStatusCodeVar]", scriptBlockContext);
+                DynamicInteger errorStatus = DynamicInteger.from("#[myStatusCodeVar]", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithErrorStatus(errorStatus);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -323,7 +325,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeTextPlainByDefault() {
                 // Given
-                DynamicByteArray errorBody = DynamicByteArray.from("#[error]", scriptBlockContext);
+                DynamicByteArray errorBody = DynamicByteArray.from("#[error]", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -349,7 +351,7 @@ class MessageHttpResponseMapperTest {
                 // Given
                 DynamicValue nullDynamicValue = null;
 
-                DynamicByteArray errorBody = DynamicByteArray.from("my text body", scriptBlockContext);
+                DynamicByteArray errorBody = DynamicByteArray.from("my text body", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -366,7 +368,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldSetContentTypeHeaderWhenBodyIsEmptyText() {
                 // Given
-                DynamicByteArray errorBody = DynamicByteArray.from("", scriptBlockContext);
+                DynamicByteArray errorBody = DynamicByteArray.from("", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -390,7 +392,7 @@ class MessageHttpResponseMapperTest {
             @Test
             void shouldNotSetContentTypeHeaderWhenBodyIsNullText() {
                 // Given
-                DynamicByteArray errorBody = DynamicByteArray.from(null, scriptBlockContext);
+                DynamicByteArray errorBody = DynamicByteArray.from(null, moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithErrorBody(errorBody);
                 Throwable exception = new ESBException("Error while processing JSON");
 
@@ -537,7 +539,7 @@ class MessageHttpResponseMapperTest {
     }
 
     private MessageHttpResponseMapper newMapperWithBody(DynamicByteArray responseBody) {
-        DynamicInteger statusValue = DynamicInteger.from(HttpResponseStatus.OK.codeAsText().toString(), scriptBlockContext);
+        DynamicInteger statusValue = DynamicInteger.from(HttpResponseStatus.OK.codeAsText().toString(), moduleContext);
         Response response = new Response();
         response.setBody(responseBody);
         response.setStatus(statusValue);
@@ -550,7 +552,7 @@ class MessageHttpResponseMapperTest {
 
     private MessageHttpResponseMapper newMapperWithStatus(DynamicInteger responseStatus) {
         String bodyContent = "sample body";
-        DynamicByteArray value = DynamicByteArray.from(bodyContent, scriptBlockContext);
+        DynamicByteArray value = DynamicByteArray.from(bodyContent, moduleContext);
         Response response = new Response();
         response.setBody(value);
         response.setStatus(responseStatus);
@@ -559,8 +561,8 @@ class MessageHttpResponseMapperTest {
 
     private MessageHttpResponseMapper newMapperWithAdditionalHeaders(DynamicStringMap responseHeaders) {
         String bodyContent = "sample body";
-        DynamicByteArray bodyValue = DynamicByteArray.from(bodyContent, scriptBlockContext);
-        DynamicInteger statusValue = DynamicInteger.from(HttpResponseStatus.OK.codeAsText().toString(), scriptBlockContext);
+        DynamicByteArray bodyValue = DynamicByteArray.from(bodyContent, moduleContext);
+        DynamicInteger statusValue = DynamicInteger.from(HttpResponseStatus.OK.codeAsText().toString(), moduleContext);
         Response response = new Response();
         response.setHeaders(responseHeaders);
         response.setBody(bodyValue);
@@ -580,7 +582,7 @@ class MessageHttpResponseMapperTest {
 
     private MessageHttpResponseMapper newMapperWithErrorStatus(DynamicInteger errorResponseStatus) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setBody(DynamicByteArray.from("error body", scriptBlockContext));
+        errorResponse.setBody(DynamicByteArray.from("error body", moduleContext));
         errorResponse.setStatus(errorResponseStatus);
         return new MessageHttpResponseMapper(scriptEngine, null, errorResponse);
     }
@@ -588,7 +590,7 @@ class MessageHttpResponseMapperTest {
     private MessageHttpResponseMapper newMapperWithErrorAdditionalHeaders(DynamicStringMap errorResponseHeaders) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setHeaders(errorResponseHeaders);
-        errorResponse.setBody(DynamicByteArray.from("error body", scriptBlockContext));
+        errorResponse.setBody(DynamicByteArray.from("error body", moduleContext));
         return new MessageHttpResponseMapper(scriptEngine, null, errorResponse);
     }
 }

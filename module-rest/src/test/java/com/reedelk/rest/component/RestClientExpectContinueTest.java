@@ -36,7 +36,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
 
         RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
 
-        DynamicByteArray dynamicBody = DynamicByteArray.from("my body", scriptBlockContext);
+        DynamicByteArray dynamicBody = DynamicByteArray.from("my body", moduleContext);
         component.setBody(dynamicBody);
 
         doReturn(Optional.of("my body".getBytes()))
@@ -73,7 +73,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
 
         RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
 
-        DynamicByteArray dynamicBody = DynamicByteArray.from("my body", scriptBlockContext);
+        DynamicByteArray dynamicBody = DynamicByteArray.from("my body", moduleContext);
         component.setBody(dynamicBody);
 
         doReturn(Optional.of("my body".getBytes()))
@@ -111,7 +111,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
 
         RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
 
-        DynamicByteArray dynamicBody = DynamicByteArray.from("my body", scriptBlockContext);
+        DynamicByteArray dynamicBody = DynamicByteArray.from("my body", moduleContext);
         component.setBody(dynamicBody);
 
         doReturn(Optional.of("my body".getBytes()))

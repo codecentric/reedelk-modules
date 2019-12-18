@@ -1,7 +1,8 @@
 package com.reedelk.esb.services.scriptengine.evaluator.function;
 
+import com.reedelk.runtime.api.commons.ModuleContext;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.script.Script;
-import com.reedelk.runtime.api.script.ScriptBlockContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,8 +11,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ScriptDefinitionBuilderTest {
 
+    private final ModuleId moduleId = new ModuleId(10L);
+    private final ModuleContext context = new ModuleContext(moduleId);
+
     private ScriptDefinitionBuilder builder;
-    private ScriptBlockContext context = new ScriptBlockContext(10L);
 
     @BeforeEach
     void setUp() {

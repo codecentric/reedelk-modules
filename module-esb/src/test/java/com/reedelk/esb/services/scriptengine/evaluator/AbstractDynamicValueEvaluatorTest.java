@@ -3,8 +3,9 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 import com.reedelk.esb.exception.ScriptCompilationException;
 import com.reedelk.esb.exception.ScriptExecutionException;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
+import com.reedelk.runtime.api.commons.ModuleContext;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.script.ScriptBlock;
-import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.*;
 class AbstractDynamicValueEvaluatorTest {
 
     private final long testModuleId = 10L;
-    private ScriptBlockContext scriptBlockContext = new ScriptBlockContext(testModuleId);
+    private ModuleContext moduleContext = new ModuleContext(new ModuleId(testModuleId));
 
     @Mock
     private ScriptEngineProvider mockEngineProvider;
@@ -53,7 +54,7 @@ class AbstractDynamicValueEvaluatorTest {
     void shouldCompileScriptWhenFunctionIsNotFoundAndInvokeAgainFunctionAfterCompilation() throws NoSuchMethodException, ScriptException {
         // Given
         String expectedResult = "evaluation result";
-        DynamicString dynamicValue = DynamicString.from("#['evaluation result']", scriptBlockContext);
+        DynamicString dynamicValue = DynamicString.from("#['evaluation result']", moduleContext);
 
         when(mockEngineProvider
                 .invokeFunction(dynamicValue.functionName()))
@@ -72,7 +73,7 @@ class AbstractDynamicValueEvaluatorTest {
     @Test
     void shouldThrowExceptionWhenScriptCouldNotBeCompiled() throws NoSuchMethodException, ScriptException {
         // Given
-        DynamicString dynamicValue = DynamicString.from("#[notValid'Script']", scriptBlockContext);
+        DynamicString dynamicValue = DynamicString.from("#[notValid'Script']", moduleContext);
 
         when(mockEngineProvider
                 .invokeFunction(dynamicValue.functionName()))
@@ -99,7 +100,7 @@ class AbstractDynamicValueEvaluatorTest {
     @Test
     void shouldThrowExceptionWhenScriptCouldNotBeInvokedAfterCompilation() throws NoSuchMethodException, ScriptException {
         // Given
-        DynamicString dynamicValue = DynamicString.from("#['Script' + unknown]", scriptBlockContext);
+        DynamicString dynamicValue = DynamicString.from("#['Script' + unknown]", moduleContext);
 
         when(mockEngineProvider
                 .invokeFunction(dynamicValue.functionName()))
@@ -124,7 +125,7 @@ class AbstractDynamicValueEvaluatorTest {
     @Test
     void shouldRethrowExceptionWithScriptBodyWhenScriptExceptionIsThrown() throws NoSuchMethodException, ScriptException {
         // Given
-        DynamicString dynamicValue = DynamicString.from("#['test' + unknownVariable]", scriptBlockContext);
+        DynamicString dynamicValue = DynamicString.from("#['test' + unknownVariable]", moduleContext);
 
         doThrow(new ScriptException("variable not found unknownVariable"))
                 .when(mockEngineProvider)
@@ -143,8 +144,8 @@ class AbstractDynamicValueEvaluatorTest {
     @Test
     void shouldCompileRegisterFunctionsCorrectlyForModuleId() throws ScriptException {
         // Given
-        DynamicString dynamicValue1 = DynamicString.from("#['evaluation result']", scriptBlockContext);
-        DynamicString dynamicValue2 = DynamicString.from("#['another evaluation result']", scriptBlockContext);
+        DynamicString dynamicValue1 = DynamicString.from("#['evaluation result']", moduleContext);
+        DynamicString dynamicValue2 = DynamicString.from("#['another evaluation result']", moduleContext);
 
         // When
         evaluator.compile(dynamicValue1, testFunctionBuilder);
@@ -155,15 +156,15 @@ class AbstractDynamicValueEvaluatorTest {
         verify(mockEngineProvider).compile(testFunctionBuilder.from(dynamicValue2));
         assertThat(evaluator.moduleIdFunctionNamesMap)
                 .containsEntry(
-                        scriptBlockContext.getModuleId(),
+                        moduleContext.getModuleId().get(),
                         asList(dynamicValue1.functionName(), dynamicValue2.functionName()));
     }
 
     @Test
     void shouldRemoveEntryFromModuleIdFunctionMapWhenModuleUninstalled() {
         // Given
-        DynamicString dynamicValue1 = DynamicString.from("#['evaluation result']", scriptBlockContext);
-        DynamicString dynamicValue2 = DynamicString.from("#['another evaluation result']", scriptBlockContext);
+        DynamicString dynamicValue1 = DynamicString.from("#['evaluation result']", moduleContext);
+        DynamicString dynamicValue2 = DynamicString.from("#['another evaluation result']", moduleContext);
 
         evaluator.compile(dynamicValue1, testFunctionBuilder);
         evaluator.compile(dynamicValue2, testFunctionBuilder);
@@ -179,8 +180,8 @@ class AbstractDynamicValueEvaluatorTest {
     @Test
     void shouldUndefineFunctionFromScriptEngineWhenModuleUninstalled() throws ScriptException {
         // Given
-        DynamicString dynamicValue1 = DynamicString.from("#['evaluation result']", scriptBlockContext);
-        DynamicString dynamicValue2 = DynamicString.from("#['another evaluation result']", scriptBlockContext);
+        DynamicString dynamicValue1 = DynamicString.from("#['evaluation result']", moduleContext);
+        DynamicString dynamicValue2 = DynamicString.from("#['another evaluation result']", moduleContext);
 
         evaluator.compile(dynamicValue1, testFunctionBuilder);
         evaluator.compile(dynamicValue2, testFunctionBuilder);
@@ -199,8 +200,8 @@ class AbstractDynamicValueEvaluatorTest {
     @Test
     void shouldDoNothingWhenModuleUninstalledDidNotHaveAnyFunctionRegisteredInTheScriptEngine() {
         // Given
-        DynamicString dynamicValue1 = DynamicString.from("#['evaluation result']", scriptBlockContext);
-        DynamicString dynamicValue2 = DynamicString.from("#['another evaluation result']", scriptBlockContext);
+        DynamicString dynamicValue1 = DynamicString.from("#['evaluation result']", moduleContext);
+        DynamicString dynamicValue2 = DynamicString.from("#['another evaluation result']", moduleContext);
 
         evaluator.compile(dynamicValue1, testFunctionBuilder);
         evaluator.compile(dynamicValue2, testFunctionBuilder);
@@ -221,7 +222,7 @@ class AbstractDynamicValueEvaluatorTest {
     void shouldThrowExceptionWhenDynamicMapCouldNotBeCompiled() throws NoSuchMethodException, ScriptException {
         // Given
         DynamicStringMap dynamicStringMap = DynamicStringMap.from(
-                of("X-Correlation-ID", "#[notValid'Script']"), scriptBlockContext);
+                of("X-Correlation-ID", "#[notValid'Script']"), moduleContext);
 
         when(mockEngineProvider
                 .invokeFunction(dynamicStringMap.functionName()))

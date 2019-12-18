@@ -1,7 +1,6 @@
 package com.reedelk.admin.console;
 
 import com.reedelk.runtime.api.service.ConfigurationService;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -24,9 +23,7 @@ public class AdminConsole {
     private ConfigurationService configurationService;
 
     @Activate
-    public void start(BundleContext context) {
-
-        ModuleIdProvider.id = context.getBundle().getBundleId();
+    public void start() {
 
         String bindAddress = configurationService.getString(PROPERTY_ADMIN_CONSOLE_ADDRESS);
 

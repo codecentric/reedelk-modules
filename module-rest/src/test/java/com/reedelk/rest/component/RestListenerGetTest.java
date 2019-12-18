@@ -3,12 +3,13 @@ package com.reedelk.rest.component;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import com.reedelk.rest.configuration.listener.Response;
+import com.reedelk.runtime.api.commons.ModuleContext;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageAttributes;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
-import com.reedelk.runtime.api.script.ScriptBlockContext;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
@@ -41,6 +42,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
 class RestListenerGetTest extends RestListenerAbstractTest {
+
+    final ModuleId moduleId = new ModuleId(10L);
+    final ModuleContext moduleContext = new ModuleContext(moduleId);
 
     private HttpGet getRequest;
 
@@ -154,7 +158,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     @Test
     void shouldReturn500WhenSuccessResponseBodyThrowsExceptionWhenEvaluated() {
         // Given
-        DynamicByteArray scriptWithSyntaxError = DynamicByteArray.from("#[unknownVariable]", new ScriptBlockContext(10L));
+        DynamicByteArray scriptWithSyntaxError = DynamicByteArray.from("#[unknownVariable]", moduleContext);
         Response response = new Response();
         response.setBody(scriptWithSyntaxError);
 
@@ -210,7 +214,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         IllegalStateException thrownException = new IllegalStateException("flow error");
 
         DynamicStringMap errorResponseHeaders = DynamicStringMap.empty();
-        DynamicByteArray errorResponseBody = DynamicByteArray.from("#['custom error']", new ScriptBlockContext(10L));
+        DynamicByteArray errorResponseBody = DynamicByteArray.from("#['custom error']", moduleContext);
 
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setBody(errorResponseBody);
@@ -244,7 +248,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         IllegalStateException thrownException = new IllegalStateException("flow error");
 
         DynamicStringMap errorResponseHeaders = DynamicStringMap.empty();
-        DynamicInteger errorResponseCode = DynamicInteger.from("#[504]", new ScriptBlockContext(10L));
+        DynamicInteger errorResponseCode = DynamicInteger.from("#[504]", moduleContext);
 
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setHeaders(errorResponseHeaders);
@@ -273,7 +277,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         IllegalStateException thrownException = new IllegalStateException("flow error");
 
         DynamicStringMap errorResponseHeaders = DynamicStringMap.empty();
-        DynamicByteArray errorResponseBody = DynamicByteArray.from("#[unknownVariable]", new ScriptBlockContext(10L));
+        DynamicByteArray errorResponseBody = DynamicByteArray.from("#[unknownVariable]", moduleContext);
 
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setHeaders(errorResponseHeaders);
@@ -309,7 +313,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         // Given
         IllegalStateException thrownException = new IllegalStateException("flow error");
 
-        DynamicInteger errorResponseStatus = DynamicInteger.from("#[unknownVariable]", new ScriptBlockContext(10L));
+        DynamicInteger errorResponseStatus = DynamicInteger.from("#[unknownVariable]", moduleContext);
 
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setStatus(errorResponseStatus);
@@ -346,7 +350,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         // Given
         String errorMessage = "my error";
         DynamicStringMap errorResponseHeaders = DynamicStringMap.empty();
-        DynamicByteArray errorResponseBody = DynamicByteArray.from("#[error]", scriptBlockContext);
+        DynamicByteArray errorResponseBody = DynamicByteArray.from("#[error]", moduleContext);
         IllegalStateException exception = new IllegalStateException(errorMessage);
 
         ErrorResponse errorResponse = new ErrorResponse();
@@ -385,7 +389,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
         String json = "{\"name\":\"John\"}";
         Message responseMessage = MessageBuilder.get().json(json).build();
 
-        DynamicByteArray responseBody = DynamicByteArray.from("#[message.payload()]", scriptBlockContext);
+        DynamicByteArray responseBody = DynamicByteArray.from("#[message.payload()]", moduleContext);
         Response listenerResponse = new Response();
         listenerResponse.setBody(responseBody);
 

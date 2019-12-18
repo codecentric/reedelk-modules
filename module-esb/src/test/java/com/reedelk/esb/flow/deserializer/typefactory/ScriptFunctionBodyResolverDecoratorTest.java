@@ -2,6 +2,7 @@ package com.reedelk.esb.flow.deserializer.typefactory;
 
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.deserializer.ScriptResource;
+import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.commons.TypeFactory;
@@ -23,18 +24,17 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class ScriptFunctionBodyResolverDecoratorTest {
 
-    private long testModuleId = 10L;
+    private final ModuleId testModuleId = new ModuleId(10L);
+    private final TypeFactoryContext factoryContext = new TypeFactoryContext(testModuleId);
 
     @Mock
-    private DeserializedModule mockDeserializedModule;
-
-    private TypeFactoryContext factoryContext = new TypeFactoryContext(testModuleId);
+    private DeserializedModule mockDeSerializedModule;
 
     private ScriptFunctionBodyResolverDecorator decorator;
 
     @BeforeEach
     void setUp() {
-        decorator = new ScriptFunctionBodyResolverDecorator(TypeFactory.getInstance(), mockDeserializedModule);
+        decorator = new ScriptFunctionBodyResolverDecorator(TypeFactory.getInstance(), mockDeSerializedModule);
     }
 
     /**
@@ -55,15 +55,15 @@ class ScriptFunctionBodyResolverDecoratorTest {
         ScriptResource scriptResource2 = new ScriptResource("/user/local/project/myProject/src/main/resources/scripts/integration/my_script.js", scriptResource2Body);
         Collection<ScriptResource> scriptResources = Arrays.asList(scriptResource1, scriptResource2);
 
-        doReturn(scriptResources).when(mockDeserializedModule).getScriptResources();
+        doReturn(scriptResources).when(mockDeSerializedModule).getScriptResources();
 
         // When
         Script actualScript = decorator.create(Script.class, componentDefinition, propertyName, factoryContext);
 
         // Then
         assertThat(actualScript.functionName()).isNotNull();
-        assertThat(actualScript.functionName()).contains("_" + testModuleId + "_"); // make sure that the function UUID contains the module id in its name as well.
-        assertThat(actualScript.context().getModuleId()).isEqualTo(testModuleId);
+        assertThat(actualScript.functionName()).contains("_" + testModuleId.get() + "_"); // make sure that the function UUID contains the module id in its name as well.
+        assertThat(actualScript.context().getModuleId().get()).isEqualTo(testModuleId.get());
         assertThat(actualScript.body()).isEqualTo(scriptResource1Body);
     }
 
@@ -81,7 +81,7 @@ class ScriptFunctionBodyResolverDecoratorTest {
         ScriptResource scriptResource2 = new ScriptResource("/user/local/project/myProject/src/main/resources/scripts/integration/my_script.js", scriptResource2Body);
         Collection<ScriptResource> scriptResources = Arrays.asList(scriptResource1, scriptResource2);
 
-        doReturn(scriptResources).when(mockDeserializedModule).getScriptResources();
+        doReturn(scriptResources).when(mockDeSerializedModule).getScriptResources();
 
         // When
         ESBException thrown = assertThrows(ESBException.class,
