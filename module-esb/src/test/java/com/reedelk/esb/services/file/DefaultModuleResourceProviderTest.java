@@ -7,7 +7,7 @@ import com.reedelk.esb.test.utils.FileUtils;
 import com.reedelk.esb.test.utils.TmpDir;
 import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.file.ModuleFileProvider;
+import com.reedelk.runtime.api.file.ModuleResourceProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class DefaultModuleFileProviderTest {
+class DefaultModuleResourceProviderTest {
 
     private final int BUFFER_SIZE = 65536;
     private final long testModuleId = 234L;
@@ -51,11 +51,11 @@ class DefaultModuleFileProviderTest {
     @Mock
     private ModulesManager modulesManager;
 
-    private ModuleFileProvider fileProvider;
+    private ModuleResourceProvider fileProvider;
 
     @BeforeEach
     void setUp() {
-        fileProvider = new DefaultModuleFileProvider(context, modulesManager);
+        fileProvider = new DefaultModuleResourceProvider(context, modulesManager);
         doReturn(testModuleId).when(module).id();
         doReturn(testModuleName).when(module).name();
         doReturn(testVersion).when(module).version();

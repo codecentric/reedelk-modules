@@ -6,7 +6,7 @@ import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.file.ModuleFileProvider;
+import com.reedelk.runtime.api.file.ModuleResourceProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.reactivestreams.Publisher;
@@ -18,12 +18,12 @@ import java.util.Enumeration;
 import static com.reedelk.esb.commons.Messages.Module.FILE_FIND_IO_ERROR;
 import static com.reedelk.esb.commons.Messages.Module.FILE_NOT_FOUND_ERROR;
 
-public class DefaultModuleFileProvider implements ModuleFileProvider {
+public class DefaultModuleResourceProvider implements ModuleResourceProvider {
 
     private final BundleContext context;
     private final ModulesManager modulesManager;
 
-    public DefaultModuleFileProvider(BundleContext context, ModulesManager modulesManager) {
+    public DefaultModuleResourceProvider(BundleContext context, ModulesManager modulesManager) {
         this.context = context;
         this.modulesManager = modulesManager;
     }

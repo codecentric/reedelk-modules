@@ -8,7 +8,7 @@ import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.file.ModuleFileProvider;
+import com.reedelk.runtime.api.file.ModuleResourceProvider;
 import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
@@ -35,7 +35,7 @@ public class LocalFileRead implements ProcessorSync {
     @Reference
     private ScriptEngineService service;
     @Reference
-    private ModuleFileProvider moduleFileProvider;
+    private ModuleResourceProvider moduleResourceProvider;
 
     @Hidden
     @Property("Module Id")
@@ -76,7 +76,7 @@ public class LocalFileRead implements ProcessorSync {
 
             try {
 
-                Publisher<byte[]> contentAsStream = moduleFileProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
+                Publisher<byte[]> contentAsStream = moduleResourceProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
 
                 TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 

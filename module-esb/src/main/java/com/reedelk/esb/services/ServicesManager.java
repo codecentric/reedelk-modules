@@ -3,13 +3,13 @@ package com.reedelk.esb.services;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.services.configuration.DefaultConfigurationService;
 import com.reedelk.esb.services.converter.DefaultConverterService;
-import com.reedelk.esb.services.file.DefaultModuleFileProvider;
+import com.reedelk.esb.services.file.DefaultModuleResourceProvider;
 import com.reedelk.esb.services.hotswap.DefaultHotSwapService;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
 import com.reedelk.esb.services.module.DefaultModuleService;
 import com.reedelk.esb.services.module.EventListener;
 import com.reedelk.esb.services.scriptengine.ScriptEngine;
-import com.reedelk.runtime.api.file.ModuleFileProvider;
+import com.reedelk.runtime.api.file.ModuleResourceProvider;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.api.service.ConverterService;
 import com.reedelk.runtime.api.service.ScriptEngineService;
@@ -98,9 +98,9 @@ public class ServicesManager {
     }
 
     private void registerModuleFileProviderService(BundleContext context) {
-        ModuleFileProvider service = new DefaultModuleFileProvider(context, modulesManager);
-        ServiceRegistration<ModuleFileProvider> registration =
-                context.registerService(ModuleFileProvider.class, service, NO_PROPERTIES);
+        ModuleResourceProvider service = new DefaultModuleResourceProvider(context, modulesManager);
+        ServiceRegistration<ModuleResourceProvider> registration =
+                context.registerService(ModuleResourceProvider.class, service, NO_PROPERTIES);
         registeredServices.add(registration);
     }
 
