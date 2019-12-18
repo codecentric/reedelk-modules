@@ -28,9 +28,9 @@ public class AdminConsole {
 
         ModuleIdProvider.id = context.getBundle().getBundleId();
 
-        String bindAddress = configurationService.getString(PROPERTY_ADMIN_CONSOLE_ADDRESS, "localhost");
+        String bindAddress = configurationService.getString(PROPERTY_ADMIN_CONSOLE_ADDRESS);
 
-        int bindPort = configurationService.getInt(PROPERTY_ADMIN_CONSOLE_PORT, 9988);
+        int bindPort = configurationService.getInt(PROPERTY_ADMIN_CONSOLE_PORT);
 
         logger.info(String.format("Admin console listening on http://%s:%d/console", bindAddress, bindPort));
     }
