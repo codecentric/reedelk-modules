@@ -7,7 +7,7 @@ import com.reedelk.esb.test.utils.FileUtils;
 import com.reedelk.esb.test.utils.TmpDir;
 import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.file.ModuleResourceProvider;
+import com.reedelk.runtime.api.resource.ModuleResourceProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

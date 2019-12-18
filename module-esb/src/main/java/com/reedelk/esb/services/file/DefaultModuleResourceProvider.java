@@ -6,7 +6,7 @@ import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.file.ModuleResourceProvider;
+import com.reedelk.runtime.api.resource.ModuleResourceProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.reactivestreams.Publisher;

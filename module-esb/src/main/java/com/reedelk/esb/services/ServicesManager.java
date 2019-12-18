@@ -9,7 +9,7 @@ import com.reedelk.esb.services.hotswap.HotSwapListener;
 import com.reedelk.esb.services.module.DefaultModuleService;
 import com.reedelk.esb.services.module.EventListener;
 import com.reedelk.esb.services.scriptengine.ScriptEngine;
-import com.reedelk.runtime.api.file.ModuleResourceProvider;
+import com.reedelk.runtime.api.resource.ModuleResourceProvider;
 import com.reedelk.runtime.api.service.ConfigurationService;
 import com.reedelk.runtime.api.service.ConverterService;
 import com.reedelk.runtime.api.service.ScriptEngineService;
