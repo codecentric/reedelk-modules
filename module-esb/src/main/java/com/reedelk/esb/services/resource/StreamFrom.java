@@ -1,4 +1,4 @@
-package com.reedelk.esb.services.file;
+package com.reedelk.esb.services.resource;
 
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;

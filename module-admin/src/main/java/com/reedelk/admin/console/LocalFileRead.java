@@ -12,7 +12,7 @@ import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
-import com.reedelk.runtime.api.resource.ModuleResourceProvider;
+import com.reedelk.runtime.api.resource.ResourceProvider;
 import com.reedelk.runtime.commons.FileUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -27,8 +27,6 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = LocalFileRead.class, scope = PROTOTYPE)
 public class LocalFileRead implements ProcessorSync {
 
-    private static final int READ_LOCAL_FILE_BUFFER_SIZE = 65536;
-
     private final String webappFolder = "/webapp/";
     private final String indexPage = "index.html";
     private final String pathParamPage = "page";
@@ -39,7 +37,7 @@ public class LocalFileRead implements ProcessorSync {
     private ModuleId moduleId;
 
     @Reference
-    private ModuleResourceProvider moduleResourceProvider;
+    private ResourceProvider resourceProvider;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -55,7 +53,7 @@ public class LocalFileRead implements ProcessorSync {
         MimeType actualMimeType = MimeType.fromFileExtension(pageFileExtension);
 
         try {
-            Publisher<byte[]> contentAsStream = moduleResourceProvider.findBy(moduleId, finalFilePath, READ_LOCAL_FILE_BUFFER_SIZE);
+            Publisher<byte[]> contentAsStream = resourceProvider.findResourceBy(moduleId, finalFilePath);
 
             TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 

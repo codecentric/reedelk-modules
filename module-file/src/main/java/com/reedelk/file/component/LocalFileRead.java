@@ -12,7 +12,7 @@ import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
-import com.reedelk.runtime.api.resource.ModuleResourceProvider;
+import com.reedelk.runtime.api.resource.ResourceProvider;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
@@ -35,7 +35,7 @@ public class LocalFileRead implements ProcessorSync {
     @Reference
     private ScriptEngineService service;
     @Reference
-    private ModuleResourceProvider moduleResourceProvider;
+    private ResourceProvider resourceProvider;
 
     @Hidden
     @Property("Module Id")
@@ -76,7 +76,7 @@ public class LocalFileRead implements ProcessorSync {
 
             try {
 
-                Publisher<byte[]> contentAsStream = moduleResourceProvider.findBy(moduleId, finalFilePath, config.getReadBufferSize());
+                Publisher<byte[]> contentAsStream = resourceProvider.findResourceBy(moduleId, finalFilePath, config.getReadBufferSize());
 
                 TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
 

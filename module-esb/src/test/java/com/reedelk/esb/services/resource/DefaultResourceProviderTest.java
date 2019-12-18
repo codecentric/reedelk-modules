@@ -1,4 +1,4 @@
-package com.reedelk.esb.services.file;
+package com.reedelk.esb.services.resource;
 
 import com.reedelk.esb.exception.FileNotFoundException;
 import com.reedelk.esb.module.Module;
@@ -7,7 +7,7 @@ import com.reedelk.esb.test.utils.FileUtils;
 import com.reedelk.esb.test.utils.TmpDir;
 import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.resource.ModuleResourceProvider;
+import com.reedelk.runtime.api.resource.ResourceProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,9 +34,8 @@ import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class DefaultModuleResourceProviderTest {
+class DefaultResourceProviderTest {
 
-    private final int BUFFER_SIZE = 65536;
     private final long testModuleId = 234L;
     private final String testModuleName = "test-module";
     private final String testVersion = "1.0.0-SNAPSHOT";
@@ -51,11 +50,11 @@ class DefaultModuleResourceProviderTest {
     @Mock
     private ModulesManager modulesManager;
 
-    private ModuleResourceProvider fileProvider;
+    private ResourceProvider fileProvider;
 
     @BeforeEach
     void setUp() {
-        fileProvider = new DefaultModuleResourceProvider(context, modulesManager);
+        fileProvider = new DefaultResourceProvider(context, modulesManager);
         doReturn(testModuleId).when(module).id();
         doReturn(testModuleName).when(module).name();
         doReturn(testVersion).when(module).version();
@@ -80,7 +79,7 @@ class DefaultModuleResourceProviderTest {
         doReturn(fileURLs).when(bundle).getResources(resource);
 
         // When
-        Publisher<byte[]> stream = fileProvider.findBy(moduleId, resource, BUFFER_SIZE);
+        Publisher<byte[]> stream = fileProvider.findResourceBy(moduleId, resource);
 
         // Then
         StepVerifier.create(stream)
@@ -104,7 +103,7 @@ class DefaultModuleResourceProviderTest {
 
         // When
         FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
-                () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
+                () -> fileProvider.findResourceBy(moduleId, resource));
 
         assertThat(thrown)
                 .hasMessage("Could not find local file file=[/tests/sample.txt] in module with id=[234], name=[test-module].");
@@ -123,7 +122,7 @@ class DefaultModuleResourceProviderTest {
 
         // When
         FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
-                () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
+                () -> fileProvider.findResourceBy(moduleId, resource));
 
         assertThat(thrown)
                 .hasMessage("Could not find local file file=[/tests/sample.txt] in module with id=[234], name=[test-module].");
@@ -142,7 +141,7 @@ class DefaultModuleResourceProviderTest {
 
         // When
         ESBException thrown = assertThrows(ESBException.class,
-                () -> fileProvider.findBy(moduleId, resource, BUFFER_SIZE));
+                () -> fileProvider.findResourceBy(moduleId, resource));
 
         assertThat(thrown)
                 .hasMessage("An I/O occurred while reading file=[/tests/sample.txt] in module with id=[234], name=[test-module]: Error while reading data");

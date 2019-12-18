@@ -47,7 +47,7 @@ public class GenericComponentDefinitionDeserializer {
         // If the implementor object has a setter of type ModuleId,
         // we set an object containing the ModuleId of this module. This is needed
         // because some services require the ID of the bundle to get some data such
-        // as the  ModuleResourceProvider  in order to discover the files within the
+        // as the  ResourceProvider  in order to discover the files within the
         // Module/resources folder. We must look for setters of this type because
         // the module id is not a property provided by the user in the JSON definition,
         // but it is provided by the runtime.
