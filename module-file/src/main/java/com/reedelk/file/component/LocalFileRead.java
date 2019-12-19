@@ -9,6 +9,7 @@ import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.resource.ResourceDynamic;
+import com.reedelk.runtime.api.resource.ResourceFile;
 import com.reedelk.runtime.api.resource.ResourceService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -46,17 +47,18 @@ public class LocalFileRead implements ProcessorSync {
 
         try {
 
-            ResourceService.ResourceFile resourceFile =
-                    resourceService.findResourceBy(this.resourceFile, flowContext, message);
+            ResourceFile resourceFile = resourceService.findResourceBy(this.resourceFile, flowContext, message);
 
-            String resourceFilePath = resourceFile.filePath();
+            String resourceFilePath = resourceFile.path();
 
             MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, resourceFilePath);
 
             TypedContent<byte[]> content = new ByteArrayContent(resourceFile.data(), actualMimeType);
 
-            MessageAttributes attributes = new DefaultMessageAttributes(LocalFileRead.class,
-                    of(FILE_NAME, resourceFilePath, TIMESTAMP, System.currentTimeMillis()));
+            MessageAttributes attributes =
+                    new DefaultMessageAttributes(LocalFileRead.class,
+                            of(FILE_NAME, resourceFilePath,
+                                    TIMESTAMP, System.currentTimeMillis()));
 
             return MessageBuilder.get().attributes(attributes).typedContent(content).build();
 
