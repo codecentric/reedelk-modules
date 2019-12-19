@@ -5,6 +5,6 @@
   "subflow": [{
     "implementor": "com.reedelk.admin.console.LocalFileRead",
     "description": "Local file read",
-    "fileName": "#['/webapp/' + message.attributes().get('pathParams').getOrDefault('page','index.html')]"
+    "resourceFile": "#['/webapp/' + message.attributes().get('pathParams').getOrDefault('page','index.html')]"
   }]
 }
