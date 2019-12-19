@@ -34,7 +34,7 @@ public class ScriptResolverDecorator implements TypeFactory {
     public <T> T create(Class<T> expectedClass, JSONObject jsonObject, String propertyName, TypeFactoryContext context) {
         T result = delegate.create(expectedClass, jsonObject, propertyName, context);
         if (result instanceof Script) {
-            return (T) loadScriptBodyOf((Script) result);
+            return (T) loadScriptFromResources((Script) result);
         }
         return result;
     }
@@ -44,7 +44,7 @@ public class ScriptResolverDecorator implements TypeFactory {
         return delegate.create(expectedClass, jsonArray, index, context);
     }
 
-    private Script loadScriptBodyOf(Script script) {
+    private Script loadScriptFromResources(Script script) {
         if (isBlank(script.getScriptPath())) {
             throw new ESBException(SCRIPT_SOURCE_EMPTY.format());
         }
@@ -52,22 +52,7 @@ public class ScriptResolverDecorator implements TypeFactory {
                 .stream()
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(script.getScriptPath()))
                 .findFirst()
-                .flatMap(resourceLoader -> Optional.of(new ScriptProxy(script, resourceLoader.bodyAsString())))
+                .flatMap(resourceLoader -> Optional.of(new ProxyScript(script, resourceLoader.bodyAsString())))
                 .orElseThrow(() -> new ESBException(SCRIPT_SOURCE_NOT_FOUND.format(script.getScriptPath())));
-    }
-
-    class ScriptProxy extends Script {
-
-        private final String scriptBody;
-
-        ScriptProxy(Script original, String scriptBody) {
-            super(original.getScriptPath(), original.getContext());
-            this.scriptBody = scriptBody;
-        }
-
-        @Override
-        public String body() {
-            return scriptBody;
-        }
     }
 }

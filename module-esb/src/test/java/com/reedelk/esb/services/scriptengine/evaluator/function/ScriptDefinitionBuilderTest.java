@@ -1,5 +1,6 @@
 package com.reedelk.esb.services.scriptengine.evaluator.function;
 
+import com.reedelk.esb.flow.deserializer.typefactory.ProxyScript;
 import com.reedelk.runtime.api.commons.ModuleContext;
 import com.reedelk.runtime.api.script.Script;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ScriptDefinitionBuilderTest {
 
     private final long moduleId = 10L;
-    private final ModuleContext context = new ModuleContext(moduleId);
+    private final ModuleContext moduleContext = new ModuleContext(moduleId);
 
     private ScriptDefinitionBuilder builder;
 
@@ -31,7 +32,7 @@ class ScriptDefinitionBuilderTest {
                 "   return 'This is a test';\n" +
                 "}\n";
 
-        Script script = Script.from(myFunction, context);
+        Script script = scriptFromBody(myFunction);
 
         // When
         String replaced = builder.from(script);
@@ -39,5 +40,10 @@ class ScriptDefinitionBuilderTest {
         // Then
         String randomlyGeneratedFunctionName = script.functionName();
         assertThat(replaced).isEqualTo(format(expectedReplaced, randomlyGeneratedFunctionName));
+    }
+
+    private Script scriptFromBody(String body) {
+        Script originalScript = Script.from("/test/path", moduleContext);
+        return new ProxyScript(originalScript, body);
     }
 }

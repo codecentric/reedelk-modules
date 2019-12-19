@@ -17,6 +17,7 @@ public class DefaultResourceService implements ResourceService {
     }
 
     // TODO: Exception handling
+    // TODO: Should we stream data ?? Use StreamFrom class!!!
     @Override
     public ResourceFile findResourceBy(ResourceDynamic resourceDynamic, FlowContext flowContext, Message message) {
         return scriptEngineService
