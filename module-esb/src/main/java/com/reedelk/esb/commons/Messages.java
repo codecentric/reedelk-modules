@@ -136,6 +136,7 @@ public class Messages {
         CONFIGURATION_NOT_FOUND("Could not find configuration with id=[%s]"),
         ERROR_READING_FILES_FROM_RESOURCE_FOLDER("Error reading files from resource folder, target path=[%s]"),
         SCRIPT_SOURCE_NOT_FOUND("Could not find script named=[%s] defined in resources/scripts folder. Please make sure that the referenced script exists."),
+        RESOURCE_SOURCE_NOT_FOUND("Could not find resource named=[%s] defined in the project 'resources' folder. Please make sure that the referenced metadata exists."),
         SCRIPT_SOURCE_EMPTY("A script resource file must not be null or empty");
 
         private String msg;

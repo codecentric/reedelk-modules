@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.configuration.converter;
 
 
-import com.reedelk.runtime.api.service.ConfigurationService;
+import com.reedelk.runtime.api.configuration.ConfigurationService;
 
 public class LongConfigConverter implements ConfigConverter<Long> {
 

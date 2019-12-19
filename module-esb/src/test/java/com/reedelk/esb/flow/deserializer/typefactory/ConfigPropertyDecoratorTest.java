@@ -1,7 +1,6 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
-import com.reedelk.runtime.api.commons.ModuleId;
-import com.reedelk.runtime.api.service.ConfigurationService;
+import com.reedelk.runtime.api.configuration.ConfigurationService;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
 import org.json.JSONArray;
@@ -16,17 +15,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ConfigPropertyAwareTypeFactoryDecoratorTest {
+class ConfigPropertyDecoratorTest {
 
     @Mock
     private ConfigurationService configurationService;
 
-    private ConfigPropertyAwareTypeFactoryDecorator typeFactory;
-    private TypeFactoryContext typeFactoryContext = new TypeFactoryContext(new ModuleId(10L));
+    private final long testModuleId = 10L;
+    private ConfigPropertyDecorator typeFactory;
+    private TypeFactoryContext typeFactoryContext = new TypeFactoryContext(testModuleId);
 
     @BeforeEach
     void setUp() {
-        typeFactory = new ConfigPropertyAwareTypeFactoryDecorator(configurationService, TypeFactory.getInstance());
+        typeFactory = new ConfigPropertyDecorator(configurationService, TypeFactory.getInstance());
     }
 
     @Test
@@ -64,16 +64,6 @@ class ConfigPropertyAwareTypeFactoryDecoratorTest {
 
         // Then
         assertThat(typeInstance).isEqualTo(expectedValue);
-        verifyNoMoreInteractions(configurationService);
-    }
-
-    @Test
-    void shouldReturnModuleIdTypeInstance() {
-        // When
-        ModuleId typeInstance = typeFactory.create(ModuleId.class, null, null, typeFactoryContext);
-
-        // Then
-        assertThat(typeInstance.get()).isEqualTo(typeFactoryContext.getModuleId().get());
         verifyNoMoreInteractions(configurationService);
     }
 

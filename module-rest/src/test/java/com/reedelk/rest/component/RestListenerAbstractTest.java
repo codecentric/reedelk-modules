@@ -4,12 +4,11 @@ import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import com.reedelk.rest.server.ServerProvider;
 import com.reedelk.runtime.api.commons.ModuleContext;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
-import com.reedelk.runtime.api.service.ScriptEngineService;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -36,7 +35,7 @@ import static org.junit.Assert.fail;
 @Tag(INTEGRATION)
 abstract class RestListenerAbstractTest {
 
-    final ModuleId moduleId = new ModuleId(10L);
+    private final long moduleId = 10L;
     final ModuleContext moduleContext = new ModuleContext(moduleId);
 
     static final String TEST_JSON_BODY = "{\"name\":\"John\"}";

@@ -1,18 +1,18 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
 import com.reedelk.runtime.api.commons.ConfigurationPropertyUtils;
-import com.reedelk.runtime.api.service.ConfigurationService;
+import com.reedelk.runtime.api.configuration.ConfigurationService;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ConfigPropertyAwareTypeFactoryDecorator implements TypeFactory {
+public class ConfigPropertyDecorator implements TypeFactory {
 
     private final TypeFactory delegate;
     private final ConfigurationService configurationService;
 
-    public ConfigPropertyAwareTypeFactoryDecorator(ConfigurationService configurationService, TypeFactory delegate) {
+    public ConfigPropertyDecorator(ConfigurationService configurationService, TypeFactory delegate) {
         this.configurationService = configurationService;
         this.delegate = delegate;
     }

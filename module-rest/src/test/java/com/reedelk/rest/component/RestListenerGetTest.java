@@ -4,7 +4,6 @@ import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.ListenerConfiguration;
 import com.reedelk.rest.configuration.listener.Response;
 import com.reedelk.runtime.api.commons.ModuleContext;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageAttributes;
@@ -43,8 +42,8 @@ import static org.mockito.Mockito.doThrow;
 
 class RestListenerGetTest extends RestListenerAbstractTest {
 
-    final ModuleId moduleId = new ModuleId(10L);
-    final ModuleContext moduleContext = new ModuleContext(moduleId);
+    private final long moduleId = 10L;
+    private final ModuleContext moduleContext = new ModuleContext(moduleId);
 
     private HttpGet getRequest;
 

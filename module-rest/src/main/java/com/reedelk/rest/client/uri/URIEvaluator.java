@@ -5,8 +5,8 @@ import com.reedelk.rest.commons.HttpProtocol;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
-import com.reedelk.runtime.api.service.ScriptEngineService;
 
 import java.net.URI;
 import java.net.URISyntaxException;

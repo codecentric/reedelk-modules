@@ -6,13 +6,12 @@ import com.reedelk.rest.client.HttpClientFactory;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.commons.ModuleContext;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
-import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +41,7 @@ abstract class RestClientAbstractTest {
     static final String PATH = "/v1/resource";
     static final String BASE_URL = "http://" + HOST + ":" + PORT;
 
-    final ModuleId moduleId = new ModuleId(10L);
+    final long moduleId = 10L;
     final ModuleContext moduleContext = new ModuleContext(moduleId);
 
     private static WireMockServer mockServer;

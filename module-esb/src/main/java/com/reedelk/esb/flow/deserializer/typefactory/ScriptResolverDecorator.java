@@ -8,17 +8,18 @@ import com.reedelk.runtime.commons.TypeFactoryContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Optional;
+
 import static com.reedelk.esb.commons.Messages.Deserializer.SCRIPT_SOURCE_EMPTY;
 import static com.reedelk.esb.commons.Messages.Deserializer.SCRIPT_SOURCE_NOT_FOUND;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
-import static java.util.Optional.of;
 
-public class ScriptFunctionBodyResolverDecorator implements TypeFactory {
+public class ScriptResolverDecorator implements TypeFactory {
 
     private final TypeFactory delegate;
     private final DeserializedModule deserializedModule;
 
-    public ScriptFunctionBodyResolverDecorator(TypeFactory delegate, DeserializedModule deserializedModule) {
+    public ScriptResolverDecorator(TypeFactory delegate, DeserializedModule deserializedModule) {
         this.delegate = delegate;
         this.deserializedModule = deserializedModule;
     }
@@ -44,14 +45,29 @@ public class ScriptFunctionBodyResolverDecorator implements TypeFactory {
     }
 
     private Script loadScriptBodyOf(Script script) {
-        if (isBlank(script.body())) {
-            throw new  ESBException(SCRIPT_SOURCE_EMPTY.format());
+        if (isBlank(script.getScriptPath())) {
+            throw new ESBException(SCRIPT_SOURCE_EMPTY.format());
         }
         return deserializedModule.getScriptResources()
                 .stream()
-                .filter(resource -> resource.getScriptFilePath().endsWith(script.body()))
+                .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(script.getScriptPath()))
                 .findFirst()
-                .flatMap(resource -> of(Script.from(resource.getBody(), script.context())))
-                .orElseThrow(() -> new ESBException(SCRIPT_SOURCE_NOT_FOUND.format(script.body())));
+                .flatMap(resourceLoader -> Optional.of(new ScriptProxy(script, resourceLoader.bodyAsString())))
+                .orElseThrow(() -> new ESBException(SCRIPT_SOURCE_NOT_FOUND.format(script.getScriptPath())));
+    }
+
+    class ScriptProxy extends Script {
+
+        private final String scriptBody;
+
+        ScriptProxy(Script original, String scriptBody) {
+            super(original.getScriptPath(), original.getContext());
+            this.scriptBody = scriptBody;
+        }
+
+        @Override
+        public String body() {
+            return scriptBody;
+        }
     }
 }

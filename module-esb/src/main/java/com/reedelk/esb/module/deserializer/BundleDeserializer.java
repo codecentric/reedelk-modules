@@ -18,8 +18,17 @@ public class BundleDeserializer extends AbstractModuleDeserializer {
     }
 
     @Override
-    protected List<URL> getResources(String directory, String suffix) {
-        Enumeration<URL> entryPaths = bundle.findEntries(directory, "*." + suffix, RECURSIVE);
+    protected List<URL> getResources(String directory) {
+        return getResourcesWithFilePattern(directory, "*");
+    }
+
+    @Override
+    protected List<URL> getResources(String directory, String fileExtension) {
+        return getResourcesWithFilePattern(directory, "*." + fileExtension);
+    }
+
+    private List<URL> getResourcesWithFilePattern(String directory, String filePattern) {
+        Enumeration<URL> entryPaths = bundle.findEntries(directory, filePattern, RECURSIVE);
         return entryPaths == null ?
                 Collections.emptyList() :
                 Collections.list(entryPaths);

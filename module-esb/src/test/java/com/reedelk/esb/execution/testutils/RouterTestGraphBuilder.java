@@ -4,7 +4,6 @@ import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.commons.ModuleContext;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import com.reedelk.runtime.component.Stop;
 
@@ -56,7 +55,7 @@ public class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
         routerWrapper.setEndOfRouterStopNode(endOfRouter);
         for (ConditionWithSequence item : conditionWithSequences) {
             if (item.sequence.size() > 0) {
-                routerWrapper.addExpressionAndPathPair(DynamicString.from(item.condition, new ModuleContext(new ModuleId(testModuleId))), item.sequence.get(0));
+                routerWrapper.addExpressionAndPathPair(DynamicString.from(item.condition, new ModuleContext(testModuleId)), item.sequence.get(0));
                 buildSequence(graph, router, endOfRouter, item.sequence);
             }
         }

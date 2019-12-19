@@ -1,19 +1,18 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class TypeFactoryContextAwareDecorator implements TypeFactory {
+public class TypeFactoryContextDecorator implements TypeFactory {
 
-    private final ModuleId moduleId;
     private final TypeFactory delegate;
+    private final TypeFactoryContext context;
 
-    public TypeFactoryContextAwareDecorator(TypeFactory delegate, ModuleId moduleId) {
+    public TypeFactoryContextDecorator(TypeFactory delegate, long moduleId) {
         this.delegate = delegate;
-        this.moduleId = moduleId;
+        this.context = new TypeFactoryContext(moduleId);
     }
 
     @Override
@@ -23,13 +22,11 @@ public class TypeFactoryContextAwareDecorator implements TypeFactory {
 
     @Override
     public <T> T create(Class<T> expectedClass, JSONObject jsonObject, String propertyName) {
-        TypeFactoryContext context = new TypeFactoryContext(moduleId);
         return create(expectedClass, jsonObject, propertyName, context);
     }
 
     @Override
     public <T> T create(Class<T> expectedClass, JSONArray jsonArray, int index) {
-        TypeFactoryContext context = new TypeFactoryContext(moduleId);
         return create(expectedClass, jsonArray, index, context);
     }
 

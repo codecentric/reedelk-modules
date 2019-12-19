@@ -1,6 +1,6 @@
 package com.reedelk.admin.console;
 
-import com.reedelk.runtime.api.service.ConfigurationService;
+import com.reedelk.runtime.api.configuration.ConfigurationService;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

@@ -1,28 +1,20 @@
 package com.reedelk.file.component;
 
-import com.reedelk.file.commons.LocalFilePath;
 import com.reedelk.file.commons.MimeTypeParser;
-import com.reedelk.file.localread.LocalFileReadConfiguration;
-import com.reedelk.file.localread.LocalReadConfiguration;
 import com.reedelk.runtime.api.annotation.*;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
-import com.reedelk.runtime.api.resource.ResourceProvider;
-import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
-import com.reedelk.runtime.api.service.ScriptEngineService;
+import com.reedelk.runtime.api.resource.ResourceDynamic;
+import com.reedelk.runtime.api.resource.ResourceService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.reactivestreams.Publisher;
 
 import java.io.FileNotFoundException;
-import java.util.Optional;
 
-import static com.reedelk.file.commons.Messages.ModuleFileReadComponent.FILE_NOT_FOUND;
 import static com.reedelk.file.localread.LocalFileReadAttribute.FILE_NAME;
 import static com.reedelk.file.localread.LocalFileReadAttribute.TIMESTAMP;
 import static com.reedelk.runtime.api.commons.ImmutableMap.of;
@@ -33,19 +25,10 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class LocalFileRead implements ProcessorSync {
 
     @Reference
-    private ScriptEngineService service;
-    @Reference
-    private ResourceProvider resourceProvider;
+    private ResourceService resourceService;
 
-    @Hidden
-    @Property("Module Id")
-    private ModuleId moduleId;
-
-    @Property("File name")
-    private DynamicString fileName;
-
-    @Property("Base path")
-    private String basePath;
+    @Property("Resource file")
+    private ResourceDynamic resourceFile;
 
     @Property("Auto mime type")
     @Default("true")
@@ -58,54 +41,32 @@ public class LocalFileRead implements ProcessorSync {
     @When(propertyName = "autoMimeType", propertyValue = When.BLANK)
     private String mimeType;
 
-    @Property("Configuration")
-    private LocalFileReadConfiguration configuration;
-
     @Override
     public Message apply(Message message, FlowContext flowContext) {
 
-        Optional<String> evaluated = service.evaluate(fileName, flowContext, message);
+        try {
 
-        return evaluated.map(filePath -> {
+            ResourceService.ResourceFile resourceFile =
+                    resourceService.findResourceBy(this.resourceFile, flowContext, message);
 
-            LocalReadConfiguration config = new LocalReadConfiguration(configuration);
+            String resourceFilePath = resourceFile.filePath();
 
-            MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, filePath);
+            MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, resourceFilePath);
 
-            String finalFilePath = LocalFilePath.from(basePath, filePath);
+            TypedContent<byte[]> content = new ByteArrayContent(resourceFile.data(), actualMimeType);
 
-            try {
+            MessageAttributes attributes = new DefaultMessageAttributes(LocalFileRead.class,
+                    of(FILE_NAME, resourceFilePath, TIMESTAMP, System.currentTimeMillis()));
 
-                Publisher<byte[]> contentAsStream = resourceProvider.findResourceBy(moduleId, finalFilePath, config.getReadBufferSize());
+            return MessageBuilder.get().attributes(attributes).typedContent(content).build();
 
-                TypedContent<byte[]> content = new ByteArrayContent(contentAsStream, actualMimeType);
-
-                MessageAttributes attributes = new DefaultMessageAttributes(LocalFileRead.class,
-                        of(FILE_NAME, finalFilePath, TIMESTAMP, System.currentTimeMillis()));
-
-                return MessageBuilder.get().attributes(attributes).typedContent(content).build();
-
-            } catch (FileNotFoundException e) {
-                throw new ESBException(e);
-            }
-
-        }).orElseThrow(() -> new ESBException(FILE_NOT_FOUND.format(fileName.toString(), basePath, moduleId.get())));
+        } catch (FileNotFoundException e) {
+            throw new ESBException(e);
+        }
     }
 
-    public void setFileName(DynamicString fileName) {
-        this.fileName = fileName;
-    }
-
-    public void setModuleId(ModuleId moduleId) {
-        this.moduleId = moduleId;
-    }
-
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
-
-    public void setConfiguration(LocalFileReadConfiguration configuration) {
-        this.configuration = configuration;
+    public void setResourceFile(ResourceDynamic resourceFile) {
+        this.resourceFile = resourceFile;
     }
 
     public void setAutoMimeType(boolean autoMimeType) {

@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static com.reedelk.esb.commons.FunctionWrapper.unchecked;
@@ -27,14 +28,24 @@ public class FileSystemDeserializer extends AbstractModuleDeserializer {
     }
 
     @Override
+    protected List<URL> getResources(String directory) {
+        return getFilesWithFilter(directory, IS_FILE_PREDICATE); // All the files
+    }
+
+    @Override
     protected List<URL> getResources(String directory, String suffix) {
+        return getFilesWithFilter(directory,
+                IS_FILE_PREDICATE.and(path -> FileUtils.hasExtension(path, suffix)));
+    }
+
+    private static final Predicate<Path> IS_FILE_PREDICATE = path -> path.toFile().isFile();
+
+    private List<URL> getFilesWithFilter(String directory, Predicate<Path> pathFilter) {
         Path targetPath = Paths.get(resourcesRootDirectory, directory);
         if (!targetPath.toFile().exists()) return EMPTY;
 
         try (Stream<Path> walk = Files.walk(targetPath)) {
-            return walk
-                    .filter(path -> path.toFile().isFile())
-                    .filter(path -> FileUtils.hasExtension(path, suffix))
+            return walk.filter(pathFilter)
                     .map(unchecked(path -> path.toFile().toURI().toURL()))
                     .collect(toList());
         } catch (IOException e) {

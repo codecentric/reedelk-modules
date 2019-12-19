@@ -2,7 +2,6 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.execution.DefaultFlowContext;
 import com.reedelk.runtime.api.commons.ModuleContext;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
@@ -28,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class ScriptEvaluatorTest {
 
-    private final ModuleId moduleId = new ModuleId(10L);
+    private final long moduleId = 10L;
     private final ModuleContext moduleContext = new ModuleContext(moduleId);
 
     private FlowContext context;

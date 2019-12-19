@@ -6,15 +6,15 @@ import com.reedelk.esb.flow.ErrorStateFlow;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.flow.deserializer.FlowDeserializer;
 import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
-import com.reedelk.esb.flow.deserializer.typefactory.ConfigPropertyAwareTypeFactoryDecorator;
-import com.reedelk.esb.flow.deserializer.typefactory.ScriptFunctionBodyResolverDecorator;
-import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextAwareDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.ConfigPropertyDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.ResourceResolverDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.ScriptResolverDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextDecorator;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.module.state.ModuleState;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.commons.TypeFactory;
 import org.json.JSONObject;
 import org.osgi.framework.Bundle;
@@ -74,12 +74,13 @@ public class ModuleBuild extends AbstractStep<Module, Module> {
 
         ModulesManager modulesManager = modulesManager();
         Module module = modulesManager.getModuleById(bundle.getBundleId());
-        ModuleId moduleId = new ModuleId(module.id());
+        long moduleId = module.id();
 
         TypeFactory typeFactory = TypeFactory.getInstance();
-        typeFactory = new ScriptFunctionBodyResolverDecorator(typeFactory, deserializedModule);
-        typeFactory = new ConfigPropertyAwareTypeFactoryDecorator(configurationService(), typeFactory);
-        typeFactory = new TypeFactoryContextAwareDecorator(typeFactory, moduleId);
+        typeFactory = new ResourceResolverDecorator(typeFactory, deserializedModule, module);
+        typeFactory = new ScriptResolverDecorator(typeFactory, deserializedModule);
+        typeFactory = new ConfigPropertyDecorator(configurationService(), typeFactory);
+        typeFactory = new TypeFactoryContextDecorator(typeFactory, moduleId);
 
         String flowId = id(flowDefinition);
         String flowTitle = hasTitle(flowDefinition) ? title(flowDefinition) : null;

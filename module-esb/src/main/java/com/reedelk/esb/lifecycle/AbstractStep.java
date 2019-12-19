@@ -6,7 +6,7 @@ import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
-import com.reedelk.runtime.api.service.ConfigurationService;
+import com.reedelk.runtime.api.configuration.ConfigurationService;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

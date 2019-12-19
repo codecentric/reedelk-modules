@@ -2,7 +2,7 @@ package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.component.ComponentRegistry;
 import com.reedelk.esb.module.ModulesManager;
-import com.reedelk.runtime.api.service.ConfigurationService;
+import com.reedelk.runtime.api.configuration.ConfigurationService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 

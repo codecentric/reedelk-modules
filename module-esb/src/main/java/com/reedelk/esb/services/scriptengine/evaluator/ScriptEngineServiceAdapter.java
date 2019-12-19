@@ -5,10 +5,10 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.Script;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import com.reedelk.runtime.api.script.ScriptSource;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
-import com.reedelk.runtime.api.service.ScriptEngineService;
 
 import java.util.Map;
 import java.util.Optional;

@@ -57,7 +57,7 @@ class ModuleResolveDependenciesTest {
     @Test
     void shouldReturnModuleWithStateInstalledWhenNoFlowsArePresent() {
         // Given
-        DeserializedModule deserializedModule = new DeserializedModule(emptySet(), emptySet(), emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(emptySet(), emptySet(), emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
@@ -78,7 +78,7 @@ class ModuleResolveDependenciesTest {
         Set<JSONObject> flows = new HashSet<>();
         flows.add(FLOW_WITH_ROUTER.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
@@ -109,7 +109,7 @@ class ModuleResolveDependenciesTest {
         Set<JSONObject> subFlows = new HashSet<>();
         subFlows.add(SUBFLOW_WITH_COMPONENTS.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, subFlows, emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(flows, subFlows, emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
@@ -139,7 +139,7 @@ class ModuleResolveDependenciesTest {
         Set<JSONObject> config = new HashSet<>();
         config.add(CONFIG.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), config, emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), config, emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
@@ -160,7 +160,7 @@ class ModuleResolveDependenciesTest {
         Set<JSONObject> flows = new HashSet<>();
         flows.add(FLOW_WITH_ROUTER.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When
@@ -194,7 +194,7 @@ class ModuleResolveDependenciesTest {
         Set<JSONObject> flows = new HashSet<>();
         flows.add(FLOW_WITH_ROUTER.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
         doReturn(deserializedModule).when(deserializer).deserialize();
 
         // When

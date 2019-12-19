@@ -1,12 +1,11 @@
 package com.reedelk.esb.flow.deserializer.node;
 
 import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
-import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextAwareDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextDecorator;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.test.utils.*;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
@@ -42,7 +41,7 @@ import static org.mockito.Mockito.spy;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class GenericComponentDefinitionDeserializerTest {
 
-    private final ModuleId testModuleId = new ModuleId(10L);
+    private final long testModuleId = 10L;
 
     @Mock
     private Bundle mockBundle;
@@ -59,7 +58,7 @@ class GenericComponentDefinitionDeserializerTest {
     @BeforeEach
     void setUp() {
         TypeFactory factory = TypeFactory.getInstance();
-        factory = new TypeFactoryContextAwareDecorator(factory, testModuleId);
+        factory = new TypeFactoryContextDecorator(factory, testModuleId);
         context = spy(new FlowDeserializerContext(mockBundle, mockModulesManager, mockDeSerializedModule, factory));
         deserializer = new GenericComponentDefinitionDeserializer(mockExecutionNode, context);
     }
@@ -1038,23 +1037,6 @@ class GenericComponentDefinitionDeserializerTest {
         }
     }
 
-    @Nested
-    @DisplayName("Module ID object tests")
-    class ModuleIdTests {
-
-        @Test
-        void shouldCorrectlySetModuleIdProperty() {
-            // When
-            TestComponentWithModuleIdProperty component =
-                    buildModuleIdComponent(
-                            "stringProperty",
-                            "my test string");
-
-            // Then
-            assertThat(component.getModuleId().get()).isEqualTo(testModuleId.get());
-        }
-    }
-
     private TestComponent buildComponentWith(String propertyName, Object propertyValue) {
         JSONObject definition = componentDefinitionWith(propertyName, propertyValue, TestComponent.class);
         TestComponent implementor = new TestComponent();
@@ -1079,13 +1061,6 @@ class GenericComponentDefinitionDeserializerTest {
     private TestComponentWithCollectionProperties buildCollectionComponentWith(String propertyName, Object propertyValue) {
         JSONObject definition = componentDefinitionWith(propertyName, propertyValue, TestComponentWithCollectionProperties.class);
         TestComponentWithCollectionProperties implementor = new TestComponentWithCollectionProperties();
-        deserializer.deserialize(definition, implementor);
-        return implementor;
-    }
-
-    private TestComponentWithModuleIdProperty buildModuleIdComponent(String propertyName, Object propertyValue) {
-        JSONObject definition = componentDefinitionWith(propertyName, propertyValue, TestComponentWithModuleIdProperty.class);
-        TestComponentWithModuleIdProperty implementor = new TestComponentWithModuleIdProperty();
         deserializer.deserialize(definition, implementor);
         return implementor;
     }

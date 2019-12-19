@@ -3,8 +3,8 @@ package com.reedelk.rest.client.body;
 import com.reedelk.runtime.api.commons.ScriptUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
-import com.reedelk.runtime.api.service.ScriptEngineService;
 import org.reactivestreams.Publisher;
 
 public class DefaultBodyProvider implements BodyProvider {

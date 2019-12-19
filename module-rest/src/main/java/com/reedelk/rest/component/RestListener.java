@@ -15,7 +15,7 @@ import com.reedelk.runtime.api.annotation.Hint;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.service.ScriptEngineService;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 

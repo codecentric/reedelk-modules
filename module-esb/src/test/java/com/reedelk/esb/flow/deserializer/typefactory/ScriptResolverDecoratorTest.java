@@ -1,8 +1,7 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
 import com.reedelk.esb.module.DeserializedModule;
-import com.reedelk.esb.module.deserializer.ScriptResource;
-import com.reedelk.runtime.api.commons.ModuleId;
+import com.reedelk.esb.module.deserializer.ResourceLoader;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.commons.TypeFactory;
@@ -19,22 +18,22 @@ import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ScriptFunctionBodyResolverDecoratorTest {
+class ScriptResolverDecoratorTest {
 
-    private final ModuleId testModuleId = new ModuleId(10L);
+    private final long testModuleId = 10L;
     private final TypeFactoryContext factoryContext = new TypeFactoryContext(testModuleId);
 
     @Mock
     private DeserializedModule mockDeSerializedModule;
 
-    private ScriptFunctionBodyResolverDecorator decorator;
+    private ScriptResolverDecorator decorator;
 
     @BeforeEach
     void setUp() {
-        decorator = new ScriptFunctionBodyResolverDecorator(TypeFactory.getInstance(), mockDeSerializedModule);
+        decorator = new ScriptResolverDecorator(TypeFactory.getInstance(), mockDeSerializedModule);
     }
 
     /**
@@ -51,19 +50,19 @@ class ScriptFunctionBodyResolverDecoratorTest {
 
         String scriptResource1Body = "return 'map data'";
         String scriptResource2Body = "return 'my script'";
-        ScriptResource scriptResource1 = new ScriptResource("/user/local/project/myProject/src/main/resources/scripts/integration/map_data.js", scriptResource1Body);
-        ScriptResource scriptResource2 = new ScriptResource("/user/local/project/myProject/src/main/resources/scripts/integration/my_script.js", scriptResource2Body);
-        Collection<ScriptResource> scriptResources = Arrays.asList(scriptResource1, scriptResource2);
+        ResourceLoader resourceLoader1 = mockResourceLoader("/user/local/project/myProject/src/main/resources/scripts/integration/map_data.js", scriptResource1Body);
+        ResourceLoader resourceLoader2 = mockResourceLoader("/user/local/project/myProject/src/main/resources/scripts/integration/my_script.js", scriptResource2Body);
+        Collection<ResourceLoader> resourceLoaders = Arrays.asList(resourceLoader1, resourceLoader2);
 
-        doReturn(scriptResources).when(mockDeSerializedModule).getScriptResources();
+        doReturn(resourceLoaders).when(mockDeSerializedModule).getScriptResources();
 
         // When
         Script actualScript = decorator.create(Script.class, componentDefinition, propertyName, factoryContext);
 
         // Then
         assertThat(actualScript.functionName()).isNotNull();
-        assertThat(actualScript.functionName()).contains("_" + testModuleId.get() + "_"); // make sure that the function UUID contains the module id in its name as well.
-        assertThat(actualScript.context().getModuleId().get()).isEqualTo(testModuleId.get());
+        assertThat(actualScript.functionName()).contains("_" + testModuleId + "_"); // make sure that the function UUID contains the module id in its name as well.
+        assertThat(actualScript.getContext().getModuleId()).isEqualTo(testModuleId);
         assertThat(actualScript.body()).isEqualTo(scriptResource1Body);
     }
 
@@ -77,11 +76,11 @@ class ScriptFunctionBodyResolverDecoratorTest {
 
         String scriptResource1Body = "return 'map data'";
         String scriptResource2Body = "return 'my script'";
-        ScriptResource scriptResource1 = new ScriptResource("/user/local/project/myProject/src/main/resources/scripts/integration/map_data.js", scriptResource1Body);
-        ScriptResource scriptResource2 = new ScriptResource("/user/local/project/myProject/src/main/resources/scripts/integration/my_script.js", scriptResource2Body);
-        Collection<ScriptResource> scriptResources = Arrays.asList(scriptResource1, scriptResource2);
+        ResourceLoader resourceLoader1 = mockResourceLoader("/user/local/project/myProject/src/main/resources/scripts/integration/map_data.js", scriptResource1Body);
+        ResourceLoader resourceLoader2 = mockResourceLoader("/user/local/project/myProject/src/main/resources/scripts/integration/my_script.js", scriptResource2Body);
+        Collection<ResourceLoader> resourceLoaders = Arrays.asList(resourceLoader1, resourceLoader2);
 
-        doReturn(scriptResources).when(mockDeSerializedModule).getScriptResources();
+        doReturn(resourceLoaders).when(mockDeSerializedModule).getScriptResources();
 
         // When
         ESBException thrown = assertThrows(ESBException.class,
@@ -105,5 +104,12 @@ class ScriptFunctionBodyResolverDecoratorTest {
 
         // Then
         assertThat(thrown).hasMessage("A script resource file must not be null or empty");
+    }
+
+    private ResourceLoader mockResourceLoader(String resourcePath, String resourceBody) {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        lenient().doReturn(resourcePath).when(resourceLoader).getResourceFilePath();
+        lenient().doReturn(resourceBody).when(resourceLoader).bodyAsString();
+        return resourceLoader;
     }
 }

@@ -7,12 +7,12 @@ import com.reedelk.esb.services.hotswap.DefaultHotSwapService;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
 import com.reedelk.esb.services.module.DefaultModuleService;
 import com.reedelk.esb.services.module.EventListener;
-import com.reedelk.esb.services.resource.DefaultResourceProvider;
+import com.reedelk.esb.services.resource.DefaultResourceService;
 import com.reedelk.esb.services.scriptengine.ScriptEngine;
-import com.reedelk.runtime.api.resource.ResourceProvider;
-import com.reedelk.runtime.api.service.ConfigurationService;
-import com.reedelk.runtime.api.service.ConverterService;
-import com.reedelk.runtime.api.service.ScriptEngineService;
+import com.reedelk.runtime.api.configuration.ConfigurationService;
+import com.reedelk.runtime.api.converter.ConverterService;
+import com.reedelk.runtime.api.resource.ResourceService;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import com.reedelk.runtime.system.api.HotSwapService;
 import com.reedelk.runtime.system.api.ModuleService;
 import com.reedelk.runtime.system.api.SystemProperty;
@@ -98,9 +98,10 @@ public class ServicesManager {
     }
 
     private void registerModuleFileProviderService(BundleContext context) {
-        ResourceProvider service = new DefaultResourceProvider(context, modulesManager);
-        ServiceRegistration<ResourceProvider> registration =
-                context.registerService(ResourceProvider.class, service, NO_PROPERTIES);
+        ScriptEngine scriptEngineService = ScriptEngine.getInstance();
+        ResourceService service = new DefaultResourceService(scriptEngineService);
+        ServiceRegistration<ResourceService> registration =
+                context.registerService(ResourceService.class, service, NO_PROPERTIES);
         registeredServices.add(registration);
     }
 

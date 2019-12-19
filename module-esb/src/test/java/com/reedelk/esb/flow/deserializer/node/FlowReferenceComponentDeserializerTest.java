@@ -27,7 +27,7 @@ class FlowReferenceComponentDeserializerTest extends AbstractDeserializerTest {
         Set<JSONObject> subflows = new HashSet<>();
         subflows.add(mySubflowDefinition);
 
-        DeserializedModule deserializedModule = new DeserializedModule(emptySet(), subflows, emptySet(), emptySet());
+        DeserializedModule deserializedModule = new DeserializedModule(emptySet(), subflows, emptySet(), emptySet(), emptySet());
 
         doReturn(deserializedModule).when(context).deserializedModule();
 

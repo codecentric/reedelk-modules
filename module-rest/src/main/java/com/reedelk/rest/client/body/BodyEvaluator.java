@@ -1,8 +1,8 @@
 package com.reedelk.rest.client.body;
 
 import com.reedelk.rest.commons.RestMethod;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
-import com.reedelk.runtime.api.service.ScriptEngineService;
 
 public class BodyEvaluator {
 

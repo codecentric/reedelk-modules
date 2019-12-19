@@ -2,7 +2,6 @@ package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.test.utils.TestComponent;
 import com.reedelk.runtime.api.commons.ModuleContext;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
@@ -21,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class DynamicMapEvaluatorTest {
 
-    private final ModuleId moduleId = new ModuleId(10L);
+    private final long moduleId = 10L;
     private final ModuleContext moduleContext = new ModuleContext(moduleId);
 
     private FlowContext context;

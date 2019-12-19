@@ -4,7 +4,6 @@ import com.reedelk.esb.exception.ScriptCompilationException;
 import com.reedelk.esb.exception.ScriptExecutionException;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
 import com.reedelk.runtime.api.commons.ModuleContext;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.script.ScriptBlock;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
@@ -36,7 +35,7 @@ import static org.mockito.Mockito.*;
 class AbstractDynamicValueEvaluatorTest {
 
     private final long testModuleId = 10L;
-    private ModuleContext moduleContext = new ModuleContext(new ModuleId(testModuleId));
+    private ModuleContext moduleContext = new ModuleContext(testModuleId);
 
     @Mock
     private ScriptEngineProvider mockEngineProvider;
@@ -156,7 +155,7 @@ class AbstractDynamicValueEvaluatorTest {
         verify(mockEngineProvider).compile(testFunctionBuilder.from(dynamicValue2));
         assertThat(evaluator.moduleIdFunctionNamesMap)
                 .containsEntry(
-                        moduleContext.getModuleId().get(),
+                        moduleContext.getModuleId(),
                         asList(dynamicValue1.functionName(), dynamicValue2.functionName()));
     }
 

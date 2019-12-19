@@ -132,9 +132,9 @@ class FileSystemDeserializerTest {
         DeserializedModule deserializedModule = deserializer.deserialize();
 
         // Then
-        Collection<ScriptResource> scriptResources = deserializedModule.getScriptResources();
-        assertExist(scriptResources,  Paths.get(projectDir.toString(), "scripts", "script1.js"), script1Body);
-        assertThat(scriptResources).hasSize(5);
+        Collection<ResourceLoader> resourceLoaders = deserializedModule.getScriptResources();
+        assertExist(resourceLoaders,  Paths.get(projectDir.toString(), "scripts", "script1.js"), script1Body);
+        assertThat(resourceLoaders).hasSize(5);
 
         assertThat(deserializedModule.getFlows()).isEmpty();
         assertThat(deserializedModule.getSubflows()).isEmpty();
@@ -166,9 +166,9 @@ class FileSystemDeserializerTest {
                 .isTrue();
     }
 
-    private void assertExist(Collection<ScriptResource> scriptResources, Path scriptFilePath, String scriptBody) {
-        boolean found = scriptResources.stream()
-                .anyMatch(scriptResource -> scriptResource.getBody().equals(scriptBody) && scriptResource.getScriptFilePath().equals(scriptFilePath.toString()));
+    private void assertExist(Collection<ResourceLoader> resourceLoaders, Path scriptFilePath, String scriptBody) {
+        boolean found = resourceLoaders.stream()
+                .anyMatch(resourceLoader -> resourceLoader.bodyAsString().equals(scriptBody) && resourceLoader.getResourceFilePath().equals(scriptFilePath.toString()));
         assertThat(found)
                 .withFailMessage("Script with file path=[%s] and body=[%s] not found", scriptFilePath, scriptBody)
                 .isTrue();

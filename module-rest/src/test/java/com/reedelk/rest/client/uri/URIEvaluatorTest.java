@@ -4,7 +4,7 @@ import com.reedelk.rest.ConfigurationException;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.service.ScriptEngineService;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

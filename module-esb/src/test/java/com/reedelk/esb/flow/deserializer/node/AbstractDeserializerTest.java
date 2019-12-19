@@ -1,13 +1,12 @@
 package com.reedelk.esb.flow.deserializer.node;
 
 import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
-import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextAwareDecorator;
+import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextDecorator;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.test.utils.TestComponent;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.component.Stop;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.spy;
 @ExtendWith(MockitoExtension.class)
 abstract class AbstractDeserializerTest {
 
-    final ModuleId moduleId = new ModuleId(10L);
+    final long moduleId = 10L;
 
     final String component1Name = TestComponent.class.getName() + "1";
     final String component2Name = TestComponent.class.getName() + "2";
@@ -68,7 +67,7 @@ abstract class AbstractDeserializerTest {
     @BeforeEach
     void setUp() {
         TypeFactory typeFactory = TypeFactory.getInstance();
-        typeFactory = new TypeFactoryContextAwareDecorator(typeFactory, moduleId);
+        typeFactory = new TypeFactoryContextDecorator(typeFactory, moduleId);
         context = spy(new FlowDeserializerContext(bundle, mockModulesManager, mockDeSerializedModule, typeFactory));
 
         lenient().doReturn(new TestComponent()).when(component1).getComponent();

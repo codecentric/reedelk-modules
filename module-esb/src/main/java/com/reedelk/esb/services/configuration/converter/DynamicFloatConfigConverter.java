@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.configuration.converter;
 
+import com.reedelk.runtime.api.configuration.ConfigurationService;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicFloat;
-import com.reedelk.runtime.api.service.ConfigurationService;
 
 public class DynamicFloatConfigConverter implements ConfigConverter<DynamicFloat> {
 

@@ -1,7 +1,7 @@
 package com.reedelk.core;
 
 import com.reedelk.core.script.CoreScriptModules;
-import com.reedelk.runtime.api.service.ScriptEngineService;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

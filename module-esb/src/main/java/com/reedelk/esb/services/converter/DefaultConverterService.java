@@ -1,8 +1,8 @@
 package com.reedelk.esb.services.converter;
 
+import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
-import com.reedelk.runtime.api.service.ConverterService;
 
 import java.util.Collections;
 import java.util.HashMap;

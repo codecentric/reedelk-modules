@@ -3,17 +3,16 @@ package com.reedelk.rest.server.mapper;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
 import com.reedelk.rest.configuration.listener.Response;
 import com.reedelk.runtime.api.commons.ModuleContext;
-import com.reedelk.runtime.api.commons.ModuleId;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
+import com.reedelk.runtime.api.script.ScriptEngineService;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicValue;
-import com.reedelk.runtime.api.service.ScriptEngineService;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -40,7 +39,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MessageHttpResponseMapperTest {
 
-    private final ModuleId moduleId = new ModuleId(10L);
+    private final long moduleId = 10L;
     private final ModuleContext moduleContext = new ModuleContext(moduleId);
 
     @Mock
