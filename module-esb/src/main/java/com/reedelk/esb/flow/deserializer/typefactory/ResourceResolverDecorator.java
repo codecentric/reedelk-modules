@@ -46,8 +46,9 @@ public class ResourceResolverDecorator implements TypeFactory {
             return (T) loadResourceBinary((ResourceBinary) result);
         }
         if  (result instanceof ResourceDynamic) {
-            return (T) new ProxyResourceDynamic((ResourceDynamic) result, deserializedModule.getMetadataResources(), module);
+            return (T) new ProxyResourceDynamic((ResourceDynamic) result, deserializedModule.getResources(), module);
         }
+
         return result;
     }
 
@@ -57,7 +58,7 @@ public class ResourceResolverDecorator implements TypeFactory {
     }
 
     private ResourceText loadResourceText(ResourceText resource) {
-        return deserializedModule.getMetadataResources()
+        return deserializedModule.getResources()
                 .stream()
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(resource.path()))
                 .findFirst()
@@ -70,7 +71,7 @@ public class ResourceResolverDecorator implements TypeFactory {
     }
 
     private ResourceBinary loadResourceBinary(ResourceBinary resource) {
-        return deserializedModule.getMetadataResources()
+        return deserializedModule.getResources()
                 .stream()
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(resource.path()))
                 .findFirst()

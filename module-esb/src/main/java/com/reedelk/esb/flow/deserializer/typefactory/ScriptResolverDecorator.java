@@ -49,7 +49,7 @@ public class ScriptResolverDecorator implements TypeFactory {
         if (isBlank(script.getScriptPath())) {
             throw new ESBException(SCRIPT_SOURCE_EMPTY.format());
         }
-        return deserializedModule.getScriptResources()
+        return deserializedModule.getScripts()
                 .stream()
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(script.getScriptPath()))
                 .findFirst()

@@ -55,7 +55,7 @@ class ScriptResolverDecoratorTest {
         ResourceLoader resourceLoader2 = mockResourceLoader("/user/local/project/myProject/src/main/resources/scripts/integration/my_script.js", scriptResource2Body);
         Collection<ResourceLoader> resourceLoaders = Arrays.asList(resourceLoader1, resourceLoader2);
 
-        doReturn(resourceLoaders).when(mockDeSerializedModule).getScriptResources();
+        doReturn(resourceLoaders).when(mockDeSerializedModule).getScripts();
 
         // When
         Script actualScript = decorator.create(Script.class, componentDefinition, propertyName, factoryContext);
@@ -81,7 +81,7 @@ class ScriptResolverDecoratorTest {
         ResourceLoader resourceLoader2 = mockResourceLoader("/user/local/project/myProject/src/main/resources/scripts/integration/my_script.js", scriptResource2Body);
         Collection<ResourceLoader> resourceLoaders = Arrays.asList(resourceLoader1, resourceLoader2);
 
-        doReturn(resourceLoaders).when(mockDeSerializedModule).getScriptResources();
+        doReturn(resourceLoaders).when(mockDeSerializedModule).getScripts();
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,

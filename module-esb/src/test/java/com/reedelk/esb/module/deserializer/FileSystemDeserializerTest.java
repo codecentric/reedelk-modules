@@ -58,7 +58,7 @@ class FileSystemDeserializerTest {
 
         assertThat(deserializedModule.getConfigurations()).isEmpty();
         assertThat(deserializedModule.getSubflows()).isEmpty();
-        assertThat(deserializedModule.getScriptResources()).isEmpty();
+        assertThat(deserializedModule.getScripts()).isEmpty();
     }
 
     @Test
@@ -86,7 +86,7 @@ class FileSystemDeserializerTest {
 
         assertThat(deserializedModule.getConfigurations()).isEmpty();
         assertThat(deserializedModule.getFlows()).isEmpty();
-        assertThat(deserializedModule.getScriptResources()).isEmpty();
+        assertThat(deserializedModule.getScripts()).isEmpty();
     }
 
     @Test
@@ -114,7 +114,7 @@ class FileSystemDeserializerTest {
 
         assertThat(deserializedModule.getFlows()).isEmpty();
         assertThat(deserializedModule.getSubflows()).isEmpty();
-        assertThat(deserializedModule.getScriptResources()).isEmpty();
+        assertThat(deserializedModule.getScripts()).isEmpty();
     }
 
     @Test
@@ -133,7 +133,7 @@ class FileSystemDeserializerTest {
         DeserializedModule deserializedModule = deserializer.deserialize();
 
         // Then
-        Collection<ResourceLoader> resourceLoaders = deserializedModule.getScriptResources();
+        Collection<ResourceLoader> resourceLoaders = deserializedModule.getScripts();
         assertExist(resourceLoaders,  Paths.get(projectDir.toString(), "scripts", "script1.js"), script1Body);
         assertThat(resourceLoaders).hasSize(5);
 

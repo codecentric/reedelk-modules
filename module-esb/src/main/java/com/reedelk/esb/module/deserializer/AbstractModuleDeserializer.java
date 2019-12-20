@@ -33,9 +33,9 @@ abstract class AbstractModuleDeserializer implements ModuleDeserializer {
 
         Collection<ResourceLoader> scripts = getScripts();
 
-        Collection<ResourceLoader> metadata = getResources();
+        Collection<ResourceLoader> resources = getResources();
 
-        return new DeserializedModule(flows, subflows, configurations, scripts, metadata);
+        return new DeserializedModule(flows, subflows, configurations, scripts, resources);
     }
 
     protected abstract List<URL> getResources(String directory);
@@ -68,7 +68,7 @@ abstract class AbstractModuleDeserializer implements ModuleDeserializer {
     }
 
     private Collection<ResourceLoader> getResources() {
-        List<URL> resourcesURL = getResources("/");
+        List<URL> resourcesURL = getResources("/");//TODO
         return resourcesURL.stream()
                 .map(ResourceLoader::new)
                 .collect(toSet());

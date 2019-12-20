@@ -13,17 +13,17 @@ public class DeserializedModule {
     private final Collection<JSONObject> configurations;
 
     private final Collection<ResourceLoader> scripts;
-    private final Collection<ResourceLoader> metadata;
+    private final Collection<ResourceLoader> resources;
 
     public DeserializedModule(Set<JSONObject> flows,
                               Set<JSONObject> subflows,
                               Collection<JSONObject> configurations,
                               Collection<ResourceLoader> scripts,
-                              Collection<ResourceLoader> metadata) {
+                              Collection<ResourceLoader> resources) {
         this.flows = flows;
         this.scripts = scripts;
         this.subflows = subflows;
-        this.metadata = metadata;
+        this.resources = resources;
         this.configurations = configurations;
     }
 
@@ -39,11 +39,11 @@ public class DeserializedModule {
         return configurations;
     }
 
-    public Collection<ResourceLoader> getScriptResources() {
+    public Collection<ResourceLoader> getScripts() {
         return scripts;
     }
 
-    public Collection<ResourceLoader> getMetadataResources() {
-        return metadata;
+    public Collection<ResourceLoader> getResources() {
+        return resources;
     }
 }
