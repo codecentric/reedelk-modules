@@ -182,6 +182,29 @@ class ExecutionNodeTest {
         assertThat(actualIsUsingComponent).isFalse();
     }
 
+    @Test
+    void shouldInitializeComponentImplementorAndDependenciesImplementors() {
+        // Given
+        Component component = mock(Component.class);
+        Implementor dependency1 = mock(Implementor.class);
+        Implementor dependency2 = mock(Implementor.class);
+        Implementor dependency3 = mock(Implementor.class);
+
+        ExecutionNode testComponentEN = mockExecutionNodeWithComponentAndReference(component, serviceReference);
+        testComponentEN.add(mockReferencePair(dependency1));
+        testComponentEN.add(mockReferencePair(dependency2));
+        testComponentEN.add(mockReferencePair(dependency3));
+
+        // When
+        testComponentEN.onInitializeEvent();
+
+        // Then
+        verify(component).initialize();
+        verify(dependency1).initialize();
+        verify(dependency2).initialize();
+        verify(dependency3).initialize();
+    }
+
     @SuppressWarnings("unchecked")
     private ReferencePair<Implementor> mockReferencePair(Implementor implementor) {
         ServiceReference<Implementor> dependencyServiceReference = mock(ServiceReference.class);
@@ -194,5 +217,4 @@ class ExecutionNodeTest {
     private ExecutionNode mockExecutionNodeWithComponentAndReference(Component component, ServiceReference<Component> serviceReference) {
         return spy(new ExecutionNode(new ReferencePair<>(component, serviceReference)));
     }
-
 }

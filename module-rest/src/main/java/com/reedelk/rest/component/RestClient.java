@@ -93,16 +93,59 @@ public class RestClient implements ProcessorAsync {
     @Override
     public void apply(Message message, FlowContext flowContext, OnResult callback) {
 
-        URIProvider uriProvider = uriEvaluator().provider(message, flowContext);
+        URIProvider uriProvider = uriEvaluator.provider(message, flowContext);
 
-        HeaderProvider headerProvider = headersEvaluator().provider(message, flowContext);
+        HeaderProvider headerProvider = headersEvaluator.provider(message, flowContext);
 
-        BodyProvider bodyProvider = bodyEvaluator().provider();
+        BodyProvider bodyProvider = bodyEvaluator.provider();
 
-        HttpClient client = client();
-
-        execution().execute(client, callback, message, flowContext,
+        execution.execute(client, callback, message, flowContext,
                 uriProvider, headerProvider, bodyProvider);
+    }
+
+    @Override
+    public synchronized void initialize() {
+        // Init uri evaluator
+        uriEvaluator = URIEvaluator.builder()
+                .queryParameters(queryParameters)
+                .pathParameters(pathParameters)
+                .configuration(configuration)
+                .scriptEngine(scriptEngine)
+                .baseURL(baseURL)
+                .path(path)
+                .build();
+
+        // Init execution
+        execution = ExecutionStrategyBuilder.builder()
+                .advancedConfig(advancedConfiguration)
+                .streaming(streaming)
+                .method(method)
+                .build();
+
+        // Init body evaluator
+        bodyEvaluator = BodyEvaluator.builder()
+                .scriptEngine(scriptEngine)
+                .method(method)
+                .body(body)
+                .build();
+
+        // Headers
+        headersEvaluator = HeadersEvaluator.builder()
+                .configuration(configuration)
+                .scriptEngine(scriptEngine)
+                .headers(headers)
+                .body(body)
+                .build();
+
+        // Init rest client
+        if (configuration != null) {
+            client = clientFactory.from(configuration);
+            client.start();
+        } else {
+            requireNonNull(baseURL, "RestClient base URL must be defined");
+            client = clientFactory.from(baseURL);
+            client.start();
+        }
     }
 
     @Override
@@ -156,67 +199,5 @@ public class RestClient implements ProcessorAsync {
 
     public void setAdvancedConfiguration(AdvancedConfiguration advancedConfiguration) {
         this.advancedConfiguration = advancedConfiguration;
-    }
-
-    private synchronized HttpClient client() {
-        if (client == null) {
-            if (configuration != null) {
-                client = clientFactory.from(configuration);
-                client.start();
-            } else {
-                requireNonNull(baseURL, "RestClient base URL must be defined");
-                client = clientFactory.from(baseURL);
-                client.start();
-            }
-        }
-        return client;
-    }
-
-    private synchronized Strategy execution() {
-        if (execution == null) {
-            execution = ExecutionStrategyBuilder.builder()
-                    .advancedConfig(advancedConfiguration)
-                    .streaming(streaming)
-                    .method(method)
-                    .build();
-        }
-        return execution;
-    }
-
-    private synchronized URIEvaluator uriEvaluator() {
-        if (uriEvaluator == null) {
-            uriEvaluator = URIEvaluator.builder()
-                    .queryParameters(queryParameters)
-                    .pathParameters(pathParameters)
-                    .configuration(configuration)
-                    .scriptEngine(scriptEngine)
-                    .baseURL(baseURL)
-                    .path(path)
-                    .build();
-        }
-        return uriEvaluator;
-    }
-
-    private synchronized BodyEvaluator bodyEvaluator() {
-        if (bodyEvaluator == null) {
-            bodyEvaluator = BodyEvaluator.builder()
-                    .scriptEngine(scriptEngine)
-                    .method(method)
-                    .body(body)
-                    .build();
-        }
-        return bodyEvaluator;
-    }
-
-    private synchronized HeadersEvaluator headersEvaluator() {
-        if (headersEvaluator == null) {
-            headersEvaluator = HeadersEvaluator.builder()
-                    .configuration(configuration)
-                    .scriptEngine(scriptEngine)
-                    .headers(headers)
-                    .body(body)
-                    .build();
-        }
-        return headersEvaluator;
     }
 }

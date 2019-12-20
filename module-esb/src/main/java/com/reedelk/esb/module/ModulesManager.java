@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.reedelk.esb.commons.Messages.Deserializer;
 import static com.reedelk.esb.module.state.ModuleState.*;
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 public class ModulesManager {
@@ -71,10 +71,10 @@ public class ModulesManager {
         if (RuntimeComponents.is(componentName)) {
             Component component = instantiateSystemComponent(componentName);
             return new ExecutionNode(new ReferencePair<>(component));
+        } else {
+            ReferencePair<Component> implementorReferencePair = instantiateImplementor(context, componentName);
+            return new ExecutionNode(implementorReferencePair);
         }
-
-        ReferencePair<Component> implementorReferencePair = instantiateImplementor(context, componentName);
-        return new ExecutionNode(implementorReferencePair);
     }
 
     public Implementor instantiateImplementor(final BundleContext context, final ExecutionNode executionNode, final String componentName) {
@@ -86,7 +86,7 @@ public class ModulesManager {
     private <T extends Implementor> ReferencePair<T> instantiateImplementor(final BundleContext context, final String componentName) {
         Optional<ServiceReference<T>> optionalServiceReference = getImplementorReferenceByName(context, componentName);
         if (!optionalServiceReference.isPresent()) {
-            throw new IllegalStateException(format("Expected Component %s was not found", componentName));
+            throw new IllegalStateException(Deserializer.ERROR_COMPONENT_NOT_FOUND.format(componentName));
         }
 
         ServiceReference<T> serviceReference = optionalServiceReference.get();

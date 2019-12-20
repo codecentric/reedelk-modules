@@ -108,10 +108,15 @@ class RestClientDigestAuthTest extends RestClientAbstractTest {
         configuration.setId(UUID.randomUUID().toString());
         configuration.setAuthentication(Authentication.DIGEST);
 
-        RestClient component = clientWith(GET, configuration, PATH);
+        RestClient restClient = new RestClient();
+        restClient.setConfiguration(configuration);
+        restClient.setMethod(GET);
+        restClient.setPath(PATH);
+        setScriptEngine(restClient);
+        setClientFactory(restClient);
 
         // Expect
-        ConfigurationException thrown = assertThrows(ConfigurationException.class, () -> invoke(component));
+        ConfigurationException thrown = assertThrows(ConfigurationException.class, restClient::initialize);
         assertThat(thrown).hasMessage("Digest Authentication Configuration must be present in the JSON definition when 'authentication' property is 'DIGEST'");
     }
 }

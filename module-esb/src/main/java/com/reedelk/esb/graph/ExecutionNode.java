@@ -7,6 +7,8 @@ import org.osgi.framework.ServiceReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.reedelk.esb.commons.Preconditions.checkArgument;
+
 public class ExecutionNode {
 
     private ReferencePair<Component> componentReference;
@@ -59,6 +61,12 @@ public class ExecutionNode {
         return referencePair.getImplementor().getClass().getName();
     }
 
+    public void onInitializeEvent() {
+        componentReference.implementor.initialize();
+        dependencyReferences.forEach(implementorReferencePair ->
+                implementorReferencePair.implementor.initialize());
+    }
+
     private void dispose(ReferencePair<? extends Implementor> componentReference) {
         if (componentReference.implementor != null) {
             // We must  call dispose() before clearing Implementor's references.
@@ -68,18 +76,20 @@ public class ExecutionNode {
         componentReference.serviceReference = null;
     }
 
-
     public static class ReferencePair<T extends Implementor> {
 
         private T implementor;
         private ServiceReference<T> serviceReference;
 
         public ReferencePair(T implementor) {
+            checkArgument(implementor != null, "implementor");
             this.implementor = implementor;
             this.serviceReference = null;
         }
 
         public ReferencePair(T implementor, ServiceReference<T> serviceReference) {
+            checkArgument(implementor != null, "implementor");
+            checkArgument(serviceReference != null, "service reference");
             this.implementor = implementor;
             this.serviceReference = serviceReference;
         }

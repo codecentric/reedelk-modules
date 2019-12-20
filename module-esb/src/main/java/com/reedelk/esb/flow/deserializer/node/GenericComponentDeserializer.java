@@ -23,6 +23,10 @@ public class GenericComponentDeserializer extends AbstractDeserializer {
         GenericComponentDefinitionDeserializer deserializer = new GenericComponentDefinitionDeserializer(executionNode, context);
         deserializer.deserialize(componentDefinition, component);
 
+        // We must call on initialize so that all the component's and dependencies
+        // initialize() method are being called for this component.
+        executionNode.onInitializeEvent();
+
         graph.putEdge(parent, executionNode);
         return executionNode;
     }

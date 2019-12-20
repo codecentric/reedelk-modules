@@ -72,13 +72,19 @@ class RestClientRequestUriTest extends RestClientAbstractTest {
 
         // When
         RestMethod restMethod = valueOf(method);
-        RestClient component = clientWith(restMethod, BASE_URL, path);
 
-        configureRequestAndQueryParams(component, pathParameters, queryParameters);
+        RestClient restClient = new RestClient();
+        restClient.setBaseURL(BASE_URL);
+        restClient.setMethod(restMethod);
+        restClient.setPath(path);
+        setScriptEngine(restClient);
+        setClientFactory(restClient);
+
+        configureRequestAndQueryParams(restClient, pathParameters, queryParameters);
+        restClient.initialize();
 
         // Expect
-        AssertHttpResponse
-                .isSuccessful(component, message, flowContext);
+        AssertHttpResponse.isSuccessful(restClient, message, flowContext);
     }
 
     private void configureRequestAndQueryParams(RestClient client, DynamicStringMap pathParameters, DynamicStringMap queryParameters) {

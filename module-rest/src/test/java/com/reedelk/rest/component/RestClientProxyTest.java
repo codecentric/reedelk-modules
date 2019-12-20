@@ -64,10 +64,15 @@ class RestClientProxyTest extends RestClientAbstractTest {
         configuration.setId(UUID.randomUUID().toString());
         configuration.setProxy(Proxy.PROXY);
 
-        RestClient component = clientWith(GET, configuration, PATH);
+        RestClient restClient = new RestClient();
+        restClient.setConfiguration(configuration);
+        restClient.setMethod(GET);
+        restClient.setPath(PATH);
+        setScriptEngine(restClient);
+        setClientFactory(restClient);
 
         // Expect
-        ConfigurationException thrown = assertThrows(ConfigurationException.class, () -> invoke(component));
+        ConfigurationException thrown = assertThrows(ConfigurationException.class, restClient::initialize);
         assertThat(thrown).hasMessage("Proxy Configuration must be present in the JSON definition when 'proxy' property is 'PROXY'");
     }
 

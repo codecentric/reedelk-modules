@@ -2,8 +2,6 @@ package com.reedelk.esb.test.utils;
 
 import com.reedelk.runtime.api.component.Inbound;
 import com.reedelk.runtime.api.component.InboundEventListener;
-import com.reedelk.runtime.api.component.OnResult;
-import com.reedelk.runtime.api.message.Message;
 
 public class TestInboundComponent implements Inbound {
 
@@ -16,11 +14,6 @@ public class TestInboundComponent implements Inbound {
 
     @Override
     public void onShutdown() {
-        throw new UnsupportedOperationException("Test Only Inbound");
-    }
-
-    @Override
-    public void onEvent(Message message, OnResult callback) {
         throw new UnsupportedOperationException("Test Only Inbound");
     }
 

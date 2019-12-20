@@ -23,13 +23,10 @@ class RestClientCustomHeadersTest extends RestClientAbstractTest {
     @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"})
     void shouldCorrectlyAddCustomHeaders(String method) {
         // Given
-        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY);
-
         Map<String,String> additionalHeaders = new HashMap<>();
         additionalHeaders.put("X-Token", "123456789");
         additionalHeaders.put("Source", "test source");
         DynamicStringMap additionalHeadersMap = DynamicStringMap.from(additionalHeaders, moduleContext);
-        component.setHeaders(additionalHeadersMap);
 
         doReturn(additionalHeaders)
                 .when(scriptEngine)
@@ -40,11 +37,11 @@ class RestClientCustomHeadersTest extends RestClientAbstractTest {
                 .withHeader("Source", equalTo("test source"))
                 .willReturn(aResponse().withStatus(200)));
 
+        RestClient component = clientWith(RestMethod.valueOf(method), BASE_URL, PATH, EVALUATE_PAYLOAD_BODY, additionalHeadersMap);
 
         Message payload = MessageBuilder.get().empty().build();
 
         // Expect
-        AssertHttpResponse
-                .isSuccessful(component, payload, flowContext);
+        AssertHttpResponse.isSuccessful(component, payload, flowContext);
     }
 }

@@ -6,11 +6,9 @@ import com.reedelk.rest.client.HttpClientFactory;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.client.ClientConfiguration;
 import com.reedelk.runtime.api.commons.ModuleContext;
-import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.script.ScriptEngineService;
+import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -68,16 +66,6 @@ abstract class RestClientAbstractTest {
         mockServer.resetAll();
     }
 
-    RestClient clientWith(RestMethod method, String baseURL, String path) {
-        RestClient restClient = new RestClient();
-        restClient.setBaseURL(baseURL);
-        restClient.setMethod(method);
-        restClient.setPath(path);
-        setScriptEngine(restClient);
-        setClientFactory(restClient);
-        return restClient;
-    }
-
     RestClient clientWith(RestMethod method, ClientConfiguration configuration, String path) {
         RestClient restClient = new RestClient();
         restClient.setConfiguration(configuration);
@@ -85,31 +73,63 @@ abstract class RestClientAbstractTest {
         restClient.setPath(path);
         setScriptEngine(restClient);
         setClientFactory(restClient);
-        return restClient;
-    }
-
-    RestClient clientWith(RestMethod method, String baseURL, String path, DynamicByteArray body) {
-        RestClient restClient = clientWith(method, baseURL, path);
-        restClient.setBody(body);
+        restClient.initialize();
         return restClient;
     }
 
     RestClient clientWith(RestMethod method, ClientConfiguration configuration, String path, DynamicByteArray body) {
-        RestClient restClient = clientWith(method, configuration, path);
+        RestClient restClient = new RestClient();
+        restClient.setConfiguration(configuration);
+        restClient.setMethod(method);
+        restClient.setPath(path);
         restClient.setBody(body);
+        setScriptEngine(restClient);
+        setClientFactory(restClient);
+        restClient.initialize();
         return restClient;
     }
 
-    void invoke(RestClient component) {
-        Message payload = MessageBuilder.get().build();
-        component.apply(payload, flowContext, new OnResult() {});
+    RestClient clientWith(RestMethod method, String baseURL, String path) {
+        RestClient restClient = new RestClient();
+        restClient.setBaseURL(baseURL);
+        restClient.setMethod(method);
+        restClient.setPath(path);
+        setScriptEngine(restClient);
+        setClientFactory(restClient);
+        restClient.initialize();
+        return restClient;
     }
 
-    private void setScriptEngine(RestClient restClient) {
+    RestClient clientWith(RestMethod method, String baseURL, String path, DynamicByteArray body) {
+        RestClient restClient = new RestClient();
+        restClient.setBaseURL(baseURL);
+        restClient.setMethod(method);
+        restClient.setPath(path);
+        restClient.setBody(body);
+        setScriptEngine(restClient);
+        setClientFactory(restClient);
+        restClient.initialize();
+        return restClient;
+    }
+
+    RestClient clientWith(RestMethod method, String baseURL, String path, DynamicByteArray body, DynamicStringMap additionalHeaders) {
+        RestClient restClient = new RestClient();
+        restClient.setHeaders(additionalHeaders);
+        restClient.setBaseURL(baseURL);
+        restClient.setMethod(method);
+        restClient.setPath(path);
+        restClient.setBody(body);
+        setScriptEngine(restClient);
+        setClientFactory(restClient);
+        restClient.initialize();
+        return restClient;
+    }
+
+    protected void setScriptEngine(RestClient restClient) {
         setField(restClient, "scriptEngine", scriptEngine);
     }
 
-    private void setClientFactory(RestClient restClient) {
+    protected void setClientFactory(RestClient restClient) {
         setField(restClient, "clientFactory", clientFactory);
     }
 

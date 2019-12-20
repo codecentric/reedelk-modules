@@ -34,10 +34,8 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         configuration.setProtocol(HttpProtocol.HTTP);
         configuration.setId(UUID.randomUUID().toString());
 
-        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
-
         DynamicByteArray dynamicBody = DynamicByteArray.from("my body", moduleContext);
-        component.setBody(dynamicBody);
+
 
         doReturn(Optional.of("my body".getBytes()))
                 .when(scriptEngine)
@@ -51,11 +49,12 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
                         .withBody("Expect continue success")
                         .withStatus(200)));
 
+        RestClient restClient = clientWith(RestMethod.valueOf(method), configuration, PATH, dynamicBody);
+
         Message payload = MessageBuilder.get().build();
 
-
         // Expect
-        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Expect continue success", TEXT);
+        AssertHttpResponse.isSuccessful(restClient, payload, flowContext, "Expect continue success", TEXT);
 
         WireMock.verify(0, newRequestPattern().withHeader("Expect", equalTo("100-continue")));
     }
@@ -71,10 +70,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         configuration.setId(UUID.randomUUID().toString());
         configuration.setExpectContinue(false);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
-
         DynamicByteArray dynamicBody = DynamicByteArray.from("my body", moduleContext);
-        component.setBody(dynamicBody);
 
         doReturn(Optional.of("my body".getBytes()))
                 .when(scriptEngine)
@@ -88,11 +84,13 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
                         .withBody("Expect continue success")
                         .withStatus(200)));
 
+        RestClient restClient = clientWith(RestMethod.valueOf(method), configuration, PATH, dynamicBody);
+
         Message payload = MessageBuilder.get().build();
 
 
         // Expect
-        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Expect continue success", TEXT);
+        AssertHttpResponse.isSuccessful(restClient, payload, flowContext, "Expect continue success", TEXT);
 
         WireMock.verify(0, newRequestPattern().withHeader("Expect", equalTo("100-continue")));
     }
@@ -109,10 +107,7 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
         configuration.setId(UUID.randomUUID().toString());
         configuration.setExpectContinue(true);
 
-        RestClient component = clientWith(RestMethod.valueOf(method), configuration, PATH);
-
         DynamicByteArray dynamicBody = DynamicByteArray.from("my body", moduleContext);
-        component.setBody(dynamicBody);
 
         doReturn(Optional.of("my body".getBytes()))
                 .when(scriptEngine)
@@ -126,11 +121,13 @@ class RestClientExpectContinueTest extends RestClientAbstractTest {
                         .withBody("Expect continue success")
                         .withStatus(200)));
 
+        RestClient restClient = clientWith(RestMethod.valueOf(method), configuration, PATH, dynamicBody);
+
         Message payload = MessageBuilder.get().build();
 
 
         // Expect
-        AssertHttpResponse.isSuccessful(component, payload, flowContext, "Expect continue success", TEXT);
+        AssertHttpResponse.isSuccessful(restClient, payload, flowContext, "Expect continue success", TEXT);
 
         WireMock.verify(1, newRequestPattern().withHeader("Expect", equalTo("100-continue")));
     }
