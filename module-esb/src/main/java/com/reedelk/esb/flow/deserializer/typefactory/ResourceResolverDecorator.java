@@ -2,7 +2,9 @@ package com.reedelk.esb.flow.deserializer.typefactory;
 
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.module.Module;
+import com.reedelk.runtime.api.commons.ByteArrayStream;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.resource.ResourceBinary;
 import com.reedelk.runtime.api.resource.ResourceDynamic;
 import com.reedelk.runtime.api.resource.ResourceText;
@@ -10,6 +12,7 @@ import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.reactivestreams.Publisher;
 
 import java.util.Optional;
 
@@ -62,7 +65,13 @@ public class ResourceResolverDecorator implements TypeFactory {
                 .stream()
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(resource.getResourcePath()))
                 .findFirst()
-                .flatMap(resourceLoader -> Optional.of(new ProxyResourceText(resource, resourceLoader.bodyAsString())))
+                .flatMap(resourceLoader -> {
+                    Publisher<byte[]> byteArrayStream = resourceLoader.body();
+                    Publisher<String> stringStream = ByteArrayStream.asStringStream(byteArrayStream);
+                    TypedPublisher<String> typedPublisher = TypedPublisher.fromString(stringStream);
+                    return Optional.of(new ProxyResourceText(resource, typedPublisher));
+                })
+                // TODO: Should throw Resource not found exception
                 .orElseThrow(() -> new ESBException(RESOURCE_SOURCE_NOT_FOUND.format(resource.getResourcePath())));
     }
 
@@ -71,7 +80,12 @@ public class ResourceResolverDecorator implements TypeFactory {
                 .stream()
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(resource.getResourcePath()))
                 .findFirst()
-                .flatMap(resourceLoader -> Optional.of(new ProxyResourceBinary(resource, resourceLoader.bodyAsBytes())))
+                .flatMap(resourceLoader -> {
+                    Publisher<byte[]> byteArrayStream = resourceLoader.body();
+                    TypedPublisher<byte[]> typedPublisher = TypedPublisher.fromByteArray(byteArrayStream);
+                    return Optional.of(new ProxyResourceBinary(resource, typedPublisher));
+                })
+                // TODO: Should throw Resource not found exception
                 .orElseThrow(() -> new ESBException(RESOURCE_SOURCE_NOT_FOUND.format(resource.getResourcePath())));
     }
 }

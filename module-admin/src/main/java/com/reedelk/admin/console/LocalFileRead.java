@@ -12,12 +12,12 @@ import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.api.resource.ResourceDynamic;
 import com.reedelk.runtime.api.resource.ResourceFile;
+import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.resource.ResourceService;
 import com.reedelk.runtime.commons.FileUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import java.io.FileNotFoundException;
+import org.reactivestreams.Publisher;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -36,18 +36,20 @@ public class LocalFileRead implements ProcessorSync {
 
         try {
 
-            ResourceFile resourceFile = resourceService.findResourceBy(this.resourceFile, flowContext, message);
+            ResourceFile resourceFile = resourceService.find(this.resourceFile, flowContext, message);
 
             String pageFileExtension = FileUtils.getExtension(resourceFile.path());
 
             MimeType actualMimeType = MimeType.fromFileExtension(pageFileExtension);
 
-            TypedContent<byte[]> content = new ByteArrayContent(resourceFile.data(), actualMimeType);
+            Publisher<byte[]> dataStream = resourceFile.data();
+
+            TypedContent<byte[]> content = new ByteArrayContent(dataStream, actualMimeType);
 
             return MessageBuilder.get().typedContent(content).build();
 
-        } catch (FileNotFoundException e) {
-            throw new ESBException(e);
+        } catch (ResourceNotFound resourceNotFound) {
+            throw new ESBException(resourceNotFound);
         }
     }
 

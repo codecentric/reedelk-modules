@@ -2,6 +2,7 @@ package com.reedelk.esb.module.deserializer;
 
 
 import com.reedelk.esb.module.DeserializedModule;
+import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.esb.test.utils.FileUtils;
 import com.reedelk.esb.test.utils.TmpDir;
 import org.json.JSONObject;

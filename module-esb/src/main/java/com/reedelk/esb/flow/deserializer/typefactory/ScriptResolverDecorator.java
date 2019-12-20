@@ -2,6 +2,7 @@ package com.reedelk.esb.flow.deserializer.typefactory;
 
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
@@ -53,6 +54,6 @@ public class ScriptResolverDecorator implements TypeFactory {
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(script.getScriptPath()))
                 .findFirst()
                 .flatMap(resourceLoader -> Optional.of(new ProxyScript(script, resourceLoader.bodyAsString())))
-                .orElseThrow(() -> new ESBException(SCRIPT_SOURCE_NOT_FOUND.format(script.getScriptPath())));
+                .orElseThrow(() -> new ESBException(new ResourceNotFound(SCRIPT_SOURCE_NOT_FOUND.format(script.getScriptPath()))));
     }
 }

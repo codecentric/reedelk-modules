@@ -1,7 +1,7 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
 import com.reedelk.esb.module.DeserializedModule;
-import com.reedelk.esb.module.deserializer.ResourceLoader;
+import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.commons.TypeFactory;

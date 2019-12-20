@@ -2,8 +2,9 @@ package com.reedelk.esb.flow.deserializer.typefactory;
 
 import com.reedelk.esb.exception.FileNotFoundException;
 import com.reedelk.esb.module.Module;
-import com.reedelk.esb.module.deserializer.ResourceLoader;
+import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.runtime.api.resource.ResourceDynamic;
+import org.reactivestreams.Publisher;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -22,11 +23,11 @@ public class ProxyResourceDynamic extends ResourceDynamic {
     }
 
     @Override
-    public byte[] load(String evaluatedPath) {
+    public Publisher<byte[]> data(String evaluatedPath) {
         return resourceLoader.stream()
                 .filter(loader -> loader.getResourceFilePath().endsWith(evaluatedPath))
                 .findFirst()
-                .flatMap(loader -> Optional.of(loader.bodyAsBytes()))
+                .flatMap(loader -> Optional.of(loader.body()))
                 .orElseThrow(() -> {
                     // The file at the given path was not found in the Module bundle.
                     String message = FILE_NOT_FOUND_ERROR.format(evaluatedPath, module.id(), module.name());

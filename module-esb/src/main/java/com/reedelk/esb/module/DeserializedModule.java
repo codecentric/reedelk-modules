@@ -1,6 +1,6 @@
 package com.reedelk.esb.module;
 
-import com.reedelk.esb.module.deserializer.ResourceLoader;
+import com.reedelk.esb.services.resource.ResourceLoader;
 import org.json.JSONObject;
 
 import java.util.Collection;
