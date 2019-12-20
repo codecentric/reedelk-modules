@@ -1,6 +1,6 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
-import com.reedelk.esb.module.DeserializedModule;
+import com.reedelk.esb.module.DeserializedModule1;
 import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.resource.ResourceNotFound;
@@ -28,13 +28,13 @@ class ScriptResolverDecoratorTest {
     private final TypeFactoryContext factoryContext = new TypeFactoryContext(testModuleId);
 
     @Mock
-    private DeserializedModule mockDeSerializedModule;
+    private DeserializedModule1 mockDeSerializedModule1;
 
     private ScriptResolverDecorator decorator;
 
     @BeforeEach
     void setUp() {
-        decorator = new ScriptResolverDecorator(TypeFactory.getInstance(), mockDeSerializedModule);
+        decorator = new ScriptResolverDecorator(TypeFactory.getInstance(), mockDeSerializedModule1);
     }
 
     /**
@@ -55,7 +55,7 @@ class ScriptResolverDecoratorTest {
         ResourceLoader resourceLoader2 = mockResourceLoader("/user/local/project/myProject/src/main/resources/scripts/integration/my_script.js", scriptResource2Body);
         Collection<ResourceLoader> resourceLoaders = Arrays.asList(resourceLoader1, resourceLoader2);
 
-        doReturn(resourceLoaders).when(mockDeSerializedModule).getScripts();
+        doReturn(resourceLoaders).when(mockDeSerializedModule1).getScripts();
 
         // When
         Script actualScript = decorator.create(Script.class, componentDefinition, propertyName, factoryContext);
@@ -81,7 +81,7 @@ class ScriptResolverDecoratorTest {
         ResourceLoader resourceLoader2 = mockResourceLoader("/user/local/project/myProject/src/main/resources/scripts/integration/my_script.js", scriptResource2Body);
         Collection<ResourceLoader> resourceLoaders = Arrays.asList(resourceLoader1, resourceLoader2);
 
-        doReturn(resourceLoaders).when(mockDeSerializedModule).getScripts();
+        doReturn(resourceLoaders).when(mockDeSerializedModule1).getScripts();
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,

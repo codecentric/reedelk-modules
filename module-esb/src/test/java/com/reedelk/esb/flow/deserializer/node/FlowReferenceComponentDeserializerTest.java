@@ -1,7 +1,7 @@
 package com.reedelk.esb.flow.deserializer.node;
 
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.esb.module.DeserializedModule;
+import com.reedelk.esb.module.DeserializedModule1;
 import com.reedelk.esb.test.utils.ComponentsBuilder;
 import com.reedelk.runtime.component.FlowReference;
 import org.json.JSONObject;
@@ -27,9 +27,9 @@ class FlowReferenceComponentDeserializerTest extends AbstractDeserializerTest {
         Set<JSONObject> subflows = new HashSet<>();
         subflows.add(mySubflowDefinition);
 
-        DeserializedModule deserializedModule = new DeserializedModule(emptySet(), subflows, emptySet(), emptySet(), emptySet());
+        DeserializedModule1 deserializedModule1 = new DeserializedModule1(emptySet(), subflows, emptySet(), emptySet(), emptySet());
 
-        doReturn(deserializedModule).when(context).deserializedModule();
+        doReturn(deserializedModule1).when(context).deserializedModule();
 
         JSONObject componentDefinition = ComponentsBuilder.forComponent(FlowReference.class)
                 .with("ref", "subflow1")

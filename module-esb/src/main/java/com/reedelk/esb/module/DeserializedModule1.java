@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import java.util.Collection;
 import java.util.Set;
 
-public class DeserializedModule {
+public class DeserializedModule1 {
 
     private final Set<JSONObject> flows;
     private final Set<JSONObject> subflows;
@@ -15,11 +15,11 @@ public class DeserializedModule {
     private final Collection<ResourceLoader> scripts;
     private final Collection<ResourceLoader> resources;
 
-    public DeserializedModule(Set<JSONObject> flows,
-                              Set<JSONObject> subflows,
-                              Collection<JSONObject> configurations,
-                              Collection<ResourceLoader> scripts,
-                              Collection<ResourceLoader> resources) {
+    public DeserializedModule1(Set<JSONObject> flows,
+                               Set<JSONObject> subflows,
+                               Collection<JSONObject> configurations,
+                               Collection<ResourceLoader> scripts,
+                               Collection<ResourceLoader> resources) {
         this.flows = flows;
         this.scripts = scripts;
         this.subflows = subflows;

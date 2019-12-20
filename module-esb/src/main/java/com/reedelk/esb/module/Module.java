@@ -156,7 +156,7 @@ public class Module implements State {
         ModuleStateLogger.log(this);
     }
 
-    public DeserializedModule deserialize() {
+    public DeserializedModule1 deserialize() {
         return deserializer.deserialize();
     }
 

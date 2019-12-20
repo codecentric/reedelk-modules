@@ -11,7 +11,7 @@ import com.reedelk.esb.flow.deserializer.typefactory.ResourceResolverDecorator;
 import com.reedelk.esb.flow.deserializer.typefactory.ScriptResolverDecorator;
 import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextDecorator;
 import com.reedelk.esb.graph.ExecutionGraph;
-import com.reedelk.esb.module.DeserializedModule;
+import com.reedelk.esb.module.DeserializedModule1;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.module.state.ModuleState;
@@ -68,7 +68,7 @@ public class ModuleBuild extends AbstractStep<Module, Module> {
         return module;
     }
 
-    private Flow buildFlow(Bundle bundle, JSONObject flowDefinition, DeserializedModule deserializedModule) {
+    private Flow buildFlow(Bundle bundle, JSONObject flowDefinition, DeserializedModule1 deserializedModule1) {
         ExecutionGraph flowGraph = ExecutionGraph.build();
         FlowExecutorEngine executionEngine = new FlowExecutorEngine(flowGraph);
 
@@ -77,8 +77,8 @@ public class ModuleBuild extends AbstractStep<Module, Module> {
         long moduleId = module.id();
 
         TypeFactory typeFactory = TypeFactory.getInstance();
-        typeFactory = new ResourceResolverDecorator(typeFactory, deserializedModule, module);
-        typeFactory = new ScriptResolverDecorator(typeFactory, deserializedModule);
+        typeFactory = new ResourceResolverDecorator(typeFactory, deserializedModule1, module);
+        typeFactory = new ScriptResolverDecorator(typeFactory, deserializedModule1);
         typeFactory = new ConfigPropertyDecorator(configurationService(), typeFactory);
         typeFactory = new TypeFactoryContextDecorator(typeFactory, moduleId);
 
@@ -86,7 +86,7 @@ public class ModuleBuild extends AbstractStep<Module, Module> {
         String flowTitle = hasTitle(flowDefinition) ? title(flowDefinition) : null;
 
         try {
-            FlowDeserializerContext context = new FlowDeserializerContext(bundle, modulesManager, deserializedModule, typeFactory);
+            FlowDeserializerContext context = new FlowDeserializerContext(bundle, modulesManager, deserializedModule1, typeFactory);
             FlowDeserializer flowDeserializer = new FlowDeserializer(context);
             flowDeserializer.deserialize(flowGraph, flowDefinition);
             return new Flow(module.id(), module.name(), flowId, flowTitle, flowGraph, executionEngine);

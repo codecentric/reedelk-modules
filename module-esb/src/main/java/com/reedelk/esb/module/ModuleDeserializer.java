@@ -2,6 +2,6 @@ package com.reedelk.esb.module;
 
 public interface ModuleDeserializer {
 
-    DeserializedModule deserialize();
+    DeserializedModule1 deserialize();
 
 }

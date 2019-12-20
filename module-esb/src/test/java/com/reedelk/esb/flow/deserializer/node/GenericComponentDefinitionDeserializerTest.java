@@ -3,7 +3,7 @@ package com.reedelk.esb.flow.deserializer.node;
 import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
 import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextDecorator;
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.esb.module.DeserializedModule;
+import com.reedelk.esb.module.DeserializedModule1;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.test.utils.*;
 import com.reedelk.runtime.api.component.Component;
@@ -50,7 +50,7 @@ class GenericComponentDefinitionDeserializerTest {
     @Mock
     private ModulesManager mockModulesManager;
     @Mock
-    private DeserializedModule mockDeSerializedModule;
+    private DeserializedModule1 mockDeSerializedModule1;
 
     private FlowDeserializerContext context;
     private GenericComponentDefinitionDeserializer deserializer;
@@ -59,7 +59,7 @@ class GenericComponentDefinitionDeserializerTest {
     void setUp() {
         TypeFactory factory = TypeFactory.getInstance();
         factory = new TypeFactoryContextDecorator(factory, testModuleId);
-        context = spy(new FlowDeserializerContext(mockBundle, mockModulesManager, mockDeSerializedModule, factory));
+        context = spy(new FlowDeserializerContext(mockBundle, mockModulesManager, mockDeSerializedModule1, factory));
         deserializer = new GenericComponentDefinitionDeserializer(mockExecutionNode, context);
     }
 

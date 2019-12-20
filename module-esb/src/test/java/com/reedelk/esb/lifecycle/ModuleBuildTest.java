@@ -5,7 +5,7 @@ import com.reedelk.esb.component.RouterWrapper;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.graph.ExecutionNode.ReferencePair;
-import com.reedelk.esb.module.DeserializedModule;
+import com.reedelk.esb.module.DeserializedModule1;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModuleDeserializer;
 import com.reedelk.esb.module.ModulesManager;
@@ -208,8 +208,8 @@ class ModuleBuildTest {
         Set<JSONObject> flows = new HashSet<>();
         flows.add(FLOW_WITH_COMPONENTS.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
-        doReturn(deserializedModule).when(deserializer).deserialize();
+        DeserializedModule1 deserializedModule1 = new DeserializedModule1(flows, emptySet(), emptySet(), emptySet(), emptySet());
+        doReturn(deserializedModule1).when(deserializer).deserialize();
 
         mockComponentWithServiceReference(TestInboundComponent.class);
         mockComponentWithServiceReference(TestComponent.class);
@@ -262,8 +262,8 @@ class ModuleBuildTest {
         flows.add(FLOW_WITH_NOT_WELL_FORMED_FORK.parse());
         flows.add(FLOW_WITH_NOT_WELL_FORMED_ROUTER.parse());
 
-        DeserializedModule deserializedModule = new DeserializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
-        doReturn(deserializedModule).when(deserializer).deserialize();
+        DeserializedModule1 deserializedModule1 = new DeserializedModule1(flows, emptySet(), emptySet(), emptySet(), emptySet());
+        doReturn(deserializedModule1).when(deserializer).deserialize();
 
         mockComponentWithServiceReference(AnotherInboundTestComponent.class);
         mockComponentWithServiceReference(TestInboundComponent.class);
