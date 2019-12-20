@@ -22,12 +22,12 @@ import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 
 public class ServicesManager {
 
-    private static final Dictionary<String, ?> NO_PROPERTIES = new Hashtable<>();
+    private static final Dictionary NO_PROPERTIES = new Properties();
 
     private final EventListener eventListener;
     private final SystemProperty systemProperty;
@@ -72,28 +72,28 @@ public class ServicesManager {
         configurationService = new DefaultConfigurationService(configurationAdmin, systemProperty);
         configurationService.initialize();
         ServiceRegistration<ConfigurationService> registration =
-                context.registerService(ConfigurationService.class, configurationService, NO_PROPERTIES);
+                registerService(context, ConfigurationService.class, configurationService);
         registeredServices.add(registration);
     }
 
     private void registerScriptEngineService(BundleContext context) {
         ScriptEngine scriptEngineService = ScriptEngine.getInstance();
         ServiceRegistration<ScriptEngineService> registration =
-                context.registerService(ScriptEngineService.class, scriptEngineService, NO_PROPERTIES);
+                registerService(context, ScriptEngineService.class, scriptEngineService);
         registeredServices.add(registration);
     }
 
     private void registerHotSwapService(BundleContext context) {
         DefaultHotSwapService service = new DefaultHotSwapService(context, hotSwapListener);
         ServiceRegistration<HotSwapService> registration =
-                context.registerService(HotSwapService.class, service, NO_PROPERTIES);
+                registerService(context, HotSwapService.class, service);
         registeredServices.add(registration);
     }
 
     private void registerModuleService(BundleContext context) {
         DefaultModuleService service = new DefaultModuleService(context, modulesManager, systemProperty, eventListener);
         ServiceRegistration<ModuleService> registration =
-                context.registerService(ModuleService.class, service, NO_PROPERTIES);
+                registerService(context, ModuleService.class, service);
         registeredServices.add(registration);
     }
 
@@ -101,14 +101,19 @@ public class ServicesManager {
         ScriptEngine scriptEngineService = ScriptEngine.getInstance();
         ResourceService service = new DefaultResourceService(scriptEngineService);
         ServiceRegistration<ResourceService> registration =
-                context.registerService(ResourceService.class, service, NO_PROPERTIES);
+                registerService(context, ResourceService.class, service);
         registeredServices.add(registration);
     }
 
     private void registerConverterService(BundleContext context) {
         ConverterService service = DefaultConverterService.getInstance();
         ServiceRegistration<ConverterService> registration =
-                context.registerService(ConverterService.class, service, NO_PROPERTIES);
+                registerService(context, ConverterService.class, service);
         registeredServices.add(registration);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> ServiceRegistration<T> registerService(BundleContext context, Class<T> serviceClazz, T serviceImplementation) {
+        return context.registerService(serviceClazz, serviceImplementation, NO_PROPERTIES);
     }
 }
