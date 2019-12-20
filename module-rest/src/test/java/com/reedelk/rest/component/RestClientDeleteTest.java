@@ -35,7 +35,7 @@ class RestClientDeleteTest extends RestClientAbstractTest {
                         .withStatus(200)
                         .withBody(expectedResponseBody)));
 
-        Message payload = MessageBuilder.get().json(requestBody).build();
+        Message payload = MessageBuilder.get().withJson(requestBody).build();
 
         // Expect
         AssertHttpResponse

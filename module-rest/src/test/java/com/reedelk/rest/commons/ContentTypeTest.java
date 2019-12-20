@@ -15,7 +15,7 @@ class ContentTypeTest {
     @Test
     void shouldReturnCorrectContentType() {
         // Given
-        Message messageWithJson = MessageBuilder.get().json("{}").build();
+        Message messageWithJson = MessageBuilder.get().withJson("{}").build();
 
         // When
         Optional<String> maybeContentType = ContentType.from(messageWithJson);

@@ -8,7 +8,7 @@ public class ProxyResourceText extends ResourceText {
     private final Publisher<String> data;
 
     public ProxyResourceText(ResourceText original, Publisher<String> data) {
-        super(original.getResourcePath(), original.getContext());
+        super(original.path());
         this.data = data;
     }
 

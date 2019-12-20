@@ -45,7 +45,7 @@ class RestClientPostTest extends RestClientAbstractTest {
                             .withHeader(CONTENT_TYPE, TEXT.toString())));
 
 
-            Message payload = MessageBuilder.get().json(requestBody).build();
+            Message payload = MessageBuilder.get().withJson(requestBody).build();
 
             // Expect
             AssertHttpResponse
@@ -71,7 +71,7 @@ class RestClientPostTest extends RestClientAbstractTest {
                             .withBody(expectedResponseBody)
                             .withHeader(CONTENT_TYPE, TEXT.toString())));
 
-            Message payload = MessageBuilder.get().text(requestBody).build();
+            Message payload = MessageBuilder.get().withText(requestBody).build();
 
             // Expect
             AssertHttpResponse
@@ -97,7 +97,7 @@ class RestClientPostTest extends RestClientAbstractTest {
                             .withBody(expectedResponseBody)
                             .withHeader(CONTENT_TYPE, TEXT.toString())));
 
-            Message payload = MessageBuilder.get().binary(requestBody).build();
+            Message payload = MessageBuilder.get().withBinary(requestBody).build();
 
             // Expect
             AssertHttpResponse
@@ -154,7 +154,7 @@ class RestClientPostTest extends RestClientAbstractTest {
                     .when(scriptEngine)
                     .evaluate(eq(body), any(FlowContext.class), any(Message.class));
 
-            Message message = MessageBuilder.get().text("my payload").build();
+            Message message = MessageBuilder.get().withText("my payload").build();
 
             givenThat(post(urlEqualTo(PATH))
                     .withRequestBody(equalTo("hello this is a script"))

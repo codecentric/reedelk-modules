@@ -34,7 +34,7 @@ public class ModuleUninstall implements ProcessorSync {
 
         String resultJson = delete(payload);
 
-        return MessageBuilder.get().json(resultJson).build();
+        return MessageBuilder.get().withJson(resultJson).build();
     }
 
     private String delete(String json) {

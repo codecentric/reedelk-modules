@@ -54,6 +54,9 @@ public class ScriptResolverDecorator implements TypeFactory {
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(script.getScriptPath()))
                 .findFirst()
                 .flatMap(resourceLoader -> Optional.of(new ProxyScript(script, resourceLoader.bodyAsString())))
-                .orElseThrow(() -> new ESBException(new ResourceNotFound(SCRIPT_SOURCE_NOT_FOUND.format(script.getScriptPath()))));
+                .orElseThrow(() -> {
+                    String message = SCRIPT_SOURCE_NOT_FOUND.format(script.getScriptPath());
+                    return new ResourceNotFound(message);
+                });
     }
 }

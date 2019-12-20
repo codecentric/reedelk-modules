@@ -198,7 +198,7 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         Publisher<MessageAndContext> publisher = Mono.just(event).handle((messageAndContext, sink) -> {
             Message message = messageAndContext.getMessage();
             String content = message.payload();
-            Message newMessage = MessageBuilder.get().text(content + "-handler").build();
+            Message newMessage = MessageBuilder.get().withText(content + "-handler").build();
             messageAndContext.replaceWith(newMessage);
             sink.next(messageAndContext);
             numberOfExecutions.incrementAndGet();
@@ -220,7 +220,7 @@ class TryCatchExecutorTest extends AbstractExecutionTest {
         public Message apply(Message message, FlowContext flowContext) {
             Exception thrown = (Exception) message.getContent().data();
             String outputString = thrown.getMessage();
-            return MessageBuilder.get().text(outputString).build();
+            return MessageBuilder.get().withText(outputString).build();
         }
     }
 }

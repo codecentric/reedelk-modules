@@ -204,7 +204,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
             String joined = messages.stream()
                     .map(message -> (String) message.getContent().data())
                     .collect(joining(","));
-            return MessageBuilder.get().text(joined).build();
+            return MessageBuilder.get().withText(joined).build();
         }
     }
 

@@ -1,9 +1,9 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
-import com.reedelk.esb.exception.FileNotFoundException;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.runtime.api.resource.ResourceDynamic;
+import com.reedelk.runtime.api.resource.ResourceNotFound;
 import org.reactivestreams.Publisher;
 
 import java.util.Collection;
@@ -31,7 +31,7 @@ public class ProxyResourceDynamic extends ResourceDynamic {
                 .orElseThrow(() -> {
                     // The file at the given path was not found in the Module bundle.
                     String message = FILE_NOT_FOUND_ERROR.format(evaluatedPath, module.id(), module.name());
-                    throw new FileNotFoundException(message);
+                    throw new ResourceNotFound(message);
                 });
     }
 }

@@ -386,7 +386,7 @@ class RestListenerGetTest extends RestListenerAbstractTest {
     void shouldReturnCorrectContentType() throws IOException {
         // Given
         String json = "{\"name\":\"John\"}";
-        Message responseMessage = MessageBuilder.get().json(json).build();
+        Message responseMessage = MessageBuilder.get().withJson(json).build();
 
         DynamicByteArray responseBody = DynamicByteArray.from("#[message.payload()]", moduleContext);
         Response listenerResponse = new Response();

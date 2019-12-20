@@ -60,7 +60,7 @@ class RestClientStreamingModeTest extends RestClientAbstractTest {
                             .withStatus(200)));
 
 
-            Message payload = MessageBuilder.get().json(requestBody).build();
+            Message payload = MessageBuilder.get().withJson(requestBody).build();
 
             // Expect
             AssertHttpResponse.isSuccessful(component, payload, flowContext);

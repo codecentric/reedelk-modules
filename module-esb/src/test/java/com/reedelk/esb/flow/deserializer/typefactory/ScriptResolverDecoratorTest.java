@@ -3,6 +3,7 @@ package com.reedelk.esb.flow.deserializer.typefactory;
 import com.reedelk.esb.module.DeserializedModule;
 import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.script.Script;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
@@ -83,7 +84,7 @@ class ScriptResolverDecoratorTest {
         doReturn(resourceLoaders).when(mockDeSerializedModule).getScriptResources();
 
         // When
-        ESBException thrown = assertThrows(ESBException.class,
+        ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
                 () -> decorator.create(Script.class, componentDefinition, propertyName, factoryContext));
 
         // Then

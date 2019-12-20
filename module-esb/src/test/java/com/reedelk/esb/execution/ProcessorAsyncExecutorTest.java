@@ -134,7 +134,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
                 } catch (InterruptedException e) {
                     // nothing to do
                 }
-                callback.onResult(MessageBuilder.get().text("hello").build(), flowContext);
+                callback.onResult(MessageBuilder.get().withText("hello").build(), flowContext);
             });
         }
     }
@@ -159,7 +159,7 @@ class ProcessorAsyncExecutorTest extends AbstractExecutionTest {
             new Thread(() -> {
                 String inputString = (String) input.getContent().data();
                 String outputString = inputString + postfix;
-                Message out = MessageBuilder.get().text(outputString).build();
+                Message out = MessageBuilder.get().withText(outputString).build();
                 callback.onResult(out, flowContext);
             }).start();
         }

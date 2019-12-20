@@ -37,7 +37,7 @@ class DynamicMapEvaluatorTest {
     void shouldCorrectlyEvaluateMapWithScriptAndTextAndNumericValues() {
         // Given
         MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
-        Message message = MessageBuilder.get().text("test").attributes(attributes).build();
+        Message message = MessageBuilder.get().withText("test").attributes(attributes).build();
 
         DynamicStringMap dynamicMap = DynamicStringMap.from(of(
                 "script", "#[message.attributes.propErty1]",
@@ -81,7 +81,7 @@ class DynamicMapEvaluatorTest {
     @Test
     void shouldCorrectlyEvaluateMapWithValueContainingQuotes() {
         // Given
-        Message message = MessageBuilder.get().text("test").build();
+        Message message = MessageBuilder.get().withText("test").build();
         DynamicStringMap dynamicMap = DynamicStringMap.from(
                 of("text", "a simple text 'with quotes'"), moduleContext);
 
@@ -134,7 +134,7 @@ class DynamicMapEvaluatorTest {
     void shouldCorrectlyEvaluateMapWithEmptyDynamicScriptValue() {
         // Given
         MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
-        Message message = MessageBuilder.get().text("test").attributes(attributes).build();
+        Message message = MessageBuilder.get().withText("test").attributes(attributes).build();
 
         DynamicStringMap dynamicMap = DynamicStringMap.from(of("Key1", "#[]"), moduleContext);
 
@@ -149,7 +149,7 @@ class DynamicMapEvaluatorTest {
     void shouldCorrectlyEvaluateMapWithEmptyValue() {
         // Given
         MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
-        Message message = MessageBuilder.get().text("test").attributes(attributes).build();
+        Message message = MessageBuilder.get().withText("test").attributes(attributes).build();
 
         DynamicStringMap dynamicMap = DynamicStringMap.from(of("Key1", ""), moduleContext);
 
@@ -164,7 +164,7 @@ class DynamicMapEvaluatorTest {
     void shouldCorrectlyEvaluateMapWithEmptyKey() {
         // Given
         MessageAttributes attributes = new DefaultMessageAttributes(TestComponent.class, of("property1", "test1"));
-        Message message = MessageBuilder.get().text("test").attributes(attributes).build();
+        Message message = MessageBuilder.get().withText("test").attributes(attributes).build();
 
         DynamicStringMap dynamicMap = DynamicStringMap.from(of(
                 "", "myValue", "key2", "value2"),

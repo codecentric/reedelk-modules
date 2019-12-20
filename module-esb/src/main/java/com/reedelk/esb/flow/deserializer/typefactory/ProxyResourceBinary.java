@@ -8,7 +8,7 @@ public class ProxyResourceBinary extends ResourceBinary {
     private final Publisher<byte[]> data;
 
     public ProxyResourceBinary(ResourceBinary original, Publisher<byte[]> data) {
-        super(original.getResourcePath(), original.getContext());
+        super(original.path());
         this.data = data;
     }
 

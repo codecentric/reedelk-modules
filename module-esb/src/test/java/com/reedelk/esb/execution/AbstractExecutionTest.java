@@ -27,7 +27,7 @@ abstract class AbstractExecutionTest {
     }
 
     MessageAndContext newEventWithContent(String content) {
-        Message message = MessageBuilder.get().text(content).build();
+        Message message = MessageBuilder.get().withText(content).build();
         return new NoActionResultMessageAndContext(message);
     }
 
@@ -91,7 +91,7 @@ abstract class AbstractExecutionTest {
         public Message apply(Message message, FlowContext flowContext) {
             String inputString = (String) message.getContent().data();
             String outputString = inputString + postfix;
-            return MessageBuilder.get().text(outputString).build();
+            return MessageBuilder.get().withText(outputString).build();
         }
     }
 }

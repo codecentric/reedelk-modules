@@ -62,7 +62,7 @@ class MessageHttpResponseMapperTest {
                 // Given
                 DynamicInteger status = DynamicInteger.from("201", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithStatus(status);
-                Message message = MessageBuilder.get().text("a body").build();
+                Message message = MessageBuilder.get().withText("a body").build();
 
                 doReturn(Optional.of(201))
                         .when(scriptEngine).evaluate(status, flowContext, message);
@@ -79,7 +79,7 @@ class MessageHttpResponseMapperTest {
                 // Given
                 DynamicInteger status = DynamicInteger.from("#[myStatusCodeVar]", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithStatus(status);
-                Message message = MessageBuilder.get().text("a body").build();
+                Message message = MessageBuilder.get().withText("a body").build();
 
                 doReturn(Optional.of(201))
                         .when(scriptEngine)
@@ -97,7 +97,7 @@ class MessageHttpResponseMapperTest {
                 // Given
                 DynamicInteger status = null;
                 MessageHttpResponseMapper mapper = newMapperWithStatus(status);
-                Message message = MessageBuilder.get().text("a body").build();
+                Message message = MessageBuilder.get().withText("a body").build();
 
                 doReturn(Optional.empty())
                         .when(scriptEngine).evaluate(status, flowContext, message);
@@ -119,7 +119,7 @@ class MessageHttpResponseMapperTest {
                 // Given
                 DynamicByteArray body = DynamicByteArray.from("#[message.payload()]", moduleContext);
                 MessageHttpResponseMapper mapper = newMapperWithBody(body);
-                Message message = MessageBuilder.get().text("my text body").build();
+                Message message = MessageBuilder.get().withText("my text body").build();
 
                 doReturn(new HashMap<>())
                         .when(scriptEngine)

@@ -110,7 +110,7 @@ class ScriptEvaluatorTest {
         void shouldCorrectlyEvaluateMessagePayload() {
             // Given
             Script payloadScript = scriptFromBody(wrapAsTestFunction("return message.payload()"));
-            Message message = MessageBuilder.get().text("my payload as text").build();
+            Message message = MessageBuilder.get().withText("my payload as text").build();
 
             // When
             Optional<String> actual = evaluator.evaluate(payloadScript, String.class, context, message);
@@ -138,9 +138,9 @@ class ScriptEvaluatorTest {
     class ScriptWithMessagesAndContext {
 
         private final List<Message> messages = asList(
-                MessageBuilder.get().text("one").build(),
-                MessageBuilder.get().text("two").build(),
-                MessageBuilder.get().text("three").build());
+                MessageBuilder.get().withText("one").build(),
+                MessageBuilder.get().withText("two").build(),
+                MessageBuilder.get().withText("three").build());
 
         @Test
         void shouldCorrectlyEvaluateScriptAndReturnOptional() {
