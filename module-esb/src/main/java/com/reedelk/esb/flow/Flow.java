@@ -1,5 +1,6 @@
 package com.reedelk.esb.flow;
 
+import com.reedelk.esb.commons.CorrelationID;
 import com.reedelk.esb.execution.FlowExecutorEngine;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
@@ -136,7 +137,14 @@ public class Flow implements InboundEventListener {
 
             String error = FlowErrorMessage.DEFAULT.format(moduleId, moduleName, flowId, flowTitle,
                     throwable.getClass().getName(), throwable.getMessage());
-            FlowExecutionException wrapped = new FlowExecutionException(moduleId, moduleName, flowId, flowTitle, error, throwable);
+            FlowExecutionException wrapped = new FlowExecutionException(
+                    moduleId,
+                    moduleName,
+                    flowId,
+                    flowTitle,
+                    CorrelationID.getOrNull(flowContext),
+                    error,
+                    throwable);
 
             if (logger.isErrorEnabled()) {
                 logger.error(StackTraceUtils.asString(wrapped));

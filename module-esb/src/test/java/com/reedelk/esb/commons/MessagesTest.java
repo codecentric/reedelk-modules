@@ -16,6 +16,7 @@ class MessagesTest {
                 "my-module-name",
                 "aabbcc",
                 "My flow",
+                "aabb-cc1122-3344-ff",
                 "com.reedelk.esb.MyException",
                 "An error has occurred");
 
@@ -23,4 +24,21 @@ class MessagesTest {
         JSONAssert.assertEquals(TestMessage.FLOW_ERROR_MESSAGE_DEFAULT.get(), actualMessageJson, true);
     }
 
+    @Test
+    void shouldCorrectlySerializeFlowErrorMessageWhenCorrelationIdIsNull() {
+        // When
+        String actualMessageJson = FlowErrorMessage.DEFAULT.format(
+                10L,
+                "my-module-name",
+                "aabbcc",
+                "My flow",
+                null,
+                "com.reedelk.esb.MyException",
+                "An error has occurred");
+
+        // Then
+        JSONAssert.assertEquals(
+                TestMessage.FLOW_ERROR_MESSAGE_DEFAULT_WITH_NULL_CORRELATION_ID.get(),
+                actualMessageJson, true);
+    }
 }

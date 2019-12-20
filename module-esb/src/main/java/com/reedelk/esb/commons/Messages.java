@@ -31,8 +31,9 @@ public class Messages {
                     (String) args[2],
                     (String) args[3],
                     (String) args[4],
-                    (String) args[5]),
-                    new String[] { moduleId, moduleName, flowId, flowTitle, errorType, errorMessage })
+                    (String) args[5],
+                    (String) args[6]),
+                    new String[] { moduleId, moduleName, flowId, flowTitle, correlationId, errorType, errorMessage })
                     .toString(2);
         }
     }
