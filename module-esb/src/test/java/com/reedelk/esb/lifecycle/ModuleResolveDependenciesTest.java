@@ -1,7 +1,7 @@
 package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.component.ComponentRegistry;
-import com.reedelk.esb.module.DeserializedModule1;
+import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModuleDeserializer;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -57,8 +57,8 @@ class ModuleResolveDependenciesTest {
     @Test
     void shouldReturnModuleWithStateInstalledWhenNoFlowsArePresent() {
         // Given
-        DeserializedModule1 deserializedModule1 = new DeserializedModule1(emptySet(), emptySet(), emptySet(), emptySet(), emptySet());
-        doReturn(deserializedModule1).when(deserializer).deserialize();
+        DeSerializedModule deSerializedModule = new DeSerializedModule(emptySet(), emptySet(), emptySet(), emptySet(), emptySet());
+        doReturn(deSerializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);
@@ -78,8 +78,8 @@ class ModuleResolveDependenciesTest {
         Set<JSONObject> flows = new HashSet<>();
         flows.add(FLOW_WITH_ROUTER.parse());
 
-        DeserializedModule1 deserializedModule1 = new DeserializedModule1(flows, emptySet(), emptySet(), emptySet(), emptySet());
-        doReturn(deserializedModule1).when(deserializer).deserialize();
+        DeSerializedModule deSerializedModule = new DeSerializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
+        doReturn(deSerializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);
@@ -109,8 +109,8 @@ class ModuleResolveDependenciesTest {
         Set<JSONObject> subFlows = new HashSet<>();
         subFlows.add(SUBFLOW_WITH_COMPONENTS.parse());
 
-        DeserializedModule1 deserializedModule1 = new DeserializedModule1(flows, subFlows, emptySet(), emptySet(), emptySet());
-        doReturn(deserializedModule1).when(deserializer).deserialize();
+        DeSerializedModule deSerializedModule = new DeSerializedModule(flows, subFlows, emptySet(), emptySet(), emptySet());
+        doReturn(deSerializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);
@@ -139,8 +139,8 @@ class ModuleResolveDependenciesTest {
         Set<JSONObject> config = new HashSet<>();
         config.add(CONFIG.parse());
 
-        DeserializedModule1 deserializedModule1 = new DeserializedModule1(flows, emptySet(), config, emptySet(), emptySet());
-        doReturn(deserializedModule1).when(deserializer).deserialize();
+        DeSerializedModule deSerializedModule = new DeSerializedModule(flows, emptySet(), config, emptySet(), emptySet());
+        doReturn(deSerializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);
@@ -160,8 +160,8 @@ class ModuleResolveDependenciesTest {
         Set<JSONObject> flows = new HashSet<>();
         flows.add(FLOW_WITH_ROUTER.parse());
 
-        DeserializedModule1 deserializedModule1 = new DeserializedModule1(flows, emptySet(), emptySet(), emptySet(), emptySet());
-        doReturn(deserializedModule1).when(deserializer).deserialize();
+        DeSerializedModule deSerializedModule = new DeSerializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
+        doReturn(deSerializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);
@@ -194,8 +194,8 @@ class ModuleResolveDependenciesTest {
         Set<JSONObject> flows = new HashSet<>();
         flows.add(FLOW_WITH_ROUTER.parse());
 
-        DeserializedModule1 deserializedModule1 = new DeserializedModule1(flows, emptySet(), emptySet(), emptySet(), emptySet());
-        doReturn(deserializedModule1).when(deserializer).deserialize();
+        DeSerializedModule deSerializedModule = new DeSerializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
+        doReturn(deSerializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(aModule);

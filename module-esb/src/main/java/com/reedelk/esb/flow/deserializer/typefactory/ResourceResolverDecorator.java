@@ -1,6 +1,6 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
-import com.reedelk.esb.module.DeserializedModule1;
+import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.runtime.api.commons.ByteArrayStream;
 import com.reedelk.runtime.api.resource.ResourceBinary;
@@ -21,12 +21,12 @@ public class ResourceResolverDecorator implements TypeFactory {
 
     private final Module module;
     private final TypeFactory delegate;
-    private final DeserializedModule1 deserializedModule1;
+    private final DeSerializedModule deSerializedModule;
 
-    public ResourceResolverDecorator(TypeFactory delegate, DeserializedModule1 deserializedModule1, Module module) {
+    public ResourceResolverDecorator(TypeFactory delegate, DeSerializedModule deSerializedModule, Module module) {
         this.module = module;
         this.delegate = delegate;
-        this.deserializedModule1 = deserializedModule1;
+        this.deSerializedModule = deSerializedModule;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ResourceResolverDecorator implements TypeFactory {
             return (T) loadResourceBinary((ResourceBinary) result);
         }
         if  (result instanceof ResourceDynamic) {
-            return (T) new ProxyResourceDynamic((ResourceDynamic) result, deserializedModule1.getResources(), module);
+            return (T) new ProxyResourceDynamic((ResourceDynamic) result, deSerializedModule.getResources(), module);
         }
 
         return result;
@@ -58,7 +58,7 @@ public class ResourceResolverDecorator implements TypeFactory {
     }
 
     private ResourceText loadResourceText(ResourceText resource) {
-        return deserializedModule1.getResources()
+        return deSerializedModule.getResources()
                 .stream()
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(resource.path()))
                 .findFirst()
@@ -71,7 +71,7 @@ public class ResourceResolverDecorator implements TypeFactory {
     }
 
     private ResourceBinary loadResourceBinary(ResourceBinary resource) {
-        return deserializedModule1.getResources()
+        return deSerializedModule.getResources()
                 .stream()
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(resource.path()))
                 .findFirst()

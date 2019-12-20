@@ -1,6 +1,6 @@
 package com.reedelk.esb.lifecycle;
 
-import com.reedelk.esb.module.DeserializedModule1;
+import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModuleDeserializer;
 import com.reedelk.esb.module.ModulesManager;
@@ -59,8 +59,8 @@ class ModuleValidateTest {
         flows.add(FLOW_WITH_COMPONENTS.parse()); // by adding the same flow twice we simulate two flows with the same ID.
         flows.add(FLOW_WITH_COMPONENTS.parse());
 
-        DeserializedModule1 deserializedModule1 = new DeserializedModule1(flows, emptySet(), emptySet(), emptySet(), emptySet());
-        doReturn(deserializedModule1).when(deserializer).deserialize();
+        DeSerializedModule deSerializedModule = new DeSerializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
+        doReturn(deSerializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(inputModule);
@@ -76,8 +76,8 @@ class ModuleValidateTest {
 
         Set<JSONObject> flows = Collections.singleton(FLOW_WITHOUT_ID.parse());
 
-        DeserializedModule1 deserializedModule1 = new DeserializedModule1(flows, emptySet(), emptySet(), emptySet(), emptySet());
-        doReturn(deserializedModule1).when(deserializer).deserialize();
+        DeSerializedModule deSerializedModule = new DeSerializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
+        doReturn(deSerializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(inputModule);
@@ -95,8 +95,8 @@ class ModuleValidateTest {
         flows.add(FLOW_WITH_COMPONENTS.parse());
         flows.add(FLOW_WITH_ROUTER.parse());
 
-        DeserializedModule1 deserializedModule1 = new DeserializedModule1(flows, emptySet(), emptySet(), emptySet(), emptySet());
-        doReturn(deserializedModule1).when(deserializer).deserialize();
+        DeSerializedModule deSerializedModule = new DeSerializedModule(flows, emptySet(), emptySet(), emptySet(), emptySet());
+        doReturn(deSerializedModule).when(deserializer).deserialize();
 
         // When
         Module module = step.run(inputModule);

@@ -2,7 +2,7 @@ package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.component.ComponentRegistry;
 import com.reedelk.esb.exception.ModuleDeserializationException;
-import com.reedelk.esb.module.DeserializedModule1;
+import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.runtime.api.commons.StackTraceUtils;
@@ -74,7 +74,7 @@ public abstract class AbstractStep<I, O> implements Step<I, O> {
      * @param module the module to be de-serialized.
      * @return an object containing the de-serialized flows, subflows and configurations.
      */
-    protected Optional<DeserializedModule1> deserialize(Module module) {
+    protected Optional<DeSerializedModule> deserialize(Module module) {
         try {
             return Optional.of(module.deserialize());
         } catch (Exception exception) {

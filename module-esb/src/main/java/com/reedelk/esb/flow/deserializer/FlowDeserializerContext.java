@@ -2,7 +2,7 @@ package com.reedelk.esb.flow.deserializer;
 
 
 import com.reedelk.esb.graph.ExecutionNode;
-import com.reedelk.esb.module.DeserializedModule1;
+import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.commons.TypeFactory;
@@ -13,16 +13,16 @@ public class FlowDeserializerContext {
     private final Bundle bundle;
     private final TypeFactory typeFactory;
     private final ModulesManager modulesManager;
-    private final DeserializedModule1 deserializedModule1;
+    private final DeSerializedModule deSerializedModule;
 
     public FlowDeserializerContext(Bundle bundle,
                                    ModulesManager modulesManager,
-                                   DeserializedModule1 deserializedModule1,
+                                   DeSerializedModule deSerializedModule,
                                    TypeFactory typeFactory) {
         this.bundle = bundle;
         this.typeFactory = typeFactory;
         this.modulesManager = modulesManager;
-        this.deserializedModule1 = deserializedModule1;
+        this.deSerializedModule = deSerializedModule;
     }
 
     public ExecutionNode instantiateComponent(Class clazz) {
@@ -37,8 +37,8 @@ public class FlowDeserializerContext {
         return modulesManager.instantiateImplementor(bundle.getBundleContext(), executionNode, implementorName);
     }
 
-    public DeserializedModule1 deserializedModule() {
-        return deserializedModule1;
+    public DeSerializedModule deserializedModule() {
+        return deSerializedModule;
     }
 
     public TypeFactory typeFactory() {

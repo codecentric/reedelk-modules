@@ -1,6 +1,6 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
-import com.reedelk.esb.module.DeserializedModule1;
+import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.script.Script;
@@ -18,11 +18,11 @@ import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 public class ScriptResolverDecorator implements TypeFactory {
 
     private final TypeFactory delegate;
-    private final DeserializedModule1 deserializedModule1;
+    private final DeSerializedModule deSerializedModule;
 
-    public ScriptResolverDecorator(TypeFactory delegate, DeserializedModule1 deserializedModule1) {
+    public ScriptResolverDecorator(TypeFactory delegate, DeSerializedModule deSerializedModule) {
         this.delegate = delegate;
-        this.deserializedModule1 = deserializedModule1;
+        this.deSerializedModule = deSerializedModule;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ScriptResolverDecorator implements TypeFactory {
         if (isBlank(script.getScriptPath())) {
             throw new ESBException(SCRIPT_SOURCE_EMPTY.format());
         }
-        return deserializedModule1.getScripts()
+        return deSerializedModule.getScripts()
                 .stream()
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(script.getScriptPath()))
                 .findFirst()

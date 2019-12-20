@@ -1,6 +1,6 @@
 package com.reedelk.esb.module.deserializer;
 
-import com.reedelk.esb.module.DeserializedModule1;
+import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.ModuleDeserializer;
 import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.runtime.commons.FileUtils;
@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toSet;
 abstract class AbstractModuleDeserializer implements ModuleDeserializer {
 
     @Override
-    public DeserializedModule1 deserialize() {
+    public DeSerializedModule deserialize() {
 
         Set<JSONObject> flows = objectsWithRoot(
                 getResources(Flow.RESOURCE_DIRECTORY, FLOW.value()),
@@ -35,7 +35,7 @@ abstract class AbstractModuleDeserializer implements ModuleDeserializer {
 
         Collection<ResourceLoader> resources = getResources();
 
-        return new DeserializedModule1(flows, subflows, configurations, scripts, resources);
+        return new DeSerializedModule(flows, subflows, configurations, scripts, resources);
     }
 
     protected abstract List<URL> getResources(String directory);

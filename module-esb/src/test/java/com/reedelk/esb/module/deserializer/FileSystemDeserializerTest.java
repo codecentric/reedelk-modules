@@ -1,7 +1,7 @@
 package com.reedelk.esb.module.deserializer;
 
 
-import com.reedelk.esb.module.DeserializedModule1;
+import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.esb.test.utils.FileUtils;
 import com.reedelk.esb.test.utils.TmpDir;
@@ -45,10 +45,10 @@ class FileSystemDeserializerTest {
         FileSystemDeserializer deserializer = new FileSystemDeserializer(projectDir.toString());
 
         // When
-        DeserializedModule1 deserializedModule1 = deserializer.deserialize();
+        DeSerializedModule deSerializedModule = deserializer.deserialize();
 
         // Then
-        Set<JSONObject> flows = deserializedModule1.getFlows();
+        Set<JSONObject> flows = deSerializedModule.getFlows();
         assertExists(flows, "id", "aaa");
         assertExists(flows, "id", "bbb");
         assertExists(flows, "id", "ccc");
@@ -56,9 +56,9 @@ class FileSystemDeserializerTest {
         assertExists(flows, "id", "eee");
         assertThat(flows).hasSize(5);
 
-        assertThat(deserializedModule1.getConfigurations()).isEmpty();
-        assertThat(deserializedModule1.getSubflows()).isEmpty();
-        assertThat(deserializedModule1.getScripts()).isEmpty();
+        assertThat(deSerializedModule.getConfigurations()).isEmpty();
+        assertThat(deSerializedModule.getSubflows()).isEmpty();
+        assertThat(deSerializedModule.getScripts()).isEmpty();
     }
 
     @Test
@@ -73,10 +73,10 @@ class FileSystemDeserializerTest {
         FileSystemDeserializer deserializer = new FileSystemDeserializer(projectDir.toString());
 
         // When
-        DeserializedModule1 deserializedModule1 = deserializer.deserialize();
+        DeSerializedModule deSerializedModule = deserializer.deserialize();
 
         // Then
-        Set<JSONObject> subFlows = deserializedModule1.getSubflows();
+        Set<JSONObject> subFlows = deSerializedModule.getSubflows();
         assertExists(subFlows, "id", "aaa");
         assertExists(subFlows, "id", "bbb");
         assertExists(subFlows, "id", "ccc");
@@ -84,9 +84,9 @@ class FileSystemDeserializerTest {
         assertExists(subFlows, "id", "eee");
         assertThat(subFlows).hasSize(5);
 
-        assertThat(deserializedModule1.getConfigurations()).isEmpty();
-        assertThat(deserializedModule1.getFlows()).isEmpty();
-        assertThat(deserializedModule1.getScripts()).isEmpty();
+        assertThat(deSerializedModule.getConfigurations()).isEmpty();
+        assertThat(deSerializedModule.getFlows()).isEmpty();
+        assertThat(deSerializedModule.getScripts()).isEmpty();
     }
 
     @Test
@@ -101,10 +101,10 @@ class FileSystemDeserializerTest {
         FileSystemDeserializer deserializer = new FileSystemDeserializer(projectDir.toString());
 
         // When
-        DeserializedModule1 deserializedModule1 = deserializer.deserialize();
+        DeSerializedModule deSerializedModule = deserializer.deserialize();
 
         // Then
-        Collection<JSONObject> configurations = deserializedModule1.getConfigurations();
+        Collection<JSONObject> configurations = deSerializedModule.getConfigurations();
         assertExists(configurations, "id", "aaa");
         assertExists(configurations, "id", "bbb");
         assertExists(configurations, "id", "ccc");
@@ -112,9 +112,9 @@ class FileSystemDeserializerTest {
         assertExists(configurations, "id", "eee");
         assertThat(configurations).hasSize(5);
 
-        assertThat(deserializedModule1.getFlows()).isEmpty();
-        assertThat(deserializedModule1.getSubflows()).isEmpty();
-        assertThat(deserializedModule1.getScripts()).isEmpty();
+        assertThat(deSerializedModule.getFlows()).isEmpty();
+        assertThat(deSerializedModule.getSubflows()).isEmpty();
+        assertThat(deSerializedModule.getScripts()).isEmpty();
     }
 
     @Test
@@ -130,16 +130,16 @@ class FileSystemDeserializerTest {
         FileSystemDeserializer deserializer = new FileSystemDeserializer(projectDir.toString());
 
         // When
-        DeserializedModule1 deserializedModule1 = deserializer.deserialize();
+        DeSerializedModule deSerializedModule = deserializer.deserialize();
 
         // Then
-        Collection<ResourceLoader> resourceLoaders = deserializedModule1.getScripts();
+        Collection<ResourceLoader> resourceLoaders = deSerializedModule.getScripts();
         assertExist(resourceLoaders,  Paths.get(projectDir.toString(), "scripts", "script1.js"), script1Body);
         assertThat(resourceLoaders).hasSize(5);
 
-        assertThat(deserializedModule1.getFlows()).isEmpty();
-        assertThat(deserializedModule1.getSubflows()).isEmpty();
-        assertThat(deserializedModule1.getConfigurations()).isEmpty();
+        assertThat(deSerializedModule.getFlows()).isEmpty();
+        assertThat(deSerializedModule.getSubflows()).isEmpty();
+        assertThat(deSerializedModule.getConfigurations()).isEmpty();
     }
 
     private void createProjectFile(Path filePathAndName, String fileContent) throws IOException {

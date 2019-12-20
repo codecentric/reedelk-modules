@@ -1,7 +1,7 @@
 package com.reedelk.esb.lifecycle;
 
 import com.reedelk.esb.commons.JsonPropertyValueCollector;
-import com.reedelk.esb.module.DeserializedModule1;
+import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.state.ModuleState;
 import com.reedelk.runtime.commons.JsonParser;
@@ -39,11 +39,11 @@ public class ModuleResolveDependencies extends AbstractStep<Module, Module> {
         return module;
     }
 
-    private Collection<String> collectImplementorDependencies(DeserializedModule1 deserializedModule1) {
+    private Collection<String> collectImplementorDependencies(DeSerializedModule deSerializedModule) {
         JsonPropertyValueCollector collector = new JsonPropertyValueCollector(JsonParser.Implementor.name());
-        Collection<String> flowImplementorNames = collector.collect(deserializedModule1.getFlows());
-        Collection<String> subFlowImplementorNames = collector.collect(deserializedModule1.getSubflows());
-        Collection<String> configImplementorNames = collector.collect(deserializedModule1.getConfigurations());
+        Collection<String> flowImplementorNames = collector.collect(deSerializedModule.getFlows());
+        Collection<String> subFlowImplementorNames = collector.collect(deSerializedModule.getSubflows());
+        Collection<String> configImplementorNames = collector.collect(deSerializedModule.getConfigurations());
 
         Collection<String> allComponentsUsedByModule = new HashSet<>();
         allComponentsUsedByModule.addAll(flowImplementorNames);

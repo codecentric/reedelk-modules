@@ -1,6 +1,6 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
-import com.reedelk.esb.module.DeserializedModule1;
+import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.runtime.api.resource.ResourceBinary;
@@ -29,7 +29,7 @@ class ResourceResolverDecoratorTest {
     private final TypeFactoryContext factoryContext = new TypeFactoryContext(testModuleId);
 
     @Mock
-    private DeserializedModule1 mockDeSerializedModule1;
+    private DeSerializedModule mockDeSerializedModule;
     @Mock
     private Module mockModule;
 
@@ -37,7 +37,7 @@ class ResourceResolverDecoratorTest {
 
     @BeforeEach
     void setUp() {
-        decorator = new ResourceResolverDecorator(TypeFactory.getInstance(), mockDeSerializedModule1, mockModule);
+        decorator = new ResourceResolverDecorator(TypeFactory.getInstance(), mockDeSerializedModule, mockModule);
     }
 
     @Test
@@ -60,7 +60,7 @@ class ResourceResolverDecoratorTest {
         componentDefinition.put(propertyName, propertyValue);
 
         doReturn(singletonList(mockResourceLoader(propertyValue, content)))
-                .when(mockDeSerializedModule1)
+                .when(mockDeSerializedModule)
                 .getResources();
 
         // When
@@ -84,7 +84,7 @@ class ResourceResolverDecoratorTest {
         componentDefinition.put(propertyName, propertyValue);
 
         doReturn(singletonList(mockResourceLoader(propertyValue, content)))
-                .when(mockDeSerializedModule1)
+                .when(mockDeSerializedModule)
                 .getResources();
 
         // When
