@@ -37,13 +37,39 @@ public class DefaultModuleService implements ModuleService {
     private final SyncModuleService syncModuleService;
     private final SystemProperty systemProperty;
 
-    public DefaultModuleService(BundleContext context, ModulesManager modulesManager, SystemProperty systemProperty, EventListener listener) {
+    public DefaultModuleService(BundleContext context,
+                                ModulesManager modulesManager,
+                                SystemProperty systemProperty,
+                                EventListener listener) {
         this.modulesManager = modulesManager;
         this.listener = listener;
         this.context = context;
         this.systemProperty = systemProperty;
         this.mapper = new ModulesMapper();
         this.syncModuleService = new SyncModuleService(this, context);
+    }
+
+    @Override
+    public long install(String moduleJarPath) {
+        if (getModuleAtPath(moduleJarPath).isPresent()) {
+            String errorMessage = INSTALL_FAILED_MODULE_ALREADY_INSTALLED.format(moduleJarPath);
+            throw new IllegalStateException(errorMessage);
+        }
+
+        // This is to un-install a module with the same name of the one we are going to install,
+        // but with a different module jar path or a different version.
+        unInstallIfModuleExistsAlready(moduleJarPath);
+
+        try {
+            Bundle installedBundle = context.installBundle(moduleJarPath);
+            if (logger.isInfoEnabled()) {
+                logger.info(INSTALL_SUCCESS.format(installedBundle.getSymbolicName()));
+            }
+            return start(installedBundle);
+        } catch (BundleException e) {
+            String errorMessage = INSTALL_FAILED.format(moduleJarPath);
+            throw new ESBException(errorMessage, e);
+        }
     }
 
     @Override
@@ -70,47 +96,22 @@ public class DefaultModuleService implements ModuleService {
     }
 
     @Override
+    public long installOrUpdate(String moduleJarPath) {
+        return getModuleAtPath(moduleJarPath)
+                .map(bundle -> update(moduleJarPath))
+                .orElseGet(() -> install(moduleJarPath));
+    }
+
+    @Override
     public long uninstall(String moduleJarPath) {
         return getModuleAtPath(moduleJarPath).map(bundleAtPath -> {
             listener.moduleStopping(bundleAtPath.getBundleId());
-            executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall, new DeleteModuleBundleJar(systemProperty));
+            executeOperation(bundleAtPath, Bundle::stop, Bundle::uninstall, deleteModuleBundleJarOperation());
             if (logger.isInfoEnabled()) {
                 logger.info(UNINSTALL_SUCCESS.format(bundleAtPath.getSymbolicName()));
             }
             return bundleAtPath.getBundleId();
         }).orElse(NOTHING_UNINSTALLED_MODULE_ID);
-    }
-
-    @Override
-    public long install(String moduleJarPath) {
-        if (getModuleAtPath(moduleJarPath).isPresent()) {
-            String errorMessage = INSTALL_FAILED_MODULE_ALREADY_INSTALLED.format(moduleJarPath);
-            throw new IllegalStateException(errorMessage);
-        }
-
-        // If the module to be installed at the given module jar path has a symbolic name of an already
-        // installed module, then we must uninstall it from the runtime before installing the new one.
-        // This is needed to prevent having in the runtime two modules with exactly the same components
-        // but with different versions.
-        syncModuleService.unInstallIfModuleExistsAlready(moduleJarPath);
-
-        try {
-            Bundle installedBundle = context.installBundle(moduleJarPath);
-            if (logger.isInfoEnabled()) {
-                logger.info(INSTALL_SUCCESS.format(installedBundle.getSymbolicName()));
-            }
-            return start(installedBundle);
-        } catch (BundleException e) {
-            String errorMessage = INSTALL_FAILED.format(moduleJarPath);
-            throw new ESBException(errorMessage, e);
-        }
-    }
-
-    @Override
-    public long installOrUpdate(String moduleJarPath) {
-        return getModuleAtPath(moduleJarPath)
-                .map(bundle -> update(moduleJarPath))
-                .orElseGet(() -> install(moduleJarPath));
     }
 
     @Override
@@ -122,6 +123,18 @@ public class DefaultModuleService implements ModuleService {
         ModulesDto modulesDto = new ModulesDto();
         modulesDto.setModuleDtos(moduleDTOs);
         return modulesDto;
+    }
+
+    void unInstallIfModuleExistsAlready(String moduleJarPath) {
+        // If the module to be installed at the given module jar path has a symbolic name of an already
+        // installed module, then we must uninstall it from the runtime before installing the new one.
+        // This is needed to prevent having in the runtime two modules with exactly the same components
+        // but with different versions.
+        syncModuleService.unInstallIfModuleExistsAlready(moduleJarPath);
+    }
+
+    Operation deleteModuleBundleJarOperation() {
+        return new DeleteModuleBundleJar(systemProperty);
     }
 
     private long start(Bundle installedBundle) {
@@ -142,7 +155,7 @@ public class DefaultModuleService implements ModuleService {
         return Optional.ofNullable(context.getBundle(bundlePath));
     }
 
-    private interface Operation {
+    interface Operation {
         void execute(Bundle bundle) throws BundleException;
     }
 

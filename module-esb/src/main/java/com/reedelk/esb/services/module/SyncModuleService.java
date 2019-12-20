@@ -23,7 +23,7 @@ class SyncModuleService {
     private final BundleContext context;
     private final ModuleService moduleService;
 
-    SyncModuleService(ModuleService moduleService, BundleContext context) {
+    public SyncModuleService(ModuleService moduleService, BundleContext context) {
         this.moduleService = moduleService;
         this.context = context;
     }
