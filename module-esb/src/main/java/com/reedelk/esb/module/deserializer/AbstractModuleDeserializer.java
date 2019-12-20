@@ -3,7 +3,7 @@ package com.reedelk.esb.module.deserializer;
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.ModuleDeserializer;
 import com.reedelk.esb.services.resource.ResourceLoader;
-import com.reedelk.runtime.commons.FileUtils;
+import com.reedelk.runtime.api.commons.FileUtils;
 import com.reedelk.runtime.commons.JsonParser;
 import org.json.JSONObject;
 

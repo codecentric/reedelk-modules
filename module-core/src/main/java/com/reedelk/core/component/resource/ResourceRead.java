@@ -1,7 +1,7 @@
-package com.reedelk.file.component;
+package com.reedelk.core.component.resource;
 
-import com.reedelk.file.commons.MimeTypeParser;
 import com.reedelk.runtime.api.annotation.*;
+import com.reedelk.runtime.api.commons.FileUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.*;
@@ -16,14 +16,15 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.reactivestreams.Publisher;
 
-import static com.reedelk.file.localread.LocalFileReadAttribute.FILE_NAME;
-import static com.reedelk.file.localread.LocalFileReadAttribute.TIMESTAMP;
 import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Local file read")
-@Component(service = LocalFileRead.class, scope = PROTOTYPE)
-public class LocalFileRead implements ProcessorSync {
+@ESBComponent("Read Resource File")
+@Component(service = ResourceRead.class, scope = PROTOTYPE)
+public class ResourceRead implements ProcessorSync {
+
+    private final String attributeResourcePath =  "resourcePath";
+    private final String attributeTimestamp = "timestamp";
 
     @Reference
     private ResourceService resourceService;
@@ -51,16 +52,16 @@ public class LocalFileRead implements ProcessorSync {
 
             String resourceFilePath = resourceFile.path();
 
-            MimeType actualMimeType = MimeTypeParser.from(autoMimeType, mimeType, resourceFilePath);
+            MimeType actualMimeType = mimeTypeFrom(autoMimeType, mimeType, resourceFilePath);
 
             Publisher<byte[]> dataStream = resourceFile.data();
 
             TypedContent<byte[]> content = new ByteArrayContent(dataStream, actualMimeType);
 
             MessageAttributes attributes =
-                    new DefaultMessageAttributes(LocalFileRead.class,
-                            of(FILE_NAME, resourceFilePath,
-                                    TIMESTAMP, System.currentTimeMillis()));
+                    new DefaultMessageAttributes(ResourceRead.class,
+                            of(attributeResourcePath, resourceFilePath,
+                                    attributeTimestamp, System.currentTimeMillis()));
 
             return MessageBuilder.get().attributes(attributes).typedContent(content).build();
 
@@ -79,5 +80,14 @@ public class LocalFileRead implements ProcessorSync {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    private static MimeType mimeTypeFrom(boolean autoMimeType, String mimeType, String filePath) {
+        if (autoMimeType) {
+            String pageFileExtension = FileUtils.getExtension(filePath);
+            return MimeType.fromFileExtension(pageFileExtension);
+        } else {
+            return MimeType.parse(mimeType);
+        }
     }
 }

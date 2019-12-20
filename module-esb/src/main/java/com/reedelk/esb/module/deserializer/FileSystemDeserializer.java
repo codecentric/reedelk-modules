@@ -1,7 +1,7 @@
 package com.reedelk.esb.module.deserializer;
 
+import com.reedelk.runtime.api.commons.FileUtils;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.commons.FileUtils;
 
 import java.io.IOException;
 import java.net.URL;

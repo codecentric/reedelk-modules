@@ -1,7 +1,7 @@
 package com.reedelk.file.commons;
 
+import com.reedelk.runtime.api.commons.FileUtils;
 import com.reedelk.runtime.api.message.content.MimeType;
-import com.reedelk.runtime.commons.FileUtils;
 
 public class MimeTypeParser {
 

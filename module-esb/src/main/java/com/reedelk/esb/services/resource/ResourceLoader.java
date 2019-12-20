@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-import static com.reedelk.runtime.commons.FileUtils.ReadFromURL;
+import static com.reedelk.runtime.api.commons.FileUtils.ReadFromURL;
 
 /**
  * A Resource Loader which lazy load resources from the given URL.

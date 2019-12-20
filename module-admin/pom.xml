@@ -44,6 +44,12 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.reedelk</groupId>
+            <artifactId>module-core</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- internal-rest-api depends on org.json -->
         <dependency>

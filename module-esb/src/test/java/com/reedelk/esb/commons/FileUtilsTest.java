@@ -1,6 +1,6 @@
 package com.reedelk.esb.commons;
 
-import com.reedelk.runtime.commons.FileUtils;
+import com.reedelk.runtime.api.commons.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;

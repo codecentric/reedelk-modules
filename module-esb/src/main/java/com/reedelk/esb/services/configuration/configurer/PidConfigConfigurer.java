@@ -1,6 +1,6 @@
 package com.reedelk.esb.services.configuration.configurer;
 
-import com.reedelk.runtime.commons.FileUtils;
+import com.reedelk.runtime.api.commons.FileUtils;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.Properties;

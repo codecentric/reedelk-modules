@@ -2,7 +2,7 @@ package com.reedelk.esb.test.utils;
 
 import java.net.URL;
 
-import static com.reedelk.runtime.commons.FileUtils.ReadFromURL;
+import static com.reedelk.runtime.api.commons.FileUtils.ReadFromURL;
 
 public enum TestScript {
 

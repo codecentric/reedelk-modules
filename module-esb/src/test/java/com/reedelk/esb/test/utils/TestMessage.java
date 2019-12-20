@@ -1,6 +1,6 @@
 package com.reedelk.esb.test.utils;
 
-import com.reedelk.runtime.commons.FileUtils;
+import com.reedelk.runtime.api.commons.FileUtils;
 
 import java.net.URL;
 

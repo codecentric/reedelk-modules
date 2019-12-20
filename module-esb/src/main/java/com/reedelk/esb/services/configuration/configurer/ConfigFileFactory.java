@@ -1,8 +1,8 @@
 package com.reedelk.esb.services.configuration.configurer;
 
+import com.reedelk.runtime.api.commons.FileUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.commons.FileExtension;
-import com.reedelk.runtime.commons.FileUtils;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
