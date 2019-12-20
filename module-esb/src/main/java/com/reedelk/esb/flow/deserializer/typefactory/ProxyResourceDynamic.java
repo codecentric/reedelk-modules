@@ -9,7 +9,7 @@ import org.reactivestreams.Publisher;
 import java.util.Collection;
 import java.util.Optional;
 
-import static com.reedelk.esb.commons.Messages.Module.FILE_NOT_FOUND_ERROR;
+import static com.reedelk.esb.commons.Messages.Resource.RESOURCE_DYNAMIC_NOT_FOUND;
 
 public class ProxyResourceDynamic extends ResourceDynamic {
 
@@ -30,8 +30,8 @@ public class ProxyResourceDynamic extends ResourceDynamic {
                 .flatMap(loader -> Optional.of(loader.body()))
                 .orElseThrow(() -> {
                     // The file at the given path was not found in the Module bundle.
-                    String message = FILE_NOT_FOUND_ERROR.format(evaluatedPath, module.id(), module.name());
-                    throw new ResourceNotFound(message);
+                    String message = RESOURCE_DYNAMIC_NOT_FOUND.format(evaluatedPath, value(), module.id(), module.name());
+                    return new ResourceNotFound(message);
                 });
     }
 }

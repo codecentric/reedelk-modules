@@ -103,7 +103,6 @@ public class Messages {
     public enum Module implements FormattedMessage {
 
         DESERIALIZATION_ERROR("Error de-serializing module with id=[%d], name=[%s]: %s"),
-        FILE_NOT_FOUND_ERROR("Could not find local file file=[%s] in module with id=[%d], name=[%s]."),
         FILE_FIND_IO_ERROR("An I/O occurred while reading file=[%s] in module with id=[%d], name=[%s]: %s"),
         START_FAILED("Could not start module named=[%s]"),
         INSTALL_SUCCESS("Module [%s] installed"),
@@ -136,7 +135,6 @@ public class Messages {
         CONFIGURATION_NOT_FOUND("Could not find configuration with id=[%s]"),
         ERROR_READING_FILES_FROM_RESOURCE_FOLDER("Error reading files from resource folder, target path=[%s]"),
         SCRIPT_SOURCE_NOT_FOUND("Could not find script named=[%s] defined in resources/scripts folder. Please make sure that the referenced script exists."),
-        RESOURCE_SOURCE_NOT_FOUND("Could not find resource named=[%s] defined in the project 'resources' folder. Please make sure that the referenced metadata exists."),
         SCRIPT_SOURCE_EMPTY("A script resource file must not be null or empty");
 
         private String msg;
@@ -256,6 +254,8 @@ public class Messages {
 
     public enum Resource implements FormattedMessage {
 
+        RESOURCE_DYNAMIC_NOT_FOUND("Could not find resource with path=[%s] (evaluated from=[%s]) in module with id=[%d], name=[%s] defined in the project's 'src/main/resources' folder. Please make sure that the referenced resource exists at the given path."),
+        RESOURCE_NOT_FOUND("Could not find resource with path=[%s] in module with id=[%d], name=[%s] defined in the project's 'src/main/resources' folder. Please make sure that the referenced resource exists at the given path."),
         ERROR_RESOURCE_NOT_FOUND_NULL("Resource could not be found: dynamic resource object was null"),
         ERROR_RESOURCE_NOT_FOUND_WITH_VALUE("Resource could not be found: dynamic resource path was=[%s]");
 
@@ -269,6 +269,5 @@ public class Messages {
         public String format(Object... args) {
             return formatMessage(msg, args);
         }
-
     }
 }

@@ -1,13 +1,14 @@
 package com.reedelk.esb.flow.deserializer.typefactory;
 
 import com.reedelk.runtime.api.resource.ResourceBinary;
+import com.reedelk.runtime.api.resource.ResourceFile;
 import org.reactivestreams.Publisher;
 
 public class ProxyResourceBinary extends ResourceBinary {
 
     private final Publisher<byte[]> data;
 
-    public ProxyResourceBinary(ResourceBinary original, Publisher<byte[]> data) {
+    public ProxyResourceBinary(ResourceFile original, Publisher<byte[]> data) {
         super(original.path());
         this.data = data;
     }
