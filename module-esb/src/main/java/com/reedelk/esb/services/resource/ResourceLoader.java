@@ -10,10 +10,12 @@ import java.nio.channels.ReadableByteChannel;
 
 import static com.reedelk.runtime.commons.FileUtils.ReadFromURL;
 
-// Lazy Loading of resources
+/**
+ * A Resource Loader which lazy load resources from the given URL.
+ */
 public class ResourceLoader {
 
-    private final int DEFAULT_BUFFER_SIZE = 65536; // TODO: Should this be a system property??
+    private static final int DEFAULT_BUFFER_SIZE = 65536;
 
     private final URL resourceURL;
 
