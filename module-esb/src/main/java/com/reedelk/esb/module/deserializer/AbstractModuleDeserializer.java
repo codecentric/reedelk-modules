@@ -59,7 +59,7 @@ abstract class AbstractModuleDeserializer implements ModuleDeserializer {
                 .collect(toSet());
     }
 
-    // Must provide name of the script starting from resources/scripts.
+    // Must provide name of the script starting from resources/scripts base path.
     private Collection<ResourceLoader> getScripts() {
         List<URL> resourcesURL = getResources(Script.RESOURCE_DIRECTORY, SCRIPT.value());
         return resourcesURL.stream()
@@ -67,8 +67,9 @@ abstract class AbstractModuleDeserializer implements ModuleDeserializer {
                 .collect(toSet());
     }
 
+    // Load all resources from src/main/resources folder.
     private Collection<ResourceLoader> getResources() {
-        List<URL> resourcesURL = getResources("/");//TODO
+        List<URL> resourcesURL = getResources(Resource.RESOURCE_DIRECTORY);
         return resourcesURL.stream()
                 .map(ResourceLoader::new)
                 .collect(toSet());
