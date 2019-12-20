@@ -9,6 +9,8 @@ import com.reedelk.runtime.api.resource.ResourceService;
 import com.reedelk.runtime.api.script.ScriptEngineService;
 import org.reactivestreams.Publisher;
 
+import static com.reedelk.esb.commons.Messages.Resource;
+
 public class DefaultResourceService implements ResourceService {
 
     private ScriptEngineService scriptEngineService;
@@ -18,13 +20,20 @@ public class DefaultResourceService implements ResourceService {
     }
 
     @Override
-    public ResourceFile find(ResourceDynamic resource, FlowContext flowContext, Message message) throws ResourceNotFound {
+    public ResourceFile<byte[]> find(ResourceDynamic resource, FlowContext flowContext, Message message) throws ResourceNotFound {
+        if (resource == null) {
+            String errorMessage = Resource.ERROR_RESOURCE_NOT_FOUND_NULL.format();
+            throw new ResourceNotFound(errorMessage);
+        }
         return scriptEngineService
                 .evaluate(resource, flowContext, message)
                 .map(evaluatedPath -> {
                     Publisher<byte[]> data = resource.data(evaluatedPath);
                     return new DefaultResourceFile(data, evaluatedPath);
                 })
-                .orElseThrow(() -> new ResourceNotFound(resource));
+                .orElseThrow(() -> {
+                    String errorMessage = Resource.ERROR_RESOURCE_NOT_FOUND_WITH_VALUE.format(resource.value());
+                    return new ResourceNotFound(errorMessage);
+                });
     }
 }

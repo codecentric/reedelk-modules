@@ -36,7 +36,7 @@ public class LocalFileRead implements ProcessorSync {
 
         try {
 
-            ResourceFile resourceFile = resourceService.find(this.resourceFile, flowContext, message);
+            ResourceFile<byte[]> resourceFile = resourceService.find(this.resourceFile, flowContext, message);
 
             String pageFileExtension = FileUtils.getExtension(resourceFile.path());
 

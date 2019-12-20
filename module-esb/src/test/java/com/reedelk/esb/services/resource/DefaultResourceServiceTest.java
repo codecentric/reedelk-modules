@@ -1,37 +1,40 @@
 package com.reedelk.esb.services.resource;
 
-import com.reedelk.esb.module.Module;
-import com.reedelk.esb.module.ModulesManager;
+import com.reedelk.runtime.api.commons.ModuleContext;
+import com.reedelk.runtime.api.message.FlowContext;
+import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.resource.ResourceDynamic;
+import com.reedelk.runtime.api.resource.ResourceFile;
+import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.resource.ResourceService;
 import com.reedelk.runtime.api.script.ScriptEngineService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
+import java.util.Arrays;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class DefaultResourceServiceTest {
 
     private final long testModuleId = 234L;
-    private final String testModuleName = "test-module";
-    private final String testVersion = "1.0.0-SNAPSHOT";
-    private final String testFilePath = "/users/user/test-module-1.0.0-SNAPSHOT.jar";
+    private final ModuleContext moduleContext = new ModuleContext(testModuleId);
 
     @Mock
-    private Bundle bundle;
+    private Message message;
     @Mock
-    private Module module;
-    @Mock
-    private BundleContext context;
-    @Mock
-    private ModulesManager modulesManager;
+    private FlowContext flowContext;
     @Mock
     private ScriptEngineService scriptEngineService;
 
@@ -40,98 +43,111 @@ class DefaultResourceServiceTest {
     @BeforeEach
     void setUp() {
         fileProvider = new DefaultResourceService(scriptEngineService);
-        doReturn(testModuleId).when(module).id();
-        doReturn(testModuleName).when(module).name();
-        doReturn(testVersion).when(module).version();
-        doReturn(testFilePath).when(module).filePath();
     }
 
-    // TODO: Test this service and fix these tests
-
-    /**
     @Test
-    void shouldCorrectlyReturnFileBytes() throws IOException, InterruptedException {
+    void shouldCorrectlyReturnFileBytes() {
         // Given
         String content = "my content";
-        String tmpDirectory = TmpDir.get();
+        ResourceDynamic resourceDynamic = resourceDynamicFrom("#['myTemplate' + '.html']", content);
 
-        String resource = "/tests/sample.txt";
-        ModuleId moduleId = new ModuleId(testModuleId);
-
-        doReturn(bundle).when(context).getBundle(testModuleId);
-        doReturn(module).when(modulesManager).getModuleById(testModuleId);
-
-        URL writtenFile = FileUtils.createFile(Paths.get(tmpDirectory, "tests").toString(), "sample.txt", content);
-
-        Enumeration<URL> fileURLs = Collections.enumeration(Collections.singletonList(writtenFile));
-        doReturn(fileURLs).when(bundle).getResources(resource);
+        doReturn(Optional.of("myTemplate.html"))
+                .when(scriptEngineService)
+                .evaluate(resourceDynamic, flowContext, message);
 
         // When
-        Publisher<byte[]> stream = fileProvider.findResourceBy(moduleId, resource);
+        ResourceFile<byte[]> resourceFile = fileProvider.find(resourceDynamic, flowContext, message);
+
 
         // Then
-        StepVerifier.create(stream)
+        Publisher<byte[]> fileDataStream = resourceFile.data();
+        StepVerifier.create(fileDataStream)
                 .expectNextMatches(bytes -> Arrays.equals(content.getBytes(), bytes))
                 .verifyComplete();
-    }
-
-
-    @Test
-    void shouldThrowFileNotFoundException() throws IOException {
-        // Given
-        String resource = "/tests/sample.txt";
-        ModuleId moduleId = new ModuleId(testModuleId);
-
-        doReturn(bundle).when(context).getBundle(testModuleId);
-        doReturn(module).when(modulesManager).getModuleById(testModuleId);
-
-
-        Enumeration<URL> fileURLs = Collections.enumeration(Collections.emptyList());
-        doReturn(fileURLs).when(bundle).getResources(resource);
-
-        // When
-        FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
-                () -> fileProvider.findResourceBy(moduleId, resource));
-
-        assertThat(thrown)
-                .hasMessage("Could not find local file file=[/tests/sample.txt] in module with id=[234], name=[test-module].");
+        assertThat(resourceFile.path()).isEqualTo("myTemplate.html");
     }
 
     @Test
-    void shouldThrowFileNotFoundExceptionWhenResourcesAreNull() throws IOException {
+    void shouldThrowFileNotFoundExceptionResourceDynamicIsNull() {
         // Given
-        String resource = "/tests/sample.txt";
-        ModuleId moduleId = new ModuleId(testModuleId);
-
-        doReturn(bundle).when(context).getBundle(testModuleId);
-        doReturn(module).when(modulesManager).getModuleById(testModuleId);
-
-        doReturn(null).when(bundle).getResources(resource);
+        ResourceDynamic resourceDynamic = null;
 
         // When
-        FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
-                () -> fileProvider.findResourceBy(moduleId, resource));
+        ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
+                () -> fileProvider.find(resourceDynamic, flowContext, message));
 
-        assertThat(thrown)
-                .hasMessage("Could not find local file file=[/tests/sample.txt] in module with id=[234], name=[test-module].");
+        // Then
+        assertThat(thrown).isNotNull();
+        assertThat(thrown).hasMessage("Resource could not be found: dynamic resource object was null");
+        verifyZeroInteractions(scriptEngineService);
     }
 
     @Test
-    void shouldThrowExceptionWhenErrorWhileReadingDataFromBundle() throws IOException {
+    void shouldThrowFileNotFoundExceptionWhenResourceDynamicEvaluatesEmpty() {
         // Given
-        String resource = "/tests/sample.txt";
-        ModuleId moduleId = new ModuleId(testModuleId);
+        ResourceDynamic resourceDynamic = resourceDynamicFrom(null, "anything");
 
-        doReturn(bundle).when(context).getBundle(testModuleId);
-        doReturn(module).when(modulesManager).getModuleById(testModuleId);
-
-        doThrow(new IOException("Error while reading data")).when(bundle).getResources(resource);
+        doReturn(Optional.empty())
+                .when(scriptEngineService)
+                .evaluate(resourceDynamic, flowContext, message);
 
         // When
-        ESBException thrown = assertThrows(ESBException.class,
-                () -> fileProvider.findResourceBy(moduleId, resource));
+        ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
+                () -> fileProvider.find(resourceDynamic, flowContext, message));
 
-        assertThat(thrown)
-                .hasMessage("An I/O occurred while reading file=[/tests/sample.txt] in module with id=[234], name=[test-module]: Error while reading data");
-    }*/
+        // Then
+        assertThat(thrown).isNotNull();
+        assertThat(thrown).hasMessage("Resource could not be found: dynamic resource path was=[null]");
+    }
+
+    @Test
+    void shouldRethrowExceptionThrownWhenResourceLoaded() {
+        // Given
+        ResourceDynamic resourceDynamic = ResourceDynamic.from("does not matter", moduleContext);
+        ResourceDynamic resourceDynamicProxy = new TestResourceDynamicProxyThrowingResourceNotFoundException(resourceDynamic);
+
+        doReturn(Optional.of("/assets/templates/hello-template.html"))
+                .when(scriptEngineService)
+                .evaluate(resourceDynamicProxy, flowContext, message);
+
+        // When
+        ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
+                () -> fileProvider.find(resourceDynamicProxy, flowContext, message));
+
+        // Then
+        assertThat(thrown).isNotNull();
+        assertThat(thrown).hasMessage("Could not find resource xyz");
+    }
+
+    private ResourceDynamic resourceDynamicFrom(Object body, String wantedContent) {
+        ResourceDynamic resourceDynamic = ResourceDynamic.from(body, moduleContext);
+        return new TestResourceDynamicProxy(resourceDynamic, wantedContent);
+    }
+
+    class TestResourceDynamicProxy extends ResourceDynamic {
+
+        private final String expectedResult;
+
+        TestResourceDynamicProxy(ResourceDynamic original, String expectedResult) {
+            super(original);
+            this.expectedResult = expectedResult;
+        }
+
+        @Override
+        public Publisher<byte[]> data(String evaluatedPath) {
+            return Mono.just(expectedResult.getBytes());
+        }
+    }
+
+    class TestResourceDynamicProxyThrowingResourceNotFoundException extends ResourceDynamic {
+
+        TestResourceDynamicProxyThrowingResourceNotFoundException(ResourceDynamic original) {
+            super(original);
+        }
+
+        @Override
+        public Publisher<byte[]> data(String evaluatedPath) {
+            throw new ResourceNotFound("Could not find resource xyz");
+        }
+    }
 }

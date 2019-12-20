@@ -17,9 +17,9 @@ public class ProxyResourceDynamic extends ResourceDynamic {
     private final Module module;
 
     public ProxyResourceDynamic(ResourceDynamic original, Collection<ResourceLoader> resourceLoader, Module module) {
-        super(original.body(), original.getContext());
-        this.resourceLoader = resourceLoader;
+        super(original);
         this.module = module;
+        this.resourceLoader = resourceLoader;
     }
 
     @Override

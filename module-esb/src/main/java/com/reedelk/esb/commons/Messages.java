@@ -168,7 +168,6 @@ public class Messages {
         }
     }
 
-
     public enum ConfigProperty implements FormattedMessage {
 
         NOT_FOUND_WITH_KEY_AND_PID_AND_DEFAULT("Could not find config property with key=[%s] for config pid=[%s], using defaultValue=[%s]."),
@@ -225,7 +224,7 @@ public class Messages {
 
     public enum HotSwap implements FormattedMessage {
 
-        MODULE_NOT_FOUND("Hot Swap failed: could not find registered module from target file path=%s");
+        MODULE_NOT_FOUND("Hot Swap failed: could not find registered module from target file path=[%s]");
 
         private String msg;
 
@@ -253,5 +252,23 @@ public class Messages {
         public String format(Object... args) {
             return formatMessage(msg, args);
         }
+    }
+
+    public enum Resource implements FormattedMessage {
+
+        ERROR_RESOURCE_NOT_FOUND_NULL("Resource could not be found: dynamic resource object was null"),
+        ERROR_RESOURCE_NOT_FOUND_WITH_VALUE("Resource could not be found: dynamic resource path was=[%s]");
+
+        private String msg;
+
+        Resource(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+
     }
 }
