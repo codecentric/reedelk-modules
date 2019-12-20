@@ -9,6 +9,7 @@ import com.reedelk.runtime.api.component.Inbound;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.component.Stop;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -271,7 +272,7 @@ class FlowTest {
         Set<ExecutionNode> executionNodes = new HashSet<>();
         executionNodes.add(stopEN);
         doReturn(executionNodes).when(mockExecutionGraph).successors(mockExecutionNode);
-        Message inMessage = new Message();
+        Message inMessage = MessageBuilder.get().withText("test").build();
 
 
         // When

@@ -25,7 +25,7 @@ class ContentTypeTest {
     }
 
     @Test
-    void shouldReturnEmptyWhenMessageHasNullContent() {
+    void shouldReturnEmptyWhenMessageHasEmptyContent() {
         // Given
         Message messageWithNullContent = MessageBuilder.get().empty().build();
 
@@ -33,7 +33,7 @@ class ContentTypeTest {
         Optional<String> maybeContentType = ContentType.from(messageWithNullContent);
 
         // Then
-        assertThat(maybeContentType).isNotPresent();
+        assertThat(maybeContentType).isEmpty();
     }
 
     @Test
