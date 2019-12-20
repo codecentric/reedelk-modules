@@ -190,8 +190,8 @@ class AbstractDynamicValueEvaluatorTest {
         evaluator.onModuleUninstalled(actionModuleUninstalled);
 
         // Then
-        verify(mockEngineProvider).undefineFunction(dynamicValue1.functionName());
-        verify(mockEngineProvider).undefineFunction(dynamicValue2.functionName());
+        verify(mockEngineProvider).unDefineFunction(dynamicValue1.functionName());
+        verify(mockEngineProvider).unDefineFunction(dynamicValue2.functionName());
         verify(mockEngineProvider, times(2)).compile(anyString());
         verifyNoMoreInteractions(mockEngineProvider);
     }

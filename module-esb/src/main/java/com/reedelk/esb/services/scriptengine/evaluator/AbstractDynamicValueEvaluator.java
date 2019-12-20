@@ -142,7 +142,8 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         long moduleId = action.getMessage();
         if (moduleIdFunctionNamesMap.containsKey(moduleId)) {
             moduleIdFunctionNamesMap.remove(moduleId)
-                    .forEach(computedFunctionName -> scriptEngine().undefineFunction(computedFunctionName));
+                    .forEach(computedFunctionName ->
+                            scriptEngine().unDefineFunction(computedFunctionName));
         }
     }
 

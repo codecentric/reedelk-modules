@@ -1,12 +1,10 @@
 package com.reedelk.esb.services.scriptengine;
 
 import com.reedelk.esb.services.scriptengine.evaluator.ScriptEngineProvider;
-import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
-import javax.script.Bindings;
-import javax.script.CompiledScript;
-import javax.script.ScriptException;
+import javax.script.ScriptEngine;
+import javax.script.*;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Map;
@@ -15,11 +13,14 @@ import static javax.script.ScriptContext.ENGINE_SCOPE;
 
 public class JavascriptEngineProvider implements ScriptEngineProvider {
 
-    private final NashornScriptEngine engine;
+    private final ScriptEngine engine;
+    private final Invocable invocable;
+    private final Compilable compilable;
 
     private JavascriptEngineProvider() {
-        this.engine = (NashornScriptEngine) new NashornScriptEngineFactory()
-                .getScriptEngine("--optimistic-types=false");
+        this.engine = new NashornScriptEngineFactory().getScriptEngine("--optimistic-types=false");
+        this.invocable = (Invocable) engine;
+        this.compilable = (Compilable) engine;
     }
 
     private static class ScriptEngineProviderHelper {
@@ -32,7 +33,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
 
     @Override
     public void compile(String functionDefinition) throws ScriptException {
-        CompiledScript compiled = engine.compile(functionDefinition);
+        CompiledScript compiled = compilable.compile(functionDefinition);
         compiled.eval(engine.getBindings(ENGINE_SCOPE));
     }
 
@@ -44,7 +45,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
 
         tmpBindings.putAll(customBindings);
 
-        CompiledScript compiled = engine.compile(reader);
+        CompiledScript compiled = compilable.compile(reader);
 
         compiled.eval(tmpBindings);
 
@@ -55,11 +56,11 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
 
     @Override
     public Object invokeFunction(String functionName, Object... args) throws NoSuchMethodException, ScriptException {
-        return engine.invokeFunction(functionName, args);
+        return invocable.invokeFunction(functionName, args);
     }
 
     @Override
-    public void undefineModule(String moduleName) {
+    public void unDefineModule(String moduleName) {
         engine.getBindings(ENGINE_SCOPE).remove(moduleName);
     }
 
@@ -92,7 +93,7 @@ public class JavascriptEngineProvider implements ScriptEngineProvider {
      * @param functionName the name of the function to be cleaned up (set to null)
      */
     @Override
-    public void undefineFunction(String functionName) {
+    public void unDefineFunction(String functionName) {
         engine.getBindings(ENGINE_SCOPE).put(functionName, null);
     }
 }

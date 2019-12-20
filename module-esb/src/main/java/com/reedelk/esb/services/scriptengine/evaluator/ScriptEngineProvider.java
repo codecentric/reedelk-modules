@@ -13,7 +13,7 @@ public interface ScriptEngineProvider {
 
     Object invokeFunction(String functionName, Object ...args) throws NoSuchMethodException, ScriptException;
 
-    void undefineModule(String module);
+    void unDefineModule(String module);
 
-    void undefineFunction(String functionName);
+    void unDefineFunction(String functionName);
 }

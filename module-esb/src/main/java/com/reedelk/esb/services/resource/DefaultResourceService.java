@@ -20,7 +20,7 @@ public class DefaultResourceService implements ResourceService {
     }
 
     @Override
-    public ResourceFile<byte[]> find(ResourceDynamic resource, FlowContext flowContext, Message message) throws ResourceNotFound {
+    public ResourceFile<byte[]> find(ResourceDynamic resource, FlowContext flowContext, Message message) {
         if (resource == null) {
             String errorMessage = Resource.ERROR_RESOURCE_NOT_FOUND_NULL.format();
             throw new ResourceNotFound(errorMessage);
