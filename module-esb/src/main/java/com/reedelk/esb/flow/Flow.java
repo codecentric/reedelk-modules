@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-import static com.reedelk.esb.commons.Messages.FlowErrorMessage;
+import static com.reedelk.esb.commons.Messages.FlowErrorMessage.DEFAULT;
 import static com.reedelk.esb.commons.Preconditions.checkArgument;
 import static com.reedelk.esb.commons.Preconditions.checkState;
 
@@ -135,16 +135,9 @@ public class Flow implements InboundEventListener {
         @Override
         public void onError(Throwable throwable, FlowContext flowContext) {
 
-            String error = FlowErrorMessage.DEFAULT.format(moduleId, moduleName, flowId, flowTitle,
-                    throwable.getClass().getName(), throwable.getMessage());
-            FlowExecutionException wrapped = new FlowExecutionException(
-                    moduleId,
-                    moduleName,
-                    flowId,
-                    flowTitle,
-                    CorrelationID.getOrNull(flowContext),
-                    error,
-                    throwable);
+            String correlationId = CorrelationID.getOrNull(flowContext);
+            String error = DEFAULT.format(moduleId, moduleName, flowId, flowTitle, correlationId, throwable.getClass().getName(), throwable.getMessage());
+            FlowExecutionException wrapped = new FlowExecutionException(moduleId, moduleName, flowId, flowTitle, correlationId, error, throwable);
 
             if (logger.isErrorEnabled()) {
                 logger.error(StackTraceUtils.asString(wrapped));
