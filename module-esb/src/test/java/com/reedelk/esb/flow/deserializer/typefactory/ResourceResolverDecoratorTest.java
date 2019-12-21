@@ -3,8 +3,8 @@ package com.reedelk.esb.flow.deserializer.typefactory;
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.services.resource.ResourceLoader;
+import com.reedelk.runtime.api.resource.DynamicResource;
 import com.reedelk.runtime.api.resource.ResourceBinary;
-import com.reedelk.runtime.api.resource.ResourceDynamic;
 import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.resource.ResourceText;
 import com.reedelk.runtime.commons.TypeFactory;
@@ -109,7 +109,7 @@ class ResourceResolverDecoratorTest {
     }
 
     @Test
-    void shouldCorrectlyLoadResourceDynamic() {
+    void shouldCorrectlyLoadDynamicResource() {
         // Given
         String content = "my sample content";
         String propertyName = "myResourceText";
@@ -123,7 +123,7 @@ class ResourceResolverDecoratorTest {
                 .getResources();
 
         // When
-        ResourceDynamic actualResource = decorator.create(ResourceDynamic.class, componentDefinition, propertyName, factoryContext);
+        DynamicResource actualResource = decorator.create(DynamicResource.class, componentDefinition, propertyName, factoryContext);
         Publisher<byte[]> data = actualResource.data(propertyValue, testBufferSize);
 
         // Then
@@ -185,7 +185,7 @@ class ResourceResolverDecoratorTest {
     }
 
     @Test
-    void shouldCreateResourceDynamicThrowResourceNotFound() {
+    void shouldCreateDynamicResourceThrowResourceNotFound() {
         // Given
         doReturn(testModuleId).when(mockModule).id();
         doReturn(testModuleName).when(mockModule).name();
@@ -201,7 +201,7 @@ class ResourceResolverDecoratorTest {
                 .when(mockDeSerializedModule)
                 .getResources();
 
-        ResourceDynamic actualResource = decorator.create(ResourceDynamic.class, componentDefinition, propertyName, factoryContext);
+        DynamicResource actualResource = decorator.create(DynamicResource.class, componentDefinition, propertyName, factoryContext);
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,

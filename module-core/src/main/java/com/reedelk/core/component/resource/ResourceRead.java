@@ -8,7 +8,7 @@ import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
-import com.reedelk.runtime.api.resource.ResourceDynamic;
+import com.reedelk.runtime.api.resource.DynamicResource;
 import com.reedelk.runtime.api.resource.ResourceFile;
 import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.resource.ResourceService;
@@ -33,7 +33,7 @@ public class ResourceRead implements ProcessorSync {
     private ResourceService resourceService;
 
     @Property("Resource file")
-    private ResourceDynamic resourceFile;
+    private DynamicResource resourceFile;
 
     @Property("Auto mime type")
     @Default("true")
@@ -87,7 +87,7 @@ public class ResourceRead implements ProcessorSync {
                         .orElse(DEFAULT_READ_BUFFER_SIZE);
     }
 
-    public void setResourceFile(ResourceDynamic resourceFile) {
+    public void setResourceFile(DynamicResource resourceFile) {
         this.resourceFile = resourceFile;
     }
 

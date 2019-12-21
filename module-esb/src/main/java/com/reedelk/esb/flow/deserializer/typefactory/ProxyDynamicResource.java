@@ -2,7 +2,7 @@ package com.reedelk.esb.flow.deserializer.typefactory;
 
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.services.resource.ResourceLoader;
-import com.reedelk.runtime.api.resource.ResourceDynamic;
+import com.reedelk.runtime.api.resource.DynamicResource;
 import com.reedelk.runtime.api.resource.ResourceNotFound;
 import org.reactivestreams.Publisher;
 
@@ -11,12 +11,12 @@ import java.util.Optional;
 
 import static com.reedelk.esb.commons.Messages.Resource.RESOURCE_DYNAMIC_NOT_FOUND;
 
-public class ProxyResourceDynamic extends ResourceDynamic {
+public class ProxyDynamicResource extends DynamicResource {
 
     private final Collection<ResourceLoader> resourceLoader;
     private final Module module;
 
-    public ProxyResourceDynamic(ResourceDynamic original, Collection<ResourceLoader> resourceLoader, Module module) {
+    public ProxyDynamicResource(DynamicResource original, Collection<ResourceLoader> resourceLoader, Module module) {
         super(original);
         this.module = module;
         this.resourceLoader = resourceLoader;

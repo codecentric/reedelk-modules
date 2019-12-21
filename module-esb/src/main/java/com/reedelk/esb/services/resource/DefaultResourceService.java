@@ -2,7 +2,7 @@ package com.reedelk.esb.services.resource;
 
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.resource.ResourceDynamic;
+import com.reedelk.runtime.api.resource.DynamicResource;
 import com.reedelk.runtime.api.resource.ResourceFile;
 import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.resource.ResourceService;
@@ -20,7 +20,7 @@ public class DefaultResourceService implements ResourceService {
     }
 
     @Override
-    public ResourceFile<byte[]> find(ResourceDynamic resource, int readBufferSize, FlowContext flowContext, Message message) {
+    public ResourceFile<byte[]> find(DynamicResource resource, int readBufferSize, FlowContext flowContext, Message message) {
         if (resource == null) {
             String errorMessage = Resource.ERROR_RESOURCE_NOT_FOUND_NULL.format();
             throw new ResourceNotFound(errorMessage);

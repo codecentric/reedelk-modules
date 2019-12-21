@@ -3,7 +3,7 @@ package com.reedelk.esb.services.resource;
 import com.reedelk.runtime.api.commons.ModuleContext;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.resource.ResourceDynamic;
+import com.reedelk.runtime.api.resource.DynamicResource;
 import com.reedelk.runtime.api.resource.ResourceFile;
 import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.resource.ResourceService;
@@ -51,14 +51,14 @@ class DefaultResourceServiceTest {
     void shouldCorrectlyReturnFileBytes() {
         // Given
         String content = "my content";
-        ResourceDynamic resourceDynamic = resourceDynamicFrom("#['myTemplate' + '.html']", content);
+        DynamicResource dynamicResource = DynamicResourceFrom("#['myTemplate' + '.html']", content);
 
         doReturn(Optional.of("myTemplate.html"))
                 .when(scriptEngineService)
-                .evaluate(resourceDynamic, flowContext, message);
+                .evaluate(dynamicResource, flowContext, message);
 
         // When
-        ResourceFile<byte[]> resourceFile = fileProvider.find(resourceDynamic, testBufferSize, flowContext, message);
+        ResourceFile<byte[]> resourceFile = fileProvider.find(dynamicResource, testBufferSize, flowContext, message);
 
 
         // Then
@@ -70,13 +70,13 @@ class DefaultResourceServiceTest {
     }
 
     @Test
-    void shouldThrowFileNotFoundExceptionResourceDynamicIsNull() {
+    void shouldThrowFileNotFoundExceptionDynamicResourceIsNull() {
         // Given
-        ResourceDynamic resourceDynamic = null;
+        DynamicResource dynamicResource = null;
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
-                () -> fileProvider.find(resourceDynamic, testBufferSize, flowContext, message));
+                () -> fileProvider.find(dynamicResource, testBufferSize, flowContext, message));
 
         // Then
         assertThat(thrown).isNotNull();
@@ -85,17 +85,17 @@ class DefaultResourceServiceTest {
     }
 
     @Test
-    void shouldThrowFileNotFoundExceptionWhenResourceDynamicEvaluatesEmpty() {
+    void shouldThrowFileNotFoundExceptionWhenDynamicResourceEvaluatesEmpty() {
         // Given
-        ResourceDynamic resourceDynamic = resourceDynamicFrom(null, "anything");
+        DynamicResource dynamicResource = DynamicResourceFrom(null, "anything");
 
         doReturn(Optional.empty())
                 .when(scriptEngineService)
-                .evaluate(resourceDynamic, flowContext, message);
+                .evaluate(dynamicResource, flowContext, message);
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
-                () -> fileProvider.find(resourceDynamic, testBufferSize, flowContext, message));
+                () -> fileProvider.find(dynamicResource, testBufferSize, flowContext, message));
 
         // Then
         assertThat(thrown).isNotNull();
@@ -105,32 +105,32 @@ class DefaultResourceServiceTest {
     @Test
     void shouldRethrowExceptionThrownWhenResourceLoaded() {
         // Given
-        ResourceDynamic resourceDynamic = ResourceDynamic.from("does not matter", moduleContext);
-        ResourceDynamic resourceDynamicProxy = new TestResourceDynamicProxyThrowingResourceNotFoundException(resourceDynamic);
+        DynamicResource dynamicResource = DynamicResource.from("does not matter", moduleContext);
+        DynamicResource dynamicResourceProxy = new TestDynamicResourceProxyThrowingNotFoundExceptionResource(dynamicResource);
 
         doReturn(Optional.of("/assets/templates/hello-template.html"))
                 .when(scriptEngineService)
-                .evaluate(resourceDynamicProxy, flowContext, message);
+                .evaluate(dynamicResourceProxy, flowContext, message);
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
-                () -> fileProvider.find(resourceDynamicProxy, testBufferSize, flowContext, message));
+                () -> fileProvider.find(dynamicResourceProxy, testBufferSize, flowContext, message));
 
         // Then
         assertThat(thrown).isNotNull();
         assertThat(thrown).hasMessage("Could not find resource xyz");
     }
 
-    private ResourceDynamic resourceDynamicFrom(Object body, String wantedContent) {
-        ResourceDynamic resourceDynamic = ResourceDynamic.from(body, moduleContext);
-        return new TestResourceDynamicProxy(resourceDynamic, wantedContent);
+    private DynamicResource DynamicResourceFrom(Object body, String wantedContent) {
+        DynamicResource dynamicResource = DynamicResource.from(body, moduleContext);
+        return new TestDynamicResourceProxy(dynamicResource, wantedContent);
     }
 
-    class TestResourceDynamicProxy extends ResourceDynamic {
+    class TestDynamicResourceProxy extends DynamicResource {
 
         private final String expectedResult;
 
-        TestResourceDynamicProxy(ResourceDynamic original, String expectedResult) {
+        TestDynamicResourceProxy(DynamicResource original, String expectedResult) {
             super(original);
             this.expectedResult = expectedResult;
         }
@@ -141,9 +141,9 @@ class DefaultResourceServiceTest {
         }
     }
 
-    class TestResourceDynamicProxyThrowingResourceNotFoundException extends ResourceDynamic {
+    class TestDynamicResourceProxyThrowingNotFoundExceptionResource extends DynamicResource {
 
-        TestResourceDynamicProxyThrowingResourceNotFoundException(ResourceDynamic original) {
+        TestDynamicResourceProxyThrowingNotFoundExceptionResource(DynamicResource original) {
             super(original);
         }
 

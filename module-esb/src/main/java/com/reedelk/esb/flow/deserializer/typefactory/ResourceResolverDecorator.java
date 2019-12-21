@@ -47,9 +47,9 @@ public class ResourceResolverDecorator implements TypeFactory {
             ResourceBinary original = (ResourceBinary) result;
             return (T) loadResource(original, resourceBinaryMapping(original));
         }
-        if  (result instanceof ResourceDynamic) {
+        if  (result instanceof DynamicResource) {
             Collection<ResourceLoader> resources = deSerializedModule.getResources();
-            return (T) new ProxyResourceDynamic((ResourceDynamic) result, resources, module);
+            return (T) new ProxyDynamicResource((DynamicResource) result, resources, module);
         }
 
         return result;
