@@ -4,7 +4,7 @@ package com.reedelk.rest.client.response;
 import com.reedelk.rest.commons.HttpHeadersAsMap;
 import com.reedelk.rest.commons.MimeTypeExtract;
 import com.reedelk.rest.component.RestClient;
-import com.reedelk.runtime.api.commons.TypedContentFrom;
+import com.reedelk.runtime.api.commons.StreamUtils;
 import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -32,7 +32,7 @@ public class HttpResponseMessageMapper {
 
         MimeType mimeType = MimeTypeExtract.from(response.getAllHeaders());
 
-        TypedContent<?> content = TypedContentFrom.stream(bytesStream, mimeType);
+        TypedContent<?> content = StreamUtils.FromByteArray.asTypedContent(bytesStream, mimeType);
 
         return MessageBuilder.get()
                 .attributes(responseAttributes)

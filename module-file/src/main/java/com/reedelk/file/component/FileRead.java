@@ -6,7 +6,7 @@ import com.reedelk.file.read.FileReadConfiguration;
 import com.reedelk.file.read.ReadConfiguration;
 import com.reedelk.file.read.Reader;
 import com.reedelk.runtime.api.annotation.*;
-import com.reedelk.runtime.api.commons.TypedContentFrom;
+import com.reedelk.runtime.api.commons.StreamUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.MimeType;
@@ -72,7 +72,7 @@ public class FileRead implements ProcessorSync {
 
             Publisher<byte[]> contentAsStream = reader.read(path, config);
 
-            TypedContent<?> content = TypedContentFrom.stream(contentAsStream, actualMimeType);
+            TypedContent<?> content = StreamUtils.FromByteArray.asTypedContent(contentAsStream, actualMimeType);
 
             MessageAttributes attributes = new DefaultMessageAttributes(FileRead.class,
                     of(FILE_NAME, path.toString(), TIMESTAMP, System.currentTimeMillis()));

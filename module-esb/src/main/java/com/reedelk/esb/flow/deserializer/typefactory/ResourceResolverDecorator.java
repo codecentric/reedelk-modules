@@ -3,7 +3,7 @@ package com.reedelk.esb.flow.deserializer.typefactory;
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.services.resource.ResourceLoader;
-import com.reedelk.runtime.api.commons.ByteArrayStream;
+import com.reedelk.runtime.api.commons.StreamUtils;
 import com.reedelk.runtime.api.resource.*;
 import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.commons.TypeFactoryContext;
@@ -82,7 +82,7 @@ public class ResourceResolverDecorator implements TypeFactory {
     private Function<ResourceLoader,Optional<ResourceText>> resourceTextMapping(ResourceFile original) {
         return resourceLoader -> {
             Publisher<byte[]> byteArrayStream = resourceLoader.body();
-            Publisher<String> stringStream = ByteArrayStream.asStringStream(byteArrayStream);
+            Publisher<String> stringStream = StreamUtils.FromByteArray.asStringStream(byteArrayStream);
             return Optional.of(new ProxyResourceText(original, stringStream));
         };
     }

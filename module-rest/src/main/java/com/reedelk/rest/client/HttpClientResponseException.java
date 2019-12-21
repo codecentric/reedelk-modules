@@ -1,6 +1,6 @@
 package com.reedelk.rest.client;
 
-import com.reedelk.runtime.api.commons.ConsumeByteArrayStream;
+import com.reedelk.runtime.api.commons.StreamUtils;
 import com.reedelk.runtime.api.exception.ESBException;
 import org.apache.http.HttpResponse;
 import org.reactivestreams.Publisher;
@@ -24,7 +24,7 @@ public class HttpClientResponseException extends ESBException {
     @Override
     public synchronized String getMessage() {
         if (message == null) {
-            byte[] from = ConsumeByteArrayStream.from(data);
+            byte[] from = StreamUtils.FromByteArray.consume(data);
             message = new String(from);
             data = null;
         }
