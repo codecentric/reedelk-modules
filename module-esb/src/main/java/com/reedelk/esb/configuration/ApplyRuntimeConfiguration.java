@@ -1,7 +1,7 @@
 package com.reedelk.esb.configuration;
 
 import com.reedelk.esb.execution.scheduler.SchedulerProvider;
-import com.reedelk.esb.services.configuration.DefaultConfigurationService;
+import com.reedelk.runtime.api.configuration.ConfigurationService;
 
 /**
  * Applies the properties from the runtime configuration file. For example
@@ -12,7 +12,7 @@ public class ApplyRuntimeConfiguration {
     private ApplyRuntimeConfiguration() {
     }
 
-    public static void from(DefaultConfigurationService configurationService) {
+    public static void from(ConfigurationService configurationService) {
         RuntimeConfigurationProvider.initialize(configurationService);
         SchedulerProvider.initialize();
     }

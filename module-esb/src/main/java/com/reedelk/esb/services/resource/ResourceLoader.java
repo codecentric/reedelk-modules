@@ -15,7 +15,7 @@ import static com.reedelk.runtime.api.commons.FileUtils.ReadFromURL;
  */
 public class ResourceLoader {
 
-    private static final int DEFAULT_BUFFER_SIZE = 65536;
+    public static final int DEFAULT_BUFFER_SIZE = 65536;
 
     private final URL resourceURL;
 
@@ -32,14 +32,18 @@ public class ResourceLoader {
         return ReadFromURL.asString(resourceURL);
     }
 
-    // Load body creating a sink out of the readable byte channel.
     public Publisher<byte[]> body() {
+        return body(DEFAULT_BUFFER_SIZE);
+    }
+
+    // Load body creating a sink out of the readable byte channel.
+    public Publisher<byte[]> body(int readBufferSize) {
 
         return Flux.create(sink -> {
 
             try (ReadableByteChannel channel = Channels.newChannel(resourceURL.openStream())) {
 
-                ByteBuffer byteBuffer = ByteBuffer.allocate(DEFAULT_BUFFER_SIZE);
+                ByteBuffer byteBuffer = ByteBuffer.allocate(readBufferSize);
 
                 while (channel.read(byteBuffer) > 0) {
 

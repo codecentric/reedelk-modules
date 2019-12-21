@@ -38,6 +38,8 @@ class DefaultResourceServiceTest {
     @Mock
     private ScriptEngineService scriptEngineService;
 
+    private final int testBufferSize = 500;
+
     private ResourceService fileProvider;
 
     @BeforeEach
@@ -56,7 +58,7 @@ class DefaultResourceServiceTest {
                 .evaluate(resourceDynamic, flowContext, message);
 
         // When
-        ResourceFile<byte[]> resourceFile = fileProvider.find(resourceDynamic, flowContext, message);
+        ResourceFile<byte[]> resourceFile = fileProvider.find(resourceDynamic, testBufferSize, flowContext, message);
 
 
         // Then
@@ -74,7 +76,7 @@ class DefaultResourceServiceTest {
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
-                () -> fileProvider.find(resourceDynamic, flowContext, message));
+                () -> fileProvider.find(resourceDynamic, testBufferSize, flowContext, message));
 
         // Then
         assertThat(thrown).isNotNull();
@@ -93,7 +95,7 @@ class DefaultResourceServiceTest {
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
-                () -> fileProvider.find(resourceDynamic, flowContext, message));
+                () -> fileProvider.find(resourceDynamic, testBufferSize, flowContext, message));
 
         // Then
         assertThat(thrown).isNotNull();
@@ -112,7 +114,7 @@ class DefaultResourceServiceTest {
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
-                () -> fileProvider.find(resourceDynamicProxy, flowContext, message));
+                () -> fileProvider.find(resourceDynamicProxy, testBufferSize, flowContext, message));
 
         // Then
         assertThat(thrown).isNotNull();
@@ -134,7 +136,7 @@ class DefaultResourceServiceTest {
         }
 
         @Override
-        public Publisher<byte[]> data(String evaluatedPath) {
+        public Publisher<byte[]> data(String evaluatedPath, int readBufferSize) {
             return Mono.just(expectedResult.getBytes());
         }
     }
@@ -146,7 +148,7 @@ class DefaultResourceServiceTest {
         }
 
         @Override
-        public Publisher<byte[]> data(String evaluatedPath) {
+        public Publisher<byte[]> data(String evaluatedPath, int readBufferSize) {
             throw new ResourceNotFound("Could not find resource xyz");
         }
     }

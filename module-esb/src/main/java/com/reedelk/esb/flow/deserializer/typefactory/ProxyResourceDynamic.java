@@ -23,11 +23,11 @@ public class ProxyResourceDynamic extends ResourceDynamic {
     }
 
     @Override
-    public Publisher<byte[]> data(String evaluatedPath) {
+    public Publisher<byte[]> data(String evaluatedPath, int readBufferSize) {
         return resourceLoader.stream()
                 .filter(loader -> loader.getResourceFilePath().endsWith(evaluatedPath))
                 .findFirst()
-                .flatMap(loader -> Optional.of(loader.body()))
+                .flatMap(loader -> Optional.of(loader.body(readBufferSize)))
                 .orElseThrow(() -> {
                     // The file at the given path was not found in the Module bundle.
                     String message = RESOURCE_DYNAMIC_NOT_FOUND.format(evaluatedPath, value(), module.id(), module.name());

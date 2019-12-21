@@ -20,7 +20,7 @@ public class DefaultResourceService implements ResourceService {
     }
 
     @Override
-    public ResourceFile<byte[]> find(ResourceDynamic resource, FlowContext flowContext, Message message) {
+    public ResourceFile<byte[]> find(ResourceDynamic resource, int readBufferSize, FlowContext flowContext, Message message) {
         if (resource == null) {
             String errorMessage = Resource.ERROR_RESOURCE_NOT_FOUND_NULL.format();
             throw new ResourceNotFound(errorMessage);
@@ -28,7 +28,7 @@ public class DefaultResourceService implements ResourceService {
         return scriptEngineService
                 .evaluate(resource, flowContext, message)
                 .map(evaluatedPath -> {
-                    Publisher<byte[]> data = resource.data(evaluatedPath);
+                    Publisher<byte[]> data = resource.data(evaluatedPath, readBufferSize);
                     return new DefaultResourceFile(data, evaluatedPath);
                 })
                 .orElseThrow(() -> {

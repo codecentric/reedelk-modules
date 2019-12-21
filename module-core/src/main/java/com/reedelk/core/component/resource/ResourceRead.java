@@ -16,6 +16,9 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.reactivestreams.Publisher;
 
+import java.util.Optional;
+
+import static com.reedelk.core.component.resource.ResourceReadConfiguration.DEFAULT_READ_BUFFER_SIZE;
 import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -43,12 +46,17 @@ public class ResourceRead implements ProcessorSync {
     @When(propertyName = "autoMimeType", propertyValue = When.BLANK)
     private String mimeType;
 
+    @Property("Configuration")
+    private ResourceReadConfiguration configuration;
+
+    private int readBufferSize;
+
     @Override
     public Message apply(Message message, FlowContext flowContext) {
 
         try {
 
-            ResourceFile<byte[]> resourceFile = resourceService.find(this.resourceFile, flowContext, message);
+            ResourceFile<byte[]> resourceFile = resourceService.find(this.resourceFile, readBufferSize, flowContext, message);
 
             String resourceFilePath = resourceFile.path();
 
@@ -70,6 +78,15 @@ public class ResourceRead implements ProcessorSync {
         }
     }
 
+    @Override
+    public void initialize() {
+        readBufferSize =
+                Optional.ofNullable(configuration)
+                .flatMap(resourceReadConfiguration ->
+                        Optional.ofNullable(resourceReadConfiguration.getReadBufferSize()))
+                        .orElse(DEFAULT_READ_BUFFER_SIZE);
+    }
+
     public void setResourceFile(ResourceDynamic resourceFile) {
         this.resourceFile = resourceFile;
     }
@@ -80,6 +97,10 @@ public class ResourceRead implements ProcessorSync {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public void setConfiguration(ResourceReadConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     private static MimeType mimeTypeFrom(boolean autoMimeType, String mimeType, String filePath) {

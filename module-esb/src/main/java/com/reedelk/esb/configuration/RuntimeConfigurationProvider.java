@@ -1,6 +1,6 @@
 package com.reedelk.esb.configuration;
 
-import com.reedelk.esb.services.configuration.DefaultConfigurationService;
+import com.reedelk.runtime.api.configuration.ConfigurationService;
 
 import static com.reedelk.esb.commons.Preconditions.checkState;
 
@@ -10,13 +10,13 @@ public class RuntimeConfigurationProvider {
 
     private static final RuntimeConfigurationProvider PROVIDER = new RuntimeConfigurationProvider();
 
-    private DefaultConfigurationService configService;
+    private ConfigurationService configService;
     private FlowExecutorConfig executorConfig;
 
     private RuntimeConfigurationProvider() {
     }
 
-    private void init(DefaultConfigurationService configService) {
+    private void init(ConfigurationService configService) {
         synchronized (PROVIDER) {
             checkState(this.configService == null, "Config service already initialized");
             this.configService = configService;
@@ -32,7 +32,7 @@ public class RuntimeConfigurationProvider {
         return executorConfig;
     }
 
-    static void initialize(DefaultConfigurationService configService) {
+    static void initialize(ConfigurationService configService) {
         PROVIDER.init(configService);
     }
 

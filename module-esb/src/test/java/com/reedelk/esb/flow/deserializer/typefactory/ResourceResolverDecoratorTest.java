@@ -30,6 +30,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ResourceResolverDecoratorTest {
 
+    private final int testBufferSize = 500;
     private final long testModuleId = 10L;
     private final String testModuleName = "Test module";
     private final TypeFactoryContext factoryContext = new TypeFactoryContext(testModuleId);
@@ -123,7 +124,7 @@ class ResourceResolverDecoratorTest {
 
         // When
         ResourceDynamic actualResource = decorator.create(ResourceDynamic.class, componentDefinition, propertyName, factoryContext);
-        Publisher<byte[]> data = actualResource.data(propertyValue);
+        Publisher<byte[]> data = actualResource.data(propertyValue, testBufferSize);
 
         // Then
         StepVerifier.create(data)
@@ -204,7 +205,7 @@ class ResourceResolverDecoratorTest {
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
-                () -> actualResource.data(evaluatedPropertyValue));
+                () -> actualResource.data(evaluatedPropertyValue, testBufferSize));
 
         // Then
         assertThat(thrown)
@@ -224,6 +225,10 @@ class ResourceResolverDecoratorTest {
                 .doReturn(Mono.just(resourceBody.getBytes()))
                 .when(resourceLoader)
                 .body();
+        lenient()
+                .doReturn(Mono.just(resourceBody.getBytes()))
+                .when(resourceLoader)
+                .body(testBufferSize);
         return resourceLoader;
     }
 }
