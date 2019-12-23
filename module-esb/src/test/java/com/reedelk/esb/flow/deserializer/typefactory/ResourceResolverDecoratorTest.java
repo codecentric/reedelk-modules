@@ -210,7 +210,7 @@ class ResourceResolverDecoratorTest {
         // Then
         assertThat(thrown)
                 .hasMessage("Could not find resource with path=[/assets/template.html] " +
-                        "(evaluated from=[#['/assets/' + 'template' + '.html']]) in module with id=[10], " +
+                        "(evaluated from=#['/assets/' + 'template' + '.html']) in module with id=[10], " +
                         "name=[Test module] defined in the project's 'src/main/resources' folder. " +
                         "Please make sure that the referenced resource exists at the given path.");
     }

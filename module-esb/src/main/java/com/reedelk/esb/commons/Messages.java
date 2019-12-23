@@ -256,7 +256,7 @@ public class Messages {
 
     public enum Resource implements FormattedMessage {
 
-        RESOURCE_DYNAMIC_NOT_FOUND("Could not find resource with path=[%s] (evaluated from=[%s]) in module with id=[%d], name=[%s] defined in the project's 'src/main/resources' folder. Please make sure that the referenced resource exists at the given path."),
+        RESOURCE_DYNAMIC_NOT_FOUND("Could not find resource with path=[%s] (evaluated from=%s) in module with id=[%d], name=[%s] defined in the project's 'src/main/resources' folder. Please make sure that the referenced resource exists at the given path."),
         RESOURCE_NOT_FOUND("Could not find resource with path=[%s] in module with id=[%d], name=[%s] defined in the project's 'src/main/resources' folder. Please make sure that the referenced resource exists at the given path."),
         ERROR_RESOURCE_NOT_FOUND_NULL("Resource could not be found: dynamic resource object was null"),
         ERROR_RESOURCE_NOT_FOUND_WITH_VALUE("Resource could not be found: dynamic resource path was=[%s]");
