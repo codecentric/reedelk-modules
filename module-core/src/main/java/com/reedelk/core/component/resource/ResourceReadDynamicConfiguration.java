@@ -9,8 +9,8 @@ import org.osgi.service.component.annotations.Component;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @Collapsible
-@Component(service = ResourceReadConfiguration.class, scope = PROTOTYPE)
-public class ResourceReadConfiguration implements Implementor {
+@Component(service = ResourceReadDynamicConfiguration.class, scope = PROTOTYPE)
+public class ResourceReadDynamicConfiguration implements Implementor {
 
     public static final int DEFAULT_READ_BUFFER_SIZE = 65536;
 

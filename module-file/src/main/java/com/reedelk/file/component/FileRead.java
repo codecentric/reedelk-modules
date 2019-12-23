@@ -28,7 +28,7 @@ import static com.reedelk.file.read.FileReadAttribute.TIMESTAMP;
 import static com.reedelk.runtime.api.commons.ImmutableMap.of;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 
-@ESBComponent("File read")
+@ESBComponent("File Read")
 @Component(service = FileRead.class, scope = ServiceScope.PROTOTYPE)
 public class FileRead implements ProcessorSync {
 

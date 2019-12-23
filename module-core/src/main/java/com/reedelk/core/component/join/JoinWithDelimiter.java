@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Join delimiter")
+@ESBComponent("Join Delimiter")
 @Component(service = JoinWithDelimiter.class, scope = PROTOTYPE)
 public class JoinWithDelimiter implements Join {
 

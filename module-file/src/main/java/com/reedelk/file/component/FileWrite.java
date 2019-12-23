@@ -30,7 +30,7 @@ import static com.reedelk.file.commons.Messages.FileWriteComponent.ERROR_FILE_WR
 import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 
-@ESBComponent("File write")
+@ESBComponent("File Write")
 @Component(service = FileWrite.class, scope = ServiceScope.PROTOTYPE)
 public class FileWrite implements ProcessorAsync {
 

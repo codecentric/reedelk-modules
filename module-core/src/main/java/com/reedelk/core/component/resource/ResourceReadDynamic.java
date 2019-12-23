@@ -1,10 +1,12 @@
 package com.reedelk.core.component.resource;
 
 import com.reedelk.runtime.api.annotation.*;
-import com.reedelk.runtime.api.commons.FileUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.runtime.api.message.*;
+import com.reedelk.runtime.api.message.FlowContext;
+import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageAttributes;
+import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.ByteArrayContent;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
@@ -18,16 +20,12 @@ import org.reactivestreams.Publisher;
 
 import java.util.Optional;
 
-import static com.reedelk.core.component.resource.ResourceReadConfiguration.DEFAULT_READ_BUFFER_SIZE;
-import static com.reedelk.runtime.api.commons.ImmutableMap.of;
+import static com.reedelk.core.component.resource.ResourceReadDynamicConfiguration.DEFAULT_READ_BUFFER_SIZE;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Read Resource File")
-@Component(service = ResourceRead.class, scope = PROTOTYPE)
-public class ResourceRead implements ProcessorSync {
-
-    private final String attributeResourcePath =  "resourcePath";
-    private final String attributeTimestamp = "timestamp";
+@ESBComponent("Resource Read Dynamic")
+@Component(service = ResourceReadDynamic.class, scope = PROTOTYPE)
+public class ResourceReadDynamic extends ResourceReadComponent implements ProcessorSync {
 
     @Reference
     private ResourceService resourceService;
@@ -47,7 +45,7 @@ public class ResourceRead implements ProcessorSync {
     private String mimeType;
 
     @Property("Configuration")
-    private ResourceReadConfiguration configuration;
+    private ResourceReadDynamicConfiguration configuration;
 
     private int readBufferSize;
 
@@ -66,10 +64,7 @@ public class ResourceRead implements ProcessorSync {
 
             TypedContent<byte[]> content = new ByteArrayContent(dataStream, actualMimeType);
 
-            MessageAttributes attributes =
-                    new DefaultMessageAttributes(ResourceRead.class,
-                            of(attributeResourcePath, resourceFilePath,
-                                    attributeTimestamp, System.currentTimeMillis()));
+            MessageAttributes attributes = createAttributes(ResourceReadDynamic.class, resourceFilePath);
 
             return MessageBuilder.get().attributes(attributes).typedContent(content).build();
 
@@ -82,8 +77,8 @@ public class ResourceRead implements ProcessorSync {
     public void initialize() {
         readBufferSize =
                 Optional.ofNullable(configuration)
-                .flatMap(resourceReadConfiguration ->
-                        Optional.ofNullable(resourceReadConfiguration.getReadBufferSize()))
+                .flatMap(resourceReadDynamicConfiguration ->
+                        Optional.ofNullable(resourceReadDynamicConfiguration.getReadBufferSize()))
                         .orElse(DEFAULT_READ_BUFFER_SIZE);
     }
 
@@ -99,16 +94,8 @@ public class ResourceRead implements ProcessorSync {
         this.mimeType = mimeType;
     }
 
-    public void setConfiguration(ResourceReadConfiguration configuration) {
+    public void setConfiguration(ResourceReadDynamicConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    private static MimeType mimeTypeFrom(boolean autoMimeType, String mimeType, String filePath) {
-        if (autoMimeType) {
-            String pageFileExtension = FileUtils.getExtension(filePath);
-            return MimeType.fromFileExtension(pageFileExtension);
-        } else {
-            return MimeType.parse(mimeType);
-        }
-    }
 }

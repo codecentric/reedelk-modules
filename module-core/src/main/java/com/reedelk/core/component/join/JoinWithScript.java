@@ -18,7 +18,7 @@ import java.util.Optional;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Join script")
+@ESBComponent("Join Script")
 @Component(service = JoinWithScript.class, scope = PROTOTYPE)
 public class JoinWithScript implements Join {
 
