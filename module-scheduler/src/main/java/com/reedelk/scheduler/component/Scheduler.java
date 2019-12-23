@@ -6,29 +6,18 @@ import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.annotation.When;
 import com.reedelk.runtime.api.component.AbstractInbound;
-import com.reedelk.runtime.api.exception.ESBException;
-import com.reedelk.scheduler.commons.ExecuteFlowJob;
-import com.reedelk.scheduler.commons.TimeZoneUtils;
+import com.reedelk.scheduler.commons.SchedulerJob;
+import com.reedelk.scheduler.commons.SchedulingStrategyBuilder;
 import com.reedelk.scheduler.configuration.CronConfiguration;
 import com.reedelk.scheduler.configuration.FixedFrequencyConfiguration;
 import com.reedelk.scheduler.configuration.SchedulingStrategy;
-import com.reedelk.scheduler.commons.SchedulerProvider;
 import org.osgi.service.component.annotations.Component;
-import org.quartz.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Date;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 @ESBComponent("Scheduler")
 @Component(service = Scheduler.class, scope = PROTOTYPE)
 public class Scheduler extends AbstractInbound {
-
-    private static final Logger logger = LoggerFactory.getLogger(Scheduler.class);
 
     @Property("Scheduling Strategy")
     @Default("FIXED_FREQUENCY")
@@ -42,48 +31,21 @@ public class Scheduler extends AbstractInbound {
     @When(propertyName = "strategy", propertyValue = "CRON")
     private CronConfiguration cron;
 
-    private JobKey startedJobKey;
+    private SchedulerJob job;
 
     @Override
     public void onStart() {
-
-        JobDetail job = JobBuilder.newJob(ExecuteFlowJob.class)
-                .build();
-        startedJobKey = job.getKey();
-
-        Trigger trigger;
-
-        if (strategy == SchedulingStrategy.FIXED_FREQUENCY) {
-            long period = fixedFrequency.getPeriod();
-            long delay = fixedFrequency.getDelay();
-            trigger = TriggerBuilder.newTrigger()
-                    .withSchedule(simpleSchedule()
-                            .withIntervalInMilliseconds(period)
-                            .repeatForever())
-                    .startAt(new Date(new Date().getTime() + delay))
-                    .build();
-        } else if (strategy == SchedulingStrategy.CRON) {
-            String expression = cron.getExpression();
-            String timeZone = cron.getTimeZone();
-            trigger = TriggerBuilder.newTrigger()
-                    .withSchedule(cronSchedule(expression)
-                            .inTimeZone(TimeZoneUtils.getOrDefault(timeZone)))
-                    .build();
-        } else {
-            throw new ESBException("Erro");
-        }
-
-        SchedulerProvider.getInstance().scheduleJob(this, job, trigger);
+        job = SchedulingStrategyBuilder.get(strategy)
+                .withConfig(cron)
+                .withConfig(fixedFrequency)
+                .build()
+                .schedule(this);
     }
 
     @Override
     public void onShutdown() {
-        if (startedJobKey != null) {
-            try {
-                SchedulerProvider.getInstance().get().deleteJob(startedJobKey);
-            } catch (SchedulerException e) {
-                e.printStackTrace();
-            }
+        if (job != null) {
+            job.dispose();
         }
     }
 
