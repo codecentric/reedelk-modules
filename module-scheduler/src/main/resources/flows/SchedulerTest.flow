@@ -6,11 +6,8 @@
     {
       "implementor": "com.reedelk.scheduler.component.Scheduler",
       "description": "Scheduler 1 two three",
-      "strategy": "FIXED_FREQUENCY",
-      "fixedFrequency": {
-        "period": 1000,
-        "timeUnit": "MILLISECONDS"
-      }
+      "strategy": "CRON",
+      "cron": {"expression": "* * * ? * *"}
     },
     {
       "implementor": "com.reedelk.core.component.payload.SetPayload",

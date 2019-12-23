@@ -1,5 +1,6 @@
 package com.reedelk.scheduler.configuration;
 
+import com.reedelk.runtime.api.annotation.Combo;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.Hint;
 import com.reedelk.runtime.api.annotation.Property;
@@ -13,10 +14,12 @@ public class CronConfiguration implements Implementor {
 
     @Property("Expression")
     @Default("1000")
-    @Hint("0 0 12 * * ?")
+    @Hint("* * * ? * *")
     private String expression;
 
-    @Property("Time Zone")
+    @Combo(editable = true, comboValues = {
+        "", ""
+    })
     private String timeZone;
 
     public String getExpression() {

@@ -4,10 +4,8 @@ import com.reedelk.runtime.api.annotation.DisplayName;
 
 public enum TimeUnit {
 
-    @DisplayName("Milliseconds")
+    @DisplayName("Milliseconds (default)")
     MILLISECONDS,
-    @DisplayName("Days")
-    DAYS,
     @DisplayName("Hours")
     HOURS,
     @DisplayName("Minutes")

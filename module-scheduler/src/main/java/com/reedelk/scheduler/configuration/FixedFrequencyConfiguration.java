@@ -1,6 +1,7 @@
 package com.reedelk.scheduler.configuration;
 
 import com.reedelk.runtime.api.annotation.Default;
+import com.reedelk.runtime.api.annotation.Hint;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.Implementor;
 import org.osgi.service.component.annotations.Component;
@@ -12,29 +13,31 @@ public class FixedFrequencyConfiguration implements Implementor {
 
     @Property("Frequency")
     @Default("1000")
-    private long period;
+    @Hint("1000")
+    private int period;
 
     @Property("Start delay")
     @Default("0")
-    private long delay;
+    @Hint("100")
+    private int delay;
 
     @Property("Time unit")
     @Default("MILLISECONDS")
     private TimeUnit timeUnit;
 
-    public long getPeriod() {
+    public int getPeriod() {
         return period;
     }
 
-    public void setPeriod(long period) {
+    public void setPeriod(int period) {
         this.period = period;
     }
 
-    public long getDelay() {
+    public int getDelay() {
         return delay;
     }
 
-    public void setDelay(long delay) {
+    public void setDelay(int delay) {
         this.delay = delay;
     }
 

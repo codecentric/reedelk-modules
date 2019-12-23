@@ -49,7 +49,7 @@ public class SchedulerProvider {
 
     public void scheduleJob(InboundEventListener listener, JobDetail job, Trigger trigger) {
         try {
-            QUARTZ_SCHEDULER.getContext().put(job.getKey().toString(), this);
+            QUARTZ_SCHEDULER.getContext().put(job.getKey().toString(), listener);
             QUARTZ_SCHEDULER.scheduleJob(job, trigger);
         } catch (SchedulerException e) {
             // TODO: Do cleanup: remove from context the key and remove the schedule job if  present.
