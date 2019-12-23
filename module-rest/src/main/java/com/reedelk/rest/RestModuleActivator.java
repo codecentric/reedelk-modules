@@ -17,6 +17,8 @@ import static org.osgi.service.component.annotations.ServiceScope.SINGLETON;
 @Component(service = RestModuleActivator.class, scope = SINGLETON, immediate = true)
 public class RestModuleActivator {
 
+    // TODO: Should we stop the Servers if any started!?
+
     private static final Dictionary<String, ?> NO_PROPERTIES = new Hashtable<>();
 
     private ServiceRegistration<HttpClientFactory> registration;
