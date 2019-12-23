@@ -5,9 +5,13 @@
   "flow": [
     {
       "implementor": "com.reedelk.scheduler.component.Scheduler",
-      "description": "Scheduler 1 two three",
-      "strategy": "CRON",
-      "cron": {"expression": "* * * ? * *"}
+      "description": "Scheduler",
+      "strategy": "FIXED_FREQUENCY",
+      "fixedFrequency": {
+        "period": 1,
+        "delay": 0,
+        "timeUnit": "MINUTES"
+      }
     },
     {
       "implementor": "com.reedelk.core.component.payload.SetPayload",
