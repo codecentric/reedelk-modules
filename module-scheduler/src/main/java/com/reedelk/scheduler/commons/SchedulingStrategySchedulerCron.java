@@ -1,11 +1,14 @@
 package com.reedelk.scheduler.commons;
 
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.scheduler.configuration.CronConfiguration;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+
+import java.util.TimeZone;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 
@@ -25,9 +28,17 @@ class SchedulingStrategySchedulerCron implements SchedulingStrategyScheduler {
         String timeZone = configuration.getTimeZone();
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withSchedule(cronSchedule(expression)
-                        .inTimeZone(TimeZoneUtils.getOrDefault(timeZone)))
+                        .inTimeZone(getOrDefault(timeZone)))
                 .build();
         SchedulerProvider.getInstance().scheduleJob(listener, job, trigger);
         return new SchedulerJob(job.getKey());
+    }
+
+    public static TimeZone getOrDefault(String timeZone) {
+        if (StringUtils.isBlank(timeZone)) {
+            return TimeZone.getDefault();
+        } else {
+            return TimeZone.getTimeZone(timeZone);
+        }
     }
 }
