@@ -29,6 +29,8 @@ public class RestModuleActivator {
 
     @Deactivate
     public void deactivate() {
-        if (registration != null) registration.unregister();
+        if (registration != null) {
+            registration.unregister();
+        }
     }
 }
