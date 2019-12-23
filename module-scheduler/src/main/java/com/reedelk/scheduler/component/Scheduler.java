@@ -4,26 +4,25 @@ package com.reedelk.scheduler.component;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.runtime.api.annotation.When;
 import com.reedelk.runtime.api.component.AbstractInbound;
-import com.reedelk.runtime.api.component.OnResult;
-import com.reedelk.runtime.api.message.DefaultMessageAttributes;
-import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.scheduler.commons.ExecuteFlowJob;
+import com.reedelk.scheduler.commons.TimeZoneUtils;
+import com.reedelk.scheduler.configuration.CronConfiguration;
+import com.reedelk.scheduler.configuration.FixedFrequencyConfiguration;
+import com.reedelk.scheduler.configuration.SchedulingStrategy;
+import com.reedelk.scheduler.commons.SchedulerProvider;
 import org.osgi.service.component.annotations.Component;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
+import java.util.Date;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 @ESBComponent("Scheduler")
 @Component(service = Scheduler.class, scope = PROTOTYPE)
@@ -31,61 +30,72 @@ public class Scheduler extends AbstractInbound {
 
     private static final Logger logger = LoggerFactory.getLogger(Scheduler.class);
 
-    private ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
+    @Property("Scheduling Strategy")
+    @Default("FIXED_FREQUENCY")
+    private SchedulingStrategy strategy;
 
-    @Property("Delay")
-    @Default("0")
-    private long delay;
+    @Property("Fixed Frequency")
+    @When(propertyName = "strategy", propertyValue = "FIXED_FREQUENCY")
+    private FixedFrequencyConfiguration fixedFrequency;
 
-    @Property("Period")
-    @Default("1000")
-    private long period;
+    @Property("Cron")
+    @When(propertyName = "strategy", propertyValue = "CRON")
+    private CronConfiguration cron;
 
-    private ScheduledFuture<?> scheduledFuture;
+    private JobKey startedJobKey;
 
+    @Override
     public void onStart() {
-        this.scheduledFuture =
-                service.scheduleAtFixedRate(command(), delay, period, MILLISECONDS);
+
+        JobDetail job = JobBuilder.newJob(ExecuteFlowJob.class)
+                .build();
+        startedJobKey = job.getKey();
+
+        Trigger trigger;
+
+        if (strategy == SchedulingStrategy.FIXED_FREQUENCY) {
+            long period = fixedFrequency.getPeriod();
+            long delay = fixedFrequency.getDelay();
+            trigger = TriggerBuilder.newTrigger()
+                    .withSchedule(simpleSchedule()
+                            .withIntervalInMilliseconds(period)
+                            .repeatForever())
+                    .startAt(new Date(new Date().getTime() + delay))
+                    .build();
+        } else if (strategy == SchedulingStrategy.CRON) {
+            String expression = cron.getExpression();
+            String timeZone = cron.getTimeZone();
+            trigger = TriggerBuilder.newTrigger()
+                    .withSchedule(cronSchedule(expression)
+                            .inTimeZone(TimeZoneUtils.getOrDefault(timeZone)))
+                    .build();
+        } else {
+            throw new ESBException("Erro");
+        }
+
+        SchedulerProvider.getInstance().scheduleJob(this, job, trigger);
     }
 
+    @Override
     public void onShutdown() {
-        scheduledFuture.cancel(false);
-        service.shutdown();
-        try {
-            service.awaitTermination(1, SECONDS);
-        } catch (InterruptedException e) {
-            // nothing to do
+        if (startedJobKey != null) {
+            try {
+                SchedulerProvider.getInstance().get().deleteJob(startedJobKey);
+            } catch (SchedulerException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void setDelay(long delay) {
-        this.delay = delay;
+    public void setStrategy(SchedulingStrategy strategy) {
+        this.strategy = strategy;
     }
 
-    public void setPeriod(long period) {
-        this.period = period;
+    public void setFixedFrequency(FixedFrequencyConfiguration fixedFrequency) {
+        this.fixedFrequency = fixedFrequency;
     }
 
-    private Runnable command() {
-        return () -> {
-
-            Map<String, Serializable> attributesMap = new HashMap<>();
-            attributesMap.put(SchedulerAttribute.firedAt(), System.currentTimeMillis());
-            DefaultMessageAttributes attributes = new DefaultMessageAttributes(Scheduler.class, attributesMap);
-
-            Message emptyMessage = MessageBuilder.get()
-                    .attributes(attributes)
-                    .empty()
-                    .build();
-
-            onEvent(emptyMessage, new OnResult() {
-                @Override
-                public void onError(Throwable throwable, FlowContext flowContext) {
-                    // we catch any exception, we want to keep the scheduler to run.
-                    // (otherwise by default it stops its execution)
-                    logger.error("scheduler", throwable);
-                }
-            });
-        };
+    public void setCron(CronConfiguration cron) {
+        this.cron = cron;
     }
 }

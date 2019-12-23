@@ -1,0 +1,28 @@
+{
+  "id": "e5bda4cf-00f8-45d6-ba1a-b45fe98e0049",
+  "title": "Scheduler Test",
+  "description": "Scheduler Test Flow",
+  "flow": [
+    {
+      "implementor": "com.reedelk.scheduler.component.Scheduler",
+      "description": "Scheduler 1 two three",
+      "strategy": "FIXED_FREQUENCY",
+      "fixedFrequency": {
+        "period": 1000,
+        "timeUnit": "MILLISECONDS"
+      }
+    },
+    {
+      "implementor": "com.reedelk.core.component.payload.SetPayload",
+      "description": "Set Payload",
+      "mimeType": "text/plain",
+      "payload": "#[message.attributes()]"
+    },
+    {
+      "implementor": "com.reedelk.core.component.logger.LoggerComponent",
+      "description": "Logger",
+      "level": "INFO",
+      "message": "#[message.payload()]"
+    }
+  ]
+}

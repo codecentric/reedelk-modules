@@ -1,4 +1,4 @@
-package com.reedelk.scheduler.component;
+package com.reedelk.scheduler.configuration;
 
 public interface SchedulerAttribute {
 
