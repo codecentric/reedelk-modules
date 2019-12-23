@@ -16,7 +16,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -203,14 +205,15 @@ class FlowTest {
         Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
         doReturn(mockExecutionNode).when(mockExecutionGraph).getRoot();
         doReturn(mockInbound).when(mockExecutionNode).getComponent();
+        InOrder inOrderMockInbound = Mockito.inOrder(mockInbound);
         flow.start();
 
         // When
         flow.stopIfStarted();
 
         // Then
-        verify(mockInbound).onShutdown();
-        verify(mockInbound).removeEventListener();
+        inOrderMockInbound.verify(mockInbound).onShutdown();
+        inOrderMockInbound.verify(mockInbound).removeEventListener();
     }
 
     @Test

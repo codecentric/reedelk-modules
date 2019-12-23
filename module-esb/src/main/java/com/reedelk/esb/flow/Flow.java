@@ -97,8 +97,8 @@ public class Flow implements InboundEventListener {
         synchronized (this) {
             try {
                 Inbound inbound = getInbound();
-                inbound.removeEventListener();
                 inbound.onShutdown();
+                inbound.removeEventListener();
             } finally {
                 started = false;
             }
