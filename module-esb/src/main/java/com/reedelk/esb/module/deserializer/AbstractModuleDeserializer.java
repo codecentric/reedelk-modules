@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.reedelk.runtime.commons.FileExtension.*;
@@ -63,6 +64,7 @@ abstract class AbstractModuleDeserializer implements ModuleDeserializer {
     private Collection<ResourceLoader> getScripts() {
         List<URL> resourcesURL = getResources(Script.RESOURCE_DIRECTORY, SCRIPT.value());
         return resourcesURL.stream()
+                .filter(Objects::nonNull)
                 .map(ResourceLoader::new)
                 .collect(toSet());
     }
@@ -71,6 +73,7 @@ abstract class AbstractModuleDeserializer implements ModuleDeserializer {
     private Collection<ResourceLoader> getResources() {
         List<URL> resourcesURL = getResources(Resource.RESOURCE_DIRECTORY);
         return resourcesURL.stream()
+                .filter(Objects::nonNull)
                 .map(ResourceLoader::new)
                 .collect(toSet());
     }

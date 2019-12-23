@@ -1,5 +1,6 @@
 package com.reedelk.esb.services.resource;
 
+import com.reedelk.esb.commons.ResourcePath;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
@@ -24,7 +25,7 @@ public class ResourceLoader {
     }
 
     public String getResourceFilePath() {
-        return resourceURL.getPath();
+        return ResourcePath.from(resourceURL);
     }
 
     // Used by script resolver (scripts are small)

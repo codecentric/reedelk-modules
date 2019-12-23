@@ -46,11 +46,11 @@ public class FileSystemDeserializer extends AbstractModuleDeserializer {
 
         try (Stream<Path> walk = Files.walk(targetPath)) {
             return walk.filter(pathFilter)
-                    .map(unchecked(path -> path.toFile().toURI().toURL()))
+                    .map(unchecked(path -> path.toUri().toURL()))
                     .collect(toList());
-        } catch (IOException e) {
+        } catch (IOException exception) {
             String errorMessage = ERROR_READING_FILES_FROM_RESOURCE_FOLDER.format(targetPath.toString());
-            throw new ESBException(errorMessage, e);
+            throw new ESBException(errorMessage, exception);
         }
     }
 }
