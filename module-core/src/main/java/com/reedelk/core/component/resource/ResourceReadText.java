@@ -48,4 +48,16 @@ public class ResourceReadText extends ResourceReadComponent implements Processor
                 .mimeType(mimeType)
                 .build();
     }
+
+    public void setResourceFile(ResourceText resourceFile) {
+        this.resourceFile = resourceFile;
+    }
+
+    public void setAutoMimeType(boolean autoMimeType) {
+        this.autoMimeType = autoMimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
 }

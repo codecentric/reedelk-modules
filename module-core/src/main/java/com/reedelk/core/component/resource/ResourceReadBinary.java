@@ -48,4 +48,16 @@ public class ResourceReadBinary extends ResourceReadComponent implements Process
                 .mimeType(mimeType)
                 .build();
     }
+
+    public void setResourceFile(ResourceBinary resourceFile) {
+        this.resourceFile = resourceFile;
+    }
+
+    public void setAutoMimeType(boolean autoMimeType) {
+        this.autoMimeType = autoMimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
 }
