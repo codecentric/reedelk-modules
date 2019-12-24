@@ -17,7 +17,7 @@ public class FixedFrequencyConfiguration implements Implementor {
     private int period;
 
     @Property("Start delay")
-    @Hint("100")
+    @Hint("1500")
     private int delay;
 
     @Property("Time unit")
