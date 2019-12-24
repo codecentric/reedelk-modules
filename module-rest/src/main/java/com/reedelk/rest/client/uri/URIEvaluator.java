@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.reedelk.rest.commons.ConfigPreconditions.requireNotNull;
+import static com.reedelk.rest.commons.Messages.RestClient.CONFIG_CLIENT_NULL_ERROR;
+import static com.reedelk.rest.commons.Messages.RestClient.REQUEST_URL_ERROR;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static com.reedelk.runtime.api.commons.StringUtils.isNotNull;
 
@@ -119,7 +121,7 @@ public class URIEvaluator {
 
             } else {
                 // Use config
-                requireNotNull(configuration, "Expected JSON definition with 'configuration' object property OR 'baseURL' property");
+                requireNotNull(configuration, CONFIG_CLIENT_NULL_ERROR.format());
 
                 String host = configuration.getHost();
                 int port = port(configuration.getPort());
@@ -129,12 +131,7 @@ public class URIEvaluator {
                     URI uri = new URI(scheme, null, host, port, basePath, null, null);
                     evaluator.baseURL = uri.toString();
                 } catch (URISyntaxException e) {
-                    String message = String.format("Could not build request URL with the following parameters " +
-                            "host=[%s], " +
-                            "port=[%s], " +
-                            "basePath=[%s], " +
-                            "scheme=[%s]",
-                            host ,port, basePath, scheme);
+                    String message = REQUEST_URL_ERROR.format(host ,port, basePath, scheme, e.getMessage());
                     throw new ConfigurationException(message, e);
                 }
             }

@@ -17,6 +17,8 @@ public class Messages {
 
         REQUEST_FAILED("Failed to connect to %s: %s"),
         REQUEST_CANCELLED("Failed to connect to %s: request has been cancelled"),
+        REQUEST_URL_ERROR("Could not build request URL with the following parameters host=[%s], port=[%s], basePath=[%s], scheme=[%s]: %s"),
+        CONFIG_CLIENT_NULL_ERROR("Expected JSON definition with 'configuration' object property OR 'baseURL' property"),
         DIGEST_AUTH_MISSING("Digest Authentication Configuration must be present in the JSON definition when 'authentication' property is 'DIGEST'"),
         BASIC_AUTH_MISSING("Basic Authentication Configuration must be present in the JSON definition when 'authentication' property is 'BASIC'"),
         PROXY_CONFIG_MISSING("Proxy Configuration must be present in the JSON definition when 'proxy' property is 'PROXY'");
