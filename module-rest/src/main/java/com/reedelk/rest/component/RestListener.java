@@ -1,6 +1,5 @@
 package com.reedelk.rest.component;
 
-import com.reedelk.rest.ConfigurationException;
 import com.reedelk.rest.commons.RestMethod;
 import com.reedelk.rest.configuration.StreamingMode;
 import com.reedelk.rest.configuration.listener.ErrorResponse;
@@ -14,6 +13,7 @@ import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Hint;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.AbstractInbound;
+import com.reedelk.runtime.api.exception.ConfigurationException;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.script.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
