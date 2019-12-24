@@ -5,6 +5,8 @@ import com.reedelk.scheduler.configuration.CronConfiguration;
 import com.reedelk.scheduler.configuration.FixedFrequencyConfiguration;
 import com.reedelk.scheduler.configuration.SchedulingStrategy;
 
+import static com.reedelk.scheduler.commons.Messages.Scheduler.*;
+
 public class SchedulingStrategyBuilder {
 
     private SchedulingStrategy strategy;
@@ -28,19 +30,19 @@ public class SchedulingStrategyBuilder {
     public SchedulingStrategyScheduler build() {
         if (SchedulingStrategy.FIXED_FREQUENCY.equals(strategy)) {
             if (fixedFrequencyConfig == null) {
-                //"Scheduler 'fixedFrequencyConfig' property must be defined in the JSON definition when 'strategy' is FIXED_FREQUENCY"
-                throw new ConfigurationException("Fixed frequency configuration");
+                String message = ERROR_CONFIG_FIXED_FREQUENCY_MISSING.format(SchedulingStrategy.FIXED_FREQUENCY.toString());
+                throw new ConfigurationException(message);
             }
             return new SchedulingStrategySchedulerFixedFrequency(fixedFrequencyConfig);
         } else if (SchedulingStrategy.CRON.equals(strategy)) {
             if (cronConfig == null) {
-                //"Scheduler 'cronConfig' property must be defined in the JSON definition when 'strategy' is CRON"
-                throw new ConfigurationException("Cron configuration");
+                String message = ERROR_CONFIG_CRON_MISSING.format(SchedulingStrategy.CRON.toString());
+                throw new ConfigurationException(message);
             }
             return new SchedulingStrategySchedulerCron(cronConfig);
         } else {
-            // Scheduler 'strategy' value=['%s'] is not valid.
-            throw new ConfigurationException("Scheduling strategy :  " + strategy + " not valid");
+            String message = ERROR_CONFIG_SCHEDULING_STRATEGY.format(strategy);
+            throw new ConfigurationException(message);
         }
     }
 

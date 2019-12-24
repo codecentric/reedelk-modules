@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+import static com.reedelk.scheduler.commons.Messages.Scheduler.*;
+
 public class SchedulerProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(SchedulerProvider.class);
@@ -18,8 +20,9 @@ public class SchedulerProvider {
         try {
             quartzScheduler = new StdSchedulerFactory().getScheduler();
             quartzScheduler.start();
-        } catch (SchedulerException e) {
-            throw new ESBException();
+        } catch (SchedulerException exception) {
+            String message = ERROR_QUARTZ_SCHEDULER_INIT.format(exception.getMessage());
+            throw new ESBException(message, exception);
         }
     }
 
@@ -38,8 +41,9 @@ public class SchedulerProvider {
                     quartzScheduler.shutdown();
                 }
                 quartzScheduler = null;
-            } catch (SchedulerException e) {
-                logger.warn("Could not dispose quartz scheduler: " + e.getMessage(), e);
+            } catch (SchedulerException exception) {
+                String message = ERROR_QUARTZ_SCHEDULER_DISPOSE.format(exception.getMessage());
+                logger.warn(message, exception);
             }
         }
     }
@@ -51,8 +55,9 @@ public class SchedulerProvider {
         try {
             quartzScheduler.checkExists(jobKey);
             quartzScheduler.deleteJob(jobKey);
-        } catch (SchedulerException e) {
-            logger.warn("Could not delete job with ID: " + jobKey.toString() + ": "+ e.getMessage(), e);
+        } catch (SchedulerException exception) {
+            String message = ERROR_DELETE_JOB.format(jobKey.toString(), exception.getMessage());
+            logger.warn(message, exception);
         }
     }
 
@@ -65,7 +70,7 @@ public class SchedulerProvider {
             // Cleanup
             getContext().ifPresent(schedulerContext -> schedulerContext.remove(jobID));
             deleteJob(job.getKey());
-            String message = String.format("Could not schedule job with id=%s", jobID);
+            String message = ERROR_SCHEDULE_JOB.format(jobID, exception.getMessage());
             throw new ESBException(message, exception);
         }
     }
@@ -73,8 +78,9 @@ public class SchedulerProvider {
     private Optional<SchedulerContext> getContext() {
         try {
             return Optional.ofNullable(quartzScheduler.getContext());
-        } catch (SchedulerException e) {
-            logger.warn("Could not get quartz context: " + e.getMessage(), e);
+        } catch (SchedulerException exception) {
+            String message = ERROR_QUARTZ_CONTEXT.format(exception.getMessage());
+            logger.warn(message, exception);
             return Optional.empty();
         }
     }

@@ -16,6 +16,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.reedelk.scheduler.commons.Messages.Scheduler.*;
+
 public class ExecuteFlowJob implements Job {
 
     private static final Logger logger = LoggerFactory.getLogger(ExecuteFlowJob.class);
@@ -35,9 +37,10 @@ public class ExecuteFlowJob implements Job {
         SchedulerContext context;
         try {
             context = jobExecutionContext.getScheduler().getContext();
-        } catch (SchedulerException e) {
-            logger.error("Could not execute Scheduler Job: " + e.getMessage(), e);
-            throw new JobExecutionException(e);
+        } catch (SchedulerException exception) {
+            String message = ERROR_QUARTZ_CONTEXT.format(exception.getMessage());
+            logger.error(message, exception);
+            throw new JobExecutionException(exception);
         }
 
         InboundEventListener inbound = (InboundEventListener) context.get(jobExecutionContext.getJobDetail().getKey().toString());
@@ -45,6 +48,7 @@ public class ExecuteFlowJob implements Job {
             @Override
             public void onError(Throwable throwable, FlowContext flowContext) {
                 // we log the exception thrown during the execution of the flow
+                // TODO: Test what gets logged here....
                 logger.error("scheduler", throwable);
             }
         });
