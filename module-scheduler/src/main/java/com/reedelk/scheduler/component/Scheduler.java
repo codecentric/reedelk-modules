@@ -36,8 +36,8 @@ public class Scheduler extends AbstractInbound {
     @Override
     public void onStart() {
         job = SchedulingStrategyBuilder.get(strategy)
-                .withConfig(cronConfig)
-                .withConfig(fixedFrequencyConfig)
+                .withFixedFrequencyConfig(cronConfig)
+                .withFixedFrequencyConfig(fixedFrequencyConfig)
                 .build()
                 .schedule(this);
     }

@@ -5,9 +5,12 @@
   "flow": [
     {
       "implementor": "com.reedelk.scheduler.component.Scheduler",
-      "description": "Scheduler1",
+      "description": "Scheduler",
       "strategy": "CRON",
-      "cron": {"timeZone": "Europe/Vaduz"}
+      "cronConfig": {
+        "expression": "* * * ? * *",
+        "timeZone": "GMT"
+      }
     },
     {
       "implementor": "com.reedelk.core.component.payload.SetPayload",

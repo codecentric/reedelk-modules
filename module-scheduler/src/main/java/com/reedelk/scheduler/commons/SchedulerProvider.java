@@ -4,8 +4,14 @@ import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.exception.ESBException;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 public class SchedulerProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(SchedulerProvider.class);
 
     private static Scheduler quartzScheduler;
     static {
@@ -33,7 +39,7 @@ public class SchedulerProvider {
                 }
                 quartzScheduler = null;
             } catch (SchedulerException e) {
-                // TODO: Just log this exceptioin there is nothing we can do to recover here
+                logger.warn("Could not dispose quartz scheduler: " + e.getMessage(), e);
             }
         }
     }
@@ -43,19 +49,33 @@ public class SchedulerProvider {
 
     void deleteJob(JobKey jobKey) {
         try {
+            quartzScheduler.checkExists(jobKey);
             quartzScheduler.deleteJob(jobKey);
         } catch (SchedulerException e) {
-            // TODO: Adjust this
+            logger.warn("Could not delete job with ID: " + jobKey.toString() + ": "+ e.getMessage(), e);
         }
     }
 
     void scheduleJob(InboundEventListener listener, JobDetail job, Trigger trigger) {
+        String jobID = job.getKey().toString();
         try {
-            quartzScheduler.getContext().put(job.getKey().toString(), listener);
+            quartzScheduler.getContext().put(jobID, listener);
             quartzScheduler.scheduleJob(job, trigger);
+        } catch (SchedulerException exception) {
+            // Cleanup
+            getContext().ifPresent(schedulerContext -> schedulerContext.remove(jobID));
+            deleteJob(job.getKey());
+            String message = String.format("Could not schedule job with id=%s", jobID);
+            throw new ESBException(message, exception);
+        }
+    }
+
+    private Optional<SchedulerContext> getContext() {
+        try {
+            return Optional.ofNullable(quartzScheduler.getContext());
         } catch (SchedulerException e) {
-            // TODO: Do cleanup: remove from context the key and remove the schedule job if  present.
-            // TODO: And then REthrow the esb exception.
+            logger.warn("Could not get quartz context: " + e.getMessage(), e);
+            return Optional.empty();
         }
     }
 }
