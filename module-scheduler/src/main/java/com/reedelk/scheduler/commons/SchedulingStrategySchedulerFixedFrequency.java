@@ -28,23 +28,36 @@ class SchedulingStrategySchedulerFixedFrequency implements SchedulingStrategySch
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withSchedule(applyTimeUnit(simpleSchedule(), timeUnit, period)
                         .repeatForever())
-                .startAt(new Date(new Date().getTime() + delay))
+                .startAt(startDate(timeUnit, delay))
                 .build();
         SchedulerProvider.scheduler().scheduleJob(listener, job, trigger);
         return new SchedulerJob(job.getKey());
     }
 
+    private Date startDate(TimeUnit timeUnit, int delay) {
+        long delayToAddInMs;
+        if (TimeUnit.HOURS.equals(timeUnit)) {
+            delayToAddInMs = java.util.concurrent.TimeUnit.HOURS.toMillis(delay);
+        } else if (TimeUnit.MINUTES.equals(timeUnit)) {
+            delayToAddInMs = java.util.concurrent.TimeUnit.MINUTES.toMillis(delay);
+        } else if (TimeUnit.SECONDS.equals(timeUnit)) {
+            delayToAddInMs = java.util.concurrent.TimeUnit.SECONDS.toMillis(delay);
+        } else {
+            // DEFAULT (Milliseconds)
+            delayToAddInMs = delay;
+        }
+        return new Date(new Date().getTime() + delayToAddInMs);
+    }
+
     private SimpleScheduleBuilder applyTimeUnit(SimpleScheduleBuilder simpleSchedule, TimeUnit timeUnit, int period) {
-        if (TimeUnit.MILLISECONDS.equals(timeUnit)) {
-         return simpleSchedule.withIntervalInMilliseconds(period);
-        } else if (TimeUnit.HOURS.equals(timeUnit)) {
+        if (TimeUnit.HOURS.equals(timeUnit)) {
             return simpleSchedule.withIntervalInHours(period);
         } else if (TimeUnit.MINUTES.equals(timeUnit)) {
             return simpleSchedule.withIntervalInMinutes(period);
         } else if (TimeUnit.SECONDS.equals(timeUnit)) {
             return simpleSchedule.withIntervalInSeconds(period);
         } else {
-            // DEFAULT
+            // DEFAULT (Milliseconds)
             return simpleSchedule.withIntervalInMilliseconds(period);
         }
     }
