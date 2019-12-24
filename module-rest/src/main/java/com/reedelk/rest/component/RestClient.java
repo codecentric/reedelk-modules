@@ -45,6 +45,9 @@ public class RestClient implements ProcessorAsync {
     private ClientConfiguration configuration;
 
     @Property("Base URL")
+    @PropertyInfo("The base URL of the HTTP request. " +
+            "It may include the request path as well, " +
+            "e.g: http://api.example.com/resource1")
     @Hint("https://api.example.com")
     @When(propertyName = "configuration", propertyValue = When.NULL)
     @When(propertyName = "configuration", propertyValue = "{'ref': '" + When.BLANK + "'}")
