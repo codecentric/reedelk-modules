@@ -8,10 +8,7 @@ import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.scheduler.component.Scheduler;
 import com.reedelk.scheduler.configuration.SchedulerAttribute;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.SchedulerContext;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +21,7 @@ public class ExecuteFlowJob implements Job {
     private static final Logger logger = LoggerFactory.getLogger(ExecuteFlowJob.class);
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) {
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         Map<String, Serializable> attributesMap = new HashMap<>();
         attributesMap.put(SchedulerAttribute.firedAt(), jobExecutionContext.getFireTime().getTime());
         DefaultMessageAttributes attributes = new DefaultMessageAttributes(Scheduler.class, attributesMap);
@@ -34,20 +31,22 @@ public class ExecuteFlowJob implements Job {
                 .empty()
                 .build();
 
+
+        SchedulerContext context;
         try {
-            SchedulerContext context = jobExecutionContext.getScheduler().getContext();
-            InboundEventListener inbound = (InboundEventListener) context.get(jobExecutionContext.getJobDetail().getKey().toString());
-            inbound.onEvent(emptyMessage, new OnResult() {
-                @Override
-                public void onError(Throwable throwable, FlowContext flowContext) {
-                    // we catch any exception, we want to keep the scheduler to run.
-                    // (otherwise by default it stops its execution)
-                    logger.error("scheduler", throwable);
-                }
-            });
+            context = jobExecutionContext.getScheduler().getContext();
         } catch (SchedulerException e) {
-            e.printStackTrace();
+            logger.error("Could not execute Scheduler Job: " + e.getMessage(), e);
+            throw new JobExecutionException(e);
         }
 
+        InboundEventListener inbound = (InboundEventListener) context.get(jobExecutionContext.getJobDetail().getKey().toString());
+        inbound.onEvent(emptyMessage, new OnResult() {
+            @Override
+            public void onError(Throwable throwable, FlowContext flowContext) {
+                // we log the exception thrown during the execution of the flow
+                logger.error("scheduler", throwable);
+            }
+        });
     }
 }

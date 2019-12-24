@@ -30,11 +30,11 @@ class SchedulingStrategySchedulerCron implements SchedulingStrategyScheduler {
                 .withSchedule(cronSchedule(expression)
                         .inTimeZone(getOrDefault(timeZone)))
                 .build();
-        SchedulerProvider.getInstance().scheduleJob(listener, job, trigger);
+        SchedulerProvider.scheduler().scheduleJob(listener, job, trigger);
         return new SchedulerJob(job.getKey());
     }
 
-    public static TimeZone getOrDefault(String timeZone) {
+    private static TimeZone getOrDefault(String timeZone) {
         if (StringUtils.isBlank(timeZone)) {
             return TimeZone.getDefault();
         } else {

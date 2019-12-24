@@ -30,7 +30,7 @@ class SchedulingStrategySchedulerFixedFrequency implements SchedulingStrategySch
                         .repeatForever())
                 .startAt(new Date(new Date().getTime() + delay))
                 .build();
-        SchedulerProvider.getInstance().scheduleJob(listener, job, trigger);
+        SchedulerProvider.scheduler().scheduleJob(listener, job, trigger);
         return new SchedulerJob(job.getKey());
     }
 

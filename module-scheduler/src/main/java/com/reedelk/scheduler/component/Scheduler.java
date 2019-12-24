@@ -25,19 +25,19 @@ public class Scheduler extends AbstractInbound {
 
     @Property("Fixed Frequency")
     @When(propertyName = "strategy", propertyValue = "FIXED_FREQUENCY")
-    private FixedFrequencyConfiguration fixedFrequency;
+    private FixedFrequencyConfiguration fixedFrequencyConfig;
 
     @Property("Cron")
     @When(propertyName = "strategy", propertyValue = "CRON")
-    private CronConfiguration cron;
+    private CronConfiguration cronConfig;
 
     private SchedulerJob job;
 
     @Override
     public void onStart() {
         job = SchedulingStrategyBuilder.get(strategy)
-                .withConfig(cron)
-                .withConfig(fixedFrequency)
+                .withConfig(cronConfig)
+                .withConfig(fixedFrequencyConfig)
                 .build()
                 .schedule(this);
     }
@@ -53,11 +53,11 @@ public class Scheduler extends AbstractInbound {
         this.strategy = strategy;
     }
 
-    public void setFixedFrequency(FixedFrequencyConfiguration fixedFrequency) {
-        this.fixedFrequency = fixedFrequency;
+    public void setFixedFrequencyConfig(FixedFrequencyConfiguration fixedFrequencyConfig) {
+        this.fixedFrequencyConfig = fixedFrequencyConfig;
     }
 
-    public void setCron(CronConfiguration cron) {
-        this.cron = cron;
+    public void setCronConfig(CronConfiguration cronConfig) {
+        this.cronConfig = cronConfig;
     }
 }

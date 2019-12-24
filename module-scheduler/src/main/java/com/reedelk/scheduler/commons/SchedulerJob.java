@@ -1,7 +1,6 @@
 package com.reedelk.scheduler.commons;
 
 import org.quartz.JobKey;
-import org.quartz.SchedulerException;
 
 public class SchedulerJob {
 
@@ -12,10 +11,6 @@ public class SchedulerJob {
     }
 
     public void dispose() {
-        try {
-            SchedulerProvider.getInstance().get().deleteJob(jobKey);
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
+        SchedulerProvider.scheduler().deleteJob(jobKey);
     }
 }
