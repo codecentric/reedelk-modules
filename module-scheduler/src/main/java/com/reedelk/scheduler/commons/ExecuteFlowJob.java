@@ -3,7 +3,6 @@ package com.reedelk.scheduler.commons;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.DefaultMessageAttributes;
-import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.scheduler.component.Scheduler;
@@ -16,7 +15,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.reedelk.scheduler.commons.Messages.Scheduler.*;
+import static com.reedelk.scheduler.commons.Messages.Scheduler.ERROR_QUARTZ_CONTEXT;
 
 public class ExecuteFlowJob implements Job {
 
@@ -44,13 +43,6 @@ public class ExecuteFlowJob implements Job {
         }
 
         InboundEventListener inbound = (InboundEventListener) context.get(jobExecutionContext.getJobDetail().getKey().toString());
-        inbound.onEvent(emptyMessage, new OnResult() {
-            @Override
-            public void onError(Throwable throwable, FlowContext flowContext) {
-                // we log the exception thrown during the execution of the flow
-                // TODO: Test what gets logged here....
-                logger.error("scheduler", throwable);
-            }
-        });
+        inbound.onEvent(emptyMessage, new OnResult() {});
     }
 }
