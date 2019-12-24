@@ -23,11 +23,11 @@ public class Scheduler extends AbstractInbound {
     @Default("FIXED_FREQUENCY")
     private SchedulingStrategy strategy;
 
-    @Property("Fixed Frequency")
+    @Property("Fixed Frequency Configuration")
     @When(propertyName = "strategy", propertyValue = "FIXED_FREQUENCY")
     private FixedFrequencyConfiguration fixedFrequencyConfig;
 
-    @Property("Cron")
+    @Property("Cron Configuration")
     @When(propertyName = "strategy", propertyValue = "CRON")
     private CronConfiguration cronConfig;
 
