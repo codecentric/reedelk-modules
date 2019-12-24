@@ -21,20 +21,24 @@ class SchedulingStrategySchedulerFixedFrequency implements SchedulingStrategySch
     public SchedulerJob schedule(InboundEventListener listener) {
         JobDetail job = JobBuilder.newJob(ExecuteFlowJob.class).build();
 
-        int period = configuration.getPeriod();
-        int delay = configuration.getDelay();
-        TimeUnit timeUnit = configuration.getTimeUnit();
-
         Trigger trigger = TriggerBuilder.newTrigger()
-                .withSchedule(applyTimeUnit(simpleSchedule(), timeUnit, period)
+                .withSchedule(applyTimeUnit(simpleSchedule())
                         .repeatForever())
-                .startAt(startDate(timeUnit, delay))
+                .startAt(startDate())
                 .build();
-        SchedulerProvider.scheduler().scheduleJob(listener, job, trigger);
+
+        scheduleJob(listener, job, trigger);
+
         return new SchedulerJob(job.getKey());
     }
 
-    private Date startDate(TimeUnit timeUnit, int delay) {
+    void scheduleJob(InboundEventListener listener, JobDetail job, Trigger trigger) {
+        SchedulerProvider.scheduler().scheduleJob(listener, job, trigger);
+    }
+
+    Date startDate() {
+        int delay = configuration.getDelay();
+        TimeUnit timeUnit = configuration.getTimeUnit();
         long delayToAddInMs;
         if (TimeUnit.HOURS.equals(timeUnit)) {
             delayToAddInMs = java.util.concurrent.TimeUnit.HOURS.toMillis(delay);
@@ -49,7 +53,9 @@ class SchedulingStrategySchedulerFixedFrequency implements SchedulingStrategySch
         return new Date(new Date().getTime() + delayToAddInMs);
     }
 
-    private SimpleScheduleBuilder applyTimeUnit(SimpleScheduleBuilder simpleSchedule, TimeUnit timeUnit, int period) {
+    SimpleScheduleBuilder applyTimeUnit(SimpleScheduleBuilder simpleSchedule) {
+        int period = configuration.getPeriod();
+        TimeUnit timeUnit = configuration.getTimeUnit();
         if (TimeUnit.HOURS.equals(timeUnit)) {
             return simpleSchedule.withIntervalInHours(period);
         } else if (TimeUnit.MINUTES.equals(timeUnit)) {

@@ -25,16 +25,20 @@ class SchedulingStrategySchedulerCron implements SchedulingStrategyScheduler {
         JobDetail job = JobBuilder.newJob(ExecuteFlowJob.class).build();
 
         String expression = configuration.getExpression();
-        String timeZone = configuration.getTimeZone();
         Trigger trigger = TriggerBuilder.newTrigger()
-                .withSchedule(cronSchedule(expression)
-                        .inTimeZone(getOrDefault(timeZone)))
+                .withSchedule(cronSchedule(expression).inTimeZone(getTimeZoneOrDefault()))
                 .build();
-        SchedulerProvider.scheduler().scheduleJob(listener, job, trigger);
+
+        scheduleJob(listener, job, trigger);
         return new SchedulerJob(job.getKey());
     }
 
-    private static TimeZone getOrDefault(String timeZone) {
+    void scheduleJob(InboundEventListener listener, JobDetail job, Trigger trigger) {
+        SchedulerProvider.scheduler().scheduleJob(listener, job, trigger);
+    }
+
+    TimeZone getTimeZoneOrDefault() {
+        String timeZone = configuration.getTimeZone();
         if (StringUtils.isBlank(timeZone)) {
             return TimeZone.getDefault();
         } else {
