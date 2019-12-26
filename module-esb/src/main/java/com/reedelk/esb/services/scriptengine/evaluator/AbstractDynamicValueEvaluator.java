@@ -7,6 +7,7 @@ import com.reedelk.esb.pubsub.OnMessage;
 import com.reedelk.esb.services.converter.DefaultConverterService;
 import com.reedelk.esb.services.scriptengine.JavascriptEngineProvider;
 import com.reedelk.esb.services.scriptengine.evaluator.function.FunctionDefinitionBuilder;
+import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.content.utils.TypedPublisher;
 import com.reedelk.runtime.api.script.ScriptBlock;
@@ -151,7 +152,7 @@ abstract class AbstractDynamicValueEvaluator extends ScriptEngineServiceAdapter 
         return JavascriptEngineProvider.getInstance();
     }
 
-    private DefaultConverterService converterService() {
+    private ConverterService converterService() {
         return DefaultConverterService.getInstance();
     }
 }
