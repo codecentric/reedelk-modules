@@ -28,11 +28,8 @@ import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf
 
 public class Writer {
 
-    public void write(WriteConfiguration config,
-                      FlowContext flowContext,
-                      OnResult callback,
-                      Path path,
-                      TypedPublisher<byte[]> dataStream) {
+    public void write(WriteConfiguration config, FlowContext flowContext, OnResult callback,
+                      Path path, TypedPublisher<byte[]> dataStream) {
 
         int bufferLength = config.getWriteBufferSize();
 
@@ -68,7 +65,7 @@ public class Writer {
                         // Write it in multiple steps
                         int remaining;
                         int offset = 0;
-                        int length = byteChunk.length > bufferLength ? bufferLength : byteChunk.length;
+                        int length = Math.min(byteChunk.length, bufferLength);
 
                         while (length > 0) {
 
@@ -84,7 +81,7 @@ public class Writer {
 
                             remaining = byteChunk.length - offset;
 
-                            length = remaining > bufferLength ? bufferLength : remaining;
+                            length = Math.min(remaining, bufferLength);
 
                         }
 
@@ -157,7 +154,7 @@ public class Writer {
      * to avoid creating a buffer before knowing if the file channel could be successfully
      * opened.
      */
-    class Initial {
+    static class Initial {
         ByteBuffer buffer;
         FileChannel fileChannel;
 

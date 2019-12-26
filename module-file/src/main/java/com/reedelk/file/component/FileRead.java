@@ -2,11 +2,8 @@ package com.reedelk.file.component;
 
 import com.reedelk.file.commons.MimeTypeParser;
 import com.reedelk.file.exception.NotValidFileException;
-import com.reedelk.file.read.FileReadConfiguration;
-import com.reedelk.file.read.ReadConfiguration;
-import com.reedelk.file.read.Reader;
+import com.reedelk.file.read.*;
 import com.reedelk.runtime.api.annotation.*;
-import com.reedelk.runtime.api.commons.StreamUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.MimeType;
@@ -16,7 +13,6 @@ import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
-import org.reactivestreams.Publisher;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,6 +37,10 @@ public class FileRead implements ProcessorSync {
     @Property("Base path")
     private String basePath;
 
+    @Property("Read mode")
+    @Default("DEFAULT")
+    private ReadMode mode;
+
     @Property("Auto mime type")
     @Default("true")
     private boolean autoMimeType;
@@ -55,7 +55,14 @@ public class FileRead implements ProcessorSync {
     @Property("Configuration")
     private FileReadConfiguration configuration;
 
-    private Reader reader = new Reader();
+    private ReadStrategy strategy;
+
+    @Override
+    public void initialize() {
+        strategy = ReadMode.STREAM.equals(mode) ?
+                new ReadStrategyStream() :
+                new ReadStrategyDefault();
+    }
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
@@ -68,14 +75,12 @@ public class FileRead implements ProcessorSync {
 
             Path path = isBlank(basePath) ? Paths.get(filePath) : Paths.get(basePath, filePath);
 
-            ReadConfiguration config = new ReadConfiguration(configuration);
-
-            Publisher<byte[]> contentAsStream = reader.read(path, config);
-
-            TypedContent<?> content = StreamUtils.FromByteArray.asTypedContent(contentAsStream, actualMimeType);
+            ReadConfigurationDecorator config = new ReadConfigurationDecorator(configuration);
 
             MessageAttributes attributes = new DefaultMessageAttributes(FileRead.class,
                     of(FILE_NAME, path.toString(), TIMESTAMP, System.currentTimeMillis()));
+
+            TypedContent<?> content = strategy.read(path, config, actualMimeType);
 
             return MessageBuilder.get().attributes(attributes).typedContent(content).build();
 
@@ -92,6 +97,10 @@ public class FileRead implements ProcessorSync {
 
     public void setBasePath(String basePath) {
         this.basePath = basePath;
+    }
+
+    public void setMode(ReadMode mode) {
+        this.mode = mode;
     }
 
     public void setAutoMimeType(boolean autoMimeType) {

@@ -6,14 +6,14 @@ import java.util.Optional;
 
 import static com.reedelk.file.commons.Defaults.FileRead.*;
 
-public class ReadConfiguration {
+public class ReadConfigurationDecorator {
 
     private final LockType lockType;
     private final int readBufferSize;
     private final long retryWaitTime;
     private final int retryMaxAttempts;
 
-    public ReadConfiguration(FileReadConfiguration configuration) {
+    public ReadConfigurationDecorator(FileReadConfiguration configuration) {
         this.lockType = getLockType(configuration);
         this.readBufferSize = getReadBufferSize(configuration);
         this.retryMaxAttempts = getRetryMaxAttempts(configuration);
