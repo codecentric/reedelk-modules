@@ -29,7 +29,7 @@ public class DynamicMapEvaluator extends AbstractDynamicValueEvaluator {
         return evaluateWith(dynamicMap, errorFunctionBuilder, throwable, context);
     }
 
-    private <T> Map<String, T> evaluateWith(DynamicMap<T> dynamicMap, FunctionDefinitionBuilder functionBuilder, Object... args) {
+    private <T> Map<String, T> evaluateWith(DynamicMap<T> dynamicMap, FunctionDefinitionBuilder<DynamicMap<T>> functionBuilder, Object... args) {
         if (dynamicMap == null || dynamicMap.isEmpty()) {
             // If dynamic map is empty, nothing to do.
             return (Map<String, T>) emptyMap;
