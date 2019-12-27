@@ -6,6 +6,9 @@ import java.net.URL;
 
 public class ResourcePath {
 
+    private ResourcePath() {
+    }
+
     // We must from spaces in the path and replace them all with "%20".
     public static String from(URL url) {
         Preconditions.checkNotNull(url, "resource url");
