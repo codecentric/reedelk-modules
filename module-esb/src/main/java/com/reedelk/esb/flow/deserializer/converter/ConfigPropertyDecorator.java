@@ -1,18 +1,18 @@
-package com.reedelk.esb.flow.deserializer.typefactory;
+package com.reedelk.esb.flow.deserializer.converter;
 
 import com.reedelk.runtime.api.commons.ConfigurationPropertyUtils;
 import com.reedelk.runtime.api.configuration.ConfigurationService;
-import com.reedelk.runtime.commons.TypeFactory;
-import com.reedelk.runtime.commons.TypeFactoryContext;
+import com.reedelk.runtime.converter.DeserializerConverter;
+import com.reedelk.runtime.converter.DeserializerConverterContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ConfigPropertyDecorator implements TypeFactory {
+public class ConfigPropertyDecorator implements DeserializerConverter {
 
-    private final TypeFactory delegate;
+    private final DeserializerConverter delegate;
     private final ConfigurationService configurationService;
 
-    public ConfigPropertyDecorator(ConfigurationService configurationService, TypeFactory delegate) {
+    public ConfigPropertyDecorator(ConfigurationService configurationService, DeserializerConverter delegate) {
         this.configurationService = configurationService;
         this.delegate = delegate;
     }
@@ -23,7 +23,7 @@ public class ConfigPropertyDecorator implements TypeFactory {
     }
 
     @Override
-    public <T> T create(Class<T> expectedClass, JSONObject jsonObject, String propertyName, TypeFactoryContext context) {
+    public <T> T convert(Class<T> expectedClass, JSONObject jsonObject, String propertyName, DeserializerConverterContext context) {
         // Note that a component definition might be null for some types. For instance, the ModuleId type
         // does not require any component definition in order to be instantiated, it only requires the moduleId.
         if (jsonObject != null ) {
@@ -39,11 +39,11 @@ public class ConfigPropertyDecorator implements TypeFactory {
         }
 
         // Otherwise we use the default converter.
-        return delegate.create(expectedClass, jsonObject, propertyName, context);
+        return delegate.convert(expectedClass, jsonObject, propertyName, context);
     }
 
     @Override
-    public <T> T create(Class<T> expectedClass, JSONArray jsonArray, int index, TypeFactoryContext context) {
+    public <T> T convert(Class<T> expectedClass, JSONArray jsonArray, int index, DeserializerConverterContext context) {
         Object value = jsonArray.get(index);
         // If the array value is a string and starts with $[],
         // then it is a system property, otherwise we just use the default value.
@@ -53,6 +53,6 @@ public class ConfigPropertyDecorator implements TypeFactory {
         }
 
         // Otherwise we use the default converter.
-        return delegate.create(expectedClass, jsonArray, index, context);
+        return delegate.convert(expectedClass, jsonArray, index, context);
     }
 }

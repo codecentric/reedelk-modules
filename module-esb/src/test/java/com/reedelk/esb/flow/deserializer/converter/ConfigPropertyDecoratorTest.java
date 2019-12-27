@@ -1,8 +1,8 @@
-package com.reedelk.esb.flow.deserializer.typefactory;
+package com.reedelk.esb.flow.deserializer.converter;
 
 import com.reedelk.runtime.api.configuration.ConfigurationService;
-import com.reedelk.runtime.commons.TypeFactory;
-import com.reedelk.runtime.commons.TypeFactoryContext;
+import com.reedelk.runtime.converter.DeserializerConverter;
+import com.reedelk.runtime.converter.DeserializerConverterContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,12 +21,12 @@ class ConfigPropertyDecoratorTest {
     private ConfigurationService configurationService;
 
     private final long testModuleId = 10L;
-    private ConfigPropertyDecorator typeFactory;
-    private TypeFactoryContext typeFactoryContext = new TypeFactoryContext(testModuleId);
+    private ConfigPropertyDecorator decorator;
+    private DeserializerConverterContext deserializerConverterContext = new DeserializerConverterContext(testModuleId);
 
     @BeforeEach
     void setUp() {
-        typeFactory = new ConfigPropertyDecorator(configurationService, TypeFactory.getInstance());
+        decorator = new ConfigPropertyDecorator(configurationService, DeserializerConverter.getInstance());
     }
 
     @Test
@@ -42,7 +42,7 @@ class ConfigPropertyDecoratorTest {
         componentDefinition.put(configKey, "${listener.port}");
 
         // When
-        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey, typeFactoryContext);
+        Object typeInstance = decorator.convert(int.class, componentDefinition, configKey, deserializerConverterContext);
 
         // Then
         assertThat(typeInstance).isEqualTo(expectedValue);
@@ -60,7 +60,7 @@ class ConfigPropertyDecoratorTest {
         componentDefinition.put(configKey, expectedValue);
 
         // When
-        Object typeInstance = typeFactory.create(int.class, componentDefinition, configKey, typeFactoryContext);
+        Object typeInstance = decorator.convert(int.class, componentDefinition, configKey, deserializerConverterContext);
 
         // Then
         assertThat(typeInstance).isEqualTo(expectedValue);
@@ -82,7 +82,7 @@ class ConfigPropertyDecoratorTest {
                 .get("array.config.property.name", int.class);
 
         // When
-        Integer instance = typeFactory.create(int.class, jsonArray, 1, typeFactoryContext);
+        Integer instance = decorator.convert(int.class, jsonArray, 1, deserializerConverterContext);
 
         // Then
         assertThat(instance).isEqualTo(expectedValue);

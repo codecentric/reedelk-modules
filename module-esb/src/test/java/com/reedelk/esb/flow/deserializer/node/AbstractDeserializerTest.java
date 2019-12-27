@@ -1,14 +1,14 @@
 package com.reedelk.esb.flow.deserializer.node;
 
 import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
-import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextDecorator;
+import com.reedelk.esb.flow.deserializer.converter.DeserializerConverterContextDecorator;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.test.utils.TestComponent;
-import com.reedelk.runtime.commons.TypeFactory;
 import com.reedelk.runtime.component.Stop;
+import com.reedelk.runtime.converter.DeserializerConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -66,9 +66,9 @@ abstract class AbstractDeserializerTest {
 
     @BeforeEach
     void setUp() {
-        TypeFactory typeFactory = TypeFactory.getInstance();
-        typeFactory = new TypeFactoryContextDecorator(typeFactory, moduleId);
-        context = spy(new FlowDeserializerContext(bundle, mockModulesManager, mockDeSerializedModule, typeFactory));
+        DeserializerConverter deserializerConverter = DeserializerConverter.getInstance();
+        deserializerConverter = new DeserializerConverterContextDecorator(deserializerConverter, moduleId);
+        context = spy(new FlowDeserializerContext(bundle, mockModulesManager, mockDeSerializedModule, deserializerConverter));
 
         lenient().doReturn(new TestComponent()).when(component1).getComponent();
         lenient().doReturn(new TestComponent()).when(component2).getComponent();

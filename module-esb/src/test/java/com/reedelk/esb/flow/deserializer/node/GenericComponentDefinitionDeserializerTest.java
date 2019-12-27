@@ -1,7 +1,7 @@
 package com.reedelk.esb.flow.deserializer.node;
 
 import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
-import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextDecorator;
+import com.reedelk.esb.flow.deserializer.converter.DeserializerConverterContextDecorator;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.ModulesManager;
@@ -10,7 +10,7 @@ import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Implementor;
 import com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap;
 import com.reedelk.runtime.api.script.dynamicvalue.*;
-import com.reedelk.runtime.commons.TypeFactory;
+import com.reedelk.runtime.converter.DeserializerConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,8 +57,8 @@ class GenericComponentDefinitionDeserializerTest {
 
     @BeforeEach
     void setUp() {
-        TypeFactory factory = TypeFactory.getInstance();
-        factory = new TypeFactoryContextDecorator(factory, testModuleId);
+        DeserializerConverter factory = DeserializerConverter.getInstance();
+        factory = new DeserializerConverterContextDecorator(factory, testModuleId);
         context = spy(new FlowDeserializerContext(mockBundle, mockModulesManager, mockDeSerializedModule, factory));
         deserializer = new GenericComponentDefinitionDeserializer(mockExecutionNode, context);
     }

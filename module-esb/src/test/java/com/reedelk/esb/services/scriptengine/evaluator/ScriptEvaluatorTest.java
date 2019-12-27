@@ -1,7 +1,7 @@
 package com.reedelk.esb.services.scriptengine.evaluator;
 
 import com.reedelk.esb.execution.DefaultFlowContext;
-import com.reedelk.esb.flow.deserializer.typefactory.ProxyScript;
+import com.reedelk.esb.flow.deserializer.converter.ProxyScript;
 import com.reedelk.runtime.api.commons.ModuleContext;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.FlowContext;

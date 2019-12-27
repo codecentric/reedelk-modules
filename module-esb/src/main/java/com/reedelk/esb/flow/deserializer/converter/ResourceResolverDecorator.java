@@ -1,12 +1,12 @@
-package com.reedelk.esb.flow.deserializer.typefactory;
+package com.reedelk.esb.flow.deserializer.converter;
 
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.runtime.api.commons.StreamUtils;
 import com.reedelk.runtime.api.resource.*;
-import com.reedelk.runtime.commons.TypeFactory;
-import com.reedelk.runtime.commons.TypeFactoryContext;
+import com.reedelk.runtime.converter.DeserializerConverter;
+import com.reedelk.runtime.converter.DeserializerConverterContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.reactivestreams.Publisher;
@@ -17,13 +17,13 @@ import java.util.function.Function;
 
 import static com.reedelk.esb.commons.Messages.Resource.RESOURCE_NOT_FOUND;
 
-public class ResourceResolverDecorator implements TypeFactory {
+public class ResourceResolverDecorator implements DeserializerConverter {
 
     private final Module module;
-    private final TypeFactory delegate;
+    private final DeserializerConverter delegate;
     private final DeSerializedModule deSerializedModule;
 
-    public ResourceResolverDecorator(TypeFactory delegate, DeSerializedModule deSerializedModule, Module module) {
+    public ResourceResolverDecorator(DeserializerConverter delegate, DeSerializedModule deSerializedModule, Module module) {
         this.module = module;
         this.delegate = delegate;
         this.deSerializedModule = deSerializedModule;
@@ -36,8 +36,8 @@ public class ResourceResolverDecorator implements TypeFactory {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T create(Class<T> expectedClass, JSONObject jsonObject, String propertyName, TypeFactoryContext context) {
-        T result = delegate.create(expectedClass, jsonObject, propertyName, context);
+    public <T> T convert(Class<T> expectedClass, JSONObject jsonObject, String propertyName, DeserializerConverterContext context) {
+        T result = delegate.convert(expectedClass, jsonObject, propertyName, context);
 
         if (result instanceof ResourceText) {
             ResourceText original = (ResourceText) result;
@@ -56,11 +56,11 @@ public class ResourceResolverDecorator implements TypeFactory {
     }
 
     @Override
-    public <T> T create(Class<T> expectedClass, JSONArray jsonArray, int index, TypeFactoryContext context) {
-        return delegate.create(expectedClass, jsonArray, index, context);
+    public <T> T convert(Class<T> expectedClass, JSONArray jsonArray, int index, DeserializerConverterContext context) {
+        return delegate.convert(expectedClass, jsonArray, index, context);
     }
 
-    private <T> T loadResource(ResourceFile resource, Function<ResourceLoader,Optional<T>> mappingFunction) {
+    private <T> T loadResource(ResourceFile<?> resource, Function<ResourceLoader,Optional<T>> mappingFunction) {
         return deSerializedModule.getResources()
                 .stream()
                 .filter(resourceLoader -> resourceLoader.getResourceFilePath().endsWith(resource.path()))
@@ -72,14 +72,14 @@ public class ResourceResolverDecorator implements TypeFactory {
                 });
     }
 
-    private Function<ResourceLoader,Optional<ResourceBinary>> resourceBinaryMapping(ResourceFile original) {
+    private Function<ResourceLoader,Optional<ResourceBinary>> resourceBinaryMapping(ResourceFile<?> original) {
         return resourceLoader -> {
             Publisher<byte[]> byteArrayStream = resourceLoader.body();
             return Optional.of(new ProxyResourceBinary(original, byteArrayStream));
         };
     }
 
-    private Function<ResourceLoader,Optional<ResourceText>> resourceTextMapping(ResourceFile original) {
+    private Function<ResourceLoader,Optional<ResourceText>> resourceTextMapping(ResourceFile<?> original) {
         return resourceLoader -> {
             Publisher<byte[]> byteArrayStream = resourceLoader.body();
             Publisher<String> stringStream = StreamUtils.FromByteArray.asStringStream(byteArrayStream);

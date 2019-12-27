@@ -62,12 +62,12 @@ public class GenericComponentDefinitionDeserializer {
             // Enum
         } else if (setterArgument.isEnum()){
             Class enumClazz = setterArgument.getClazz();
-            return context.typeFactory().create(enumClazz, componentDefinition, propertyName);
+            return context.converter().convert(enumClazz, componentDefinition, propertyName);
 
             // Primitive or Dynamic Value
         } else {
             Class<?> clazz = setterArgument.getClazz();
-            return context.typeFactory().create(clazz, componentDefinition, propertyName);
+            return context.converter().convert(clazz, componentDefinition, propertyName);
         }
     }
 
@@ -84,7 +84,7 @@ public class GenericComponentDefinitionDeserializer {
             // be used by the Script engine as a reference for the pre-compiled script
             // to be used at runtime evaluation.
             Class<?> clazz = setterArgument.getClazz();
-            return context.typeFactory().create(clazz, componentDefinition, propertyName);
+            return context.converter().convert(clazz, componentDefinition, propertyName);
         } else {
             // It is a complex type implementing implementor interface.
             // We expect that this JSONObject satisfies the properties
@@ -104,7 +104,7 @@ public class GenericComponentDefinitionDeserializer {
         Collection collection = CollectionFactory.from(clazz);
         Class<?> genericType = argument.getGenericType();
         for (int index = 0; index < array.length(); index++) {
-            Object converted = context.typeFactory().create(genericType, array, index);
+            Object converted = context.converter().convert(genericType, array, index);
             collection.add(converted);
         }
         return collection;

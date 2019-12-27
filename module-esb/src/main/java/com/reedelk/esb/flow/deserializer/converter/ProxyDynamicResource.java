@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.deserializer.typefactory;
+package com.reedelk.esb.flow.deserializer.converter;
 
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.services.resource.ResourceLoader;

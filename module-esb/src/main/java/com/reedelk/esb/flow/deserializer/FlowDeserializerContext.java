@@ -5,22 +5,22 @@ import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.runtime.api.component.Implementor;
-import com.reedelk.runtime.commons.TypeFactory;
+import com.reedelk.runtime.converter.DeserializerConverter;
 import org.osgi.framework.Bundle;
 
 public class FlowDeserializerContext {
 
     private final Bundle bundle;
-    private final TypeFactory typeFactory;
+    private final DeserializerConverter deserializerConverter;
     private final ModulesManager modulesManager;
     private final DeSerializedModule deSerializedModule;
 
     public FlowDeserializerContext(Bundle bundle,
                                    ModulesManager modulesManager,
                                    DeSerializedModule deSerializedModule,
-                                   TypeFactory typeFactory) {
+                                   DeserializerConverter deserializerConverter) {
         this.bundle = bundle;
-        this.typeFactory = typeFactory;
+        this.deserializerConverter = deserializerConverter;
         this.modulesManager = modulesManager;
         this.deSerializedModule = deSerializedModule;
     }
@@ -41,7 +41,7 @@ public class FlowDeserializerContext {
         return deSerializedModule;
     }
 
-    public TypeFactory typeFactory() {
-        return typeFactory;
+    public DeserializerConverter converter() {
+        return deserializerConverter;
     }
 }

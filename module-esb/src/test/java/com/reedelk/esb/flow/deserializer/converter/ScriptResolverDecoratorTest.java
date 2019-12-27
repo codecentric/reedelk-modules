@@ -1,12 +1,12 @@
-package com.reedelk.esb.flow.deserializer.typefactory;
+package com.reedelk.esb.flow.deserializer.converter;
 
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.script.Script;
-import com.reedelk.runtime.commons.TypeFactory;
-import com.reedelk.runtime.commons.TypeFactoryContext;
+import com.reedelk.runtime.converter.DeserializerConverter;
+import com.reedelk.runtime.converter.DeserializerConverterContext;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class ScriptResolverDecoratorTest {
 
     private final long testModuleId = 10L;
-    private final TypeFactoryContext factoryContext = new TypeFactoryContext(testModuleId);
+    private final DeserializerConverterContext factoryContext = new DeserializerConverterContext(testModuleId);
 
     @Mock
     private DeSerializedModule mockDeSerializedModule;
@@ -34,7 +34,7 @@ class ScriptResolverDecoratorTest {
 
     @BeforeEach
     void setUp() {
-        decorator = new ScriptResolverDecorator(TypeFactory.getInstance(), mockDeSerializedModule);
+        decorator = new ScriptResolverDecorator(DeserializerConverter.getInstance(), mockDeSerializedModule);
     }
 
     /**
@@ -58,7 +58,7 @@ class ScriptResolverDecoratorTest {
         doReturn(resourceLoaders).when(mockDeSerializedModule).getScripts();
 
         // When
-        Script actualScript = decorator.create(Script.class, componentDefinition, propertyName, factoryContext);
+        Script actualScript = decorator.convert(Script.class, componentDefinition, propertyName, factoryContext);
 
         // Then
         assertThat(actualScript.functionName()).isNotNull();
@@ -85,7 +85,7 @@ class ScriptResolverDecoratorTest {
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
-                () -> decorator.create(Script.class, componentDefinition, propertyName, factoryContext));
+                () -> decorator.convert(Script.class, componentDefinition, propertyName, factoryContext));
 
         // Then
         assertThat(thrown).hasMessage("Could not find script named=[/integration/not_existent.js] defined in resources/scripts folder. Please make sure that the referenced script exists.");
@@ -101,7 +101,7 @@ class ScriptResolverDecoratorTest {
 
         // When
         ESBException thrown = assertThrows(ESBException.class,
-                () -> decorator.create(Script.class, componentDefinition, propertyName, factoryContext));
+                () -> decorator.convert(Script.class, componentDefinition, propertyName, factoryContext));
 
         // Then
         assertThat(thrown).hasMessage("A script resource file must not be null or empty");

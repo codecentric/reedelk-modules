@@ -1,4 +1,4 @@
-package com.reedelk.esb.flow.deserializer.typefactory;
+package com.reedelk.esb.flow.deserializer.converter;
 
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
@@ -7,8 +7,8 @@ import com.reedelk.runtime.api.resource.DynamicResource;
 import com.reedelk.runtime.api.resource.ResourceBinary;
 import com.reedelk.runtime.api.resource.ResourceNotFound;
 import com.reedelk.runtime.api.resource.ResourceText;
-import com.reedelk.runtime.commons.TypeFactory;
-import com.reedelk.runtime.commons.TypeFactoryContext;
+import com.reedelk.runtime.converter.DeserializerConverter;
+import com.reedelk.runtime.converter.DeserializerConverterContext;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class ResourceResolverDecoratorTest {
     private final int testBufferSize = 500;
     private final long testModuleId = 10L;
     private final String testModuleName = "Test module";
-    private final TypeFactoryContext factoryContext = new TypeFactoryContext(testModuleId);
+    private final DeserializerConverterContext factoryContext = new DeserializerConverterContext(testModuleId);
 
     @Mock
     private DeSerializedModule mockDeSerializedModule;
@@ -45,7 +45,7 @@ class ResourceResolverDecoratorTest {
 
     @BeforeEach
     void setUp() {
-        decorator = new ResourceResolverDecorator(TypeFactory.getInstance(), mockDeSerializedModule, mockModule);
+        decorator = new ResourceResolverDecorator(DeserializerConverter.getInstance(), mockDeSerializedModule, mockModule);
         testResourceLoader = createResourceLoaderWith("/sample/path/file.txt", "my test file");
     }
 
@@ -75,7 +75,7 @@ class ResourceResolverDecoratorTest {
                 .getResources();
 
         // When
-        ResourceText actualResource = decorator.create(ResourceText.class, componentDefinition, propertyName, factoryContext);
+        ResourceText actualResource = decorator.convert(ResourceText.class, componentDefinition, propertyName, factoryContext);
 
         // Then
         assertThat(actualResource.path()).isEqualTo(propertyValue);
@@ -99,7 +99,7 @@ class ResourceResolverDecoratorTest {
                 .getResources();
 
         // When
-        ResourceBinary actualResource = decorator.create(ResourceBinary.class, componentDefinition, propertyName, factoryContext);
+        ResourceBinary actualResource = decorator.convert(ResourceBinary.class, componentDefinition, propertyName, factoryContext);
 
         // Then
         assertThat(actualResource.path()).isEqualTo(propertyValue);
@@ -123,7 +123,7 @@ class ResourceResolverDecoratorTest {
                 .getResources();
 
         // When
-        DynamicResource actualResource = decorator.create(DynamicResource.class, componentDefinition, propertyName, factoryContext);
+        DynamicResource actualResource = decorator.convert(DynamicResource.class, componentDefinition, propertyName, factoryContext);
         Publisher<byte[]> data = actualResource.data(propertyValue, testBufferSize);
 
         // Then
@@ -152,7 +152,7 @@ class ResourceResolverDecoratorTest {
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
-                () -> decorator.create(ResourceText.class, componentDefinition, propertyName, factoryContext));
+                () -> decorator.convert(ResourceText.class, componentDefinition, propertyName, factoryContext));
 
 
         // Then
@@ -177,7 +177,7 @@ class ResourceResolverDecoratorTest {
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,
-                () -> decorator.create(ResourceBinary.class, componentDefinition, propertyName, factoryContext));
+                () -> decorator.convert(ResourceBinary.class, componentDefinition, propertyName, factoryContext));
 
 
         // Then
@@ -201,7 +201,7 @@ class ResourceResolverDecoratorTest {
                 .when(mockDeSerializedModule)
                 .getResources();
 
-        DynamicResource actualResource = decorator.create(DynamicResource.class, componentDefinition, propertyName, factoryContext);
+        DynamicResource actualResource = decorator.convert(DynamicResource.class, componentDefinition, propertyName, factoryContext);
 
         // When
         ResourceNotFound thrown = assertThrows(ResourceNotFound.class,

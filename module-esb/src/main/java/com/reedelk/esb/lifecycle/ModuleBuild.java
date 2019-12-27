@@ -6,16 +6,16 @@ import com.reedelk.esb.flow.ErrorStateFlow;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.flow.deserializer.FlowDeserializer;
 import com.reedelk.esb.flow.deserializer.FlowDeserializerContext;
-import com.reedelk.esb.flow.deserializer.typefactory.ConfigPropertyDecorator;
-import com.reedelk.esb.flow.deserializer.typefactory.ResourceResolverDecorator;
-import com.reedelk.esb.flow.deserializer.typefactory.ScriptResolverDecorator;
-import com.reedelk.esb.flow.deserializer.typefactory.TypeFactoryContextDecorator;
+import com.reedelk.esb.flow.deserializer.converter.ConfigPropertyDecorator;
+import com.reedelk.esb.flow.deserializer.converter.DeserializerConverterContextDecorator;
+import com.reedelk.esb.flow.deserializer.converter.ResourceResolverDecorator;
+import com.reedelk.esb.flow.deserializer.converter.ScriptResolverDecorator;
 import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.module.state.ModuleState;
-import com.reedelk.runtime.commons.TypeFactory;
+import com.reedelk.runtime.converter.DeserializerConverter;
 import org.json.JSONObject;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
@@ -76,17 +76,17 @@ public class ModuleBuild extends AbstractStep<Module, Module> {
         Module module = modulesManager.getModuleById(bundle.getBundleId());
         long moduleId = module.id();
 
-        TypeFactory typeFactory = TypeFactory.getInstance();
-        typeFactory = new ResourceResolverDecorator(typeFactory, deSerializedModule, module);
-        typeFactory = new ScriptResolverDecorator(typeFactory, deSerializedModule);
-        typeFactory = new ConfigPropertyDecorator(configurationService(), typeFactory);
-        typeFactory = new TypeFactoryContextDecorator(typeFactory, moduleId);
+        DeserializerConverter deserializerConverter = DeserializerConverter.getInstance();
+        deserializerConverter = new ResourceResolverDecorator(deserializerConverter, deSerializedModule, module);
+        deserializerConverter = new ScriptResolverDecorator(deserializerConverter, deSerializedModule);
+        deserializerConverter = new ConfigPropertyDecorator(configurationService(), deserializerConverter);
+        deserializerConverter = new DeserializerConverterContextDecorator(deserializerConverter, moduleId);
 
         String flowId = id(flowDefinition);
         String flowTitle = hasTitle(flowDefinition) ? title(flowDefinition) : null;
 
         try {
-            FlowDeserializerContext context = new FlowDeserializerContext(bundle, modulesManager, deSerializedModule, typeFactory);
+            FlowDeserializerContext context = new FlowDeserializerContext(bundle, modulesManager, deSerializedModule, deserializerConverter);
             FlowDeserializer flowDeserializer = new FlowDeserializer(context);
             flowDeserializer.deserialize(flowGraph, flowDefinition);
             return new Flow(module.id(), module.name(), flowId, flowTitle, flowGraph, executionEngine);
