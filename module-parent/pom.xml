@@ -81,6 +81,21 @@
                     </instructions>
                 </configuration>
             </plugin>
+
+            <!-- Reedelk Plugin -->
+            <plugin>
+                <groupId>com.reedelk</groupId>
+                <artifactId>component-definition</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>processComponentsDefinitions</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
