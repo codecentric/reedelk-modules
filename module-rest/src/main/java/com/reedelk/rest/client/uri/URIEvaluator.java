@@ -13,9 +13,9 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.reedelk.rest.commons.ConfigPreconditions.requireNotNull;
 import static com.reedelk.rest.commons.Messages.RestClient.CONFIG_CLIENT_NULL_ERROR;
 import static com.reedelk.rest.commons.Messages.RestClient.REQUEST_URL_ERROR;
+import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotNull;
 import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static com.reedelk.runtime.api.commons.StringUtils.isNotNull;
 

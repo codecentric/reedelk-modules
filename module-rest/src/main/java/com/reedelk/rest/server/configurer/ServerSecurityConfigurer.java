@@ -14,7 +14,7 @@ import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.util.Optional;
 
-import static com.reedelk.rest.commons.ConfigPreconditions.requireNotBlank;
+import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotBlank;
 import static java.util.Objects.requireNonNull;
 
 public class ServerSecurityConfigurer {

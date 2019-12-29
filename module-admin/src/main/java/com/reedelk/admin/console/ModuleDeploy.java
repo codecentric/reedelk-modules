@@ -18,8 +18,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.reedelk.runtime.commons.Preconditions.checkArgument;
-import static com.reedelk.runtime.commons.Preconditions.checkState;
+import static com.reedelk.runtime.api.commons.Preconditions.checkArgument;
+import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 import static java.lang.String.format;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 

@@ -20,7 +20,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import java.util.Optional;
 
-import static com.reedelk.rest.commons.ConfigPreconditions.requireNotNull;
+import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotNull;
 import static java.lang.Boolean.TRUE;
 
 public class DefaultHttpClientFactory implements HttpClientFactory {

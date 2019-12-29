@@ -19,8 +19,8 @@ import com.reedelk.runtime.api.script.ScriptEngineService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import static com.reedelk.rest.commons.ConfigPreconditions.requireNotNull;
 import static com.reedelk.rest.commons.Messages.RestListener.LISTENER_CONFIG_MISSING;
+import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotNull;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("REST Listener")
