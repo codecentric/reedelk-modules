@@ -32,6 +32,11 @@ public class DefaultSystemPropertyService implements SystemProperty {
     }
 
     @Override
+    public String homeDirectory() {
+        return homeDirectory;
+    }
+
+    @Override
     public String version() {
         return runtimeVersion;
     }
