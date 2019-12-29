@@ -1,1 +1,1254 @@
-{"componentDescriptors":[{"hidden":false,"displayName":"REST Client","fullyQualifiedName":"com.reedelk.rest.component.RestClient","componentType":"PROCESSOR","componentPropertyDescriptors":[{"displayName":"Method","propertyName":"method","defaultValue":"GET","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeEnumDescriptor","INSTANCE":{"nameAndDisplayNameMap":{"HEAD":"HEAD","DELETE":"DELETE","POST":"POST","GET":"GET","OPTIONS":"OPTIONS","PUT":"PUT"},"type":"java.lang.Enum"}},"whenDefinitions":[]},{"displayName":"Client config","propertyName":"configuration","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"YES","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.client.ClientConfiguration","objectProperties":[{"displayName":"Host","propertyName":"host","defaultValue":"localhost","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Port","propertyName":"port","defaultValue":"80","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"displayName":"Base path","propertyName":"basePath","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Protocol","propertyName":"protocol","defaultValue":"HTTP","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeEnumDescriptor","INSTANCE":{"nameAndDisplayNameMap":{"HTTPS":"HTTPS","HTTP":"HTTP"},"type":"java.lang.Enum"}},"whenDefinitions":[]},{"displayName":"Request timeout","propertyName":"requestTimeout","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"displayName":"Connect timeout","propertyName":"connectTimeout","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"displayName":"Keep alive","propertyName":"keepAlive","defaultValue":"true","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Boolean"}},"whenDefinitions":[]},{"displayName":"Follow redirects","propertyName":"followRedirects","defaultValue":"true","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Boolean"}},"whenDefinitions":[]},{"displayName":"Expect continue","propertyName":"expectContinue","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Boolean"}},"whenDefinitions":[]},{"displayName":"Authentication","propertyName":"authentication","defaultValue":"NONE","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeEnumDescriptor","INSTANCE":{"nameAndDisplayNameMap":{"DIGEST":"Digest","NONE":"None","BASIC":"Basic"},"type":"java.lang.Enum"}},"whenDefinitions":[]},{"displayName":"Basic authentication","propertyName":"basicAuthentication","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.client.BasicAuthenticationConfiguration","objectProperties":[{"displayName":"Username","propertyName":"username","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Password","propertyName":"password","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePasswordDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.annotation.Password"}},"whenDefinitions":[]},{"displayName":"Preemptive","propertyName":"preemptive","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Boolean"}},"whenDefinitions":[]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[{"propertyName":"authentication","propertyValue":"BASIC"}]},{"displayName":"Digest authentication","propertyName":"digestAuthentication","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.client.DigestAuthenticationConfiguration","objectProperties":[{"displayName":"Username","propertyName":"username","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Password","propertyName":"password","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePasswordDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.annotation.Password"}},"whenDefinitions":[]},{"displayName":"Preemptive","propertyName":"preemptive","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Boolean"}},"whenDefinitions":[]},{"displayName":"Realm","propertyName":"realm","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[{"propertyName":"preemptive","propertyValue":"true"}]},{"displayName":"Nonce","propertyName":"nonce","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[{"propertyName":"preemptive","propertyValue":"true"}]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[{"propertyName":"authentication","propertyValue":"DIGEST"}]},{"displayName":"Proxy","propertyName":"proxy","defaultValue":"NONE","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeEnumDescriptor","INSTANCE":{"nameAndDisplayNameMap":{"PROXY":"Proxy","NONE":"None"},"type":"java.lang.Enum"}},"whenDefinitions":[]},{"displayName":"Proxy configuration","propertyName":"proxyConfiguration","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.client.ProxyConfiguration","objectProperties":[{"displayName":"Host","propertyName":"host","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Port","propertyName":"port","defaultValue":"8080","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"displayName":"Authentication","propertyName":"authentication","defaultValue":"NONE","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeEnumDescriptor","INSTANCE":{"nameAndDisplayNameMap":{"DIGEST":"Digest","NONE":"None","BASIC":"Basic"},"type":"java.lang.Enum"}},"whenDefinitions":[]},{"displayName":"Basic authentication","propertyName":"basicAuthentication","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.client.ProxyBasicAuthenticationConfiguration","objectProperties":[{"displayName":"Username","propertyName":"username","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Password","propertyName":"password","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePasswordDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.annotation.Password"}},"whenDefinitions":[]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[{"propertyName":"authentication","propertyValue":"BASIC"}]},{"displayName":"Digest authentication","propertyName":"digestAuthentication","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.client.ProxyDigestAuthenticationConfiguration","objectProperties":[{"displayName":"Username","propertyName":"username","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Password","propertyName":"password","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePasswordDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.annotation.Password"}},"whenDefinitions":[]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[{"propertyName":"authentication","propertyValue":"DIGEST"}]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[{"propertyName":"proxy","propertyValue":"PROXY"}]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[]},{"hintValue":"https://api.example.com","displayName":"Base URL","propertyName":"baseURL","defaultValue":"###USE_DEFAULT_VALUE###","propertyInfo":"The base URL of the HTTP request. It may include the request path as well, e.g: http://api.example.com/resource1","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[{"propertyName":"configuration","propertyValue":"###NULL###"},{"propertyName":"configuration","propertyValue":"{\u0027ref\u0027: \u0027###BLANK###\u0027}"}]},{"hintValue":"/resource/{id}","displayName":"Path","propertyName":"path","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"hintValue":"payload","displayName":"Body","propertyName":"body","defaultValue":"#[message.payload()]","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray"}},"whenDefinitions":[{"propertyName":"method","propertyValue":"DELETE"},{"propertyName":"method","propertyValue":"POST"},{"propertyName":"method","propertyValue":"PUT"}]},{"displayName":"Streaming","propertyName":"streaming","defaultValue":"AUTO","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeEnumDescriptor","INSTANCE":{"nameAndDisplayNameMap":{"AUTO":"Auto","NONE":"None","ALWAYS":"Always"},"type":"java.lang.Enum"}},"whenDefinitions":[{"propertyName":"method","propertyValue":"DELETE"},{"propertyName":"method","propertyValue":"POST"},{"propertyName":"method","propertyValue":"PUT"}]},{"displayName":"Headers","propertyName":"headers","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor","INSTANCE":{"tabGroup":"Headers and parameters","type":"com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"}},"whenDefinitions":[]},{"displayName":"Path params","propertyName":"pathParameters","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor","INSTANCE":{"tabGroup":"Headers and parameters","type":"com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"}},"whenDefinitions":[]},{"displayName":"Query params","propertyName":"queryParameters","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor","INSTANCE":{"tabGroup":"Headers and parameters","type":"com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"}},"whenDefinitions":[]},{"displayName":"Advanced configuration","propertyName":"advancedConfiguration","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"YES","typeFullyQualifiedName":"com.reedelk.rest.configuration.client.AdvancedConfiguration","objectProperties":[{"hintValue":"16384","displayName":"Response buffer size","propertyName":"responseBufferSize","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"hintValue":"16384","displayName":"Request buffer size","propertyName":"requestBufferSize","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[]}]},{"hidden":false,"displayName":"REST Listener","fullyQualifiedName":"com.reedelk.rest.component.RestListener","componentType":"INBOUND","componentPropertyDescriptors":[{"displayName":"Configuration","propertyName":"configuration","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"YES","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.listener.ListenerConfiguration","objectProperties":[{"hintValue":"localhost","displayName":"Host","propertyName":"host","defaultValue":"localhost","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"hintValue":"8080","displayName":"Port","propertyName":"port","defaultValue":"8080","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"displayName":"Protocol","propertyName":"protocol","defaultValue":"HTTP","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeEnumDescriptor","INSTANCE":{"nameAndDisplayNameMap":{"HTTPS":"HTTPS","HTTP":"HTTP"},"type":"java.lang.Enum"}},"whenDefinitions":[]},{"hintValue":"/api","displayName":"Base path","propertyName":"basePath","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Keep alive","propertyName":"keepAlive","defaultValue":"true","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Boolean"}},"whenDefinitions":[]},{"displayName":"Compress response","propertyName":"compress","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Boolean"}},"whenDefinitions":[]},{"displayName":"Read timeout millis","propertyName":"readTimeoutMillis","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"displayName":"Connection timeout millis","propertyName":"connectionTimeoutMillis","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"displayName":"Socket backlog","propertyName":"socketBacklog","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"displayName":"Max chunk size","propertyName":"maxChunkSize","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"displayName":"Max headers length","propertyName":"maxLengthOfAllHeaders","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Integer"}},"whenDefinitions":[]},{"displayName":"Security configuration","propertyName":"securityConfiguration","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.listener.SecurityConfiguration","objectProperties":[{"displayName":"Type","propertyName":"type","defaultValue":"CERTIFICATE_AND_PRIVATE_KEY","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeEnumDescriptor","INSTANCE":{"nameAndDisplayNameMap":{"CERTIFICATE_AND_PRIVATE_KEY":"Certificate and private key","KEY_STORE":"Key store"},"type":"java.lang.Enum"}},"whenDefinitions":[]},{"displayName":"X.509 Certificate and private key","propertyName":"certificateAndPrivateKey","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.listener.CertificateAndPrivateKeyConfiguration","objectProperties":[{"displayName":"Certificate","propertyName":"certificateFile","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Private key","propertyName":"privateKeyFile","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[{"propertyName":"type","propertyValue":"CERTIFICATE_AND_PRIVATE_KEY"}]},{"displayName":"Key store","propertyName":"keyStore","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.listener.KeyStoreConfiguration","objectProperties":[{"displayName":"Path","propertyName":"path","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Password","propertyName":"password","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePasswordDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.annotation.Password"}},"whenDefinitions":[]},{"displayName":"Type","propertyName":"type","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Algorithm","propertyName":"algorithm","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[{"propertyName":"type","propertyValue":"KEY_STORE"}]},{"displayName":"Use trust store","propertyName":"useTrustStore","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.Boolean"}},"whenDefinitions":[]},{"displayName":"Trust store configuration","propertyName":"trustStoreConfiguration","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"NO","typeFullyQualifiedName":"com.reedelk.rest.configuration.listener.TrustStoreConfiguration","objectProperties":[{"displayName":"Path","propertyName":"path","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Password","propertyName":"password","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePasswordDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.annotation.Password"}},"whenDefinitions":[]},{"displayName":"Type","propertyName":"type","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Algorithm","propertyName":"algorithm","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[{"propertyName":"useTrustStore","propertyValue":"true"}]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[{"propertyName":"protocol","propertyValue":"HTTPS"}]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[]},{"hintValue":"/resource/{id}","displayName":"Path","propertyName":"path","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypePrimitiveDescriptor","INSTANCE":{"type":"java.lang.String"}},"whenDefinitions":[]},{"displayName":"Method","propertyName":"method","defaultValue":"GET","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeEnumDescriptor","INSTANCE":{"nameAndDisplayNameMap":{"HEAD":"HEAD","DELETE":"DELETE","POST":"POST","GET":"GET","OPTIONS":"OPTIONS","PUT":"PUT"},"type":"java.lang.Enum"}},"whenDefinitions":[]},{"displayName":"Streaming","propertyName":"streaming","defaultValue":"AUTO","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeEnumDescriptor","INSTANCE":{"nameAndDisplayNameMap":{"AUTO":"Auto","NONE":"None","ALWAYS":"Always"},"type":"java.lang.Enum"}},"whenDefinitions":[]},{"displayName":"Response","propertyName":"response","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"YES","typeFullyQualifiedName":"com.reedelk.rest.configuration.listener.Response","objectProperties":[{"hintValue":"content body text","displayName":"Response body","propertyName":"body","defaultValue":"#[message.payload()]","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray"}},"whenDefinitions":[]},{"hintValue":"200","displayName":"Response status","propertyName":"status","defaultValue":"200","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger"}},"whenDefinitions":[]},{"displayName":"Additional Headers","propertyName":"headers","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor","INSTANCE":{"tabGroup":"Headers","type":"com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"}},"whenDefinitions":[]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[]},{"displayName":"Error response","propertyName":"errorResponse","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeObjectDescriptor","INSTANCE":{"shared":"NO","collapsible":"YES","typeFullyQualifiedName":"com.reedelk.rest.configuration.listener.ErrorResponse","objectProperties":[{"hintValue":"error body text","displayName":"Response body","propertyName":"body","defaultValue":"#[error]","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray"}},"autoCompleteContributorDefinition":{"error":true,"message":false,"context":true,"contributions":[]},"whenDefinitions":[]},{"hintValue":"500","displayName":"Response status","propertyName":"status","defaultValue":"500","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor","INSTANCE":{"type":"com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger"}},"autoCompleteContributorDefinition":{"error":true,"message":false,"context":true,"contributions":[]},"whenDefinitions":[]},{"displayName":"Additional Headers","propertyName":"headers","defaultValue":"###USE_DEFAULT_VALUE###","propertyType":{"CLASSNAME":"com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor","INSTANCE":{"tabGroup":"Headers","type":"com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"}},"autoCompleteContributorDefinition":{"error":true,"message":false,"context":true,"contributions":[]},"whenDefinitions":[]}],"type":"com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"}},"whenDefinitions":[]}]}],"autocompleteContributorDefinitions":[]}
+{
+  "componentDescriptors": [
+    {
+      "hidden": false,
+      "displayName": "REST Client",
+      "fullyQualifiedName": "com.reedelk.rest.component.RestClient",
+      "componentType": "PROCESSOR",
+      "componentPropertyDescriptors": [
+        {
+          "displayName": "Method",
+          "propertyName": "method",
+          "defaultValue": "GET",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+            "INSTANCE": {
+              "nameAndDisplayNameMap": {
+                "HEAD": "HEAD",
+                "DELETE": "DELETE",
+                "POST": "POST",
+                "GET": "GET",
+                "OPTIONS": "OPTIONS",
+                "PUT": "PUT"
+              },
+              "type": "java.lang.Enum"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "displayName": "Client config",
+          "propertyName": "configuration",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "INSTANCE": {
+              "shared": "YES",
+              "collapsible": "NO",
+              "typeFullyQualifiedName": "com.reedelk.rest.configuration.client.ClientConfiguration",
+              "objectProperties": [
+                {
+                  "displayName": "Host",
+                  "propertyName": "host",
+                  "defaultValue": "localhost",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.String"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Port",
+                  "propertyName": "port",
+                  "defaultValue": "80",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Base path",
+                  "propertyName": "basePath",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.String"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Protocol",
+                  "propertyName": "protocol",
+                  "defaultValue": "HTTP",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                    "INSTANCE": {
+                      "nameAndDisplayNameMap": {
+                        "HTTPS": "HTTPS",
+                        "HTTP": "HTTP"
+                      },
+                      "type": "java.lang.Enum"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Request timeout",
+                  "propertyName": "requestTimeout",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Connect timeout",
+                  "propertyName": "connectTimeout",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Keep alive",
+                  "propertyName": "keepAlive",
+                  "defaultValue": "true",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Follow redirects",
+                  "propertyName": "followRedirects",
+                  "defaultValue": "true",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Expect continue",
+                  "propertyName": "expectContinue",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Authentication",
+                  "propertyName": "authentication",
+                  "defaultValue": "NONE",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                    "INSTANCE": {
+                      "nameAndDisplayNameMap": {
+                        "DIGEST": "Digest",
+                        "NONE": "None",
+                        "BASIC": "Basic"
+                      },
+                      "type": "java.lang.Enum"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Basic authentication",
+                  "propertyName": "basicAuthentication",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                    "INSTANCE": {
+                      "shared": "NO",
+                      "collapsible": "NO",
+                      "typeFullyQualifiedName": "com.reedelk.rest.configuration.client.BasicAuthenticationConfiguration",
+                      "objectProperties": [
+                        {
+                          "displayName": "Username",
+                          "propertyName": "username",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "INSTANCE": {
+                              "type": "java.lang.String"
+                            }
+                          },
+                          "whenDefinitions": []
+                        },
+                        {
+                          "displayName": "Password",
+                          "propertyName": "password",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                            "INSTANCE": {
+                              "type": "com.reedelk.runtime.api.annotation.Password"
+                            }
+                          },
+                          "whenDefinitions": []
+                        },
+                        {
+                          "displayName": "Preemptive",
+                          "propertyName": "preemptive",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "INSTANCE": {
+                              "type": "java.lang.Boolean"
+                            }
+                          },
+                          "whenDefinitions": []
+                        }
+                      ],
+                      "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                    }
+                  },
+                  "whenDefinitions": [
+                    {
+                      "propertyName": "authentication",
+                      "propertyValue": "BASIC"
+                    }
+                  ]
+                },
+                {
+                  "displayName": "Digest authentication",
+                  "propertyName": "digestAuthentication",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                    "INSTANCE": {
+                      "shared": "NO",
+                      "collapsible": "NO",
+                      "typeFullyQualifiedName": "com.reedelk.rest.configuration.client.DigestAuthenticationConfiguration",
+                      "objectProperties": [
+                        {
+                          "displayName": "Username",
+                          "propertyName": "username",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "INSTANCE": {
+                              "type": "java.lang.String"
+                            }
+                          },
+                          "whenDefinitions": []
+                        },
+                        {
+                          "displayName": "Password",
+                          "propertyName": "password",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                            "INSTANCE": {
+                              "type": "com.reedelk.runtime.api.annotation.Password"
+                            }
+                          },
+                          "whenDefinitions": []
+                        },
+                        {
+                          "displayName": "Preemptive",
+                          "propertyName": "preemptive",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "INSTANCE": {
+                              "type": "java.lang.Boolean"
+                            }
+                          },
+                          "whenDefinitions": []
+                        },
+                        {
+                          "displayName": "Realm",
+                          "propertyName": "realm",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "INSTANCE": {
+                              "type": "java.lang.String"
+                            }
+                          },
+                          "whenDefinitions": [
+                            {
+                              "propertyName": "preemptive",
+                              "propertyValue": "true"
+                            }
+                          ]
+                        },
+                        {
+                          "displayName": "Nonce",
+                          "propertyName": "nonce",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "INSTANCE": {
+                              "type": "java.lang.String"
+                            }
+                          },
+                          "whenDefinitions": [
+                            {
+                              "propertyName": "preemptive",
+                              "propertyValue": "true"
+                            }
+                          ]
+                        }
+                      ],
+                      "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                    }
+                  },
+                  "whenDefinitions": [
+                    {
+                      "propertyName": "authentication",
+                      "propertyValue": "DIGEST"
+                    }
+                  ]
+                },
+                {
+                  "displayName": "Proxy",
+                  "propertyName": "proxy",
+                  "defaultValue": "NONE",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                    "INSTANCE": {
+                      "nameAndDisplayNameMap": {
+                        "PROXY": "Proxy",
+                        "NONE": "None"
+                      },
+                      "type": "java.lang.Enum"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Proxy configuration",
+                  "propertyName": "proxyConfiguration",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                    "INSTANCE": {
+                      "shared": "NO",
+                      "collapsible": "NO",
+                      "typeFullyQualifiedName": "com.reedelk.rest.configuration.client.ProxyConfiguration",
+                      "objectProperties": [
+                        {
+                          "displayName": "Host",
+                          "propertyName": "host",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "INSTANCE": {
+                              "type": "java.lang.String"
+                            }
+                          },
+                          "whenDefinitions": []
+                        },
+                        {
+                          "displayName": "Port",
+                          "propertyName": "port",
+                          "defaultValue": "8080",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "INSTANCE": {
+                              "type": "java.lang.Integer"
+                            }
+                          },
+                          "whenDefinitions": []
+                        },
+                        {
+                          "displayName": "Authentication",
+                          "propertyName": "authentication",
+                          "defaultValue": "NONE",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                            "INSTANCE": {
+                              "nameAndDisplayNameMap": {
+                                "DIGEST": "Digest",
+                                "NONE": "None",
+                                "BASIC": "Basic"
+                              },
+                              "type": "java.lang.Enum"
+                            }
+                          },
+                          "whenDefinitions": []
+                        },
+                        {
+                          "displayName": "Basic authentication",
+                          "propertyName": "basicAuthentication",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                            "INSTANCE": {
+                              "shared": "NO",
+                              "collapsible": "NO",
+                              "typeFullyQualifiedName": "com.reedelk.rest.configuration.client.ProxyBasicAuthenticationConfiguration",
+                              "objectProperties": [
+                                {
+                                  "displayName": "Username",
+                                  "propertyName": "username",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "INSTANCE": {
+                                      "type": "java.lang.String"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                },
+                                {
+                                  "displayName": "Password",
+                                  "propertyName": "password",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                                    "INSTANCE": {
+                                      "type": "com.reedelk.runtime.api.annotation.Password"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                }
+                              ],
+                              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                            }
+                          },
+                          "whenDefinitions": [
+                            {
+                              "propertyName": "authentication",
+                              "propertyValue": "BASIC"
+                            }
+                          ]
+                        },
+                        {
+                          "displayName": "Digest authentication",
+                          "propertyName": "digestAuthentication",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                            "INSTANCE": {
+                              "shared": "NO",
+                              "collapsible": "NO",
+                              "typeFullyQualifiedName": "com.reedelk.rest.configuration.client.ProxyDigestAuthenticationConfiguration",
+                              "objectProperties": [
+                                {
+                                  "displayName": "Username",
+                                  "propertyName": "username",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "INSTANCE": {
+                                      "type": "java.lang.String"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                },
+                                {
+                                  "displayName": "Password",
+                                  "propertyName": "password",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                                    "INSTANCE": {
+                                      "type": "com.reedelk.runtime.api.annotation.Password"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                }
+                              ],
+                              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                            }
+                          },
+                          "whenDefinitions": [
+                            {
+                              "propertyName": "authentication",
+                              "propertyValue": "DIGEST"
+                            }
+                          ]
+                        }
+                      ],
+                      "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                    }
+                  },
+                  "whenDefinitions": [
+                    {
+                      "propertyName": "proxy",
+                      "propertyValue": "PROXY"
+                    }
+                  ]
+                }
+              ],
+              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "hintValue": "https://api.example.com",
+          "displayName": "Base URL",
+          "propertyName": "baseURL",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyInfo": "The base URL of the HTTP request. It may include the request path as well, e.g: http://api.example.com/resource1",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "INSTANCE": {
+              "type": "java.lang.String"
+            }
+          },
+          "whenDefinitions": [
+            {
+              "propertyName": "configuration",
+              "propertyValue": "###NULL###"
+            },
+            {
+              "propertyName": "configuration",
+              "propertyValue": "{\u0027ref\u0027: \u0027###BLANK###\u0027}"
+            }
+          ]
+        },
+        {
+          "hintValue": "/resource/{id}",
+          "displayName": "Path",
+          "propertyName": "path",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "INSTANCE": {
+              "type": "java.lang.String"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "hintValue": "payload",
+          "displayName": "Body",
+          "propertyName": "body",
+          "defaultValue": "#[message.payload()]",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+            "INSTANCE": {
+              "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray"
+            }
+          },
+          "whenDefinitions": [
+            {
+              "propertyName": "method",
+              "propertyValue": "DELETE"
+            },
+            {
+              "propertyName": "method",
+              "propertyValue": "POST"
+            },
+            {
+              "propertyName": "method",
+              "propertyValue": "PUT"
+            }
+          ]
+        },
+        {
+          "displayName": "Streaming",
+          "propertyName": "streaming",
+          "defaultValue": "AUTO",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+            "INSTANCE": {
+              "nameAndDisplayNameMap": {
+                "AUTO": "Auto",
+                "NONE": "None",
+                "ALWAYS": "Always"
+              },
+              "type": "java.lang.Enum"
+            }
+          },
+          "whenDefinitions": [
+            {
+              "propertyName": "method",
+              "propertyValue": "DELETE"
+            },
+            {
+              "propertyName": "method",
+              "propertyValue": "POST"
+            },
+            {
+              "propertyName": "method",
+              "propertyValue": "PUT"
+            }
+          ]
+        },
+        {
+          "displayName": "Headers",
+          "propertyName": "headers",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor",
+            "INSTANCE": {
+              "tabGroup": "Headers and parameters",
+              "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "displayName": "Path params",
+          "propertyName": "pathParameters",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor",
+            "INSTANCE": {
+              "tabGroup": "Headers and parameters",
+              "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "displayName": "Query params",
+          "propertyName": "queryParameters",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor",
+            "INSTANCE": {
+              "tabGroup": "Headers and parameters",
+              "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "displayName": "Advanced configuration",
+          "propertyName": "advancedConfiguration",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "INSTANCE": {
+              "shared": "NO",
+              "collapsible": "YES",
+              "typeFullyQualifiedName": "com.reedelk.rest.configuration.client.AdvancedConfiguration",
+              "objectProperties": [
+                {
+                  "hintValue": "16384",
+                  "displayName": "Response buffer size",
+                  "propertyName": "responseBufferSize",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "hintValue": "16384",
+                  "displayName": "Request buffer size",
+                  "propertyName": "requestBufferSize",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                }
+              ],
+              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+            }
+          },
+          "whenDefinitions": []
+        }
+      ]
+    },
+    {
+      "hidden": false,
+      "displayName": "REST Listener",
+      "fullyQualifiedName": "com.reedelk.rest.component.RestListener",
+      "componentType": "INBOUND",
+      "componentPropertyDescriptors": [
+        {
+          "displayName": "Configuration",
+          "propertyName": "configuration",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "INSTANCE": {
+              "shared": "YES",
+              "collapsible": "NO",
+              "typeFullyQualifiedName": "com.reedelk.rest.configuration.listener.ListenerConfiguration",
+              "objectProperties": [
+                {
+                  "hintValue": "localhost",
+                  "displayName": "Host",
+                  "propertyName": "host",
+                  "defaultValue": "localhost",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.String"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "hintValue": "8080",
+                  "displayName": "Port",
+                  "propertyName": "port",
+                  "defaultValue": "8080",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Protocol",
+                  "propertyName": "protocol",
+                  "defaultValue": "HTTP",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                    "INSTANCE": {
+                      "nameAndDisplayNameMap": {
+                        "HTTPS": "HTTPS",
+                        "HTTP": "HTTP"
+                      },
+                      "type": "java.lang.Enum"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "hintValue": "/api",
+                  "displayName": "Base path",
+                  "propertyName": "basePath",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.String"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Keep alive",
+                  "propertyName": "keepAlive",
+                  "defaultValue": "true",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Compress response",
+                  "propertyName": "compress",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Read timeout millis",
+                  "propertyName": "readTimeoutMillis",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Connection timeout millis",
+                  "propertyName": "connectionTimeoutMillis",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Socket backlog",
+                  "propertyName": "socketBacklog",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Max chunk size",
+                  "propertyName": "maxChunkSize",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Max headers length",
+                  "propertyName": "maxLengthOfAllHeaders",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "INSTANCE": {
+                      "type": "java.lang.Integer"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Security configuration",
+                  "propertyName": "securityConfiguration",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                    "INSTANCE": {
+                      "shared": "NO",
+                      "collapsible": "NO",
+                      "typeFullyQualifiedName": "com.reedelk.rest.configuration.listener.SecurityConfiguration",
+                      "objectProperties": [
+                        {
+                          "displayName": "Type",
+                          "propertyName": "type",
+                          "defaultValue": "CERTIFICATE_AND_PRIVATE_KEY",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                            "INSTANCE": {
+                              "nameAndDisplayNameMap": {
+                                "CERTIFICATE_AND_PRIVATE_KEY": "Certificate and private key",
+                                "KEY_STORE": "Key store"
+                              },
+                              "type": "java.lang.Enum"
+                            }
+                          },
+                          "whenDefinitions": []
+                        },
+                        {
+                          "displayName": "X.509 Certificate and private key",
+                          "propertyName": "certificateAndPrivateKey",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                            "INSTANCE": {
+                              "shared": "NO",
+                              "collapsible": "NO",
+                              "typeFullyQualifiedName": "com.reedelk.rest.configuration.listener.CertificateAndPrivateKeyConfiguration",
+                              "objectProperties": [
+                                {
+                                  "displayName": "Certificate",
+                                  "propertyName": "certificateFile",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "INSTANCE": {
+                                      "type": "java.lang.String"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                },
+                                {
+                                  "displayName": "Private key",
+                                  "propertyName": "privateKeyFile",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "INSTANCE": {
+                                      "type": "java.lang.String"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                }
+                              ],
+                              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                            }
+                          },
+                          "whenDefinitions": [
+                            {
+                              "propertyName": "type",
+                              "propertyValue": "CERTIFICATE_AND_PRIVATE_KEY"
+                            }
+                          ]
+                        },
+                        {
+                          "displayName": "Key store",
+                          "propertyName": "keyStore",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                            "INSTANCE": {
+                              "shared": "NO",
+                              "collapsible": "NO",
+                              "typeFullyQualifiedName": "com.reedelk.rest.configuration.listener.KeyStoreConfiguration",
+                              "objectProperties": [
+                                {
+                                  "displayName": "Path",
+                                  "propertyName": "path",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "INSTANCE": {
+                                      "type": "java.lang.String"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                },
+                                {
+                                  "displayName": "Password",
+                                  "propertyName": "password",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                                    "INSTANCE": {
+                                      "type": "com.reedelk.runtime.api.annotation.Password"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                },
+                                {
+                                  "displayName": "Type",
+                                  "propertyName": "type",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "INSTANCE": {
+                                      "type": "java.lang.String"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                },
+                                {
+                                  "displayName": "Algorithm",
+                                  "propertyName": "algorithm",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "INSTANCE": {
+                                      "type": "java.lang.String"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                }
+                              ],
+                              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                            }
+                          },
+                          "whenDefinitions": [
+                            {
+                              "propertyName": "type",
+                              "propertyValue": "KEY_STORE"
+                            }
+                          ]
+                        },
+                        {
+                          "displayName": "Use trust store",
+                          "propertyName": "useTrustStore",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "INSTANCE": {
+                              "type": "java.lang.Boolean"
+                            }
+                          },
+                          "whenDefinitions": []
+                        },
+                        {
+                          "displayName": "Trust store configuration",
+                          "propertyName": "trustStoreConfiguration",
+                          "defaultValue": "###USE_DEFAULT_VALUE###",
+                          "propertyType": {
+                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                            "INSTANCE": {
+                              "shared": "NO",
+                              "collapsible": "NO",
+                              "typeFullyQualifiedName": "com.reedelk.rest.configuration.listener.TrustStoreConfiguration",
+                              "objectProperties": [
+                                {
+                                  "displayName": "Path",
+                                  "propertyName": "path",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "INSTANCE": {
+                                      "type": "java.lang.String"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                },
+                                {
+                                  "displayName": "Password",
+                                  "propertyName": "password",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                                    "INSTANCE": {
+                                      "type": "com.reedelk.runtime.api.annotation.Password"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                },
+                                {
+                                  "displayName": "Type",
+                                  "propertyName": "type",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "INSTANCE": {
+                                      "type": "java.lang.String"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                },
+                                {
+                                  "displayName": "Algorithm",
+                                  "propertyName": "algorithm",
+                                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                                  "propertyType": {
+                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "INSTANCE": {
+                                      "type": "java.lang.String"
+                                    }
+                                  },
+                                  "whenDefinitions": []
+                                }
+                              ],
+                              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                            }
+                          },
+                          "whenDefinitions": [
+                            {
+                              "propertyName": "useTrustStore",
+                              "propertyValue": "true"
+                            }
+                          ]
+                        }
+                      ],
+                      "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                    }
+                  },
+                  "whenDefinitions": [
+                    {
+                      "propertyName": "protocol",
+                      "propertyValue": "HTTPS"
+                    }
+                  ]
+                }
+              ],
+              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "hintValue": "/resource/{id}",
+          "displayName": "Path",
+          "propertyName": "path",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "INSTANCE": {
+              "type": "java.lang.String"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "displayName": "Method",
+          "propertyName": "method",
+          "defaultValue": "GET",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+            "INSTANCE": {
+              "nameAndDisplayNameMap": {
+                "HEAD": "HEAD",
+                "DELETE": "DELETE",
+                "POST": "POST",
+                "GET": "GET",
+                "OPTIONS": "OPTIONS",
+                "PUT": "PUT"
+              },
+              "type": "java.lang.Enum"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "displayName": "Streaming",
+          "propertyName": "streaming",
+          "defaultValue": "AUTO",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+            "INSTANCE": {
+              "nameAndDisplayNameMap": {
+                "AUTO": "Auto",
+                "NONE": "None",
+                "ALWAYS": "Always"
+              },
+              "type": "java.lang.Enum"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "displayName": "Response",
+          "propertyName": "response",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "INSTANCE": {
+              "shared": "NO",
+              "collapsible": "YES",
+              "typeFullyQualifiedName": "com.reedelk.rest.configuration.listener.Response",
+              "objectProperties": [
+                {
+                  "hintValue": "content body text",
+                  "displayName": "Response body",
+                  "propertyName": "body",
+                  "defaultValue": "#[message.payload()]",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+                    "INSTANCE": {
+                      "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "hintValue": "200",
+                  "displayName": "Response status",
+                  "propertyName": "status",
+                  "defaultValue": "200",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+                    "INSTANCE": {
+                      "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger"
+                    }
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Additional Headers",
+                  "propertyName": "headers",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor",
+                    "INSTANCE": {
+                      "tabGroup": "Headers",
+                      "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
+                    }
+                  },
+                  "whenDefinitions": []
+                }
+              ],
+              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+            }
+          },
+          "whenDefinitions": []
+        },
+        {
+          "displayName": "Error response",
+          "propertyName": "errorResponse",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "INSTANCE": {
+              "shared": "NO",
+              "collapsible": "YES",
+              "typeFullyQualifiedName": "com.reedelk.rest.configuration.listener.ErrorResponse",
+              "objectProperties": [
+                {
+                  "hintValue": "error body text",
+                  "displayName": "Response body",
+                  "propertyName": "body",
+                  "defaultValue": "#[error]",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+                    "INSTANCE": {
+                      "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray"
+                    }
+                  },
+                  "autoCompleteContributorDefinition": {
+                    "error": true,
+                    "message": false,
+                    "context": true,
+                    "contributions": []
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "hintValue": "500",
+                  "displayName": "Response status",
+                  "propertyName": "status",
+                  "defaultValue": "500",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+                    "INSTANCE": {
+                      "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger"
+                    }
+                  },
+                  "autoCompleteContributorDefinition": {
+                    "error": true,
+                    "message": false,
+                    "context": true,
+                    "contributions": []
+                  },
+                  "whenDefinitions": []
+                },
+                {
+                  "displayName": "Additional Headers",
+                  "propertyName": "headers",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyType": {
+                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor",
+                    "INSTANCE": {
+                      "tabGroup": "Headers",
+                      "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
+                    }
+                  },
+                  "autoCompleteContributorDefinition": {
+                    "error": true,
+                    "message": false,
+                    "context": true,
+                    "contributions": []
+                  },
+                  "whenDefinitions": []
+                }
+              ],
+              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+            }
+          },
+          "whenDefinitions": []
+        }
+      ]
+    }
+  ],
+  "autocompleteContributorDefinitions": []
+}
