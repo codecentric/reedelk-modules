@@ -2,6 +2,7 @@ package com.reedelk.esb.services;
 
 import com.reedelk.esb.module.ModulesManager;
 import com.reedelk.esb.services.configuration.DefaultConfigurationService;
+import com.reedelk.esb.services.configuration.DefaultSystemPropertyService;
 import com.reedelk.esb.services.converter.DefaultConverterService;
 import com.reedelk.esb.services.hotswap.DefaultHotSwapService;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
@@ -30,7 +31,6 @@ public class ServicesManager {
     private static final Dictionary NO_PROPERTIES = new Properties();
 
     private final EventListener eventListener;
-    private final SystemProperty systemProperty;
     private final ModulesManager modulesManager;
     private final HotSwapListener hotSwapListener;
     private final ConfigurationAdmin configurationAdmin;
@@ -38,20 +38,20 @@ public class ServicesManager {
     private List<ServiceRegistration<?>> registeredServices = new ArrayList<>();
 
     private DefaultConfigurationService configurationService;
+    private SystemProperty systemProperty;
 
     public ServicesManager(EventListener eventListener,
                            HotSwapListener hotSwapListener,
                            ModulesManager modulesManager,
-                           SystemProperty systemProperty,
                            ConfigurationAdmin configurationAdmin) {
         this.eventListener = eventListener;
-        this.systemProperty = systemProperty;
         this.modulesManager = modulesManager;
         this.hotSwapListener = hotSwapListener;
         this.configurationAdmin = configurationAdmin;
     }
 
     public void registerServices(BundleContext context) {
+        registerSystemPropertyService(context);
         registerModuleService(context);
         registerHotSwapService(context);
         registerConverterService(context);
@@ -66,6 +66,13 @@ public class ServicesManager {
 
     public DefaultConfigurationService configurationService() {
         return configurationService;
+    }
+
+    private void registerSystemPropertyService(BundleContext context) {
+        systemProperty = new DefaultSystemPropertyService(context);
+        ServiceRegistration<SystemProperty> registration =
+                registerService(context, SystemProperty.class, systemProperty);
+        registeredServices.add(registration);
     }
 
     private void registerConfigurationService(BundleContext context) {

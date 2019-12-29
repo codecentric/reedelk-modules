@@ -11,7 +11,6 @@ import com.reedelk.esb.services.ServicesManager;
 import com.reedelk.esb.services.hotswap.HotSwapListener;
 import com.reedelk.esb.services.module.EventListener;
 import com.reedelk.esb.services.module.EventService;
-import com.reedelk.runtime.system.api.SystemProperty;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
@@ -28,8 +27,6 @@ public class ESB implements EventListener, HotSwapListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ESB.class);
 
-    @Reference
-    private SystemProperty systemProperty;
     @Reference
     private ConfigurationAdmin configurationAdmin;
 
@@ -52,8 +49,8 @@ public class ESB implements EventListener, HotSwapListener {
         context.addBundleListener(eventDispatcher);
         context.addServiceListener(eventDispatcher);
 
-        servicesManager = new ServicesManager(ESB.this, ESB.this,
-                modulesManager, systemProperty, configurationAdmin);
+        servicesManager =
+                new ServicesManager(ESB.this, ESB.this, modulesManager, configurationAdmin);
         servicesManager.registerServices(context);
 
         ApplyRuntimeConfiguration.from(servicesManager.configurationService());

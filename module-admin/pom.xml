@@ -22,12 +22,6 @@
     <dependencies>
         <dependency>
             <groupId>com.reedelk</groupId>
-            <artifactId>runtime-system-api</artifactId>
-            <version>${runtime.system.api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.reedelk</groupId>
             <artifactId>runtime-commons</artifactId>
             <version>${runtime.commons.version}</version>
             <scope>provided</scope>
