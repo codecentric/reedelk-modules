@@ -7,8 +7,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static com.reedelk.esb.commons.Preconditions.checkArgument;
-import static com.reedelk.esb.commons.Preconditions.checkState;
+import static com.reedelk.runtime.api.commons.Preconditions.checkArgument;
+import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 
 public class ExecutionGraph {
 

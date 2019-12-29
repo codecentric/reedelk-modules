@@ -2,7 +2,7 @@ package com.reedelk.esb.configuration;
 
 import com.reedelk.runtime.api.configuration.ConfigurationService;
 
-import static com.reedelk.esb.commons.Preconditions.checkState;
+import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 
 public class RuntimeConfigurationProvider {
 

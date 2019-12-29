@@ -5,8 +5,8 @@ import com.reedelk.esb.module.Module;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.reedelk.esb.commons.Preconditions.checkState;
 import static com.reedelk.esb.module.state.ModuleState.UNRESOLVED;
+import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 import static java.lang.String.format;
 
 public class ModuleUpdateRegisteredComponent extends AbstractStep<Module, Module> {

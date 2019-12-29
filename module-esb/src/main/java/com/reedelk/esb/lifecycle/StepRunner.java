@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.reedelk.esb.commons.Preconditions.checkArgument;
+import static com.reedelk.runtime.api.commons.Preconditions.checkArgument;
 
 public class StepRunner {
 

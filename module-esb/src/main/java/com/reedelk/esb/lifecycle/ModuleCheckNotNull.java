@@ -3,7 +3,7 @@ package com.reedelk.esb.lifecycle;
 import com.reedelk.esb.module.Module;
 import org.osgi.framework.Bundle;
 
-import static com.reedelk.esb.commons.Preconditions.checkState;
+import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 
 public class ModuleCheckNotNull extends AbstractStep<Module, Module> {
 

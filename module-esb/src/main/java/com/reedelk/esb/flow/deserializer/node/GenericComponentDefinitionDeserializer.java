@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static com.reedelk.esb.commons.Messages.Deserializer.CONFIGURATION_NOT_FOUND;
 import static com.reedelk.esb.commons.Messages.Deserializer.UNSUPPORTED_COLLECTION_TYPE;
-import static com.reedelk.esb.commons.Preconditions.checkArgument;
+import static com.reedelk.runtime.api.commons.Preconditions.checkArgument;
 import static com.reedelk.runtime.commons.JsonParser.Component;
 import static com.reedelk.runtime.commons.JsonParser.Config;
 import static com.reedelk.runtime.commons.ReflectionUtils.*;

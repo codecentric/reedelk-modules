@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 import static com.reedelk.esb.commons.Messages.FlowErrorMessage.DEFAULT;
-import static com.reedelk.esb.commons.Preconditions.checkArgument;
-import static com.reedelk.esb.commons.Preconditions.checkState;
+import static com.reedelk.runtime.api.commons.Preconditions.checkArgument;
+import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 
 public class Flow implements InboundEventListener {
 

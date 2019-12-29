@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 import java.util.Set;
 
-import static com.reedelk.esb.commons.Preconditions.checkState;
+import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 import static com.reedelk.runtime.commons.JsonParser.FlowReference;
 import static com.reedelk.runtime.commons.JsonParser.Subflow;
 

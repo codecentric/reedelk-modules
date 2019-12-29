@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static com.reedelk.esb.commons.Preconditions.checkState;
 import static com.reedelk.esb.module.state.ModuleState.*;
+import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 
 public class ModuleUpdateUnregisteredComponent extends AbstractStep<Module, Module> {
 

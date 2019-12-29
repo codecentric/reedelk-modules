@@ -4,8 +4,9 @@ import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 
 import java.util.Collection;
+import java.util.stream.Stream;
 
-import static com.reedelk.esb.commons.Preconditions.checkAtLeastOneAndGetOrThrow;
+import static java.lang.String.format;
 
 class ExecutionUtils {
 
@@ -25,8 +26,13 @@ class ExecutionUtils {
         Collection<ExecutionNode> nextExecutorNodes = graph.successors(current);
         return checkAtLeastOneAndGetOrThrow(
                 nextExecutorNodes.stream(),
-                "Expected [%s] to have exactly one following node, but %d were found",
                 current.getComponent().getClass().getName(),
                 nextExecutorNodes.size());
+    }
+
+    private static <T> T checkAtLeastOneAndGetOrThrow(Stream<T> stream, Object... args) {
+        return stream.findFirst()
+                .orElseThrow(() ->
+                        new IllegalStateException(format("Expected [%s] to have exactly one following node, but %d were found", args)));
     }
 }

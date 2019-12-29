@@ -21,7 +21,7 @@ import java.util.Set;
 
 import static com.reedelk.esb.commons.FunctionWrapper.uncheckedConsumer;
 import static com.reedelk.esb.commons.Messages.Module.*;
-import static com.reedelk.esb.commons.Preconditions.checkNotNull;
+import static com.reedelk.runtime.api.commons.Preconditions.checkNotNull;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toSet;
 
@@ -168,7 +168,7 @@ public class DefaultModuleService implements ModuleService {
     /**
      * Removes a Module Bundle Jar file if and only if it belongs to the modules directory.
      */
-    class DeleteModuleBundleJar implements Operation {
+    static class DeleteModuleBundleJar implements Operation {
 
         private final SystemProperty systemProperty;
 

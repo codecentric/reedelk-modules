@@ -5,8 +5,8 @@ import org.osgi.framework.*;
 
 import java.util.Dictionary;
 
-import static com.reedelk.esb.commons.Preconditions.checkArgument;
 import static com.reedelk.esb.commons.ServiceReferenceProperty.COMPONENT_NAME;
+import static com.reedelk.runtime.api.commons.Preconditions.checkArgument;
 import static org.osgi.framework.BundleEvent.*;
 import static org.osgi.framework.ServiceEvent.REGISTERED;
 import static org.osgi.framework.ServiceEvent.UNREGISTERING;

@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static com.reedelk.esb.commons.Preconditions.checkNotNull;
-import static com.reedelk.esb.commons.Preconditions.checkState;
 import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
+import static com.reedelk.runtime.api.commons.Preconditions.checkNotNull;
+import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -98,7 +98,7 @@ public class ForkExecutor implements FlowExecutor {
         };
     }
 
-    class JoinConsumer implements Consumer<MonoSink<MessageAndContext>> {
+    static class JoinConsumer implements Consumer<MonoSink<MessageAndContext>> {
 
         private final Join join;
         private final MessageAndContext context;
