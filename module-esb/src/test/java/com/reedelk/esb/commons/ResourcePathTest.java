@@ -57,7 +57,7 @@ class ResourcePathTest {
 
         // Then
         assertThat(thrown).isNotNull();
-        assertThat(thrown).hasMessage("resource url");
+        assertThat(thrown).hasMessage("url");
     }
 
     @Test
@@ -71,5 +71,4 @@ class ResourcePathTest {
         // Then
         assertThat(actual).isEqualTo(StringUtils.EMPTY);
     }
-
 }
