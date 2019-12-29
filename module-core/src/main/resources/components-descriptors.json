@@ -12,12 +12,12 @@
           "propertyName": "name",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
             "INSTANCE": {
               "type": "java.lang.String"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         }
       ]
     },
@@ -33,19 +33,19 @@
           "propertyName": "name",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
             "INSTANCE": {
               "type": "java.lang.String"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Mime type",
           "propertyName": "mimeType",
           "defaultValue": "*/*",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeComboDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
             "INSTANCE": {
               "editable": true,
               "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -173,7 +173,7 @@
               "type": "com.reedelk.runtime.api.annotation.Combo"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "hintValue": "variable text value",
@@ -181,12 +181,12 @@
           "propertyName": "value",
           "defaultValue": "#[]",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
             "INSTANCE": {
               "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicObject"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         }
       ]
     },
@@ -201,7 +201,7 @@
           "propertyName": "mimeType",
           "defaultValue": "text/plain",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeComboDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
             "INSTANCE": {
               "editable": true,
               "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -329,19 +329,19 @@
               "type": "com.reedelk.runtime.api.annotation.Combo"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Delimiter",
           "propertyName": "delimiter",
           "defaultValue": ",",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
             "INSTANCE": {
               "type": "java.lang.String"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         }
       ]
     },
@@ -356,7 +356,7 @@
           "propertyName": "mimeType",
           "defaultValue": "text/plain",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeComboDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
             "INSTANCE": {
               "editable": true,
               "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -484,25 +484,25 @@
               "type": "com.reedelk.runtime.api.annotation.Combo"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Script",
           "propertyName": "script",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeScriptDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeScriptDescriptor",
             "INSTANCE": {
               "type": "com.reedelk.runtime.api.script.Script"
             }
           },
-          "scriptSignatureDefinition": {
+          "scriptSignatureDescriptor": {
             "arguments": [
               "context",
               "messages"
             ]
           },
-          "autoCompleteContributorDefinition": {
+          "autoCompleteContributorDescriptor": {
             "error": false,
             "message": false,
             "context": true,
@@ -511,7 +511,7 @@
               "messages.size()[FUNCTION:int]"
             ]
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         }
       ]
     },
@@ -526,7 +526,7 @@
           "propertyName": "level",
           "defaultValue": "INFO",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
             "INSTANCE": {
               "nameAndDisplayNameMap": {
                 "TRACE": "Trace",
@@ -538,7 +538,7 @@
               "type": "java.lang.Enum"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "hintValue": "my log message",
@@ -546,12 +546,12 @@
           "propertyName": "message",
           "defaultValue": "#[message]",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
             "INSTANCE": {
               "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicObject"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         }
       ]
     },
@@ -566,7 +566,7 @@
           "propertyName": "mimeType",
           "defaultValue": "text/plain",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeComboDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
             "INSTANCE": {
               "editable": true,
               "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -694,19 +694,19 @@
               "type": "com.reedelk.runtime.api.annotation.Combo"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Payload",
           "propertyName": "payload",
           "defaultValue": "#[]",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
             "INSTANCE": {
               "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicObject"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         }
       ]
     },
@@ -721,31 +721,31 @@
           "propertyName": "resourceFile",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeResourceBinaryDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeResourceBinaryDescriptor",
             "INSTANCE": {
               "type": "com.reedelk.runtime.api.resource.ResourceBinary"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Auto mime type",
           "propertyName": "autoMimeType",
           "defaultValue": "true",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
             "INSTANCE": {
               "type": "boolean"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Mime type",
           "propertyName": "mimeType",
           "defaultValue": "text/plain",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeComboDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
             "INSTANCE": {
               "editable": true,
               "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -873,7 +873,7 @@
               "type": "com.reedelk.runtime.api.annotation.Combo"
             }
           },
-          "whenDefinitions": [
+          "whenDescriptors": [
             {
               "propertyName": "autoMimeType",
               "propertyValue": "false"
@@ -897,31 +897,31 @@
           "propertyName": "resourceFile",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
             "INSTANCE": {
               "type": "com.reedelk.runtime.api.resource.DynamicResource"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Auto mime type",
           "propertyName": "autoMimeType",
           "defaultValue": "true",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
             "INSTANCE": {
               "type": "boolean"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Mime type",
           "propertyName": "mimeType",
           "defaultValue": "text/plain",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeComboDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
             "INSTANCE": {
               "editable": true,
               "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -1049,7 +1049,7 @@
               "type": "com.reedelk.runtime.api.annotation.Combo"
             }
           },
-          "whenDefinitions": [
+          "whenDescriptors": [
             {
               "propertyName": "autoMimeType",
               "propertyValue": "false"
@@ -1065,7 +1065,7 @@
           "propertyName": "configuration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
             "INSTANCE": {
               "shared": "NO",
               "collapsible": "YES",
@@ -1077,18 +1077,18 @@
                   "propertyName": "readBufferSize",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 }
               ],
-              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         }
       ]
     },
@@ -1103,31 +1103,31 @@
           "propertyName": "resourceFile",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeResourceTextDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeResourceTextDescriptor",
             "INSTANCE": {
               "type": "com.reedelk.runtime.api.resource.ResourceText"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Auto mime type",
           "propertyName": "autoMimeType",
           "defaultValue": "true",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
             "INSTANCE": {
               "type": "boolean"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Mime type",
           "propertyName": "mimeType",
           "defaultValue": "text/plain",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeComboDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
             "INSTANCE": {
               "editable": true,
               "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -1255,7 +1255,7 @@
               "type": "com.reedelk.runtime.api.annotation.Combo"
             }
           },
-          "whenDefinitions": [
+          "whenDescriptors": [
             {
               "propertyName": "autoMimeType",
               "propertyValue": "false"
@@ -1279,7 +1279,7 @@
           "propertyName": "mimeType",
           "defaultValue": "text/plain",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeComboDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
             "INSTANCE": {
               "editable": true,
               "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -1407,24 +1407,24 @@
               "type": "com.reedelk.runtime.api.annotation.Combo"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Script",
           "propertyName": "script",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeScriptDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeScriptDescriptor",
             "INSTANCE": {
               "type": "com.reedelk.runtime.api.script.Script"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         }
       ]
     }
   ],
-  "autocompleteContributorDefinitions": [
+  "autocompleteContributorDescriptors": [
     {
       "error": false,
       "message": false,

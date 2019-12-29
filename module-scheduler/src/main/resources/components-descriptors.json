@@ -11,7 +11,7 @@
           "propertyName": "strategy",
           "defaultValue": "FIXED_FREQUENCY",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
             "INSTANCE": {
               "nameAndDisplayNameMap": {
                 "CRON": "Cron",
@@ -20,14 +20,14 @@
               "type": "java.lang.Enum"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Fixed Frequency Configuration",
           "propertyName": "fixedFrequencyConfig",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
             "INSTANCE": {
               "shared": "NO",
               "collapsible": "NO",
@@ -39,12 +39,12 @@
                   "propertyName": "period",
                   "defaultValue": "1000",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "int"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "hintValue": "1500",
@@ -52,19 +52,19 @@
                   "propertyName": "delay",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "int"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Time unit",
                   "propertyName": "timeUnit",
                   "defaultValue": "MILLISECONDS",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
                     "INSTANCE": {
                       "nameAndDisplayNameMap": {
                         "MILLISECONDS": "Milliseconds (default)",
@@ -75,13 +75,13 @@
                       "type": "java.lang.Enum"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 }
               ],
-              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
             }
           },
-          "whenDefinitions": [
+          "whenDescriptors": [
             {
               "propertyName": "strategy",
               "propertyValue": "FIXED_FREQUENCY"
@@ -93,7 +93,7 @@
           "propertyName": "cronConfig",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
             "INSTANCE": {
               "shared": "NO",
               "collapsible": "NO",
@@ -105,19 +105,19 @@
                   "propertyName": "expression",
                   "defaultValue": "* * * ? * *",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.String"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Time Zone",
                   "propertyName": "timeZone",
                   "defaultValue": "GMT",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeComboDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
                     "INSTANCE": {
                       "editable": true,
                       "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -714,13 +714,13 @@
                       "type": "com.reedelk.runtime.api.annotation.Combo"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 }
               ],
-              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
             }
           },
-          "whenDefinitions": [
+          "whenDescriptors": [
             {
               "propertyName": "strategy",
               "propertyValue": "CRON"
@@ -730,5 +730,5 @@
       ]
     }
   ],
-  "autocompleteContributorDefinitions": []
+  "autocompleteContributorDescriptors": []
 }

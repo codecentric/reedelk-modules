@@ -11,7 +11,7 @@
           "propertyName": "method",
           "defaultValue": "GET",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
             "INSTANCE": {
               "nameAndDisplayNameMap": {
                 "HEAD": "HEAD",
@@ -24,14 +24,14 @@
               "type": "java.lang.Enum"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Client config",
           "propertyName": "configuration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
             "INSTANCE": {
               "shared": "YES",
               "collapsible": "NO",
@@ -42,43 +42,43 @@
                   "propertyName": "host",
                   "defaultValue": "localhost",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.String"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Port",
                   "propertyName": "port",
                   "defaultValue": "80",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Base path",
                   "propertyName": "basePath",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.String"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Protocol",
                   "propertyName": "protocol",
                   "defaultValue": "HTTP",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
                     "INSTANCE": {
                       "nameAndDisplayNameMap": {
                         "HTTPS": "HTTPS",
@@ -87,74 +87,74 @@
                       "type": "java.lang.Enum"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Request timeout",
                   "propertyName": "requestTimeout",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Connect timeout",
                   "propertyName": "connectTimeout",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Keep alive",
                   "propertyName": "keepAlive",
                   "defaultValue": "true",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Boolean"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Follow redirects",
                   "propertyName": "followRedirects",
                   "defaultValue": "true",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Boolean"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Expect continue",
                   "propertyName": "expectContinue",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Boolean"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Authentication",
                   "propertyName": "authentication",
                   "defaultValue": "NONE",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
                     "INSTANCE": {
                       "nameAndDisplayNameMap": {
                         "DIGEST": "Digest",
@@ -164,14 +164,14 @@
                       "type": "java.lang.Enum"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Basic authentication",
                   "propertyName": "basicAuthentication",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
                     "INSTANCE": {
                       "shared": "NO",
                       "collapsible": "NO",
@@ -182,42 +182,42 @@
                           "propertyName": "username",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                             "INSTANCE": {
                               "type": "java.lang.String"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         },
                         {
                           "displayName": "Password",
                           "propertyName": "password",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePasswordDescriptor",
                             "INSTANCE": {
                               "type": "com.reedelk.runtime.api.annotation.Password"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         },
                         {
                           "displayName": "Preemptive",
                           "propertyName": "preemptive",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                             "INSTANCE": {
                               "type": "java.lang.Boolean"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         }
                       ],
-                      "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                      "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
                     }
                   },
-                  "whenDefinitions": [
+                  "whenDescriptors": [
                     {
                       "propertyName": "authentication",
                       "propertyValue": "BASIC"
@@ -229,7 +229,7 @@
                   "propertyName": "digestAuthentication",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
                     "INSTANCE": {
                       "shared": "NO",
                       "collapsible": "NO",
@@ -240,48 +240,48 @@
                           "propertyName": "username",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                             "INSTANCE": {
                               "type": "java.lang.String"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         },
                         {
                           "displayName": "Password",
                           "propertyName": "password",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePasswordDescriptor",
                             "INSTANCE": {
                               "type": "com.reedelk.runtime.api.annotation.Password"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         },
                         {
                           "displayName": "Preemptive",
                           "propertyName": "preemptive",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                             "INSTANCE": {
                               "type": "java.lang.Boolean"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         },
                         {
                           "displayName": "Realm",
                           "propertyName": "realm",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                             "INSTANCE": {
                               "type": "java.lang.String"
                             }
                           },
-                          "whenDefinitions": [
+                          "whenDescriptors": [
                             {
                               "propertyName": "preemptive",
                               "propertyValue": "true"
@@ -293,12 +293,12 @@
                           "propertyName": "nonce",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                             "INSTANCE": {
                               "type": "java.lang.String"
                             }
                           },
-                          "whenDefinitions": [
+                          "whenDescriptors": [
                             {
                               "propertyName": "preemptive",
                               "propertyValue": "true"
@@ -306,10 +306,10 @@
                           ]
                         }
                       ],
-                      "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                      "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
                     }
                   },
-                  "whenDefinitions": [
+                  "whenDescriptors": [
                     {
                       "propertyName": "authentication",
                       "propertyValue": "DIGEST"
@@ -321,7 +321,7 @@
                   "propertyName": "proxy",
                   "defaultValue": "NONE",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
                     "INSTANCE": {
                       "nameAndDisplayNameMap": {
                         "PROXY": "Proxy",
@@ -330,14 +330,14 @@
                       "type": "java.lang.Enum"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Proxy configuration",
                   "propertyName": "proxyConfiguration",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
                     "INSTANCE": {
                       "shared": "NO",
                       "collapsible": "NO",
@@ -348,31 +348,31 @@
                           "propertyName": "host",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                             "INSTANCE": {
                               "type": "java.lang.String"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         },
                         {
                           "displayName": "Port",
                           "propertyName": "port",
                           "defaultValue": "8080",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                             "INSTANCE": {
                               "type": "java.lang.Integer"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         },
                         {
                           "displayName": "Authentication",
                           "propertyName": "authentication",
                           "defaultValue": "NONE",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
                             "INSTANCE": {
                               "nameAndDisplayNameMap": {
                                 "DIGEST": "Digest",
@@ -382,14 +382,14 @@
                               "type": "java.lang.Enum"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         },
                         {
                           "displayName": "Basic authentication",
                           "propertyName": "basicAuthentication",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
                             "INSTANCE": {
                               "shared": "NO",
                               "collapsible": "NO",
@@ -400,30 +400,30 @@
                                   "propertyName": "username",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                                     "INSTANCE": {
                                       "type": "java.lang.String"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 },
                                 {
                                   "displayName": "Password",
                                   "propertyName": "password",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePasswordDescriptor",
                                     "INSTANCE": {
                                       "type": "com.reedelk.runtime.api.annotation.Password"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 }
                               ],
-                              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
                             }
                           },
-                          "whenDefinitions": [
+                          "whenDescriptors": [
                             {
                               "propertyName": "authentication",
                               "propertyValue": "BASIC"
@@ -435,7 +435,7 @@
                           "propertyName": "digestAuthentication",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
                             "INSTANCE": {
                               "shared": "NO",
                               "collapsible": "NO",
@@ -446,30 +446,30 @@
                                   "propertyName": "username",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                                     "INSTANCE": {
                                       "type": "java.lang.String"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 },
                                 {
                                   "displayName": "Password",
                                   "propertyName": "password",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePasswordDescriptor",
                                     "INSTANCE": {
                                       "type": "com.reedelk.runtime.api.annotation.Password"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 }
                               ],
-                              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
                             }
                           },
-                          "whenDefinitions": [
+                          "whenDescriptors": [
                             {
                               "propertyName": "authentication",
                               "propertyValue": "DIGEST"
@@ -477,10 +477,10 @@
                           ]
                         }
                       ],
-                      "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                      "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
                     }
                   },
-                  "whenDefinitions": [
+                  "whenDescriptors": [
                     {
                       "propertyName": "proxy",
                       "propertyValue": "PROXY"
@@ -488,10 +488,10 @@
                   ]
                 }
               ],
-              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "hintValue": "https://api.example.com",
@@ -500,12 +500,12 @@
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyInfo": "The base URL of the HTTP request. It may include the request path as well, e.g: http://api.example.com/resource1",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
             "INSTANCE": {
               "type": "java.lang.String"
             }
           },
-          "whenDefinitions": [
+          "whenDescriptors": [
             {
               "propertyName": "configuration",
               "propertyValue": "###NULL###"
@@ -522,12 +522,12 @@
           "propertyName": "path",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
             "INSTANCE": {
               "type": "java.lang.String"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "hintValue": "payload",
@@ -535,12 +535,12 @@
           "propertyName": "body",
           "defaultValue": "#[message.payload()]",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
             "INSTANCE": {
               "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray"
             }
           },
-          "whenDefinitions": [
+          "whenDescriptors": [
             {
               "propertyName": "method",
               "propertyValue": "DELETE"
@@ -560,7 +560,7 @@
           "propertyName": "streaming",
           "defaultValue": "AUTO",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
             "INSTANCE": {
               "nameAndDisplayNameMap": {
                 "AUTO": "Auto",
@@ -570,7 +570,7 @@
               "type": "java.lang.Enum"
             }
           },
-          "whenDefinitions": [
+          "whenDescriptors": [
             {
               "propertyName": "method",
               "propertyValue": "DELETE"
@@ -590,46 +590,46 @@
           "propertyName": "headers",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicMapDescriptor",
             "INSTANCE": {
               "tabGroup": "Headers and parameters",
               "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Path params",
           "propertyName": "pathParameters",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicMapDescriptor",
             "INSTANCE": {
               "tabGroup": "Headers and parameters",
               "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Query params",
           "propertyName": "queryParameters",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicMapDescriptor",
             "INSTANCE": {
               "tabGroup": "Headers and parameters",
               "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Advanced configuration",
           "propertyName": "advancedConfiguration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
             "INSTANCE": {
               "shared": "NO",
               "collapsible": "YES",
@@ -641,12 +641,12 @@
                   "propertyName": "responseBufferSize",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "hintValue": "16384",
@@ -654,18 +654,18 @@
                   "propertyName": "requestBufferSize",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 }
               ],
-              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         }
       ]
     },
@@ -680,7 +680,7 @@
           "propertyName": "configuration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
             "INSTANCE": {
               "shared": "YES",
               "collapsible": "NO",
@@ -692,12 +692,12 @@
                   "propertyName": "host",
                   "defaultValue": "localhost",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.String"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "hintValue": "8080",
@@ -705,19 +705,19 @@
                   "propertyName": "port",
                   "defaultValue": "8080",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Protocol",
                   "propertyName": "protocol",
                   "defaultValue": "HTTP",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
                     "INSTANCE": {
                       "nameAndDisplayNameMap": {
                         "HTTPS": "HTTPS",
@@ -726,7 +726,7 @@
                       "type": "java.lang.Enum"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "hintValue": "/api",
@@ -734,103 +734,103 @@
                   "propertyName": "basePath",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.String"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Keep alive",
                   "propertyName": "keepAlive",
                   "defaultValue": "true",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Boolean"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Compress response",
                   "propertyName": "compress",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Boolean"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Read timeout millis",
                   "propertyName": "readTimeoutMillis",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Connection timeout millis",
                   "propertyName": "connectionTimeoutMillis",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Socket backlog",
                   "propertyName": "socketBacklog",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Max chunk size",
                   "propertyName": "maxChunkSize",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Max headers length",
                   "propertyName": "maxLengthOfAllHeaders",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                     "INSTANCE": {
                       "type": "java.lang.Integer"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Security configuration",
                   "propertyName": "securityConfiguration",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
                     "INSTANCE": {
                       "shared": "NO",
                       "collapsible": "NO",
@@ -841,7 +841,7 @@
                           "propertyName": "type",
                           "defaultValue": "CERTIFICATE_AND_PRIVATE_KEY",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
                             "INSTANCE": {
                               "nameAndDisplayNameMap": {
                                 "CERTIFICATE_AND_PRIVATE_KEY": "Certificate and private key",
@@ -850,14 +850,14 @@
                               "type": "java.lang.Enum"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         },
                         {
                           "displayName": "X.509 Certificate and private key",
                           "propertyName": "certificateAndPrivateKey",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
                             "INSTANCE": {
                               "shared": "NO",
                               "collapsible": "NO",
@@ -868,30 +868,30 @@
                                   "propertyName": "certificateFile",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                                     "INSTANCE": {
                                       "type": "java.lang.String"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 },
                                 {
                                   "displayName": "Private key",
                                   "propertyName": "privateKeyFile",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                                     "INSTANCE": {
                                       "type": "java.lang.String"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 }
                               ],
-                              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
                             }
                           },
-                          "whenDefinitions": [
+                          "whenDescriptors": [
                             {
                               "propertyName": "type",
                               "propertyValue": "CERTIFICATE_AND_PRIVATE_KEY"
@@ -903,7 +903,7 @@
                           "propertyName": "keyStore",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
                             "INSTANCE": {
                               "shared": "NO",
                               "collapsible": "NO",
@@ -914,54 +914,54 @@
                                   "propertyName": "path",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                                     "INSTANCE": {
                                       "type": "java.lang.String"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 },
                                 {
                                   "displayName": "Password",
                                   "propertyName": "password",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePasswordDescriptor",
                                     "INSTANCE": {
                                       "type": "com.reedelk.runtime.api.annotation.Password"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 },
                                 {
                                   "displayName": "Type",
                                   "propertyName": "type",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                                     "INSTANCE": {
                                       "type": "java.lang.String"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 },
                                 {
                                   "displayName": "Algorithm",
                                   "propertyName": "algorithm",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                                     "INSTANCE": {
                                       "type": "java.lang.String"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 }
                               ],
-                              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
                             }
                           },
-                          "whenDefinitions": [
+                          "whenDescriptors": [
                             {
                               "propertyName": "type",
                               "propertyValue": "KEY_STORE"
@@ -973,19 +973,19 @@
                           "propertyName": "useTrustStore",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                             "INSTANCE": {
                               "type": "java.lang.Boolean"
                             }
                           },
-                          "whenDefinitions": []
+                          "whenDescriptors": []
                         },
                         {
                           "displayName": "Trust store configuration",
                           "propertyName": "trustStoreConfiguration",
                           "defaultValue": "###USE_DEFAULT_VALUE###",
                           "propertyType": {
-                            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+                            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
                             "INSTANCE": {
                               "shared": "NO",
                               "collapsible": "NO",
@@ -996,54 +996,54 @@
                                   "propertyName": "path",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                                     "INSTANCE": {
                                       "type": "java.lang.String"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 },
                                 {
                                   "displayName": "Password",
                                   "propertyName": "password",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePasswordDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePasswordDescriptor",
                                     "INSTANCE": {
                                       "type": "com.reedelk.runtime.api.annotation.Password"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 },
                                 {
                                   "displayName": "Type",
                                   "propertyName": "type",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                                     "INSTANCE": {
                                       "type": "java.lang.String"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 },
                                 {
                                   "displayName": "Algorithm",
                                   "propertyName": "algorithm",
                                   "defaultValue": "###USE_DEFAULT_VALUE###",
                                   "propertyType": {
-                                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+                                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
                                     "INSTANCE": {
                                       "type": "java.lang.String"
                                     }
                                   },
-                                  "whenDefinitions": []
+                                  "whenDescriptors": []
                                 }
                               ],
-                              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
                             }
                           },
-                          "whenDefinitions": [
+                          "whenDescriptors": [
                             {
                               "propertyName": "useTrustStore",
                               "propertyValue": "true"
@@ -1051,10 +1051,10 @@
                           ]
                         }
                       ],
-                      "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+                      "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
                     }
                   },
-                  "whenDefinitions": [
+                  "whenDescriptors": [
                     {
                       "propertyName": "protocol",
                       "propertyValue": "HTTPS"
@@ -1062,10 +1062,10 @@
                   ]
                 }
               ],
-              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "hintValue": "/resource/{id}",
@@ -1073,19 +1073,19 @@
           "propertyName": "path",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypePrimitiveDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
             "INSTANCE": {
               "type": "java.lang.String"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Method",
           "propertyName": "method",
           "defaultValue": "GET",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
             "INSTANCE": {
               "nameAndDisplayNameMap": {
                 "HEAD": "HEAD",
@@ -1098,14 +1098,14 @@
               "type": "java.lang.Enum"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Streaming",
           "propertyName": "streaming",
           "defaultValue": "AUTO",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeEnumDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
             "INSTANCE": {
               "nameAndDisplayNameMap": {
                 "AUTO": "Auto",
@@ -1115,14 +1115,14 @@
               "type": "java.lang.Enum"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Response",
           "propertyName": "response",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
             "INSTANCE": {
               "shared": "NO",
               "collapsible": "YES",
@@ -1134,12 +1134,12 @@
                   "propertyName": "body",
                   "defaultValue": "#[message.payload()]",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
                     "INSTANCE": {
                       "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "hintValue": "200",
@@ -1147,38 +1147,38 @@
                   "propertyName": "status",
                   "defaultValue": "200",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
                     "INSTANCE": {
                       "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Additional Headers",
                   "propertyName": "headers",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicMapDescriptor",
                     "INSTANCE": {
                       "tabGroup": "Headers",
                       "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
                     }
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 }
               ],
-              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         },
         {
           "displayName": "Error response",
           "propertyName": "errorResponse",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.plugin.component.domain.TypeObjectDescriptor",
+            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
             "INSTANCE": {
               "shared": "NO",
               "collapsible": "YES",
@@ -1190,18 +1190,18 @@
                   "propertyName": "body",
                   "defaultValue": "#[error]",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
                     "INSTANCE": {
                       "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray"
                     }
                   },
-                  "autoCompleteContributorDefinition": {
+                  "autoCompleteContributorDescriptor": {
                     "error": true,
                     "message": false,
                     "context": true,
                     "contributions": []
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "hintValue": "500",
@@ -1209,46 +1209,46 @@
                   "propertyName": "status",
                   "defaultValue": "500",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicValueDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
                     "INSTANCE": {
                       "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger"
                     }
                   },
-                  "autoCompleteContributorDefinition": {
+                  "autoCompleteContributorDescriptor": {
                     "error": true,
                     "message": false,
                     "context": true,
                     "contributions": []
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 },
                 {
                   "displayName": "Additional Headers",
                   "propertyName": "headers",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.plugin.component.domain.TypeDynamicMapDescriptor",
+                    "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicMapDescriptor",
                     "INSTANCE": {
                       "tabGroup": "Headers",
                       "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
                     }
                   },
-                  "autoCompleteContributorDefinition": {
+                  "autoCompleteContributorDescriptor": {
                     "error": true,
                     "message": false,
                     "context": true,
                     "contributions": []
                   },
-                  "whenDefinitions": []
+                  "whenDescriptors": []
                 }
               ],
-              "type": "com.reedelk.plugin.component.domain.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
             }
           },
-          "whenDefinitions": []
+          "whenDescriptors": []
         }
       ]
     }
   ],
-  "autocompleteContributorDefinitions": []
+  "autocompleteContributorDescriptors": []
 }
