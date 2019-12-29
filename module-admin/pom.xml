@@ -17,15 +17,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <runtime.rest.api.version>1.0.0-SNAPSHOT</runtime.rest.api.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.reedelk</groupId>
-            <artifactId>runtime-rest-api</artifactId>
-            <version>${runtime.rest.api.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.reedelk</groupId>
             <artifactId>runtime-system-api</artifactId>
