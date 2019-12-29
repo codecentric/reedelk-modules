@@ -85,7 +85,7 @@
             <!-- Reedelk Plugin -->
             <plugin>
                 <groupId>com.reedelk</groupId>
-                <artifactId>component-descriptor</artifactId>
+                <artifactId>reedelk-maven-plugin</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
                 <executions>
                     <execution>
