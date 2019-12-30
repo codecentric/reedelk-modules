@@ -89,7 +89,7 @@
                 <version>1.0.0-SNAPSHOT</version>
                 <executions>
                     <execution>
-                        <phase>prepare-package</phase>
+                        <phase>process-classes</phase>
                         <goals>
                             <goal>generateModuleDescriptor</goal>
                         </goals>
