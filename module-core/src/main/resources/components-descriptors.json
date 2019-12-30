@@ -496,6 +496,7 @@
               "type": "com.reedelk.runtime.api.script.Script"
             }
           },
+          "whenDescriptors": [],
           "scriptSignatureDescriptor": {
             "arguments": [
               "context",
@@ -510,8 +511,7 @@
               "messages[VARIABLE:Message[]]",
               "messages.size()[FUNCTION:int]"
             ]
-          },
-          "whenDescriptors": []
+          }
         }
       ]
     },

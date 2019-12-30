@@ -1195,13 +1195,13 @@
                       "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicByteArray"
                     }
                   },
+                  "whenDescriptors": [],
                   "autoCompleteContributorDescriptor": {
                     "error": true,
                     "message": false,
                     "context": true,
                     "contributions": []
-                  },
-                  "whenDescriptors": []
+                  }
                 },
                 {
                   "hintValue": "500",
@@ -1214,13 +1214,13 @@
                       "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicInteger"
                     }
                   },
+                  "whenDescriptors": [],
                   "autoCompleteContributorDescriptor": {
                     "error": true,
                     "message": false,
                     "context": true,
                     "contributions": []
-                  },
-                  "whenDescriptors": []
+                  }
                 },
                 {
                   "displayName": "Additional Headers",
@@ -1233,13 +1233,13 @@
                       "type": "com.reedelk.runtime.api.script.dynamicmap.DynamicStringMap"
                     }
                   },
+                  "whenDescriptors": [],
                   "autoCompleteContributorDescriptor": {
                     "error": true,
                     "message": false,
                     "context": true,
                     "contributions": []
-                  },
-                  "whenDescriptors": []
+                  }
                 }
               ],
               "type": "com.reedelk.module.descriptor.model.TypeObjectDescriptor$TypeObject"
