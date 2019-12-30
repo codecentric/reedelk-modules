@@ -11,8 +11,8 @@
           "propertyName": "fileName",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypeDynamicValueDescriptor",
+            "instance": {
               "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicString"
             }
           },
@@ -23,8 +23,8 @@
           "propertyName": "basePath",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
               "type": "java.lang.String"
             }
           },
@@ -35,8 +35,8 @@
           "propertyName": "mode",
           "defaultValue": "DEFAULT",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypeEnumDescriptor",
+            "instance": {
               "nameAndDisplayNameMap": {
                 "STREAM": "Stream",
                 "DEFAULT": "Default"
@@ -51,8 +51,8 @@
           "propertyName": "autoMimeType",
           "defaultValue": "true",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
               "type": "boolean"
             }
           },
@@ -63,8 +63,8 @@
           "propertyName": "mimeType",
           "defaultValue": "text/plain",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypeComboDescriptor",
+            "instance": {
               "editable": true,
               "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXX",
               "comboValues": [
@@ -207,8 +207,8 @@
           "propertyName": "configuration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
+            "instance": {
               "shared": "NO",
               "collapsible": "YES",
               "typeFullyQualifiedName": "com.reedelk.file.read.FileReadConfiguration",
@@ -218,8 +218,8 @@
                   "propertyName": "lockFile",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "java.lang.Boolean"
                     }
                   },
@@ -231,8 +231,8 @@
                   "propertyName": "lockRetryMaxAttempts",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "java.lang.Integer"
                     }
                   },
@@ -249,8 +249,8 @@
                   "propertyName": "lockRetryWaitTime",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "java.lang.Long"
                     }
                   },
@@ -267,15 +267,15 @@
                   "propertyName": "readBufferSize",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "java.lang.Integer"
                     }
                   },
                   "whenDescriptors": []
                 }
               ],
-              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.module.descriptor.model.TypeObjectDescriptor$TypeObject"
             }
           },
           "whenDescriptors": []
@@ -293,8 +293,8 @@
           "propertyName": "filePath",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypeDynamicValueDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypeDynamicValueDescriptor",
+            "instance": {
               "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicString"
             }
           },
@@ -305,8 +305,8 @@
           "propertyName": "basePath",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
               "type": "java.lang.String"
             }
           },
@@ -317,8 +317,8 @@
           "propertyName": "mode",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypeEnumDescriptor",
+            "instance": {
               "nameAndDisplayNameMap": {
                 "OVERWRITE": "Overwrite",
                 "CREATE_NEW": "Create new",
@@ -334,8 +334,8 @@
           "propertyName": "configuration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
+            "instance": {
               "shared": "NO",
               "collapsible": "YES",
               "typeFullyQualifiedName": "com.reedelk.file.write.FileWriteConfiguration",
@@ -345,8 +345,8 @@
                   "propertyName": "createParentDirectory",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "java.lang.Boolean"
                     }
                   },
@@ -357,8 +357,8 @@
                   "propertyName": "lockFile",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "java.lang.Boolean"
                     }
                   },
@@ -370,8 +370,8 @@
                   "propertyName": "lockRetryMaxAttempts",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "java.lang.Integer"
                     }
                   },
@@ -388,8 +388,8 @@
                   "propertyName": "lockRetryWaitTime",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "java.lang.Long"
                     }
                   },
@@ -406,15 +406,15 @@
                   "propertyName": "writeBufferSize",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "java.lang.Integer"
                     }
                   },
                   "whenDescriptors": []
                 }
               ],
-              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.module.descriptor.model.TypeObjectDescriptor$TypeObject"
             }
           },
           "whenDescriptors": []

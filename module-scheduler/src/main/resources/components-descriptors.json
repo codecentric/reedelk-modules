@@ -11,8 +11,8 @@
           "propertyName": "strategy",
           "defaultValue": "FIXED_FREQUENCY",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypeEnumDescriptor",
+            "instance": {
               "nameAndDisplayNameMap": {
                 "CRON": "Cron",
                 "FIXED_FREQUENCY": "Fixed Frequency"
@@ -27,8 +27,8 @@
           "propertyName": "fixedFrequencyConfig",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
+            "instance": {
               "shared": "NO",
               "collapsible": "NO",
               "typeFullyQualifiedName": "com.reedelk.scheduler.configuration.FixedFrequencyConfiguration",
@@ -39,8 +39,8 @@
                   "propertyName": "period",
                   "defaultValue": "1000",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "int"
                     }
                   },
@@ -52,8 +52,8 @@
                   "propertyName": "delay",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "int"
                     }
                   },
@@ -64,8 +64,8 @@
                   "propertyName": "timeUnit",
                   "defaultValue": "MILLISECONDS",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypeEnumDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypeEnumDescriptor",
+                    "instance": {
                       "nameAndDisplayNameMap": {
                         "MILLISECONDS": "Milliseconds (default)",
                         "HOURS": "Hours",
@@ -78,7 +78,7 @@
                   "whenDescriptors": []
                 }
               ],
-              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.module.descriptor.model.TypeObjectDescriptor$TypeObject"
             }
           },
           "whenDescriptors": [
@@ -93,8 +93,8 @@
           "propertyName": "cronConfig",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
-            "CLASSNAME": "com.reedelk.component.descriptor.TypeObjectDescriptor",
-            "INSTANCE": {
+            "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
+            "instance": {
               "shared": "NO",
               "collapsible": "NO",
               "typeFullyQualifiedName": "com.reedelk.scheduler.configuration.CronConfiguration",
@@ -105,8 +105,8 @@
                   "propertyName": "expression",
                   "defaultValue": "* * * ? * *",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypePrimitiveDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
                       "type": "java.lang.String"
                     }
                   },
@@ -117,8 +117,8 @@
                   "propertyName": "timeZone",
                   "defaultValue": "GMT",
                   "propertyType": {
-                    "CLASSNAME": "com.reedelk.component.descriptor.TypeComboDescriptor",
-                    "INSTANCE": {
+                    "classname": "com.reedelk.module.descriptor.model.TypeComboDescriptor",
+                    "instance": {
                       "editable": true,
                       "prototype": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                       "comboValues": [
@@ -717,7 +717,7 @@
                   "whenDescriptors": []
                 }
               ],
-              "type": "com.reedelk.component.descriptor.TypeObjectDescriptor$TypeObject"
+              "type": "com.reedelk.module.descriptor.model.TypeObjectDescriptor$TypeObject"
             }
           },
           "whenDescriptors": [

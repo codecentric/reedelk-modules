@@ -91,7 +91,7 @@
                     <execution>
                         <phase>prepare-package</phase>
                         <goals>
-                            <goal>processComponentsDefinitions</goal>
+                            <goal>generateModuleDescriptor</goal>
                         </goals>
                     </execution>
                 </executions>
