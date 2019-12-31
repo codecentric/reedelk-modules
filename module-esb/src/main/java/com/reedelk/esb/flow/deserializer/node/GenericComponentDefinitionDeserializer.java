@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.reedelk.esb.commons.Messages.Deserializer.CONFIGURATION_NOT_FOUND;
@@ -44,10 +45,9 @@ public class GenericComponentDefinitionDeserializer {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private Object deserialize(JSONObject componentDefinition, Implementor bean, String propertyName) {
         Object propertyValue = componentDefinition.get(propertyName);
-        SetterArgument setterArgument = argumentOf(bean, propertyName);
+        SetterArgument<?,?> setterArgument = argumentOf(bean, propertyName);
 
         // Dynamic Map or declared Implementor object
         if (propertyValue instanceof JSONObject) {
@@ -61,7 +61,7 @@ public class GenericComponentDefinitionDeserializer {
 
             // Enum
         } else if (setterArgument.isEnum()){
-            Class enumClazz = setterArgument.getClazz();
+            Class<?> enumClazz = setterArgument.getClazz();
             return context.converter().convert(enumClazz, componentDefinition, propertyName);
 
             // Primitive or Dynamic Value
@@ -71,12 +71,11 @@ public class GenericComponentDefinitionDeserializer {
         }
     }
 
-    private Object deserializeObject(JSONObject componentDefinition, String propertyName, SetterArgument setterArgument) {
+    private Object deserializeObject(JSONObject componentDefinition, String propertyName, SetterArgument<?,?> setterArgument) {
         if (setterArgument.isMap()) {
             // The setter argument for this property is a map, so we just return
             // a de-serialized java map object.
-            JSONObject jsonObject = componentDefinition.getJSONObject(propertyName);
-            return jsonObject.toMap();
+            return context.converter().convert(Map.class, componentDefinition, propertyName);
         } else if (setterArgument.isDynamicMap()){
             // The setter argument for this property is any type of Dynamic map,
             // we must wrap the de-serialized java map object with a type specific
@@ -98,10 +97,10 @@ public class GenericComponentDefinitionDeserializer {
     }
 
     @SuppressWarnings("unchecked")
-    private Collection deserializeArray(JSONObject componentDefinition, String propertyName, SetterArgument argument) {
+    private Collection<?> deserializeArray(JSONObject componentDefinition, String propertyName, SetterArgument<?,?> argument) {
         JSONArray array = componentDefinition.getJSONArray(propertyName);
-        Class clazz = argument.getClazz();
-        Collection collection = CollectionFactory.from(clazz);
+        Class<?> clazz = argument.getClazz();
+        Collection<Object> collection = CollectionFactory.from(clazz);
         Class<?> genericType = argument.getGenericType();
         for (int index = 0; index < array.length(); index++) {
             Object converted = context.converter().convert(genericType, array, index);
