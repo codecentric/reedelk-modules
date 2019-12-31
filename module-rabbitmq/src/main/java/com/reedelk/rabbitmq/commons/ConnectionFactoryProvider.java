@@ -1,4 +1,4 @@
-package com.reedelk.rabbitmq.component;
+package com.reedelk.rabbitmq.commons;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -10,17 +10,14 @@ import java.util.concurrent.TimeoutException;
 public class ConnectionFactoryProvider {
 
     private static final ConnectionFactory connectionFactory = new ConnectionFactory();
-    private static Connection connection;
 
     private static ConnectionFactory get() {
         return connectionFactory;
     }
 
     public static synchronized Connection connection() {
-        if (connection != null) return connection;
         try {
-            connection = connectionFactory.newConnection();
-            return connection;
+            return connectionFactory.newConnection();
         } catch (IOException | TimeoutException e) {
             throw new ESBException(e);
         }

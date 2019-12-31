@@ -3,6 +3,7 @@ package com.reedelk.rabbitmq.component;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.reedelk.rabbitmq.commons.ChannelUtils;
+import com.reedelk.rabbitmq.commons.ConnectionFactoryProvider;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Hint;
@@ -33,16 +34,14 @@ public class RabbitMQProducer implements ProcessorSync {
     @Hint("localhost")
     private String host;
 
-    private Channel channel;
-
     @Reference
     private ConverterService converter;
 
+    private Channel channel;
+    private Connection connection;
 
     @Override
     public Message apply(Message message, FlowContext flowContext) {
-        // Convert to Bytes.
-
         Object payload = message.payload();
         byte[] payloadAsBytes = converter.convert(payload, byte[].class);
 
@@ -59,7 +58,7 @@ public class RabbitMQProducer implements ProcessorSync {
     @Override
     public void initialize() {
         try {
-            Connection connection = ConnectionFactoryProvider.connection();
+            connection = ConnectionFactoryProvider.connection();
             channel = connection.createChannel();
             channel.queueDeclare(queueName, false, false, false, null);
         } catch (IOException e) {
@@ -70,6 +69,7 @@ public class RabbitMQProducer implements ProcessorSync {
     @Override
     public void dispose() {
         ChannelUtils.closeSilently(channel);
+        ChannelUtils.closeSilently(connection);
     }
 
     public void setQueueName(String queueName) {

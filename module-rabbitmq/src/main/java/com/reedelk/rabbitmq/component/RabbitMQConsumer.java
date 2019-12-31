@@ -2,21 +2,18 @@ package com.reedelk.rabbitmq.component;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.DeliverCallback;
 import com.reedelk.rabbitmq.commons.ChannelUtils;
+import com.reedelk.rabbitmq.commons.ConnectionFactoryProvider;
+import com.reedelk.rabbitmq.commons.ConsumerDeliverCallback;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Hint;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.AbstractInbound;
-import com.reedelk.runtime.api.component.OnResult;
-import com.reedelk.runtime.api.message.FlowContext;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.exception.ESBException;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -42,51 +39,25 @@ public class RabbitMQConsumer extends AbstractInbound {
     private Boolean queueAutoDelete;
 
     private Channel channel;
-
+    private Connection connection;
 
     @Override
     public void onStart() {
-
         try {
-            Connection connection = ConnectionFactoryProvider.connection();
+            connection = ConnectionFactoryProvider.connection();
             channel = connection.createChannel();
             channel.queueDeclare(queueName, false, false, false, null);
-
-            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-
-                // Message Attributes
-                Map<String, Object> headers = delivery.getProperties().getHeaders();
-
-
-                String message = new String(delivery.getBody(), "UTF-8");
-
-                Message inboundMessage = MessageBuilder.get()
-                        .withText(message)
-                        .build();
-
-                onEvent(inboundMessage, new OnResult() {
-                    @Override
-                    public void onResult(Message message, FlowContext flowContext) {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable, FlowContext flowContext) {
-
-                    }
-                });
-            };
-            channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {
+            channel.basicConsume(queueName, true, new ConsumerDeliverCallback(this), consumerTag -> {
             });
-
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ESBException(e);
         }
     }
 
     @Override
     public void onShutdown() {
         ChannelUtils.closeSilently(channel);
+        ChannelUtils.closeSilently(connection);
     }
 
     public void setHost(String host) {

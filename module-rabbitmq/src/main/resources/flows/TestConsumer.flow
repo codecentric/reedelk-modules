@@ -1,13 +1,14 @@
 {
   "id": "c179ceed-ce09-4012-9c6f-1a9704efad2c",
-  "title": "Test Consumer",
+  "title": "Test Consumer Stuff",
   "description": "Test Consumer Flow",
   "flow": [
     {
       "implementor": "com.reedelk.rabbitmq.component.RabbitMQConsumer",
       "description": "RabbitMQ Consumer",
       "host": "localhost",
-      "queueName": "TEST"
+      "queueName": "TEST",
+      "queueDurable": true
     },
     {
       "implementor": "com.reedelk.core.component.logger.LoggerComponent",
