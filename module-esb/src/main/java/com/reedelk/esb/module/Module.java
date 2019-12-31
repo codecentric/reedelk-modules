@@ -19,10 +19,10 @@ import static java.util.Collections.singletonList;
 
 public class Module implements State {
 
-    private static final Map<Class, Collection<Class>> ALLOWED_TRANSITIONS;
+    private static final Map<Class<?>, Collection<Class<?>>> ALLOWED_TRANSITIONS;
 
     static {
-        Map<Class, Collection<Class>> tmp = new HashMap<>();
+        Map<Class<?>, Collection<Class<?>>> tmp = new HashMap<>();
         tmp.put(Error.class, asList(Unresolved.class, Installed.class)); // when a dependency component is uninstalled, the state goes from error to unresolved.
         tmp.put(Started.class, singletonList(Stopped.class));
         tmp.put(Installed.class, asList(Error.class, Unresolved.class));
@@ -142,9 +142,8 @@ public class Module implements State {
         return state.state();
     }
 
-    @SuppressWarnings("unchecked")
-    private void isAllowedTransition(Class transitionTo) {
-        Collection<Class> allowedNextStates = ALLOWED_TRANSITIONS.get(state.getClass());
+    private void isAllowedTransition(Class<?> transitionTo) {
+        Collection<Class<?>> allowedNextStates = ALLOWED_TRANSITIONS.get(state.getClass());
         boolean allowed = allowedNextStates.stream().anyMatch(transitionTo::isAssignableFrom);
 
         checkState(allowed, format("Module cannot transition from state=%s to state=%s",

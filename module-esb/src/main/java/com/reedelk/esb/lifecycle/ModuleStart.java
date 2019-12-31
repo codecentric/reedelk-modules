@@ -34,7 +34,7 @@ public class ModuleStart extends AbstractStep<Module, Module> {
             try {
                 flow.start();
                 Log.flowStarted(logger, flow);
-            } catch (Exception exception) {
+            } catch (Exception | LinkageError exception) {
                 String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
                 String message = flow.getFlowTitle()
                         .map(flowTitle -> START_ERROR_WITH_TITLE.format(flow.getFlowId(), flowTitle, rootCauseMessage))

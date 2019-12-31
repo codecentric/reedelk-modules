@@ -3,6 +3,7 @@ var Utilities = {
     Capitalize: function (string) {
         if (typeof string !== 'string') return '';
         var lowercased = string.toLowerCase();
+        // noinspection JSConstructorReturnsPrimitive
         return lowercased.charAt(0).toUpperCase() + lowercased.slice(1);
     },
 
@@ -16,14 +17,19 @@ var Utilities = {
 
     IconByModuleStatus: function (moduleStatus) {
         if (moduleStatus === "INSTALLED" || moduleStatus === "STARTED") {
+            // noinspection JSConstructorReturnsPrimitive
             return '<i class="icon-checkmark success-color"></i>';
         } else if (moduleStatus === 'UNRESOLVED') {
+            // noinspection JSConstructorReturnsPrimitive
             return '<i class="icon-blocked warn-color"></i>';
         } else if (moduleStatus === 'RESOLVED') {
+            // noinspection JSConstructorReturnsPrimitive
             return '<i class="icon-checkmark success-color"></i>';
         } else if (moduleStatus === 'STOPPED') {
-            return '<i class="icon-checkmark success-color"></i>';
+            // noinspection JSConstructorReturnsPrimitive
+            return '<i class="icon-blocked warn-color"></i>';
         } else if (moduleStatus === 'ERROR') {
+            // noinspection JSConstructorReturnsPrimitive
             return '<i class="icon-cross error-color"></i>';
         } else {
             return moduleStatus;
