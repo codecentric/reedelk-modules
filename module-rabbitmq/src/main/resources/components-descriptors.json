@@ -1,0 +1,80 @@
+{
+  "componentDescriptors": [
+    {
+      "hidden": false,
+      "displayName": "RabbitMQ Consumer",
+      "fullyQualifiedName": "com.reedelk.rabbitmq.component.RabbitMQConsumer",
+      "componentType": "INBOUND",
+      "componentPropertyDescriptors": [
+        {
+          "displayName": "Host",
+          "propertyName": "host",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
+              "type": "java.lang.String"
+            }
+          },
+          "whenDescriptors": []
+        },
+        {
+          "displayName": "Queue Name",
+          "propertyName": "queueName",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
+              "type": "java.lang.String"
+            }
+          },
+          "whenDescriptors": []
+        },
+        {
+          "displayName": "Queue Durable",
+          "propertyName": "queueDurable",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
+              "type": "java.lang.Boolean"
+            }
+          },
+          "whenDescriptors": []
+        },
+        {
+          "displayName": "Queue Exclusive",
+          "propertyName": "queueExclusive",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
+              "type": "java.lang.Boolean"
+            }
+          },
+          "whenDescriptors": []
+        },
+        {
+          "displayName": "Queue Auto Delete",
+          "propertyName": "queueAutoDelete",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
+              "type": "java.lang.Boolean"
+            }
+          },
+          "whenDescriptors": []
+        }
+      ]
+    },
+    {
+      "hidden": false,
+      "displayName": "RabbitMQ Producer",
+      "fullyQualifiedName": "com.reedelk.rabbitmq.component.RabbitMQProducer",
+      "componentType": "PROCESSOR",
+      "componentPropertyDescriptors": []
+    }
+  ],
+  "autocompleteContributorDescriptors": []
+}

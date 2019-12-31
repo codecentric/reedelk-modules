@@ -35,6 +35,7 @@
         <module>module-core</module>
         <module>module-scheduler</module>
         <module>module-file</module>
+        <module>module-rabbitmq</module>
     </modules>
 
     <dependencyManagement>
