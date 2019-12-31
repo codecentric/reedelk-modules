@@ -7,9 +7,10 @@
       "componentType": "INBOUND",
       "componentPropertyDescriptors": [
         {
+          "hintValue": "localhost",
           "displayName": "Host",
           "propertyName": "host",
-          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "defaultValue": "localhost",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
             "instance": {
@@ -19,9 +20,10 @@
           "whenDescriptors": []
         },
         {
+          "hintValue": "queue_inbound",
           "displayName": "Queue Name",
           "propertyName": "queueName",
-          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "defaultValue": "queue_inbound",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
             "instance": {
@@ -73,7 +75,34 @@
       "displayName": "RabbitMQ Producer",
       "fullyQualifiedName": "com.reedelk.rabbitmq.component.RabbitMQProducer",
       "componentType": "PROCESSOR",
-      "componentPropertyDescriptors": []
+      "componentPropertyDescriptors": [
+        {
+          "hintValue": "queue_outbound",
+          "displayName": "Queue Name",
+          "propertyName": "queueName",
+          "defaultValue": "queue_outbound",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
+              "type": "java.lang.String"
+            }
+          },
+          "whenDescriptors": []
+        },
+        {
+          "hintValue": "localhost",
+          "displayName": "Host",
+          "propertyName": "host",
+          "defaultValue": "localhost",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
+              "type": "java.lang.String"
+            }
+          },
+          "whenDescriptors": []
+        }
+      ]
     }
   ],
   "autocompleteContributorDescriptors": []

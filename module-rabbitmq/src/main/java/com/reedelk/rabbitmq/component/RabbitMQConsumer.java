@@ -2,9 +2,10 @@ package com.reedelk.rabbitmq.component;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
+import com.reedelk.runtime.api.annotation.Hint;
 import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.component.OnResult;
@@ -14,6 +15,7 @@ import com.reedelk.runtime.api.message.MessageBuilder;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
@@ -23,9 +25,15 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 public class RabbitMQConsumer extends AbstractInbound {
 
     @Property("Host")
+    @Default("localhost")
+    @Hint("localhost")
     private String host;
+
     @Property("Queue Name")
+    @Default("queue_inbound")
+    @Hint("queue_inbound")
     private String queueName;
+
     @Property("Queue Durable")
     private Boolean queueDurable;
     @Property("Queue Exclusive")
@@ -33,19 +41,21 @@ public class RabbitMQConsumer extends AbstractInbound {
     @Property("Queue Auto Delete")
     private Boolean queueAutoDelete;
 
-
-    private Connection connection;
+    private Channel channel;
 
     @Override
     public void onStart() {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+
         try {
-            connection = factory.newConnection();
-            Channel channel = connection.createChannel();
+            Connection connection = ConnectionFactoryProvider.get();
+            channel = connection.createChannel();
             channel.queueDeclare(queueName, false, false, false, null);
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+
+                // Message Attributes
+                Map<String, Object> headers = delivery.getProperties().getHeaders();
+
 
                 String message = new String(delivery.getBody(), "UTF-8");
 
@@ -70,20 +80,21 @@ public class RabbitMQConsumer extends AbstractInbound {
 
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
         }
     }
 
     @Override
     public void onShutdown() {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (IOException e) {
-                // Ignored
+        if (channel != null) {
+            if (channel.isOpen()) {
+                try {
+                    channel.close();
+                } catch (IOException | TimeoutException e) {
+                    // nothing we  can do
+                }
             }
         }
+        ConnectionFactoryProvider.dispose();
     }
 
     public void setHost(String host) {
@@ -92,5 +103,17 @@ public class RabbitMQConsumer extends AbstractInbound {
 
     public void setQueueName(String queueName) {
         this.queueName = queueName;
+    }
+
+    public void setQueueDurable(Boolean queueDurable) {
+        this.queueDurable = queueDurable;
+    }
+
+    public void setQueueExclusive(Boolean queueExclusive) {
+        this.queueExclusive = queueExclusive;
+    }
+
+    public void setQueueAutoDelete(Boolean queueAutoDelete) {
+        this.queueAutoDelete = queueAutoDelete;
     }
 }
