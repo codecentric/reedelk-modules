@@ -5,12 +5,10 @@ import com.rabbitmq.client.Connection;
 import com.reedelk.rabbitmq.commons.ChannelUtils;
 import com.reedelk.rabbitmq.commons.ConnectionFactoryProvider;
 import com.reedelk.rabbitmq.commons.ConsumerDeliverCallback;
-import com.reedelk.runtime.api.annotation.Default;
-import com.reedelk.runtime.api.annotation.ESBComponent;
-import com.reedelk.runtime.api.annotation.Hint;
-import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.exception.ESBException;
+import com.reedelk.runtime.api.message.content.MimeType;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
@@ -21,15 +19,19 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = RabbitMQConsumer.class, scope = PROTOTYPE)
 public class RabbitMQConsumer extends AbstractInbound {
 
-    @Property("Host")
-    @Default("localhost")
-    @Hint("localhost")
-    private String host;
+    @Property("Connection Configuration")
+    private ConnectionFactoryConfiguration configuration;
 
     @Property("Queue Name")
     @Default("queue_inbound")
     @Hint("queue_inbound")
     private String queueName;
+
+    @Property("Mime type")
+    @PropertyInfo("Mime Type of the consumed message")
+    @Default(MimeType.MIME_TYPE_TEXT_PLAIN)
+    @MimeTypeCombo
+    private String mimeType;
 
     @Property("Queue Durable")
     private Boolean queueDurable;
@@ -60,8 +62,8 @@ public class RabbitMQConsumer extends AbstractInbound {
         ChannelUtils.closeSilently(connection);
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setConfiguration(ConnectionFactoryConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public void setQueueName(String queueName) {
@@ -78,5 +80,9 @@ public class RabbitMQConsumer extends AbstractInbound {
 
     public void setQueueAutoDelete(Boolean queueAutoDelete) {
         this.queueAutoDelete = queueAutoDelete;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 }

@@ -21,8 +21,7 @@
     {
       "implementor": "com.reedelk.rabbitmq.component.RabbitMQProducer",
       "description": "RabbitMQ Producer",
-      "queueName": "TEST",
-      "host": "localhost"
+      "queueName": "TEST"
     }
   ]
 }

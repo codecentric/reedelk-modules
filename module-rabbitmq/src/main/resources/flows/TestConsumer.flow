@@ -6,8 +6,8 @@
     {
       "implementor": "com.reedelk.rabbitmq.component.RabbitMQConsumer",
       "description": "RabbitMQ Consumer",
-      "host": "localhost",
       "queueName": "TEST",
+      "mimeType": "*/*",
       "queueDurable": true
     },
     {

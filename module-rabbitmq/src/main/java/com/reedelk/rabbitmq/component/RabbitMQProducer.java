@@ -4,10 +4,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.reedelk.rabbitmq.commons.ChannelUtils;
 import com.reedelk.rabbitmq.commons.ConnectionFactoryProvider;
-import com.reedelk.runtime.api.annotation.Default;
-import com.reedelk.runtime.api.annotation.ESBComponent;
-import com.reedelk.runtime.api.annotation.Hint;
-import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -24,15 +21,18 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = RabbitMQProducer.class, scope = PROTOTYPE)
 public class RabbitMQProducer implements ProcessorSync {
 
+    @Property("Connection Configuration")
+    private ConnectionFactoryConfiguration configuration;
+
     @Property("Queue Name")
     @Default("queue_outbound")
     @Hint("queue_outbound")
-    private String queueName;
+    private String queueName; // TODO: Should be dynamic
 
-    @Property("Host")
-    @Default("localhost")
-    @Hint("localhost")
-    private String host;
+    @Property("Exchange")
+    @Default("amq.direct")
+    @Hint("amq.direct")
+    private String exchange;  // TODO: Should be dynamic
 
     @Reference
     private ConverterService converter;
@@ -47,7 +47,7 @@ public class RabbitMQProducer implements ProcessorSync {
 
         try {
             synchronized (this) {
-                channel.basicPublish("", queueName, null, payloadAsBytes);
+                channel.basicPublish(exchange, queueName, null, payloadAsBytes);
                 return message;
             }
         } catch (IOException e) {
@@ -72,11 +72,15 @@ public class RabbitMQProducer implements ProcessorSync {
         ChannelUtils.closeSilently(connection);
     }
 
+    public void setConfiguration(ConnectionFactoryConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     public void setQueueName(String queueName) {
         this.queueName = queueName;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setExchange(String exchange) {
+        this.exchange = exchange;
     }
 }
