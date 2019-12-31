@@ -3,6 +3,7 @@ package com.reedelk.rabbitmq.component;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DeliverCallback;
+import com.reedelk.rabbitmq.commons.ChannelUtils;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Hint;
@@ -16,7 +17,6 @@ import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -43,11 +43,12 @@ public class RabbitMQConsumer extends AbstractInbound {
 
     private Channel channel;
 
+
     @Override
     public void onStart() {
 
         try {
-            Connection connection = ConnectionFactoryProvider.get();
+            Connection connection = ConnectionFactoryProvider.connection();
             channel = connection.createChannel();
             channel.queueDeclare(queueName, false, false, false, null);
 
@@ -85,16 +86,7 @@ public class RabbitMQConsumer extends AbstractInbound {
 
     @Override
     public void onShutdown() {
-        if (channel != null) {
-            if (channel.isOpen()) {
-                try {
-                    channel.close();
-                } catch (IOException | TimeoutException e) {
-                    // nothing we  can do
-                }
-            }
-        }
-        ConnectionFactoryProvider.dispose();
+        ChannelUtils.closeSilently(channel);
     }
 
     public void setHost(String host) {

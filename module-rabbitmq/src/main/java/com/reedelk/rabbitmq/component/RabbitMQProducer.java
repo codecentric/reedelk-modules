@@ -2,6 +2,7 @@ package com.reedelk.rabbitmq.component;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
+import com.reedelk.rabbitmq.commons.ChannelUtils;
 import com.reedelk.runtime.api.annotation.Default;
 import com.reedelk.runtime.api.annotation.ESBComponent;
 import com.reedelk.runtime.api.annotation.Hint;
@@ -15,7 +16,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
@@ -38,6 +38,7 @@ public class RabbitMQProducer implements ProcessorSync {
     @Reference
     private ConverterService converter;
 
+
     @Override
     public Message apply(Message message, FlowContext flowContext) {
         // Convert to Bytes.
@@ -46,8 +47,10 @@ public class RabbitMQProducer implements ProcessorSync {
         byte[] payloadAsBytes = converter.convert(payload, byte[].class);
 
         try {
-            channel.basicPublish("", queueName, null, payloadAsBytes);
-            return message;
+            synchronized (this) {
+                channel.basicPublish("", queueName, null, payloadAsBytes);
+                return message;
+            }
         } catch (IOException e) {
             throw new ESBException(e);
         }
@@ -56,7 +59,7 @@ public class RabbitMQProducer implements ProcessorSync {
     @Override
     public void initialize() {
         try {
-            Connection connection = ConnectionFactoryProvider.get();
+            Connection connection = ConnectionFactoryProvider.connection();
             channel = connection.createChannel();
             channel.queueDeclare(queueName, false, false, false, null);
         } catch (IOException e) {
@@ -66,15 +69,7 @@ public class RabbitMQProducer implements ProcessorSync {
 
     @Override
     public void dispose() {
-        if (channel != null) {
-            try {
-                if (channel.isOpen()) {
-                    channel.close();
-                }
-            } catch (IOException | TimeoutException e) {
-                // Nothing to do
-            }
-        }
+        ChannelUtils.closeSilently(channel);
     }
 
     public void setQueueName(String queueName) {
