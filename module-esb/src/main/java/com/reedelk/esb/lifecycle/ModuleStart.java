@@ -32,9 +32,17 @@ public class ModuleStart extends AbstractStep<Module, Module> {
 
         for (Flow flow : flows) {
             try {
+
                 flow.start();
+
                 Log.flowStarted(logger, flow);
-            } catch (Exception | LinkageError exception) {
+
+            } catch (Throwable exception) {
+                // We must catch all the exception Thrown during flow startup, so that
+                // we can property log them and notify the user about the specific error.
+                // This is also needed to call "forceStop" method below, so that Clients
+                // get a possibility to properly cleanup any resource partially opened
+                // during the start phase.
                 String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
                 String message = flow.getFlowTitle()
                         .map(flowTitle -> START_ERROR_WITH_TITLE.format(flow.getFlowId(), flowTitle, rootCauseMessage))
