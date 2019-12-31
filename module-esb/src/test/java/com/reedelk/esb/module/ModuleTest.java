@@ -245,7 +245,7 @@ class ModuleTest {
     @DisplayName("Stopped state tests")
     class Stopped {
 
-        // Stopped -> Started | Unresolved | Error | Resolved
+        // Stopped -> Started | Resolved | Unresolved | Error | Installed
         @Test
         void shouldStoppedTransitionToStarted() {
             // Given
@@ -300,6 +300,20 @@ class ModuleTest {
 
             // Then
             assertStateIs(RESOLVED);
+        }
+
+        @Test
+        void shouldStoppedTransitionToInstalled() {
+            // Given
+            module.unresolve(unresolvedComponents, resolvedComponents);
+            module.resolve(resolvedComponents);
+            module.stop(singletonList(flow));
+
+            // When
+            module.installed();
+
+            // Then
+            assertStateIs(INSTALLED);
         }
     }
 

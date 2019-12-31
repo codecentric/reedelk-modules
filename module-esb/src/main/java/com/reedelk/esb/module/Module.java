@@ -28,7 +28,7 @@ public class Module implements State {
         tmp.put(Installed.class, asList(Error.class, Unresolved.class));
         tmp.put(Resolved.class, asList(Unresolved.class, Stopped.class, Error.class, Installed.class));
         tmp.put(Unresolved.class, asList(Resolved.class, Unresolved.class, Installed.class));
-        tmp.put(Stopped.class, asList(Started.class, Resolved.class, Unresolved.class, Error.class));
+        tmp.put(Stopped.class, asList(Started.class, Resolved.class, Unresolved.class, Error.class, Installed.class));
         ALLOWED_TRANSITIONS = tmp;
     }
 
