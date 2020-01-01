@@ -191,7 +191,7 @@
                   ]
                 },
                 {
-                  "displayName": "Exclusive to this connection",
+                  "displayName": "Exclusive to connection",
                   "propertyName": "exclusive",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyInfo": "If true the use of the queue will be restricted to this connection (default: false).",
@@ -372,7 +372,7 @@
           "displayName": "Auto Acknowledge",
           "propertyName": "autoAck",
           "defaultValue": "true",
-          "propertyInfo": "True to immediately consider messages delivered by the broker as soon as the flow starts.False to acknowledge the message only if the flow executed successfully.",
+          "propertyInfo": "True to immediately consider messages delivered by the broker as soon as the flow starts. False to acknowledge the message only if the flow executed successfully.",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
             "instance": {
@@ -587,7 +587,7 @@
                   ]
                 },
                 {
-                  "displayName": "Exclusive to this connection",
+                  "displayName": "Exclusive to connection",
                   "propertyName": "exclusive",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyInfo": "If true the use of the queue will be restricted to this connection (default: false).",
