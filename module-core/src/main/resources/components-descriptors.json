@@ -2,8 +2,8 @@
   "componentDescriptors": [
     {
       "hidden": false,
-      "displayName": "Remove Variable",
-      "fullyQualifiedName": "com.reedelk.core.component.flow.RemoveVariable",
+      "displayName": "Variable Remove",
+      "fullyQualifiedName": "com.reedelk.core.component.flow.VariableRemove",
       "componentType": "PROCESSOR",
       "componentPropertyDescriptors": [
         {
@@ -23,8 +23,8 @@
     },
     {
       "hidden": false,
-      "displayName": "Set Variable",
-      "fullyQualifiedName": "com.reedelk.core.component.flow.SetVariable",
+      "displayName": "Variable Set",
+      "fullyQualifiedName": "com.reedelk.core.component.flow.VariableSet",
       "componentType": "PROCESSOR",
       "componentPropertyDescriptors": [
         {
@@ -557,8 +557,8 @@
     },
     {
       "hidden": false,
-      "displayName": "Set Payload",
-      "fullyQualifiedName": "com.reedelk.core.component.payload.SetPayload",
+      "displayName": "Payload Set",
+      "fullyQualifiedName": "com.reedelk.core.component.payload.PayloadSet",
       "componentType": "PROCESSOR",
       "componentPropertyDescriptors": [
         {

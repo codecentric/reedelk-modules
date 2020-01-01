@@ -16,9 +16,9 @@ import java.io.Serializable;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Set Variable")
-@Component(service = SetVariable.class, scope = PROTOTYPE)
-public class SetVariable implements ProcessorSync {
+@ESBComponent("Variable Set")
+@Component(service = VariableSet.class, scope = PROTOTYPE)
+public class VariableSet implements ProcessorSync {
 
     @Reference
     private ScriptEngineService scriptEngine;

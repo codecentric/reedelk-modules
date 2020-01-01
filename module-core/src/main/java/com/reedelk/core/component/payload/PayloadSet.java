@@ -18,9 +18,9 @@ import org.osgi.service.component.annotations.Reference;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Set Payload")
-@Component(service = SetPayload.class, scope = PROTOTYPE)
-public class SetPayload implements ProcessorSync {
+@ESBComponent("Payload Set")
+@Component(service = PayloadSet.class, scope = PROTOTYPE)
+public class PayloadSet implements ProcessorSync {
 
     @Reference
     private ScriptEngineService scriptEngine;

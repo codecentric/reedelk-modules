@@ -11,9 +11,9 @@ import org.osgi.service.component.annotations.Component;
 
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
-@ESBComponent("Remove Variable")
-@Component(service = RemoveVariable.class, scope = PROTOTYPE)
-public class RemoveVariable implements ProcessorSync {
+@ESBComponent("Variable Remove")
+@Component(service = VariableRemove.class, scope = PROTOTYPE)
+public class VariableRemove implements ProcessorSync {
 
     @Property("Name")
     @Hint("variable name")
