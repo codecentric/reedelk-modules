@@ -6,10 +6,10 @@
     {
       "implementor": "com.reedelk.rabbitmq.component.RabbitMQConsumer",
       "description": "RabbitMQ Consumer",
-      "connectionURI": "amqp://guest:guest@localhost:5672",
+      "configuration": {"ref": "568593cf-0218-4b8a-a6cb-212af1b0176b"},
       "queueName": "queue_inbound",
-      "messageMimeType": "application/octet-stream",
-      "createQueueConfiguration": {"createQueue": true}
+      "messageMimeType": "text/plain",
+      "autoAck": true
     },
     {
       "implementor": "com.reedelk.core.component.logger.LoggerComponent",

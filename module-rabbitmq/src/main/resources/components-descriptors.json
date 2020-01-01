@@ -280,29 +280,47 @@
           "whenDescriptors": []
         },
         {
-          "displayName": "Declare queue",
-          "propertyName": "declareQueue",
-          "defaultValue": "###USE_DEFAULT_VALUE###",
-          "propertyInfo": "If true, the consumer will declare a new queue with name provided in the \u0027Queue Name\u0027 field to be used for consuming messages from (default: false).",
+          "displayName": "Auto Acknowledge",
+          "propertyName": "autoAck",
+          "defaultValue": "true",
+          "propertyInfo": "True to immediately consider messages delivered by the broker as soon as the flow starts.False to acknowledge the message only if the flow executed successfully.",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
             "instance": {
-              "type": "java.lang.Boolean"
+              "type": "boolean"
             }
           },
           "whenDescriptors": []
         },
         {
-          "displayName": "Declare Queue Configuration",
-          "propertyName": "declareConfig",
+          "displayName": "Create Consumer Queue Settings",
+          "propertyName": "createQueueConfiguration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
             "instance": {
               "shared": "NO",
               "collapsible": "YES",
-              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.DeclareQueueConfiguration",
+              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.CreateQueueConfiguration",
               "objectProperties": [
+                {
+                  "displayName": "Create new",
+                  "propertyName": "create",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyInfo": "If true, the consumer will create a new queue with the name provided in the \u0027Queue Name\u0027 field (default: false).",
+                  "propertyType": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDescriptors": [
+                    {
+                      "propertyName": "queueName",
+                      "propertyValue": "###NOT_SCRIPT###"
+                    }
+                  ]
+                },
                 {
                   "displayName": "Durable",
                   "propertyName": "durable",
@@ -346,12 +364,7 @@
               "type": "com.reedelk.module.descriptor.model.TypeObjectDescriptor$TypeObject"
             }
           },
-          "whenDescriptors": [
-            {
-              "propertyName": "declareQueue",
-              "propertyValue": "true"
-            }
-          ]
+          "whenDescriptors": []
         }
       ]
     },
@@ -498,10 +511,10 @@
           "whenDescriptors": []
         },
         {
-          "hintValue": "amq.direct",
+          "hintValue": "amq.fanout",
           "displayName": "Exchange Name",
           "propertyName": "exchangeName",
-          "defaultValue": "amq.direct",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypeDynamicValueDescriptor",
             "instance": {
@@ -511,34 +524,34 @@
           "whenDescriptors": []
         },
         {
-          "displayName": "Declare queue",
-          "propertyName": "declareQueue",
-          "defaultValue": "###USE_DEFAULT_VALUE###",
-          "propertyInfo": "If true, the consumer will declare a new queue with name provided in the \u0027Queue Name\u0027 field to be used for consuming messages from (default: false).",
-          "propertyType": {
-            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
-            "instance": {
-              "type": "java.lang.Boolean"
-            }
-          },
-          "whenDescriptors": [
-            {
-              "propertyName": "queueName",
-              "propertyValue": "###NOT_SCRIPT###"
-            }
-          ]
-        },
-        {
-          "displayName": "Declare Queue Configuration",
-          "propertyName": "declareConfig",
+          "displayName": "Create Producer Queue Settings",
+          "propertyName": "createQueueConfiguration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
             "instance": {
               "shared": "NO",
               "collapsible": "YES",
-              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.DeclareQueueConfiguration",
+              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.CreateQueueConfiguration",
               "objectProperties": [
+                {
+                  "displayName": "Create new",
+                  "propertyName": "create",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyInfo": "If true, the consumer will create a new queue with the name provided in the \u0027Queue Name\u0027 field (default: false).",
+                  "propertyType": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDescriptors": [
+                    {
+                      "propertyName": "queueName",
+                      "propertyValue": "###NOT_SCRIPT###"
+                    }
+                  ]
+                },
                 {
                   "displayName": "Durable",
                   "propertyName": "durable",
@@ -584,8 +597,8 @@
           },
           "whenDescriptors": [
             {
-              "propertyName": "declareQueue",
-              "propertyValue": "true"
+              "propertyName": "queueName",
+              "propertyValue": "###NOT_SCRIPT###"
             }
           ]
         }

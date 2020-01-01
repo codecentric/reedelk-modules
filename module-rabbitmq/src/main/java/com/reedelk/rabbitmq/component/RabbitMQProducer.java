@@ -7,7 +7,7 @@ import com.reedelk.rabbitmq.commons.ConnectionFactoryProvider;
 import com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration;
 import com.reedelk.rabbitmq.configuration.CreateQueueConfiguration;
 import com.reedelk.runtime.api.annotation.*;
-import com.reedelk.runtime.api.commons.ScriptUtils;
+import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -46,8 +46,7 @@ public class RabbitMQProducer implements ProcessorSync {
     private DynamicString queueName;
 
     @Property("Exchange Name")
-    @Default("amq.direct")
-    @Hint("amq.direct")
+    @Hint("amq.fanout")
     private DynamicString exchangeName;
 
     @Property("Create Producer Queue Settings")
@@ -69,7 +68,7 @@ public class RabbitMQProducer implements ProcessorSync {
                 .orElseThrow(() -> new ESBException("Queue name not found"));
 
         String exchangeName = scriptEngine.evaluate(this.exchangeName, flowContext, message)
-                .orElse("amq.direct");
+                .orElse(StringUtils.EMPTY);
 
         Object payload = message.payload();
         byte[] payloadAsBytes = converter.convert(payload, byte[].class);
@@ -137,7 +136,7 @@ public class RabbitMQProducer implements ProcessorSync {
 
     private void createQueueIfNeeded() throws IOException {
         // If it is a script we cannot create it.
-        if (ScriptUtils.isScript(queueName.body())) return;
+        if (queueName.isScript()) return;
 
         boolean shouldDeclareQueue = shouldDeclareQueue();
         if (shouldDeclareQueue) {
