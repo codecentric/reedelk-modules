@@ -6,6 +6,7 @@ import com.reedelk.file.commons.FileOperation;
 import com.reedelk.file.exception.FileReadException;
 import com.reedelk.file.exception.MaxRetriesExceeded;
 import com.reedelk.file.exception.NotValidFileException;
+import com.reedelk.runtime.api.commons.TypedContentUtils;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import reactor.core.publisher.Flux;
@@ -22,7 +23,6 @@ import static com.reedelk.file.commons.Messages.FileReadComponent.FILE_READ_ERRO
 import static com.reedelk.file.commons.Messages.Misc.FILE_LOCK_MAX_RETRY_ERROR;
 import static com.reedelk.file.commons.Messages.Misc.FILE_NOT_FOUND;
 import static com.reedelk.runtime.api.commons.StackTraceUtils.rootCauseMessageOf;
-import static com.reedelk.runtime.api.commons.StreamUtils.FromByteArray;
 
 public class ReadStrategyStream implements ReadStrategy {
 
@@ -89,6 +89,6 @@ public class ReadStrategyStream implements ReadStrategy {
             }
         });
 
-        return FromByteArray.asTypedContent(contentAsStream, actualMimeType);
+        return TypedContentUtils.from(contentAsStream, actualMimeType);
     }
 }
