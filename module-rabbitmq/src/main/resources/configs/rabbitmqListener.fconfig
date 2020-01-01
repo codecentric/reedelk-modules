@@ -1,6 +1,6 @@
 {
   "id": "bb94a649-2fa1-4a26-a729-d8e848e63ad2",
-  "title": "rabbitmqListener",
+  "title": "REST Listener RabbitMQ",
   "implementor": "com.reedelk.rest.configuration.listener.ListenerConfiguration",
   "host": "localhost",
   "port": 8080,

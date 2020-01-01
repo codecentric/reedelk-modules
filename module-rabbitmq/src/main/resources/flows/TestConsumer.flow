@@ -6,15 +6,21 @@
     {
       "implementor": "com.reedelk.rabbitmq.component.RabbitMQConsumer",
       "description": "RabbitMQ Consumer",
-      "queueName": "TEST",
-      "mimeType": "*/*",
-      "queueDurable": true
+      "queueName": "queue_inbound",
+      "mimeType": "text/plain"
     },
     {
       "implementor": "com.reedelk.core.component.logger.LoggerComponent",
-      "description": "Logger",
+      "description": "Logger asfasdf asdf saf as f asdf as f adsfs df sa fs df asdf s df sa fa sf",
       "level": "INFO",
       "message": "#[message.payload()]"
+    },
+    {
+      "implementor": "com.reedelk.rabbitmq.component.RabbitMQProducer",
+      "description": "RabbitMQ Producer",
+      "configuration": {"ref": "39434cc2-5546-4b23-bc5c-73cb7ce90b56"},
+      "queueName": "queue_outbound",
+      "exchange": "amq.direct"
     }
   ]
 }

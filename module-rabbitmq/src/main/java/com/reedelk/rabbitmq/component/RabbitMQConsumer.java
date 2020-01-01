@@ -6,6 +6,7 @@ import com.reedelk.rabbitmq.commons.ChannelUtils;
 import com.reedelk.rabbitmq.commons.ConnectionFactoryProvider;
 import com.reedelk.rabbitmq.commons.ConsumerDeliverCallback;
 import com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration;
+import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.content.MimeType;
