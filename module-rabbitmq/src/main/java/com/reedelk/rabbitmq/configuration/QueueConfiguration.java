@@ -14,18 +14,19 @@ import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 @Component(service = QueueConfiguration.class, scope = PROTOTYPE)
 public class QueueConfiguration implements Implementor {
 
-    @Property("Create new")
-    @PropertyInfo("If true, the consumer will create a new queue with the name provided in the 'Queue Name' " +
-            "field (default: false).")
+    @Property("Create new queue")
+    @PropertyInfo("If true, a queue with the name provided in the 'Queue Name' field will be created in the broker." +
+            "If false the queue is considered already defined in the broker and an error will be thrown if the" +
+            " queue does not exists (default: false).")
     @When(propertyName = "queueName", propertyValue = When.NOT_SCRIPT)
     private Boolean create;
 
-    @Property("Durable")
+    @Property("Durable after restart")
     @PropertyInfo("If true the queue will survive a server restart (default: false).")
     @When(propertyName = "create", propertyValue = "true")
     private Boolean durable;
 
-    @Property("Exclusive")
+    @Property("Exclusive to connection")
     @PropertyInfo("If true the use of the queue will be restricted to this connection (default: false).")
     @When(propertyName = "create", propertyValue = "true")
     private Boolean exclusive;

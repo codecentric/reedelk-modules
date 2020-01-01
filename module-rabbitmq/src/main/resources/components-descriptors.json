@@ -155,10 +155,10 @@
               "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.QueueConfiguration",
               "objectProperties": [
                 {
-                  "displayName": "Create new",
+                  "displayName": "Create new queue",
                   "propertyName": "create",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
-                  "propertyInfo": "If true, the consumer will create a new queue with the name provided in the \u0027Queue Name\u0027 field (default: false).",
+                  "propertyInfo": "If true, a queue with the name provided in the \u0027Queue Name\u0027 field will be created in the broker.If false the queue is considered already defined in the broker and an error will be thrown if the queue does not exists (default: false).",
                   "propertyType": {
                     "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
                     "instance": {
@@ -173,7 +173,7 @@
                   ]
                 },
                 {
-                  "displayName": "Durable",
+                  "displayName": "Durable after restart",
                   "propertyName": "durable",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyInfo": "If true the queue will survive a server restart (default: false).",
@@ -191,7 +191,7 @@
                   ]
                 },
                 {
-                  "displayName": "Exclusive",
+                  "displayName": "Exclusive to this connection",
                   "propertyName": "exclusive",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyInfo": "If true the use of the queue will be restricted to this connection (default: false).",
@@ -551,10 +551,10 @@
               "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.QueueConfiguration",
               "objectProperties": [
                 {
-                  "displayName": "Create new",
+                  "displayName": "Create new queue",
                   "propertyName": "create",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
-                  "propertyInfo": "If true, the consumer will create a new queue with the name provided in the \u0027Queue Name\u0027 field (default: false).",
+                  "propertyInfo": "If true, a queue with the name provided in the \u0027Queue Name\u0027 field will be created in the broker.If false the queue is considered already defined in the broker and an error will be thrown if the queue does not exists (default: false).",
                   "propertyType": {
                     "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
                     "instance": {
@@ -569,7 +569,7 @@
                   ]
                 },
                 {
-                  "displayName": "Durable",
+                  "displayName": "Durable after restart",
                   "propertyName": "durable",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyInfo": "If true the queue will survive a server restart (default: false).",
@@ -587,7 +587,7 @@
                   ]
                 },
                 {
-                  "displayName": "Exclusive",
+                  "displayName": "Exclusive to this connection",
                   "propertyName": "exclusive",
                   "defaultValue": "###USE_DEFAULT_VALUE###",
                   "propertyInfo": "If true the use of the queue will be restricted to this connection (default: false).",
