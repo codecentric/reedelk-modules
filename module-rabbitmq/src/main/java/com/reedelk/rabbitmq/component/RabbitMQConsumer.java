@@ -12,11 +12,10 @@ import com.reedelk.runtime.api.message.content.MimeType;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.function.Function;
 
 import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotBlank;
-import static java.util.Optional.*;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("RabbitMQ Consumer")
