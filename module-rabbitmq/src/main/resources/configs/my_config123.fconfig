@@ -1,6 +1,0 @@
-{
-  "id": "6cb0e226-c641-42cb-8cd4-857cf64aa986",
-  "title": "My configuration",
-  "implementor": "com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration",
-  "automaticRecovery": true
-}

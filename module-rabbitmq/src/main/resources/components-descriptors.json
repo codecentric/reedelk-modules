@@ -515,6 +515,7 @@
           "displayName": "Exchange Name",
           "propertyName": "exchangeName",
           "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyInfo": "The name of the exchange to publish the message to. It might be a dynamic property.",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypeDynamicValueDescriptor",
             "instance": {

@@ -46,6 +46,7 @@ public class RabbitMQProducer implements ProcessorSync {
     private DynamicString queueName;
 
     @Property("Exchange Name")
+    @PropertyInfo("The name of the exchange to publish the message to. It might be a dynamic property.")
     @Hint("amq.fanout")
     private DynamicString exchangeName;
 

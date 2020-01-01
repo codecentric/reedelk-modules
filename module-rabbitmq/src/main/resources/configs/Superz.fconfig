@@ -1,6 +1,0 @@
-{
-  "id": "f16595d7-dd8f-4a5d-abad-c9c70d51cda5",
-  "title": "Testz",
-  "implementor": "com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration",
-  "automaticRecovery": true
-}
