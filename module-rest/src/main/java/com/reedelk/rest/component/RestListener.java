@@ -8,10 +8,7 @@ import com.reedelk.rest.configuration.listener.Response;
 import com.reedelk.rest.server.HttpRequestHandler;
 import com.reedelk.rest.server.Server;
 import com.reedelk.rest.server.ServerProvider;
-import com.reedelk.runtime.api.annotation.Default;
-import com.reedelk.runtime.api.annotation.ESBComponent;
-import com.reedelk.runtime.api.annotation.Hint;
-import com.reedelk.runtime.api.annotation.Property;
+import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.exception.ConfigurationException;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -21,6 +18,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import static com.reedelk.rest.commons.Messages.RestListener.LISTENER_CONFIG_MISSING;
 import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotNull;
+import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireTrue;
+import static com.reedelk.runtime.api.commons.StringUtils.isBlank;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("REST Listener")
@@ -37,6 +36,8 @@ public class RestListener extends AbstractInbound {
     private ListenerConfiguration configuration;
 
     @Property("Path")
+    @PropertyInfo("The rest path this listener will be bound to. If present must start with '/'. " +
+            "The path might contain regex matching a segment, e.g: /api/{name:.*}.")
     @Hint("/resource/{id}")
     private String path;
 
@@ -59,6 +60,7 @@ public class RestListener extends AbstractInbound {
         requireNotNull(configuration, "RestListener configuration must be defined");
         requireNotNull(configuration.getProtocol(), "RestListener configuration protocol must be defined");
         requireNotNull(method, "RestListener method must be defined");
+        requireTrue(isBlank(path) || path.startsWith("/") ,"RestListener path must start with '/'");
 
         HttpRequestHandler httpRequestHandler = HttpRequestHandler.builder()
                         .inboundEventListener(RestListener.this)

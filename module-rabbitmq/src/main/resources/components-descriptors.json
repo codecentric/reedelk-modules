@@ -152,7 +152,7 @@
             "instance": {
               "shared": "NO",
               "collapsible": "YES",
-              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.QueueConfiguration",
+              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.ConsumerQueueConfiguration",
               "objectProperties": [
                 {
                   "displayName": "Create new queue",
@@ -541,14 +541,14 @@
         },
         {
           "displayName": "Queue Settings",
-          "propertyName": "queueConfiguration",
+          "propertyName": "producerQueueConfiguration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
             "instance": {
               "shared": "NO",
               "collapsible": "YES",
-              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.QueueConfiguration",
+              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.ProducerQueueConfiguration",
               "objectProperties": [
                 {
                   "displayName": "Create new queue",

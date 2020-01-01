@@ -82,7 +82,6 @@ abstract class ConsumerDeliverCallback implements DeliverCallback {
         return new DefaultMessageAttributes(RabbitMQConsumer.class, attributes);
     }
 
-    //  TODO: Add tests for this
     private void setIfNotNull(String key, Serializable value, Map<String, Serializable> map) {
         if (value != null) {
             map.put(key, value);

@@ -5,7 +5,7 @@ import com.rabbitmq.client.Connection;
 import com.reedelk.rabbitmq.commons.ChannelUtils;
 import com.reedelk.rabbitmq.commons.ConnectionFactoryProvider;
 import com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration;
-import com.reedelk.rabbitmq.configuration.QueueConfiguration;
+import com.reedelk.rabbitmq.configuration.ProducerQueueConfiguration;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
@@ -52,7 +52,7 @@ public class RabbitMQProducer implements ProcessorSync {
 
     @Property("Queue Settings")
     @When(propertyName = "queueName", propertyValue = When.NOT_SCRIPT)
-    private QueueConfiguration queueConfiguration;
+    private ProducerQueueConfiguration producerQueueConfiguration;
 
     @Reference
     private ConverterService converter;
@@ -124,14 +124,14 @@ public class RabbitMQProducer implements ProcessorSync {
         this.exchangeName = exchangeName;
     }
 
-    public void setQueueConfiguration(QueueConfiguration queueConfiguration) {
-        this.queueConfiguration = queueConfiguration;
+    public void setProducerQueueConfiguration(ProducerQueueConfiguration producerQueueConfiguration) {
+        this.producerQueueConfiguration = producerQueueConfiguration;
     }
 
     private boolean shouldDeclareQueue() {
-        return ofNullable(queueConfiguration)
-                .flatMap(queueConfiguration ->
-                        of(QueueConfiguration.isCreateNew(queueConfiguration)))
+        return ofNullable(producerQueueConfiguration)
+                .flatMap(producerQueueConfiguration ->
+                        of(ProducerQueueConfiguration.isCreateNew(producerQueueConfiguration)))
                 .orElse(false);
     }
 
@@ -141,10 +141,10 @@ public class RabbitMQProducer implements ProcessorSync {
 
         boolean shouldDeclareQueue = shouldDeclareQueue();
         if (shouldDeclareQueue) {
-            boolean durable = QueueConfiguration.isDurable(queueConfiguration);
-            boolean exclusive = QueueConfiguration.isExclusive(queueConfiguration);
-            boolean autoDelete = QueueConfiguration.isAutoDelete(queueConfiguration);
-            channel.queueDeclare(queueName.body(), durable, exclusive, autoDelete, null);
+            boolean durable = ProducerQueueConfiguration.isDurable(producerQueueConfiguration);
+            boolean exclusive = ProducerQueueConfiguration.isExclusive(producerQueueConfiguration);
+            boolean autoDelete = ProducerQueueConfiguration.isAutoDelete(producerQueueConfiguration);
+            channel.queueDeclare(queueName.value(), durable, exclusive, autoDelete, null);
         }
     }
 }

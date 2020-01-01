@@ -11,8 +11,8 @@ import static java.util.Optional.ofNullable;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @Collapsible
-@Component(service = QueueConfiguration.class, scope = PROTOTYPE)
-public class QueueConfiguration implements Implementor {
+@Component(service = ConsumerQueueConfiguration.class, scope = PROTOTYPE)
+public class ConsumerQueueConfiguration implements Implementor {
 
     @Property("Create new queue")
     @PropertyInfo("If true, a queue with the name provided in the 'Queue Name' field will be created in the broker." +
@@ -52,25 +52,25 @@ public class QueueConfiguration implements Implementor {
         this.create = create;
     }
 
-    public static boolean isCreateNew(QueueConfiguration configuration) {
+    public static boolean isCreateNew(ConsumerQueueConfiguration configuration) {
         return ofNullable(configuration)
                 .flatMap(config -> ofNullable(config.create))
                 .orElse(false);
     }
 
-    public static boolean isDurable(QueueConfiguration configuration) {
+    public static boolean isDurable(ConsumerQueueConfiguration configuration) {
         return ofNullable(configuration)
                 .flatMap(config -> ofNullable(config.durable))
                 .orElse(false);
     }
 
-    public static boolean isExclusive(QueueConfiguration configuration) {
+    public static boolean isExclusive(ConsumerQueueConfiguration configuration) {
         return ofNullable(configuration)
                 .flatMap(config -> ofNullable(config.exclusive))
                 .orElse(false);
     }
 
-    public static boolean isAutoDelete(QueueConfiguration configuration) {
+    public static boolean isAutoDelete(ConsumerQueueConfiguration configuration) {
         return ofNullable(configuration)
                 .flatMap(config -> ofNullable(config.autoDelete))
                 .orElse(false);
