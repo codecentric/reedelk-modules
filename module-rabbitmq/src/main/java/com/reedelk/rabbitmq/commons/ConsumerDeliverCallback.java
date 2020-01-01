@@ -6,8 +6,6 @@ import com.rabbitmq.client.Delivery;
 import com.rabbitmq.client.Envelope;
 import com.reedelk.rabbitmq.component.RabbitMQConsumer;
 import com.reedelk.runtime.api.commons.TypedContentUtils;
-import com.reedelk.runtime.api.component.InboundEventListener;
-import com.reedelk.runtime.api.component.OnResult;
 import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageAttributes;
@@ -22,15 +20,12 @@ import java.util.Map;
 
 import static com.reedelk.runtime.api.commons.Preconditions.checkArgument;
 
-public class ConsumerDeliverCallback implements DeliverCallback {
+abstract class ConsumerDeliverCallback implements DeliverCallback {
 
-    private final InboundEventListener listener;
     private final MimeType consumedMessageMimeType;
 
-    public ConsumerDeliverCallback(InboundEventListener listener, MimeType consumedMessageMimeType) {
-        checkArgument(listener != null, "listener");
+    ConsumerDeliverCallback(MimeType consumedMessageMimeType) {
         checkArgument(consumedMessageMimeType != null, "consumedMessageMimeType");
-        this.listener = listener;
         this.consumedMessageMimeType = consumedMessageMimeType;
     }
 
@@ -50,9 +45,11 @@ public class ConsumerDeliverCallback implements DeliverCallback {
                 .attributes(messageAttributes)
                 .build();
 
-        // Notify Event
-        listener.onEvent(inboundMessage, new OnResult() {});
+        // Notify event
+        onEvent(inboundMessage, delivery);
     }
+
+    protected abstract void onEvent(Message message, Delivery delivery);
 
     private MessageAttributes createAttributes(Delivery delivery) {
         Envelope envelope = delivery.getEnvelope();
@@ -85,6 +82,7 @@ public class ConsumerDeliverCallback implements DeliverCallback {
         return new DefaultMessageAttributes(RabbitMQConsumer.class, attributes);
     }
 
+    //  TODO: Add tests for this
     private void setIfNotNull(String key, Serializable value, Map<String, Serializable> map) {
         if (value != null) {
             map.put(key, value);

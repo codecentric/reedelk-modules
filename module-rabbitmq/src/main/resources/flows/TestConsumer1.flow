@@ -7,14 +7,14 @@
       "implementor": "com.reedelk.rabbitmq.component.RabbitMQConsumer",
       "description": "RabbitMQ Consumer",
       "connectionURI": "amqp://guest:guest@localhost:5672",
-      "queueName": "queue_inbound",
-      "messageMimeType": "text/plain"
+      "messageMimeType": "text/plain",
+      "autoAck": true
     },
     {
       "implementor": "com.reedelk.core.component.logger.LoggerComponent",
       "description": "Logger",
       "level": "INFO",
-      "message": "#['Superz: ' + message.payload()]"
+      "message": "#['Superz: ' + message.content().consume()]"
     },
     {
       "implementor": "com.reedelk.rabbitmq.component.RabbitMQProducer",

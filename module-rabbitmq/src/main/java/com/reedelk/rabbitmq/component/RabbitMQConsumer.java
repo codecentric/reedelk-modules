@@ -2,10 +2,7 @@ package com.reedelk.rabbitmq.component;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.reedelk.rabbitmq.commons.ChannelUtils;
-import com.reedelk.rabbitmq.commons.ConnectionFactoryProvider;
-import com.reedelk.rabbitmq.commons.ConsumerCancelCallback;
-import com.reedelk.rabbitmq.commons.ConsumerDeliverCallback;
+import com.reedelk.rabbitmq.commons.*;
 import com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration;
 import com.reedelk.rabbitmq.configuration.CreateQueueConfiguration;
 import com.reedelk.runtime.api.annotation.*;
@@ -52,6 +49,12 @@ public class RabbitMQConsumer extends AbstractInbound {
     @Default(MimeType.MIME_TYPE_TEXT_PLAIN)
     private String messageMimeType;
 
+    @Property("Auto Acknowledge")
+    @PropertyInfo("True to immediately consider messages delivered by the broker as soon as the flow starts." +
+            "False to acknowledge the message only if the flow executed successfully.")
+    @Default("true")
+    private boolean autoAck;
+
     @Property("Create Consumer Queue Settings")
     private CreateQueueConfiguration createQueueConfiguration;
 
@@ -74,11 +77,16 @@ public class RabbitMQConsumer extends AbstractInbound {
             channel = connection.createChannel();
             createQueueIfNeeded();
 
-            channel.basicConsume(
-                    queueName,
-                    true,
-                    new ConsumerDeliverCallback(this, queueMessageContentType),
-                    new ConsumerCancelCallback());
+            if (autoAck) {
+                channel.basicConsume(queueName, true,
+                        new ConsumerDeliverCallbackAutoAck( this, queueMessageContentType),
+                        new ConsumerCancelCallback());
+            } else {
+                channel.basicConsume(queueName, false,
+                        new ConsumerDeliverCallbackExplicitAck( this, queueMessageContentType, channel),
+                        new ConsumerCancelCallback());
+            }
+
         } catch (IOException e) {
             throw new ESBException(e);
         }
@@ -108,6 +116,10 @@ public class RabbitMQConsumer extends AbstractInbound {
 
     public void setConnectionURI(String connectionURI) {
         this.connectionURI = connectionURI;
+    }
+
+    public void setAutoAck(Boolean autoAck) {
+        this.autoAck = autoAck;
     }
 
     private boolean shouldDeclareQueue() {
