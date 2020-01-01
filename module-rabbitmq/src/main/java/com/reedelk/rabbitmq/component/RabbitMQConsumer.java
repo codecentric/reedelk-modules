@@ -4,7 +4,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.reedelk.rabbitmq.commons.*;
 import com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration;
-import com.reedelk.rabbitmq.configuration.CreateQueueConfiguration;
+import com.reedelk.rabbitmq.configuration.QueueConfiguration;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -39,6 +39,9 @@ public class RabbitMQConsumer extends AbstractInbound {
     @Hint("queue_inbound")
     private String queueName;
 
+    @Property("Queue Settings")
+    private QueueConfiguration queueConfiguration;
+
     @Property("Content Mime Type")
     @PropertyInfo("The Mime Type of the consumed content allows to create " +
             "a flow message with a suitable content type for the following flow components " +
@@ -53,9 +56,6 @@ public class RabbitMQConsumer extends AbstractInbound {
             "False to acknowledge the message only if the flow executed successfully.")
     @Default("true")
     private boolean autoAck;
-
-    @Property("Create Consumer Queue Settings")
-    private CreateQueueConfiguration createQueueConfiguration;
 
     private Channel channel;
     private Connection connection;
@@ -107,8 +107,8 @@ public class RabbitMQConsumer extends AbstractInbound {
         this.messageMimeType = messageMimeType;
     }
 
-    public void setCreateQueueConfiguration(CreateQueueConfiguration createQueueConfiguration) {
-        this.createQueueConfiguration = createQueueConfiguration;
+    public void setQueueConfiguration(QueueConfiguration queueConfiguration) {
+        this.queueConfiguration = queueConfiguration;
     }
 
     public void setConnectionURI(String connectionURI) {
@@ -120,18 +120,18 @@ public class RabbitMQConsumer extends AbstractInbound {
     }
 
     private boolean shouldDeclareQueue() {
-        return ofNullable(createQueueConfiguration)
-                .flatMap(createQueueConfiguration ->
-                        of(CreateQueueConfiguration.isCreateNew(createQueueConfiguration)))
+        return ofNullable(queueConfiguration)
+                .flatMap(queueConfiguration ->
+                        of(QueueConfiguration.isCreateNew(queueConfiguration)))
                 .orElse(false);
     }
 
     private void createQueueIfNeeded() throws IOException {
         boolean shouldDeclareQueue = shouldDeclareQueue();
         if (shouldDeclareQueue) {
-            boolean durable = CreateQueueConfiguration.isDurable(createQueueConfiguration);
-            boolean exclusive = CreateQueueConfiguration.isExclusive(createQueueConfiguration);
-            boolean autoDelete = CreateQueueConfiguration.isAutoDelete(createQueueConfiguration);
+            boolean durable = QueueConfiguration.isDurable(queueConfiguration);
+            boolean exclusive = QueueConfiguration.isExclusive(queueConfiguration);
+            boolean autoDelete = QueueConfiguration.isAutoDelete(queueConfiguration);
             channel.queueDeclare(queueName, durable, exclusive, autoDelete, null);
         }
     }

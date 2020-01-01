@@ -144,6 +144,95 @@
           "whenDescriptors": []
         },
         {
+          "displayName": "Queue Settings",
+          "propertyName": "queueConfiguration",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
+            "instance": {
+              "shared": "NO",
+              "collapsible": "YES",
+              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.QueueConfiguration",
+              "objectProperties": [
+                {
+                  "displayName": "Create new",
+                  "propertyName": "create",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyInfo": "If true, the consumer will create a new queue with the name provided in the \u0027Queue Name\u0027 field (default: false).",
+                  "propertyType": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDescriptors": [
+                    {
+                      "propertyName": "queueName",
+                      "propertyValue": "###NOT_SCRIPT###"
+                    }
+                  ]
+                },
+                {
+                  "displayName": "Durable",
+                  "propertyName": "durable",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyInfo": "If true the queue will survive a server restart (default: false).",
+                  "propertyType": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDescriptors": [
+                    {
+                      "propertyName": "create",
+                      "propertyValue": "true"
+                    }
+                  ]
+                },
+                {
+                  "displayName": "Exclusive",
+                  "propertyName": "exclusive",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyInfo": "If true the use of the queue will be restricted to this connection (default: false).",
+                  "propertyType": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDescriptors": [
+                    {
+                      "propertyName": "create",
+                      "propertyValue": "true"
+                    }
+                  ]
+                },
+                {
+                  "displayName": "Auto Delete",
+                  "propertyName": "autoDelete",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyInfo": "If true the server will delete the queue when it is no longer in use (default: false).",
+                  "propertyType": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDescriptors": [
+                    {
+                      "propertyName": "create",
+                      "propertyValue": "true"
+                    }
+                  ]
+                }
+              ],
+              "type": "com.reedelk.module.descriptor.model.TypeObjectDescriptor$TypeObject"
+            }
+          },
+          "whenDescriptors": []
+        },
+        {
           "displayName": "Content Mime Type",
           "propertyName": "messageMimeType",
           "defaultValue": "text/plain",
@@ -291,80 +380,6 @@
             }
           },
           "whenDescriptors": []
-        },
-        {
-          "displayName": "Create Consumer Queue Settings",
-          "propertyName": "createQueueConfiguration",
-          "defaultValue": "###USE_DEFAULT_VALUE###",
-          "propertyType": {
-            "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
-            "instance": {
-              "shared": "NO",
-              "collapsible": "YES",
-              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.CreateQueueConfiguration",
-              "objectProperties": [
-                {
-                  "displayName": "Create new",
-                  "propertyName": "create",
-                  "defaultValue": "###USE_DEFAULT_VALUE###",
-                  "propertyInfo": "If true, the consumer will create a new queue with the name provided in the \u0027Queue Name\u0027 field (default: false).",
-                  "propertyType": {
-                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
-                    "instance": {
-                      "type": "java.lang.Boolean"
-                    }
-                  },
-                  "whenDescriptors": [
-                    {
-                      "propertyName": "queueName",
-                      "propertyValue": "###NOT_SCRIPT###"
-                    }
-                  ]
-                },
-                {
-                  "displayName": "Durable",
-                  "propertyName": "durable",
-                  "defaultValue": "###USE_DEFAULT_VALUE###",
-                  "propertyInfo": "If true the queue will survive a server restart (default: false).",
-                  "propertyType": {
-                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
-                    "instance": {
-                      "type": "java.lang.Boolean"
-                    }
-                  },
-                  "whenDescriptors": []
-                },
-                {
-                  "displayName": "Exclusive",
-                  "propertyName": "exclusive",
-                  "defaultValue": "###USE_DEFAULT_VALUE###",
-                  "propertyInfo": "If true the use of the queue will be restricted to this connection (default: false).",
-                  "propertyType": {
-                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
-                    "instance": {
-                      "type": "java.lang.Boolean"
-                    }
-                  },
-                  "whenDescriptors": []
-                },
-                {
-                  "displayName": "Auto Delete",
-                  "propertyName": "autoDelete",
-                  "defaultValue": "###USE_DEFAULT_VALUE###",
-                  "propertyInfo": "If true the server will delete the queue when it is no longer in use (default: false).",
-                  "propertyType": {
-                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
-                    "instance": {
-                      "type": "java.lang.Boolean"
-                    }
-                  },
-                  "whenDescriptors": []
-                }
-              ],
-              "type": "com.reedelk.module.descriptor.model.TypeObjectDescriptor$TypeObject"
-            }
-          },
-          "whenDescriptors": []
         }
       ]
     },
@@ -498,19 +513,6 @@
           ]
         },
         {
-          "hintValue": "queue_outbound",
-          "displayName": "Queue Name",
-          "propertyName": "queueName",
-          "defaultValue": "###USE_DEFAULT_VALUE###",
-          "propertyType": {
-            "classname": "com.reedelk.module.descriptor.model.TypeDynamicValueDescriptor",
-            "instance": {
-              "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicString"
-            }
-          },
-          "whenDescriptors": []
-        },
-        {
           "hintValue": "amq.fanout",
           "displayName": "Exchange Name",
           "propertyName": "exchangeName",
@@ -525,15 +527,28 @@
           "whenDescriptors": []
         },
         {
-          "displayName": "Create Producer Queue Settings",
-          "propertyName": "createQueueConfiguration",
+          "hintValue": "queue_outbound",
+          "displayName": "Queue Name",
+          "propertyName": "queueName",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypeDynamicValueDescriptor",
+            "instance": {
+              "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicString"
+            }
+          },
+          "whenDescriptors": []
+        },
+        {
+          "displayName": "Queue Settings",
+          "propertyName": "queueConfiguration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
             "instance": {
               "shared": "NO",
               "collapsible": "YES",
-              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.CreateQueueConfiguration",
+              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.QueueConfiguration",
               "objectProperties": [
                 {
                   "displayName": "Create new",
@@ -564,7 +579,12 @@
                       "type": "java.lang.Boolean"
                     }
                   },
-                  "whenDescriptors": []
+                  "whenDescriptors": [
+                    {
+                      "propertyName": "create",
+                      "propertyValue": "true"
+                    }
+                  ]
                 },
                 {
                   "displayName": "Exclusive",
@@ -577,7 +597,12 @@
                       "type": "java.lang.Boolean"
                     }
                   },
-                  "whenDescriptors": []
+                  "whenDescriptors": [
+                    {
+                      "propertyName": "create",
+                      "propertyValue": "true"
+                    }
+                  ]
                 },
                 {
                   "displayName": "Auto Delete",
@@ -590,7 +615,12 @@
                       "type": "java.lang.Boolean"
                     }
                   },
-                  "whenDescriptors": []
+                  "whenDescriptors": [
+                    {
+                      "propertyName": "create",
+                      "propertyValue": "true"
+                    }
+                  ]
                 }
               ],
               "type": "com.reedelk.module.descriptor.model.TypeObjectDescriptor$TypeObject"

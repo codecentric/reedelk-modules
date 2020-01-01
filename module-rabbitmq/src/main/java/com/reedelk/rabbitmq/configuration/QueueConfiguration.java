@@ -11,8 +11,8 @@ import static java.util.Optional.ofNullable;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @Collapsible
-@Component(service = CreateQueueConfiguration.class, scope = PROTOTYPE)
-public class CreateQueueConfiguration implements Implementor {
+@Component(service = QueueConfiguration.class, scope = PROTOTYPE)
+public class QueueConfiguration implements Implementor {
 
     @Property("Create new")
     @PropertyInfo("If true, the consumer will create a new queue with the name provided in the 'Queue Name' " +
@@ -22,14 +22,17 @@ public class CreateQueueConfiguration implements Implementor {
 
     @Property("Durable")
     @PropertyInfo("If true the queue will survive a server restart (default: false).")
+    @When(propertyName = "create", propertyValue = "true")
     private Boolean durable;
 
     @Property("Exclusive")
     @PropertyInfo("If true the use of the queue will be restricted to this connection (default: false).")
+    @When(propertyName = "create", propertyValue = "true")
     private Boolean exclusive;
 
     @Property("Auto Delete")
     @PropertyInfo("If true the server will delete the queue when it is no longer in use (default: false).")
+    @When(propertyName = "create", propertyValue = "true")
     private Boolean autoDelete;
 
     public void setDurable(Boolean durable) {
@@ -48,25 +51,25 @@ public class CreateQueueConfiguration implements Implementor {
         this.create = create;
     }
 
-    public static boolean isCreateNew(CreateQueueConfiguration configuration) {
+    public static boolean isCreateNew(QueueConfiguration configuration) {
         return ofNullable(configuration)
                 .flatMap(config -> ofNullable(config.create))
                 .orElse(false);
     }
 
-    public static boolean isDurable(CreateQueueConfiguration configuration) {
+    public static boolean isDurable(QueueConfiguration configuration) {
         return ofNullable(configuration)
                 .flatMap(config -> ofNullable(config.durable))
                 .orElse(false);
     }
 
-    public static boolean isExclusive(CreateQueueConfiguration configuration) {
+    public static boolean isExclusive(QueueConfiguration configuration) {
         return ofNullable(configuration)
                 .flatMap(config -> ofNullable(config.exclusive))
                 .orElse(false);
     }
 
-    public static boolean isAutoDelete(CreateQueueConfiguration configuration) {
+    public static boolean isAutoDelete(QueueConfiguration configuration) {
         return ofNullable(configuration)
                 .flatMap(config -> ofNullable(config.autoDelete))
                 .orElse(false);

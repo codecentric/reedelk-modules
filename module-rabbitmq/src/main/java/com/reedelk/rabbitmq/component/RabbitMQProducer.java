@@ -5,7 +5,7 @@ import com.rabbitmq.client.Connection;
 import com.reedelk.rabbitmq.commons.ChannelUtils;
 import com.reedelk.rabbitmq.commons.ConnectionFactoryProvider;
 import com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration;
-import com.reedelk.rabbitmq.configuration.CreateQueueConfiguration;
+import com.reedelk.rabbitmq.configuration.QueueConfiguration;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.StringUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
@@ -41,18 +41,18 @@ public class RabbitMQProducer implements ProcessorSync {
     @When(propertyName = "configuration", propertyValue = "{'ref': '" + When.BLANK + "'}")
     private String connectionURI;
 
-    @Property("Queue Name")
-    @Hint("queue_outbound")
-    private DynamicString queueName;
-
     @Property("Exchange Name")
     @PropertyInfo("The name of the exchange to publish the message to. It might be a dynamic property.")
     @Hint("amq.fanout")
     private DynamicString exchangeName;
 
-    @Property("Create Producer Queue Settings")
+    @Property("Queue Name")
+    @Hint("queue_outbound")
+    private DynamicString queueName;
+
+    @Property("Queue Settings")
     @When(propertyName = "queueName", propertyValue = When.NOT_SCRIPT)
-    private CreateQueueConfiguration createQueueConfiguration;
+    private QueueConfiguration queueConfiguration;
 
     @Reference
     private ConverterService converter;
@@ -124,14 +124,14 @@ public class RabbitMQProducer implements ProcessorSync {
         this.exchangeName = exchangeName;
     }
 
-    public void setCreateQueueConfiguration(CreateQueueConfiguration createQueueConfiguration) {
-        this.createQueueConfiguration = createQueueConfiguration;
+    public void setQueueConfiguration(QueueConfiguration queueConfiguration) {
+        this.queueConfiguration = queueConfiguration;
     }
 
     private boolean shouldDeclareQueue() {
-        return ofNullable(createQueueConfiguration)
-                .flatMap(createQueueConfiguration ->
-                        of(CreateQueueConfiguration.isCreateNew(createQueueConfiguration)))
+        return ofNullable(queueConfiguration)
+                .flatMap(queueConfiguration ->
+                        of(QueueConfiguration.isCreateNew(queueConfiguration)))
                 .orElse(false);
     }
 
@@ -141,9 +141,9 @@ public class RabbitMQProducer implements ProcessorSync {
 
         boolean shouldDeclareQueue = shouldDeclareQueue();
         if (shouldDeclareQueue) {
-            boolean durable = CreateQueueConfiguration.isDurable(createQueueConfiguration);
-            boolean exclusive = CreateQueueConfiguration.isExclusive(createQueueConfiguration);
-            boolean autoDelete = CreateQueueConfiguration.isAutoDelete(createQueueConfiguration);
+            boolean durable = QueueConfiguration.isDurable(queueConfiguration);
+            boolean exclusive = QueueConfiguration.isExclusive(queueConfiguration);
+            boolean autoDelete = QueueConfiguration.isAutoDelete(queueConfiguration);
             channel.queueDeclare(queueName.body(), durable, exclusive, autoDelete, null);
         }
     }
