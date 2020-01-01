@@ -70,12 +70,10 @@ public class RabbitMQConsumer extends AbstractInbound {
             connection = ConnectionFactoryProvider.from(configuration);
         }
 
-        MimeType queueMessageContentType = MimeType.parse(messageMimeType);
-
         try {
             channel = connection.createChannel();
             createQueueIfNeeded();
-
+            MimeType queueMessageContentType = MimeType.parse(messageMimeType);
             if (autoAck) {
                 channel.basicConsume(queueName, true,
                         new ConsumerDeliverCallbackAutoAck( this, queueMessageContentType),
