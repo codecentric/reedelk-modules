@@ -53,7 +53,7 @@ public class RabbitMQConsumer extends AbstractInbound {
 
     @Property("Auto Acknowledge")
     @PropertyInfo("True to immediately consider messages delivered by the broker as soon as the flow starts." +
-            "False to acknowledge the message only if the flow executed successfully.")
+            " False to acknowledge the message only if the flow executed successfully.")
     @Default("true")
     private boolean autoAck;
 
