@@ -3,8 +3,11 @@ package com.reedelk.rabbitmq.component;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.reedelk.rabbitmq.commons.ChannelUtils;
-import com.reedelk.rabbitmq.commons.ConnectionFactoryProvider;
 import com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration;
+import com.reedelk.runtime.api.annotation.Default;
+import com.reedelk.runtime.api.annotation.ESBComponent;
+import com.reedelk.runtime.api.annotation.Hint;
+import com.reedelk.runtime.api.annotation.Property;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.exception.ESBException;
@@ -58,7 +61,7 @@ public class RabbitMQProducer implements ProcessorSync {
     @Override
     public void initialize() {
         try {
-            connection = ConnectionFactoryProvider.connection();
+            connection = null; //ConnectionFactoryProvider.connection();
             channel = connection.createChannel();
             channel.queueDeclare(queueName, false, false, false, null);
         } catch (IOException e) {

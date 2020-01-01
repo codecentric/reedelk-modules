@@ -2,26 +2,19 @@
   "id": "2bd6fd14-3182-41ba-a151-2f695f03a01e",
   "title": "Test Producer",
   "description": "Test Producer Flow",
-  "flow": [
-    {
-      "implementor": "com.reedelk.rest.component.RestListener",
-      "description": "REST Listener",
-      "configuration": {"ref": "bb94a649-2fa1-4a26-a729-d8e848e63ad2"},
-      "method": "POST",
-      "streaming": "AUTO",
-      "response": {
-        "body": "#[message.payload()]",
-        "status": 200
-      },
-      "errorResponse": {
-        "body": "#[error]",
-        "status": 500
-      }
+  "flow": [{
+    "implementor": "com.reedelk.rest.component.RestListener",
+    "description": "REST Listener",
+    "configuration": {"ref": "bb94a649-2fa1-4a26-a729-d8e848e63ad2"},
+    "method": "POST",
+    "streaming": "AUTO",
+    "response": {
+      "body": "#[message.payload()]",
+      "status": 200
     },
-    {
-      "implementor": "com.reedelk.rabbitmq.component.RabbitMQProducer",
-      "description": "RabbitMQ Producer",
-      "queueName": "TEST"
+    "errorResponse": {
+      "body": "#[error]",
+      "status": 500
     }
-  ]
+  }]
 }

@@ -2,12 +2,20 @@ package com.reedelk.rabbitmq.commons;
 
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Delivery;
+import com.reedelk.rabbitmq.component.RabbitMQConsumer;
+import com.reedelk.runtime.api.commons.StreamUtils;
 import com.reedelk.runtime.api.component.InboundEventListener;
 import com.reedelk.runtime.api.component.OnResult;
+import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageAttributes;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.content.MimeType;
+import com.reedelk.runtime.api.message.content.TypedContent;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.reedelk.runtime.api.commons.Preconditions.checkArgument;
@@ -15,10 +23,13 @@ import static com.reedelk.runtime.api.commons.Preconditions.checkArgument;
 public class ConsumerDeliverCallback implements DeliverCallback {
 
     private final InboundEventListener listener;
+    private final MimeType consumedMessageMimeType;
 
-    public ConsumerDeliverCallback(InboundEventListener listener) {
+    public ConsumerDeliverCallback(InboundEventListener listener, MimeType consumedMessageMimeType) {
         checkArgument(listener != null, "listener");
+        checkArgument(consumedMessageMimeType != null, "consumedMessageMimeType");
         this.listener = listener;
+        this.consumedMessageMimeType = consumedMessageMimeType;
     }
 
     @Override
@@ -26,15 +37,18 @@ public class ConsumerDeliverCallback implements DeliverCallback {
         // Message Attributes
         Map<String, Object> headers = delivery.getProperties().getHeaders();
 
+        byte[] content = delivery.getBody();
+        TypedContent<?> typedContent = StreamUtils.FromByteArray.asTypedContent(content, consumedMessageMimeType);
 
-        // This one depends  on the mime type
-        String message = new String(delivery.getBody(), "UTF-8");
+        Map<String, Serializable> attributes = new HashMap<>();
+        MessageAttributes messageAttributes = new DefaultMessageAttributes(RabbitMQConsumer.class, attributes);
 
         Message inboundMessage = MessageBuilder.get()
-                .withText(message)
+                .typedContent(typedContent)
+                .mimeType(consumedMessageMimeType)
+                .attributes(messageAttributes)
                 .build();
 
-        // TODO: Create calback without on result. Should be empty
         listener.onEvent(inboundMessage, new OnResult() {});
     }
 }

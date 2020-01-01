@@ -1,5 +1,5 @@
 {
   "id": "39434cc2-5546-4b23-bc5c-73cb7ce90b56",
-  "title": "My configuration",
+  "title": "RabbitMQ Factory Config",
   "implementor": "com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration"
 }
