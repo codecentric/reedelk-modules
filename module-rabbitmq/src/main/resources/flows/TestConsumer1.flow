@@ -17,16 +17,10 @@
       "message": "#['Superz: ' + message.payload()]"
     },
     {
-      "implementor": "com.reedelk.runtime.component.Router",
-      "when": [{
-        "condition": "otherwise",
-        "next": [{
-          "implementor": "com.reedelk.rabbitmq.component.RabbitMQProducer",
-          "description": "RabbitMQ Producer",
-          "queueName": "queue_outbound",
-          "exchange": "amq.direct"
-        }]
-      }]
+      "implementor": "com.reedelk.rabbitmq.component.RabbitMQProducer",
+      "description": "RabbitMQ Producer",
+      "queueName": "",
+      "exchangeName": ""
     }
   ]
 }

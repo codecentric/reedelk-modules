@@ -7,7 +7,7 @@
       "componentType": "INBOUND",
       "componentPropertyDescriptors": [
         {
-          "displayName": "Connection Configuration",
+          "displayName": "Connection Config",
           "propertyName": "configuration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
@@ -133,7 +133,7 @@
           "hintValue": "queue_inbound",
           "displayName": "Queue Name",
           "propertyName": "queueName",
-          "defaultValue": "queue_inbound",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyInfo": "Defines the name of the queue this consumer will be consuming messages from.",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
@@ -144,7 +144,7 @@
           "whenDescriptors": []
         },
         {
-          "displayName": "Consumed Content Mime Type",
+          "displayName": "Content Mime Type",
           "propertyName": "messageMimeType",
           "defaultValue": "text/plain",
           "propertyInfo": "The Mime Type of the consumed content allows to create a flow message with a suitable content type for the following flow components (e.g a \u0027text/plain\u0027 mime type converts the consumed content to a string, a \u0027application/octet-stream\u0027 keeps the consumed content as byte array).",
@@ -362,7 +362,7 @@
       "componentType": "PROCESSOR",
       "componentPropertyDescriptors": [
         {
-          "displayName": "Connection Configuration",
+          "displayName": "Connection Config",
           "propertyName": "configuration",
           "defaultValue": "###USE_DEFAULT_VALUE###",
           "propertyType": {
@@ -462,30 +462,132 @@
           "whenDescriptors": []
         },
         {
-          "hintValue": "queue_outbound",
-          "displayName": "Queue Name",
-          "propertyName": "queueName",
-          "defaultValue": "queue_outbound",
+          "hintValue": "amqp://guest:guest@localhost:5672",
+          "displayName": "Connection URI",
+          "propertyName": "connectionURI",
+          "defaultValue": "amqp://guest:guest@localhost:5672",
+          "propertyInfo": "Configure a connection using the provided AMQP URI containing the connection data.",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
             "instance": {
               "type": "java.lang.String"
+            }
+          },
+          "whenDescriptors": [
+            {
+              "propertyName": "configuration",
+              "propertyValue": "###NULL###"
+            },
+            {
+              "propertyName": "configuration",
+              "propertyValue": "{\u0027ref\u0027: \u0027###BLANK###\u0027}"
+            }
+          ]
+        },
+        {
+          "hintValue": "queue_outbound",
+          "displayName": "Queue Name",
+          "propertyName": "queueName",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypeDynamicValueDescriptor",
+            "instance": {
+              "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicString"
             }
           },
           "whenDescriptors": []
         },
         {
           "hintValue": "amq.direct",
-          "displayName": "Exchange",
-          "propertyName": "exchange",
+          "displayName": "Exchange Name",
+          "propertyName": "exchangeName",
           "defaultValue": "amq.direct",
           "propertyType": {
-            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "classname": "com.reedelk.module.descriptor.model.TypeDynamicValueDescriptor",
             "instance": {
-              "type": "java.lang.String"
+              "type": "com.reedelk.runtime.api.script.dynamicvalue.DynamicString"
             }
           },
           "whenDescriptors": []
+        },
+        {
+          "displayName": "Declare queue",
+          "propertyName": "declareQueue",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyInfo": "If true, the consumer will declare a new queue with name provided in the \u0027Queue Name\u0027 field to be used for consuming messages from (default: false).",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+            "instance": {
+              "type": "java.lang.Boolean"
+            }
+          },
+          "whenDescriptors": [
+            {
+              "propertyName": "queueName",
+              "propertyValue": "###NOT_SCRIPT###"
+            }
+          ]
+        },
+        {
+          "displayName": "Declare Queue Configuration",
+          "propertyName": "declareConfig",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypeObjectDescriptor",
+            "instance": {
+              "shared": "NO",
+              "collapsible": "YES",
+              "typeFullyQualifiedName": "com.reedelk.rabbitmq.configuration.DeclareQueueConfiguration",
+              "objectProperties": [
+                {
+                  "displayName": "Durable",
+                  "propertyName": "durable",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyInfo": "If true the queue will survive a server restart (default: false).",
+                  "propertyType": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDescriptors": []
+                },
+                {
+                  "displayName": "Exclusive",
+                  "propertyName": "exclusive",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyInfo": "If true the use of the queue will be restricted to this connection (default: false).",
+                  "propertyType": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDescriptors": []
+                },
+                {
+                  "displayName": "Auto Delete",
+                  "propertyName": "autoDelete",
+                  "defaultValue": "###USE_DEFAULT_VALUE###",
+                  "propertyInfo": "If true the server will delete the queue when it is no longer in use (default: false).",
+                  "propertyType": {
+                    "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
+                    "instance": {
+                      "type": "java.lang.Boolean"
+                    }
+                  },
+                  "whenDescriptors": []
+                }
+              ],
+              "type": "com.reedelk.module.descriptor.model.TypeObjectDescriptor$TypeObject"
+            }
+          },
+          "whenDescriptors": [
+            {
+              "propertyName": "declareQueue",
+              "propertyValue": "true"
+            }
+          ]
         }
       ]
     }
