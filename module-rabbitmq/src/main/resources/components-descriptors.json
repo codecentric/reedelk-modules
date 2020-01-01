@@ -107,10 +107,10 @@
           "whenDescriptors": []
         },
         {
-          "hintValue": "amqp://guest:guest@localhost:5672/",
+          "hintValue": "amqp://guest:guest@localhost:5672",
           "displayName": "Connection URI",
           "propertyName": "connectionURI",
-          "defaultValue": "amqp://guest:guest@localhost:5672/",
+          "defaultValue": "amqp://guest:guest@localhost:5672",
           "propertyInfo": "Configure a connection using the provided AMQP URI containing the connection data.",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
@@ -283,7 +283,7 @@
           "displayName": "Declare queue",
           "propertyName": "declareQueue",
           "defaultValue": "###USE_DEFAULT_VALUE###",
-          "propertyInfo": "If true, the consumer will declare a new queue to be used for consuming messages from (default: false).",
+          "propertyInfo": "If true, the consumer will declare a new queue with name provided in the \u0027Queue Name\u0027 field to be used for consuming messages from (default: false).",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
             "instance": {

@@ -8,7 +8,7 @@
       "description": "RabbitMQ Consumer",
       "connectionURI": "amqp://guest:guest@localhost:5672",
       "queueName": "queue_inbound",
-      "messageMimeType": "text/plain"
+      "messageMimeType": "application/octet-stream"
     },
     {
       "implementor": "com.reedelk.core.component.logger.LoggerComponent",

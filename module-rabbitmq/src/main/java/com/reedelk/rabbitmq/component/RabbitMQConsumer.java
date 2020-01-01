@@ -8,7 +8,6 @@ import com.reedelk.rabbitmq.commons.ConsumerCancelCallback;
 import com.reedelk.rabbitmq.commons.ConsumerDeliverCallback;
 import com.reedelk.rabbitmq.configuration.ConnectionFactoryConfiguration;
 import com.reedelk.rabbitmq.configuration.DeclareQueueConfiguration;
-import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.component.AbstractInbound;
 import com.reedelk.runtime.api.exception.ESBException;
 import com.reedelk.runtime.api.message.content.MimeType;
@@ -29,8 +28,8 @@ public class RabbitMQConsumer extends AbstractInbound {
     @Property("Connection URI")
     @PropertyInfo("Configure a connection using the provided AMQP URI " +
             "containing the connection data.")
-    @Hint("amqp://guest:guest@localhost:5672/")
-    @Default("amqp://guest:guest@localhost:5672/")
+    @Hint("amqp://guest:guest@localhost:5672")
+    @Default("amqp://guest:guest@localhost:5672")
     @When(propertyName = "configuration", propertyValue = When.NULL)
     @When(propertyName = "configuration", propertyValue = "{'ref': '" + When.BLANK + "'}")
     private String connectionURI;
@@ -41,7 +40,7 @@ public class RabbitMQConsumer extends AbstractInbound {
     @Hint("queue_inbound")
     private String queueName;
 
-    @Property("Consumed Content Mime Type")
+    @Property("Content Mime Type")
     @PropertyInfo("The Mime Type of the consumed content allows to create " +
             "a flow message with a suitable content type for the following flow components " +
             "(e.g a 'text/plain' mime type converts the consumed content to a string, " +
@@ -51,8 +50,8 @@ public class RabbitMQConsumer extends AbstractInbound {
     private String messageMimeType;
 
     @Property("Declare queue")
-    @PropertyInfo("If true, the consumer will declare a new queue to be used for consuming " +
-            "messages from (default: false).")
+    @PropertyInfo("If true, the consumer will declare a new queue with name provided in the 'Queue Name' " +
+            "field to be used for consuming messages from (default: false).")
     private Boolean declareQueue;
 
     @Property("Declare Queue Configuration")
@@ -79,6 +78,7 @@ public class RabbitMQConsumer extends AbstractInbound {
         try {
             channel = connection.createChannel();
             createQueueIfNeeded(shouldDeclareQueue);
+
             channel.basicConsume(
                     queueName,
                     true,

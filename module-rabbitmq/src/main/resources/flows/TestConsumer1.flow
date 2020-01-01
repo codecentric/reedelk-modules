@@ -1,0 +1,32 @@
+{
+  "id": "3336fa8e-a184-4eec-b203-70d55f6926a4",
+  "title": "Test Consumer1",
+  "description": "Test Consumer1 Flow",
+  "flow": [
+    {
+      "implementor": "com.reedelk.rabbitmq.component.RabbitMQConsumer",
+      "description": "RabbitMQ Consumer",
+      "connectionURI": "amqp://guest:guest@localhost:5672",
+      "queueName": "queue_inbound",
+      "messageMimeType": "text/plain"
+    },
+    {
+      "implementor": "com.reedelk.core.component.logger.LoggerComponent",
+      "description": "Logger",
+      "level": "INFO",
+      "message": "#['Superz: ' + message.payload()]"
+    },
+    {
+      "implementor": "com.reedelk.runtime.component.Router",
+      "when": [{
+        "condition": "otherwise",
+        "next": [{
+          "implementor": "com.reedelk.rabbitmq.component.RabbitMQProducer",
+          "description": "RabbitMQ Producer",
+          "queueName": "queue_outbound",
+          "exchange": "amq.direct"
+        }]
+      }]
+    }
+  ]
+}
