@@ -89,15 +89,25 @@ public class ESB implements EventListener, HotSwapListener {
      */
     @Override
     public synchronized void moduleStarted(long moduleId) {
-        if (!modulesManager.isModuleStarted(moduleId)) {
-            StepRunner.get(context, modulesManager, componentRegistry, servicesManager.configurationService())
-                    .next(new ModuleCheckNotNull())
-                    .next(new ModuleValidate())
-                    .next(new ModuleResolveDependencies())
-                    .next(new ModuleBuild())
-                    .next(new ModuleStart())
-                    .execute(moduleId);
-        }
+        StepRunner.get(context, modulesManager, componentRegistry, servicesManager.configurationService())
+                .next(new ModuleCheckNotNull())
+                .next(new ModuleValidate())
+                .next(new ModuleResolveDependencies())
+                .next(new ModuleBuild())
+                .next(new ModuleStart())
+                .execute(moduleId);
+
+        // After a module has been started, look-up for 'unresolved' modules. Resolve their
+        // dependencies and check whether each 'unresolved' module can now be started:
+        // the newly started module above might have just resolved some dependencies of the
+        // unresolved modules.
+        modulesManager.findUnresolvedModules().forEach(unresolvedModule ->
+                StepRunner.get(context, modulesManager, componentRegistry, servicesManager.configurationService())
+                        .next(new ModuleCheckNotNull())
+                        .next(new ModuleUpdateRegisteredComponents())
+                        .next(new ModuleBuild())
+                        .next(new ModuleStart())
+                        .execute(unresolvedModule.id()));
     }
 
     @Override
@@ -149,14 +159,6 @@ public class ESB implements EventListener, HotSwapListener {
     public synchronized void componentRegistered(String componentName) {
         componentRegistry.registerComponent(componentName);
         Log.componentRegistered(logger, componentName);
-
-        modulesManager.findUnresolvedModules().forEach(unresolvedModule ->
-                StepRunner.get(context, modulesManager, servicesManager.configurationService())
-                        .next(new ModuleCheckNotNull())
-                        .next(new ModuleUpdateRegisteredComponent(componentName))
-                        .next(new ModuleBuild())
-                        .next(new ModuleStart())
-                        .execute(unresolvedModule.id()));
     }
 
     @Override
