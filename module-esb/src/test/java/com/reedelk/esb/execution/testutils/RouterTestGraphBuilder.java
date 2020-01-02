@@ -69,7 +69,7 @@ public class RouterTestGraphBuilder extends AbstractTestGraphBuilder {
         return graph;
     }
 
-    class ConditionWithSequence {
+    static class ConditionWithSequence {
         String condition;
         List<ExecutionNode> sequence;
 
