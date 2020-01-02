@@ -2,7 +2,7 @@ package com.reedelk.file.commons;
 
 public class Defaults {
 
-    public class FileRead {
+    public static class FileRead {
 
         private FileRead() {
         }
@@ -12,7 +12,7 @@ public class Defaults {
         public static final long RETRY_WAIT_TIME = 500;
     }
 
-    public class FileWrite {
+    public static class FileWrite {
 
         private FileWrite() {
         }

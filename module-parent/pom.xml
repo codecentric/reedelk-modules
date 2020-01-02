@@ -72,12 +72,37 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <ESB-Module>true</ESB-Module>
                         <_noee>true</_noee>
+                        <Import-Package>
+                            com.reedelk.runtime.api.*,
+                            org.osgi.framework,
+                            sun.misc,
+                            jdk.internal.misc,
+                            jdk.internal.miscjavax.net,
+                            javax.net,
+                            javax.net.ssl,
+                            javax.security.cert,
+                            javax.script,
+                            javax.naming,
+                            javax.crypto.spec,
+                            javax.crypto,
+                            org.slf4j,
+                            org.slf4j.helpers,
+                            org.slf4j.spi,
+                            com.intellij.rt.debugger.agent,
+                            org.reactivestreams,
+                            reactor.core,
+                            reactor.core.publisher,
+                            reactor.core.scheduler,
+                            reactor.util,
+                            reactor.util.context,
+                            reactor.util.concurrent
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>

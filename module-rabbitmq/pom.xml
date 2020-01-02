@@ -24,33 +24,4 @@
             <version>${rabbitmq.version}</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-Name>${project.name}</Bundle-Name>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
-                        <ESB-Module>true</ESB-Module>
-                        <Import-Package>
-                            com.reedelk.runtime.api.*,
-                            org.osgi.framework,
-                            javax.crypto.spec,
-                            javax.crypto,
-                            javax.net,
-                            javax.net.ssl,
-                            org.slf4j,
-                            org.slf4j.helpers,
-                            org.slf4j.spi,
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
