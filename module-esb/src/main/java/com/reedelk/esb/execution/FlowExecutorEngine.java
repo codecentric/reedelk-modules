@@ -8,7 +8,7 @@ import com.reedelk.runtime.api.message.Message;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
-import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
+import static com.reedelk.esb.execution.ExecutionUtils.nextNodeOfOrThrow;
 
 public class FlowExecutorEngine {
 
@@ -34,7 +34,7 @@ public class FlowExecutorEngine {
 
             ExecutionNode root = graph.getRoot();
 
-            ExecutionNode nodeAfterRoot = nextNode(root, graph);
+            ExecutionNode nodeAfterRoot = nextNodeOfOrThrow(root, graph);
 
             Publisher<MessageAndContext> result =
                     FlowExecutorFactory.get().execute(publisher, nodeAfterRoot, graph);

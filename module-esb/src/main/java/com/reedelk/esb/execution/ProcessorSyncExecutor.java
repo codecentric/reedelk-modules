@@ -11,7 +11,7 @@ import reactor.core.publisher.SynchronousSink;
 
 import java.util.function.BiConsumer;
 
-import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
+import static com.reedelk.esb.execution.ExecutionUtils.nextNodeOfOrThrow;
 
 public class ProcessorSyncExecutor implements FlowExecutor {
 
@@ -22,7 +22,7 @@ public class ProcessorSyncExecutor implements FlowExecutor {
 
         Publisher<MessageAndContext> mono = Flux.from(publisher).handle(apply(processorSync));
 
-        ExecutionNode next = nextNode(currentNode, graph);
+        ExecutionNode next = nextNodeOfOrThrow(currentNode, graph);
 
         // Move on building the flux for the following
         // processors in the execution graph definition.

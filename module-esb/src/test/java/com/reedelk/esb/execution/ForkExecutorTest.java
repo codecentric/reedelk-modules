@@ -198,7 +198,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
                 .isEqualTo("Fork must be followed by a component implementing [com.reedelk.runtime.api.component.Join] interface");
     }
 
-    class JoinString implements Join {
+    static class JoinString implements Join {
         @Override
         public Message apply(List<Message> messages, FlowContext flowContext) {
             String joined = messages.stream()
@@ -208,7 +208,7 @@ class ForkExecutorTest extends AbstractExecutionTest {
         }
     }
 
-    class JoinThrowingException implements Join {
+    static class JoinThrowingException implements Join {
         @Override
         public Message apply(List<Message> messagesToJoin, FlowContext flowContext) {
             throw new IllegalStateException("Join not valid");

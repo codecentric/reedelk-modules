@@ -15,7 +15,7 @@ import reactor.core.scheduler.Scheduler;
 
 import java.util.Optional;
 
-import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
+import static com.reedelk.esb.execution.ExecutionUtils.nextNodeOfOrThrow;
 import static java.time.Duration.ofMillis;
 
 /**
@@ -43,7 +43,7 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
                     .orElse(callbackMono);
         });
 
-        ExecutionNode next = nextNode(currentNode, graph);
+        ExecutionNode next = nextNodeOfOrThrow(currentNode, graph);
 
         return FlowExecutorFactory.get().execute(parent, next, graph);
     }
@@ -87,5 +87,4 @@ public class ProcessorAsyncExecutor implements FlowExecutor {
             }
         });
     }
-
 }

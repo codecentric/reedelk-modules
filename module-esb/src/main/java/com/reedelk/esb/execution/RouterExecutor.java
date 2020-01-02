@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
+import static com.reedelk.esb.execution.ExecutionUtils.nextNodeOf;
 import static java.util.stream.Collectors.toList;
 
 public class RouterExecutor implements FlowExecutor {
@@ -51,9 +51,11 @@ public class RouterExecutor implements FlowExecutor {
 
         ExecutionNode stopNode = router.getEndOfRouterStopNode();
 
-        ExecutionNode nodeAfterStop = nextNode(stopNode, graph);
-
-        return FlowExecutorFactory.get().execute(flux, nodeAfterStop, graph);
+        // If the Router is followed by other nodes, then we keep executing
+        // the other nodes, otherwise we stop and we return the current publisher.
+        return nextNodeOf(stopNode, graph)
+                .map(nodeAfterStop -> FlowExecutorFactory.get().execute(flux, nodeAfterStop, graph))
+                .orElse(flux); // The Router is the last execution node of the flow.
     }
 
     private Mono<MessageAndContext> createDefaultMono(PathExpressionPair pair, MessageAndContext message, ExecutionGraph graph) {

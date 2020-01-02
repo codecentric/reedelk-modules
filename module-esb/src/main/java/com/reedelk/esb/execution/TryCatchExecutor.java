@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
 
-import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
+import static com.reedelk.esb.execution.ExecutionUtils.nextNodeOfOrThrow;
 
 public class TryCatchExecutor implements FlowExecutor {
 
@@ -24,7 +24,7 @@ public class TryCatchExecutor implements FlowExecutor {
 
         ExecutionNode stopNode = tryCatch.getStopNode();
 
-        ExecutionNode nodeAfterStop = nextNode(stopNode, graph);
+        ExecutionNode nodeAfterStop = nextNodeOfOrThrow(stopNode, graph);
 
         ExecutionNode firstTryNode = tryCatch.getFirstTryNode();
 

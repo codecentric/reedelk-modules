@@ -6,7 +6,7 @@ import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 import com.reedelk.runtime.api.component.Component;
 import com.reedelk.runtime.api.component.Join;
-import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -14,14 +14,15 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 import reactor.core.scheduler.Scheduler;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static com.reedelk.esb.execution.ExecutionUtils.nextNode;
-import static com.reedelk.runtime.api.commons.Preconditions.checkNotNull;
-import static com.reedelk.runtime.api.commons.Preconditions.checkState;
-import static java.lang.String.format;
+import static com.reedelk.esb.execution.ExecutionUtils.nextNodeOf;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -36,16 +37,13 @@ public class ForkExecutor implements FlowExecutor {
 
         ExecutionNode stopNode = fork.getStopNode();
 
-        ExecutionNode joinNode = nextNode(stopNode, graph);
-        checkNotNull(joinNode, "Join component is mandatory after Fork");
+        // If the stop node does not have next node, then it means that the Fork
+        // is not followed by any other component.
+        ExecutionNode nextAfterStop = nextNodeOf(stopNode, graph).orElse(null);
 
-        Component joinComponent = joinNode.getComponent();
-        checkState(joinComponent instanceof Join,
-                format("Fork must be followed by a component implementing [%s] interface", Join.class.getName()));
+        final Join join = getJoinComponentOrDefault(nextAfterStop);
 
-        Join join = (Join) joinComponent;
-
-        Flux<MessageAndContext> flux = Flux.from(publisher).flatMap(messageContext -> {
+        Flux<MessageAndContext> joinedForkFlux = Flux.from(publisher).flatMap(messageContext -> {
 
             // We must consume the message stream if it has not been consumed yet,
             // otherwise we cannot copy (by using serialization) its content and hand
@@ -57,11 +55,7 @@ public class ForkExecutor implements FlowExecutor {
 
             // Create fork branches (Fork step)
             List<Mono<MessageAndContext>> forkBranches = nextExecutionNodes.stream()
-                    .map(nextExecutionNode -> createForkBranch(
-                            nextExecutionNode,
-                            messageContext,
-                            graph,
-                            flowScheduler()))
+                    .map(nextNode -> createForkBranch(nextNode, messageContext, graph, flowScheduler()))
                     .collect(toList());
 
             // Join fork branches (Join step)
@@ -70,11 +64,23 @@ public class ForkExecutor implements FlowExecutor {
                     .publishOn(flowScheduler()); // switch back using another flow thread.
         });
 
+        if (nextAfterStop == null) {
+            // This is the last component of the flow, so we return the current publisher.
+            return joinedForkFlux;
+        }
 
-        // Continue to execute the flow after join
-        ExecutionNode nodeAfterJoin = nextNode(joinNode, graph);
-
-        return FlowExecutorFactory.get().execute(flux, nodeAfterJoin, graph);
+        if (isJoinExecutionNode(nextAfterStop)) {
+            // 'nextAfterStop' is an execution node referring to a join node which was executed
+            // as a result of the JoinConsumer above. Therefore, the next node to be executed must be
+            // the next after the Join Execution Node.
+            return nextNodeOf(nextAfterStop, graph).map(nextOfJoin ->
+                    FlowExecutorFactory.get().execute(joinedForkFlux, nextOfJoin, graph))
+                    .orElse(joinedForkFlux);
+        } else {
+            // If 'nextAfterStop' was NOT a join,
+            // then we keep with the execution starting from 'nextAfterStop'.
+            return FlowExecutorFactory.get().execute(joinedForkFlux, nextAfterStop, graph);
+        }
     }
 
     Scheduler flowScheduler() {
@@ -96,6 +102,31 @@ public class ForkExecutor implements FlowExecutor {
             }
             return messageAndContexts;
         };
+    }
+
+    private boolean isJoinExecutionNode(ExecutionNode nextAfterStop) {
+        if (nextAfterStop != null) {
+            Component joinComponent = nextAfterStop.getComponent();
+            return joinComponent instanceof Join;
+        }
+        return false;
+    }
+
+    private Join getJoinComponentOrDefault(ExecutionNode nextAfterStop) {
+        return Optional.ofNullable(nextAfterStop)
+                .flatMap(executionNode -> executionNode.getComponent() instanceof Join ?
+                        Optional.of((Join) executionNode.getComponent()) :
+                        Optional.empty())
+                .orElse(new EmptyJoin());
+    }
+
+    static class EmptyJoin implements Join {
+        @Override
+        public Message apply(List<Message> messagesToJoin, FlowContext flowContext) {
+            Map<String, Serializable> attributes = new HashMap<>();
+            MessageAttributes emptyJoinAttributes = new DefaultMessageAttributes(EmptyJoin.class, attributes);
+            return MessageBuilder.get().empty().attributes(emptyJoinAttributes).build();
+        }
     }
 
     static class JoinConsumer implements Consumer<MonoSink<MessageAndContext>> {
@@ -129,5 +160,3 @@ public class ForkExecutor implements FlowExecutor {
         }
     }
 }
-
-

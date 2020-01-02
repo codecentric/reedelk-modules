@@ -4,13 +4,19 @@ import com.reedelk.esb.graph.ExecutionGraph;
 import com.reedelk.esb.graph.ExecutionNode;
 
 import java.util.Collection;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import static java.lang.String.format;
 
 class ExecutionUtils {
 
     private ExecutionUtils() {
+    }
+
+    static Optional<ExecutionNode> nextNodeOf(ExecutionNode current, ExecutionGraph graph) {
+        return current == null ?
+                Optional.empty() :
+                graph.successors(current).stream().findFirst();
     }
     
     /**
@@ -22,17 +28,15 @@ class ExecutionUtils {
      * @return the following execution node of the current node.
      * @throws IllegalStateException if  the next node is not present.
      */
-    static ExecutionNode nextNode(ExecutionNode current, ExecutionGraph graph) {
+    static ExecutionNode nextNodeOfOrThrow(ExecutionNode current, ExecutionGraph graph) {
         Collection<ExecutionNode> nextExecutorNodes = graph.successors(current);
-        return checkAtLeastOneAndGetOrThrow(
-                nextExecutorNodes.stream(),
-                current.getComponent().getClass().getName(),
-                nextExecutorNodes.size());
-    }
-
-    private static <T> T checkAtLeastOneAndGetOrThrow(Stream<T> stream, Object... args) {
-        return stream.findFirst()
-                .orElseThrow(() ->
-                        new IllegalStateException(format("Expected [%s] to have exactly one following node, but %d were found", args)));
+        String currentNodeComponentName = current.getComponent().getClass().getName();
+        return nextExecutorNodes.stream()
+                .findFirst()
+                .orElseThrow(() -> {
+                    String errorMessage = format("Expected [%s] to have exactly one following node, but %d were found",
+                            currentNodeComponentName, nextExecutorNodes.size());
+                    return new IllegalStateException(errorMessage);
+                });
     }
 }

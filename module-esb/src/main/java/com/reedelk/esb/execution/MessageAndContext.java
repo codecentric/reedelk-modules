@@ -1,8 +1,8 @@
 package com.reedelk.esb.execution;
 
+import com.reedelk.esb.commons.SerializationUtils;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.commons.SerializationUtils;
 
 import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 
