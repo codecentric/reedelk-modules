@@ -72,20 +72,19 @@ public class ESB implements EventListener, HotSwapListener {
     }
 
     /**
-     * Note that a module might be started already when this callback is called.
-     * It is started when we update an already installed module.
+     * There are two scenarios when this event callback is being called:
+     * when a module is INSTALLED and when a module is UPDATED.
+     *
      * Install:
      * - moduleInstalled: state=INSTALLED
      * - moduleStarted: state=STARTED
      *
-     * Update (e.g. because component source code was changed - no hotswap -):
+     * Update (e.g. because component source code was changed - no hot-swap -):
      * - moduleStopping: state=RESOLVED
      * - componentUnregistering: state=UNRESOLVED
      * - moduleStopped: state=UNRESOLVED (no-op)
      * - componentRegistered: state=STARTED (auto-start when all components are resolved)
      * - moduleStarted: state=STARTED (no-op)
-     *
-     * This is why we have this isModuleStarted check: the module might have been already started.
      */
     @Override
     public synchronized void moduleStarted(long moduleId) {
