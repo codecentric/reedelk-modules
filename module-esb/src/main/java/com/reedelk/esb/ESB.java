@@ -156,6 +156,9 @@ public class ESB implements EventListener, HotSwapListener {
 
     @Override
     public synchronized void componentRegistered(String componentName) {
+        // We must update the registry to keep track of registered components whenever
+        // a module is being installed. This event is called by the OSGi framework to
+        // notify that a new service (i.e a new implementor) has been added.
         componentRegistry.registerComponent(componentName);
         Log.componentRegistered(logger, componentName);
     }
