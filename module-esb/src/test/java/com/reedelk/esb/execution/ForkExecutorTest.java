@@ -8,7 +8,6 @@ import com.reedelk.runtime.api.component.Join;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
@@ -20,7 +19,6 @@ import reactor.test.StepVerifier;
 import java.util.List;
 
 import static java.util.stream.Collectors.joining;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -174,28 +172,25 @@ class ForkExecutorTest extends AbstractExecutionTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenJoinDoesNotImplementJoinInterface() {
+    void shouldStopExecutionWhenForkNotFollowedByAnyOtherNode() {
         // Given
-        ExecutionNode incorrectJoinType = newExecutionNode(new AddPostfixSyncProcessor("incorrect-join"));
-
         ExecutionGraph graph = ForkTestGraphBuilder.get()
                 .fork(forkNode)
                 .inbound(inbound)
                 .forkSequence(fork1Node)
                 .forkSequence(fork2Node)
-                .join(incorrectJoinType)
                 .build();
 
         MessageAndContext event = newEventWithContent("ForkTest");
         Publisher<MessageAndContext> publisher = Mono.just(event);
 
         // When
-        IllegalStateException thrown = assertThrows(IllegalStateException.class,
-                () -> executor.execute(publisher, forkNode, graph));
+        Publisher<MessageAndContext> endPublisher = executor.execute(publisher, forkNode, graph);
 
         // Then
-        Assertions.assertThat(thrown.getMessage())
-                .isEqualTo("Fork must be followed by a component implementing [com.reedelk.runtime.api.component.Join] interface");
+        StepVerifier.create(endPublisher)
+                .assertNext(assertMessageIsEmptyContent())
+                .verifyComplete();
     }
 
     static class JoinString implements Join {

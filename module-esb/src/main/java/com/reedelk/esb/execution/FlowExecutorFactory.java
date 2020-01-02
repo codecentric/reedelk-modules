@@ -19,9 +19,9 @@ public class FlowExecutorFactory {
 
     private static final FlowExecutorFactory INSTANCE = new FlowExecutorFactory();
 
-    private static final Map<Class, FlowExecutor> COMPONENT_EXECUTOR;
+    private static final Map<Class<?>, FlowExecutor> COMPONENT_EXECUTOR;
     static {
-        Map<Class, FlowExecutor> tmp = new HashMap<>();
+        Map<Class<?>, FlowExecutor> tmp = new HashMap<>();
         tmp.put(Stop.class, new StopExecutor());
         tmp.put(ForkWrapper.class, new ForkExecutor());
         tmp.put(RouterWrapper.class, new RouterExecutor());
@@ -56,8 +56,8 @@ public class FlowExecutorFactory {
     }
 
     private Optional<FlowExecutor> executorOf(Class<?>[] componentInterfaces) {
-        Set<Class> fluxBuilderInterfaceNames = COMPONENT_EXECUTOR.keySet();
-        for (Class interfaceClazz : componentInterfaces) {
+        Set<Class<?>> fluxBuilderInterfaceNames = COMPONENT_EXECUTOR.keySet();
+        for (Class<?> interfaceClazz : componentInterfaces) {
             if (fluxBuilderInterfaceNames.contains(interfaceClazz)) {
                 return Optional.of(COMPONENT_EXECUTOR.get(interfaceClazz));
             }

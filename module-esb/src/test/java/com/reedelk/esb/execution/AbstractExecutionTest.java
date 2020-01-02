@@ -8,6 +8,8 @@ import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.message.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.content.EmptyContent;
+import com.reedelk.runtime.api.message.content.TypedContent;
 import com.reedelk.runtime.component.Stop;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -52,6 +54,15 @@ abstract class AbstractExecutionTest {
         };
     }
 
+    Consumer<MessageAndContext> assertMessageIsEmptyContent() {
+        return event -> {
+            Message message = event.getMessage();
+            TypedContent<?> content = message.getContent();
+            assertThat(content).isInstanceOf(EmptyContent.class);
+            assertThat(content.data()).isNull();
+        };
+    }
+
     Consumer<MessageAndContext> assertMessageContainsOneOf(String... expected) {
         return event -> {
             String out = (String) event.getMessage().getContent().data();
@@ -59,13 +70,13 @@ abstract class AbstractExecutionTest {
         };
     }
 
-    class NoActionResultMessageAndContext extends MessageAndContext {
+    static class NoActionResultMessageAndContext extends MessageAndContext {
         NoActionResultMessageAndContext(Message message) {
             super(message, DefaultFlowContext.from(message));
         }
     }
 
-    class ProcessorThrowingIllegalStateExceptionSync implements ProcessorSync {
+    static class ProcessorThrowingIllegalStateExceptionSync implements ProcessorSync {
 
         private final String errorMessage;
 
@@ -79,7 +90,7 @@ abstract class AbstractExecutionTest {
         }
     }
 
-    class AddPostfixSyncProcessor implements ProcessorSync {
+    static class AddPostfixSyncProcessor implements ProcessorSync {
 
         private final String postfix;
 
