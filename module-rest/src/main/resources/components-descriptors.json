@@ -1072,6 +1072,7 @@
           "displayName": "Path",
           "propertyName": "path",
           "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyInfo": "The rest path this listener will be bound to. If present must start with \u0027/\u0027. The path might contain regex matching a segment, e.g: /api/{name:.*}.",
           "propertyType": {
             "classname": "com.reedelk.module.descriptor.model.TypePrimitiveDescriptor",
             "instance": {

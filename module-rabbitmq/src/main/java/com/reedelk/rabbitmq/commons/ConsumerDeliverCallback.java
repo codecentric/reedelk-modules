@@ -6,10 +6,7 @@ import com.rabbitmq.client.Delivery;
 import com.rabbitmq.client.Envelope;
 import com.reedelk.rabbitmq.component.RabbitMQConsumer;
 import com.reedelk.runtime.api.commons.TypedContentUtils;
-import com.reedelk.runtime.api.message.DefaultMessageAttributes;
-import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.MessageAttributes;
-import com.reedelk.runtime.api.message.MessageBuilder;
+import com.reedelk.runtime.api.message.*;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.message.content.TypedContent;
 
@@ -78,6 +75,16 @@ abstract class ConsumerDeliverCallback implements DeliverCallback {
 
         Map<String, Serializable> attributes = new HashMap<>();
         attributes.put(RabbitMQConsumerAttribute.Envelope.name(), envelopeAttrs);
+        attributes.put(RabbitMQConsumerAttribute.Properties.name(), propertiesAttrs);
+
+        // We copy the AMQP correlationId to the Internal Correlation ID and we set it
+        // as a Message Attribute with the given key: MessageAttributeKey.CORRELATION_ID.
+        // This allows to access the correlation ID from the flow context using 'context.correlationId'
+        // from a script or dynamic value.
+        if (propertiesAttrs.containsKey(RabbitMQConsumerAttribute.Properties.correlationId())) {
+            attributes.put(MessageAttributeKey.CORRELATION_ID,
+                    propertiesAttrs.get(RabbitMQConsumerAttribute.Properties.correlationId()));
+        }
 
         return new DefaultMessageAttributes(RabbitMQConsumer.class, attributes);
     }

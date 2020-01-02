@@ -1,5 +1,6 @@
 package com.reedelk.rabbitmq.component;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.reedelk.rabbitmq.commons.ChannelUtils;
@@ -19,6 +20,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotBlank;
 import static java.util.Optional.of;
@@ -74,11 +76,13 @@ public class RabbitMQProducer implements ProcessorSync {
         Object payload = message.payload();
         byte[] payloadAsBytes = converter.convert(payload, byte[].class);
 
+        AMQP.BasicProperties messageProperties = createMessageProperties();
+
         try {
             synchronized (this) {
                 // Only one Thread should publish data, otherwise we might have
                 // out of order arrivals.
-                channel.basicPublish(exchangeName, queueName, null, payloadAsBytes);
+                channel.basicPublish(exchangeName, queueName, messageProperties, payloadAsBytes);
                 return message;
             }
         } catch (IOException e) {
@@ -133,6 +137,14 @@ public class RabbitMQProducer implements ProcessorSync {
                 .flatMap(producerQueueConfiguration ->
                         of(ProducerQueueConfiguration.isCreateNew(producerQueueConfiguration)))
                 .orElse(false);
+    }
+
+    private AMQP.BasicProperties createMessageProperties() {
+        final String correlationId = UUID.randomUUID().toString();
+        return new AMQP.BasicProperties
+                .Builder()
+                .correlationId(correlationId)
+                .build();
     }
 
     private void createQueueIfNeeded() throws IOException {
