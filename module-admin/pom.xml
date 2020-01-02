@@ -60,7 +60,9 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>
-                            com.reedelk.runtime.*,
+                            com.reedelk.runtime.api.*,
+                            com.reedelk.runtime.rest.api.*,
+                            com.reedelk.runtime.system.api.*,
                             org.json,
                             org.osgi.framework,
                             org.osgi.service.cm,

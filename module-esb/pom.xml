@@ -78,7 +78,11 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>
-                            com.reedelk.runtime.*,
+                            com.reedelk.runtime.api.*,
+                            com.reedelk.runtime.commons.*,
+                            com.reedelk.runtime.component.*,
+                            com.reedelk.runtime.converter.*,
+                            com.reedelk.runtime.system.api.*,
                             sun.misc,
                             javax.script,
                             javax.annotation,

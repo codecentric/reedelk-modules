@@ -1,7 +1,6 @@
 package com.reedelk.esb.commons;
 
 import com.reedelk.runtime.commons.ObjectToBytes;
-import com.reedelk.runtime.commons.SerializationException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
