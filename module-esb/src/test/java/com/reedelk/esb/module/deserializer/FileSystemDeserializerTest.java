@@ -3,13 +3,14 @@ package com.reedelk.esb.module.deserializer;
 
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.services.resource.ResourceLoader;
-import com.reedelk.esb.test.utils.FileUtils;
 import com.reedelk.esb.test.utils.TmpDir;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +29,7 @@ class FileSystemDeserializerTest {
         this.projectDir = Paths.get(tmpDir);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @AfterEach
     void tearDown() {
         projectDir.toFile().delete();
@@ -144,7 +146,7 @@ class FileSystemDeserializerTest {
 
     private void createProjectFile(Path filePathAndName, String fileContent) throws IOException {
         Path path = Paths.get(projectDir.toString(), filePathAndName.toString());
-        FileUtils.createFile(path, fileContent);
+        createFile(path, fileContent);
     }
 
     private String flowWith(String id, String title) {
@@ -173,5 +175,14 @@ class FileSystemDeserializerTest {
         assertThat(found)
                 .withFailMessage("Script with file path=[%s] and body=[%s] not found", scriptFilePath, scriptBody)
                 .isTrue();
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void createFile(Path filePathAndName, String content) throws IOException {
+        new File(filePathAndName.toFile().getParent()).mkdirs();
+        try (FileOutputStream os = new FileOutputStream(filePathAndName.toFile())) {
+            os.write(content.getBytes());
+            os.flush();
+        }
     }
 }
