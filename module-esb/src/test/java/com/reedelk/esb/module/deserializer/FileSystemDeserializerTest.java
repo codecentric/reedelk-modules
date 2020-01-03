@@ -1,6 +1,7 @@
 package com.reedelk.esb.module.deserializer;
 
 
+import com.reedelk.esb.commons.ResourcePath;
 import com.reedelk.esb.module.DeSerializedModule;
 import com.reedelk.esb.services.resource.ResourceLoader;
 import com.reedelk.esb.test.utils.TmpDir;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -136,7 +138,7 @@ class FileSystemDeserializerTest {
 
         // Then
         Collection<ResourceLoader> resourceLoaders = deSerializedModule.getScripts();
-        assertExist(resourceLoaders,  Paths.get(projectDir.toString(), "scripts", "script1.js"), script1Body);
+        assertExist(resourceLoaders,  Paths.get(projectDir.toString(), "scripts", "script1.js").toUri().toURL(), script1Body);
         assertThat(resourceLoaders).hasSize(5);
 
         assertThat(deSerializedModule.getFlows()).isEmpty();
@@ -169,14 +171,14 @@ class FileSystemDeserializerTest {
                 .isTrue();
     }
 
-    private void assertExist(Collection<ResourceLoader> resourceLoaders, Path scriptFilePath, String scriptBody) {
+    private void assertExist(Collection<ResourceLoader> resourceLoaders, URL scriptFilePath, String scriptBody) {
         boolean found = resourceLoaders.stream()
                 .anyMatch(resourceLoader -> {
                     String bodyAsString = resourceLoader.bodyAsString();
                     System.out.println(bodyAsString);
                     String resourceFilePath = resourceLoader.getResourceFilePath();
                     System.out.println(resourceFilePath);
-                    return bodyAsString.contains(scriptBody) && resourceLoader.getResourceFilePath().equals(scriptFilePath.toString());
+                    return bodyAsString.equals(scriptBody) && resourceLoader.getResourceFilePath().equals(ResourcePath.from(scriptFilePath));
                 });
         assertThat(found)
                 .withFailMessage("Script with file path=[%s], and body=[%s] not found", scriptFilePath, scriptBody)
