@@ -58,6 +58,13 @@ public class ExecutionGraph {
         return graph.findOne(predicate);
     }
 
+    public boolean isEmpty() {
+        boolean empty = graph.isEmpty();
+        checkState(empty && !hasRoot() || !empty && hasRoot(),
+                "execution graph state is not valid: empty=[" + empty + "], root=[" + root + "]");
+        return empty;
+    }
+
     private boolean hasRoot() {
         return root != null;
     }

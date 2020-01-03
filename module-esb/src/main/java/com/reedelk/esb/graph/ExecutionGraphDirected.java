@@ -8,7 +8,7 @@ import static com.reedelk.runtime.api.commons.Preconditions.checkState;
 
 class ExecutionGraphDirected {
 
-    private Map<ExecutionNode, List<ExecutionNode>> adjacentNodes = new HashMap<>();
+    private final Map<ExecutionNode, List<ExecutionNode>> adjacentNodes = new HashMap<>();
 
     void addNode(ExecutionNode n2) {
         adjacentNodes.putIfAbsent(n2, new ArrayList<>());
@@ -48,5 +48,9 @@ class ExecutionGraphDirected {
                 .stream()
                 .filter(predicate)
                 .findFirst();
+    }
+
+    boolean isEmpty() {
+        return adjacentNodes.isEmpty();
     }
 }

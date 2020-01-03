@@ -36,6 +36,7 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class FlowTest {
@@ -170,6 +171,7 @@ class FlowTest {
         // Then
         verify(mockInbound).onStart();
         verify(mockInbound).addEventListener(flow);
+        assertThat(flow.isStarted()).isTrue();
     }
 
     @Test
@@ -294,5 +296,44 @@ class FlowTest {
                 fail("Unexpected");
             }
         });
+    }
+
+    @Test
+    void shouldNotStartFlowWhenEmpty() {
+        // Given
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        doReturn(true).when(mockExecutionGraph).isEmpty();
+
+        // When
+        flow.start();
+
+        // Then
+        assertThat(flow.isStarted()).isFalse();
+    }
+
+    @Test
+    void shouldForceStopDoNothingWhenFlowIsEmpty() {
+        // Given
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        doReturn(true).when(mockExecutionGraph).isEmpty();
+
+        // When
+        flow.forceStop();
+
+        // Then
+        assertThat(flow.isStarted()).isFalse();
+    }
+
+    @Test
+    void shouldStopIfStartedDoNothingWhenFlowIsEmpty() {
+        // Given
+        Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
+        doReturn(true).when(mockExecutionGraph).isEmpty();
+
+        // When
+        flow.stopIfStarted();
+
+        // Then
+        assertThat(flow.isStarted()).isFalse();
     }
 }

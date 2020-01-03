@@ -36,8 +36,13 @@ public class FlowDeserializer {
                     .deserialize();
         }
 
-        // Last node of the graph is always a Stop node.
-        ExecutionNode stopNode = context.instantiateComponent(Stop.class);
-        flowGraph.putEdge(current, stopNode);
+        // If the Flow does not contain any component,
+        // we don't add the stop node because it only make
+        // sense when there is at least one component.
+        if (!flowComponents.isEmpty()) {
+            // Last node of the graph is always a Stop node.
+            ExecutionNode stopNode = context.instantiateComponent(Stop.class);
+            flowGraph.putEdge(current, stopNode);
+        }
     }
 }

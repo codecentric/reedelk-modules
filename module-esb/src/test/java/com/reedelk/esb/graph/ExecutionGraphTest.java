@@ -155,4 +155,26 @@ class ExecutionGraphTest {
         // Then
         assertThat(maybeOne).get().isEqualTo(n2);
     }
+
+    @Test
+    void shouldReturnEmptyTrue() {
+        // When
+        boolean actual = graph.isEmpty();
+
+        // Then
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void shouldReturnEmptyFalse() {
+        // Given
+        ExecutionNode n1 = new ExecutionNode(new ReferencePair<>(new TestInboundComponent()));
+        graph.putEdge(null, n1);
+
+        // When
+        boolean actual = graph.isEmpty();
+
+        // Then
+        assertThat(actual).isFalse();
+    }
 }

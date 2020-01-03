@@ -77,12 +77,15 @@ public class Flow implements InboundEventListener {
     }
 
     public void start() {
-        synchronized (this) {
-            Inbound inbound = getInbound();
-            inbound.addEventListener(this);
-            inbound.onStart();
-            started = true;
-        }
+        // If inbound is not present it means that the flow
+        // is empty: there are no components in the flow.
+        getInbound().ifPresent(inbound -> {
+            synchronized (Flow.this) {
+                inbound.addEventListener(Flow.this);
+                inbound.onStart();
+                started = true;
+            }
+        });
     }
 
     public void stopIfStarted() {
@@ -94,15 +97,18 @@ public class Flow implements InboundEventListener {
     }
 
     public void forceStop() {
-        synchronized (this) {
-            try {
-                Inbound inbound = getInbound();
-                inbound.onShutdown();
-                inbound.removeEventListener();
-            } finally {
-                started = false;
+        // If inbound is not present it means that the flow
+        // is empty: there are no components in the flow.
+        getInbound().ifPresent(inbound -> {
+            synchronized (Flow.this) {
+                try {
+                    inbound.onShutdown();
+                    inbound.removeEventListener();
+                } finally {
+                    started = false;
+                }
             }
-        }
+        });
     }
 
     @Override
@@ -110,8 +116,12 @@ public class Flow implements InboundEventListener {
         executionEngine.onEvent(message, new OnResultFlowExceptionWrapper(onResult));
     }
 
-    private Inbound getInbound() {
-        return (Inbound) executionGraph.getRoot().getComponent();
+    // If inbound is not present it means that the flow
+    // is empty: there are no components in the flow.
+    private Optional<Inbound> getInbound() {
+        return executionGraph.isEmpty() ?
+                Optional.empty() :
+                Optional.of((Inbound) executionGraph.getRoot().getComponent());
     }
 
     /**
@@ -143,7 +153,7 @@ public class Flow implements InboundEventListener {
                 logger.error(StackTraceUtils.asString(wrapped));
             }
 
-            delegate.onError(wrapped,flowContext);
+            delegate.onError(wrapped, flowContext);
         }
     }
 }
