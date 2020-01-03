@@ -14,6 +14,7 @@ import com.reedelk.runtime.system.api.SystemProperty;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,7 +49,11 @@ public class ModuleDeploy implements ProcessorSync {
         checkState(part.getAttributes().containsKey(ATTRIBUTE_FILE_NAME),
                 "Attribute file name missing");
 
-        String jarFileName = part.getAttributes().get(ATTRIBUTE_FILE_NAME);
+        // Windows Explorer sends the file name including the path.
+        // Therefore we must extract just the name of the deployed module.
+        String jarFileNameMaybeWithPath = part.getAttributes().get(ATTRIBUTE_FILE_NAME);
+
+        String jarFileName = new File(jarFileNameMaybeWithPath).getName();
 
         checkArgument(StringUtils.isNotBlank(jarFileName), "Please specify a not empty Module file path.");
 
