@@ -171,9 +171,15 @@ class FileSystemDeserializerTest {
 
     private void assertExist(Collection<ResourceLoader> resourceLoaders, Path scriptFilePath, String scriptBody) {
         boolean found = resourceLoaders.stream()
-                .anyMatch(resourceLoader -> resourceLoader.bodyAsString().contains(scriptBody) && resourceLoader.getResourceFilePath().equals(scriptFilePath.toString()));
+                .anyMatch(resourceLoader -> {
+                    String bodyAsString = resourceLoader.bodyAsString();
+                    System.out.println(bodyAsString);
+                    String resourceFilePath = resourceLoader.getResourceFilePath();
+                    System.out.println(resourceFilePath);
+                    return bodyAsString.contains(scriptBody) && resourceLoader.getResourceFilePath().equals(scriptFilePath.toString());
+                });
         assertThat(found)
-                .withFailMessage("Script with file path=[%s] and body=[%s] not found", scriptFilePath, scriptBody)
+                .withFailMessage("Script with file path=[%s], and body=[%s] not found", scriptFilePath, scriptBody)
                 .isTrue();
     }
 
