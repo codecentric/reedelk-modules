@@ -15,6 +15,7 @@ import com.reedelk.runtime.api.message.content.factory.TypedContentFactory;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotBlank;
 import static org.osgi.service.component.annotations.ServiceScope.PROTOTYPE;
 
 @ESBComponent("Payload To String")
@@ -29,15 +30,22 @@ public class PayloadToString implements ProcessorSync {
     @Default(MimeType.MIME_TYPE_TEXT_PLAIN)
     private String mimeType;
 
+    private MimeType wantedMimeType;
+
+    @Override
+    public void initialize() {
+        requireNotBlank(mimeType, "MimeType must not be empty");
+        this.wantedMimeType = MimeType.parse(mimeType);
+    }
+
     @Override
     public Message apply(Message message, FlowContext flowContext) {
+
         Object payload = message.payload();
 
         String converted = converterService.convert(payload, String.class);
 
-        MimeType mimeType = MimeType.parse(this.mimeType);
-
-        TypedContent<?> typedContent = TypedContentFactory.from(converted, mimeType);
+        TypedContent<?> typedContent = TypedContentFactory.from(converted, wantedMimeType);
 
         return MessageBuilder.get()
                 .typedContent(typedContent)
