@@ -87,8 +87,8 @@ class ForkExecutorTest extends AbstractExecutionTest {
 
         // Then
         StepVerifier.create(endPublisher)
-                .assertNext(assertMessageContains("ForkTest1-fork1,ForkTest1-fork2"))
-                .assertNext(assertMessageContains("ForkTest2-fork1,ForkTest2-fork2"))
+                .assertNext(assertMessageContainsOneOf("ForkTest1-fork1,ForkTest1-fork2", "ForkTest2-fork1,ForkTest2-fork2"))
+                .assertNext(assertMessageContainsOneOf("ForkTest1-fork1,ForkTest1-fork2", "ForkTest2-fork1,ForkTest2-fork2"))
                 .verifyComplete();
     }
 
