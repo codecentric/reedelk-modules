@@ -222,8 +222,20 @@ class ModuleStopAndReleaseReferencesTest {
         Collection<Exception> errors = actualModule.errors();
         assertThat(errors).hasSize(2);
 
-        String expectedMessage1 = "Error stopping flow with id=[aabbccddee]: Listener configuration is missing";
-        String expectedMessage2 = "Error stopping flow with id=[ffghhiillmm]: Client configuration was not provided";
+        String expectedMessage1 = "{\n" +
+                "  \"moduleName\": \"StopTestModule\",\n" +
+                "  \"errorMessage\": \"Listener configuration is missing\",\n" +
+                "  \"moduleId\": 33,\n" +
+                "  \"flowId\": \"aabbccddee\",\n" +
+                "  \"errorType\": \"com.reedelk.runtime.api.exception.ESBException\"\n" +
+                "}";
+        String expectedMessage2 = "{\n" +
+                "  \"moduleName\": \"StopTestModule\",\n" +
+                "  \"errorMessage\": \"Client configuration was not provided\",\n" +
+                "  \"moduleId\": 33,\n" +
+                "  \"flowId\": \"ffghhiillmm\",\n" +
+                "  \"errorType\": \"com.reedelk.runtime.api.exception.ESBException\"\n" +
+                "}";
 
         assertThatExistExceptionWithMessage(errors, expectedMessage1);
         assertThatExistExceptionWithMessage(errors, expectedMessage2);

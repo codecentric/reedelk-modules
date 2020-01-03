@@ -185,6 +185,8 @@ class ModuleStartTest {
         verify(module).flows();
         verify(module).state();
         verify(module).error(errorsCaptor.capture());
+        verify(module).id(); // Used in error message format
+        verify(module).name(); // Used in error message format
 
         verifyNoMoreInteractions(module);
 
@@ -200,7 +202,12 @@ class ModuleStartTest {
         Collection<Exception> errors = errorsCaptor.getValue();
         assertThat(errors).hasSize(1);
 
-        String expectedErrorMessage = "Error starting flow with id=[aabbccddee]: error x.y.z while starting flow";
+        String expectedErrorMessage = "{\n" +
+                "  \"errorMessage\": \"error x.y.z while starting flow\",\n" +
+                "  \"moduleId\": 0,\n" +
+                "  \"flowId\": \"aabbccddee\",\n" +
+                "  \"errorType\": \"java.lang.RuntimeException\"\n" +
+                "}";
         assertThat(errors.iterator().next().getMessage()).isEqualTo(expectedErrorMessage);
     }
 }
