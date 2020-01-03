@@ -75,6 +75,7 @@ public class DefaultModuleService implements ModuleService {
 
     @Override
     public long update(String moduleJarPath) {
+        // IMPORTANT: On Java 8 this does not compile if we collapse the lambda.
         Bundle bundleAtPath = getModuleAtPath(moduleJarPath).orElseThrow(new Supplier<IllegalStateException>() {
             @Override
             public IllegalStateException get() {
