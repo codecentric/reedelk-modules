@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static com.reedelk.esb.commons.FunctionWrapper.uncheckedConsumer;
 import static com.reedelk.esb.commons.Messages.Module.*;
@@ -28,7 +29,7 @@ import static java.util.stream.Collectors.toSet;
 public class DefaultModuleService implements ModuleService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultModuleService.class);
-    private static final long NOTHING_UNINSTALLED_MODULE_ID =  -1L;
+    private static final long NOTHING_UNINSTALLED_MODULE_ID = -1L;
 
     private final ModulesMapper mapper;
     private final EventListener listener;
@@ -74,9 +75,12 @@ public class DefaultModuleService implements ModuleService {
 
     @Override
     public long update(String moduleJarPath) {
-        Bundle bundleAtPath = getModuleAtPath(moduleJarPath).orElseThrow(() -> {
-            String errorMessage = UPDATE_FAILED_MODULE_NOT_FOUND.format(moduleJarPath);
-            throw new IllegalStateException(errorMessage);
+        Bundle bundleAtPath = getModuleAtPath(moduleJarPath).orElseThrow(new Supplier<IllegalStateException>() {
+            @Override
+            public IllegalStateException get() {
+                String errorMessage = UPDATE_FAILED_MODULE_NOT_FOUND.format(moduleJarPath);
+                throw new IllegalStateException(errorMessage);
+            }
         });
 
         if (Bundle.INSTALLED == bundleAtPath.getState()) {
