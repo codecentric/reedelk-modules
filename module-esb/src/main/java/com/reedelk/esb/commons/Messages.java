@@ -1,6 +1,7 @@
 package com.reedelk.esb.commons;
 
 import com.reedelk.runtime.api.commons.FlowError;
+import com.reedelk.runtime.api.commons.StackTraceUtils;
 import org.json.JSONObject;
 
 import static com.reedelk.runtime.api.commons.FlowError.Properties.*;
@@ -36,6 +37,21 @@ public class Messages {
                     new String[] { moduleId, moduleName, flowId, flowTitle, correlationId, errorType, errorMessage })
                     .toString(2);
         }
+
+        public String formatWith(com.reedelk.esb.module.Module module, com.reedelk.esb.flow.Flow flow, Throwable throwable) {
+            String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(throwable);
+            return DEFAULT.format(
+                    module.id(),
+                    module.name(),
+                    flow.getFlowId(),
+                    flow.getFlowTitle().orElse(null),
+                    // There is no correlation id yet when a flow it is started.
+                    // It is the Inbound component responsible to set it.
+                    // Therefore we set it to null.
+                    null,
+                    throwable.getClass().getName(),
+                    rootCauseMessage);
+        }
     }
 
     public enum Flow implements FormattedMessage {
@@ -44,12 +60,8 @@ public class Messages {
         FORCE_STOP_WITH_TITLE("Error forcing stop flow with id=[%s] and title '%s': %s"),
         START("Flow with id=[%s] started."),
         START_WITH_TITLE("Flow with id=[%s] and title '%s' started."),
-        START_ERROR("Error starting flow with id=[%s]: %s"),
-        START_ERROR_WITH_TITLE("Error starting flow with id=[%s] and title '%s': %s"),
         STOP_WITH_TITLE("Flow with id=[%s] and title '%s' stopped."),
         STOP("Flow with id=[%s] stopped."),
-        STOP_ERROR("Error stopping flow with id=[%s]: %s"),
-        STOP_ERROR_WITH_TITLE("Error stopping flow with id=[%s] and title '%s': %s"),
         BUILD_ERROR("Error building flow with id=[%s]: %s"),
         BUILD_ERROR_WITH_TITLE("Error building flow with id=[%s] and title '%s': %s"),
         VALIDATION_ID_NOT_UNIQUE("Error validating module with name=[%s]: There are at least two flows with the same ID. Flow IDs must be unique."),

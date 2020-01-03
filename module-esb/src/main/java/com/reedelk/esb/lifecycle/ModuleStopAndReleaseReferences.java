@@ -4,7 +4,6 @@ import com.reedelk.esb.commons.Log;
 import com.reedelk.esb.exception.FlowStopException;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.module.Module;
-import com.reedelk.runtime.api.commons.StackTraceUtils;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static com.reedelk.esb.commons.Messages.Flow.STOP_ERROR;
-import static com.reedelk.esb.commons.Messages.Flow.STOP_ERROR_WITH_TITLE;
+import static com.reedelk.esb.commons.Messages.FlowErrorMessage.DEFAULT;
 import static com.reedelk.esb.module.state.ModuleState.STARTED;
 import static com.reedelk.runtime.api.commons.StringUtils.EMPTY;
 
@@ -34,14 +32,13 @@ public class ModuleStopAndReleaseReferences extends AbstractStep<Module, Module>
                 flow.stopIfStarted();
                 Log.flowStopped(logger, flow);
             } catch (Exception exception) {
-                String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
 
-                String message = flow.getFlowTitle()
-                        .map(flowTitle -> STOP_ERROR_WITH_TITLE.format(flow.getFlowId(), flowTitle, rootCauseMessage))
-                        .orElse(STOP_ERROR.format(flow.getFlowId(), rootCauseMessage));
+                String errorMessage = DEFAULT.formatWith(module, flow, exception);
+                FlowStopException stopException = new FlowStopException(errorMessage, exception);
 
-                FlowStopException stopException = new FlowStopException(message, exception);
-                logger.error(EMPTY, stopException);
+                if (logger.isErrorEnabled()) {
+                    logger.error(EMPTY, stopException);
+                }
 
                 exceptions.add(stopException);
             }

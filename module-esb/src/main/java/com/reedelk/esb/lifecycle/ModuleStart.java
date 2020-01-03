@@ -6,7 +6,6 @@ import com.reedelk.esb.exception.FlowStartException;
 import com.reedelk.esb.flow.Flow;
 import com.reedelk.esb.module.Module;
 import com.reedelk.esb.module.state.ModuleState;
-import com.reedelk.runtime.api.commons.StackTraceUtils;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static com.reedelk.esb.commons.Messages.Flow.START_ERROR;
-import static com.reedelk.esb.commons.Messages.Flow.START_ERROR_WITH_TITLE;
+import static com.reedelk.esb.commons.Messages.FlowErrorMessage.DEFAULT;
 import static com.reedelk.runtime.api.commons.StringUtils.EMPTY;
 
 public class ModuleStart extends AbstractStep<Module, Module> {
@@ -43,13 +41,12 @@ public class ModuleStart extends AbstractStep<Module, Module> {
                 // This is also needed to call "forceStop" method below, so that Clients
                 // get a possibility to properly cleanup any resource partially opened
                 // during the start phase.
-                String rootCauseMessage = StackTraceUtils.rootCauseMessageOf(exception);
-                String message = flow.getFlowTitle()
-                        .map(flowTitle -> START_ERROR_WITH_TITLE.format(flow.getFlowId(), flowTitle, rootCauseMessage))
-                        .orElse(START_ERROR.format(flow.getFlowId(), rootCauseMessage));
+                String errorMessage = DEFAULT.formatWith(module, flow, exception);
+                FlowStartException startException = new FlowStartException(errorMessage, exception);
 
-                FlowStartException startException = new FlowStartException(message, exception);
-                logger.error(EMPTY, startException);
+                if (logger.isErrorEnabled()) {
+                    logger.error(EMPTY, startException);
+                }
 
                 exceptions.add(startException);
             }
