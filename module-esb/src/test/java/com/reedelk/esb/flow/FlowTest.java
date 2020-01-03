@@ -299,7 +299,7 @@ class FlowTest {
     }
 
     @Test
-    void shouldNotStartFlowWhenEmpty() {
+    void shouldFlowBeStartedEvenWhenEmpty() {
         // Given
         Flow flow = new Flow(moduleId, moduleName, flowId, flowTitle, mockExecutionGraph, executionEngine);
         doReturn(true).when(mockExecutionGraph).isEmpty();
@@ -308,7 +308,7 @@ class FlowTest {
         flow.start();
 
         // Then
-        assertThat(flow.isStarted()).isFalse();
+        assertThat(flow.isStarted()).isTrue();
     }
 
     @Test

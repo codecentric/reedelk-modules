@@ -77,15 +77,20 @@ public class Flow implements InboundEventListener {
     }
 
     public void start() {
-        // If inbound is not present it means that the flow
-        // is empty: there are no components in the flow.
-        getInbound().ifPresent(inbound -> {
-            synchronized (Flow.this) {
+        synchronized (this) {
+            // If inbound is not present it means that the flow
+            // is empty: there are no components in the flow.
+            getInbound().ifPresent(inbound -> {
                 inbound.addEventListener(Flow.this);
                 inbound.onStart();
-                started = true;
-            }
-        });
+            });
+            // If the inbound component is not present, we still
+            // consider the flow as started even though it does not
+            // do anything. This is to keep the consistency with the
+            // module state which will be started if and only if all
+            // flows will be started without any errors.
+            started = true;
+        }
     }
 
     public void stopIfStarted() {
@@ -97,18 +102,17 @@ public class Flow implements InboundEventListener {
     }
 
     public void forceStop() {
-        // If inbound is not present it means that the flow
-        // is empty: there are no components in the flow.
-        getInbound().ifPresent(inbound -> {
-            synchronized (Flow.this) {
-                try {
+        synchronized (this) {
+            try {
+                getInbound().ifPresent(inbound -> {
                     inbound.onShutdown();
                     inbound.removeEventListener();
-                } finally {
-                    started = false;
-                }
+                });
+                // On Shutdown might throw an exception.
+            } finally {
+                started = false;
             }
-        });
+        }
     }
 
     @Override
