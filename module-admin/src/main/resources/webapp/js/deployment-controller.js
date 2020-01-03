@@ -30,7 +30,7 @@ let IndexController = (function () {
 
             },
             error: function (error) {
-                Messages.Error('Module could not be deployed: ' + error.responseText);
+                showError(moduleName, 'deployed', error);
             }
         });
     };
@@ -56,7 +56,7 @@ let IndexController = (function () {
 
             },
             error: function (error) {
-                Messages.Error('Module "' + moduleName + '" could not be updated: ' + error.responseText);
+                showError(moduleName, 'updated', error);
             }
         });
     };
@@ -82,7 +82,7 @@ let IndexController = (function () {
 
             },
             error: function (error) {
-                Messages.Error('Module "' + moduleName + '" could not be removed: ' + error.responseText);
+                showError(moduleName, 'removed', error);
             }
         });
     };
@@ -96,6 +96,14 @@ let IndexController = (function () {
         let tableBody = $(table).find('tbody');
         let content = Template.Row(Template.Column('<p class="refreshing-list">' + Template.Bold('Updating modules &hellip;') + '</p>', '', 8));
         tableBody.append(content);
+    };
+
+    let showError = function (moduleName, actionName, error) {
+        if (error.responseText) {
+            Messages.Error('Module "' + moduleName + '" could not be ' + actionName + ': ' + error.responseText);
+        } else {
+            Messages.Error('Module "' + moduleName + '" could not be ' + actionName + '. Please check that the Runtime is up and running.');
+        }
     };
 
     return {

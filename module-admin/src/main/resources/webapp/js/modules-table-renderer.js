@@ -1,5 +1,11 @@
 var ModulesTableRenderer = (function() {
 
+	var notUpdatableOrRemovableModules = [
+		'module-admin',  // NAME_CONVENTION
+		'module-core', 	 // NAME_CONVENTION
+		'module-rest'	 // NAME_CONVENTION
+	];
+
 	var render = function(modules) {
 		var table = document.getElementById("deployed-modules");
 
@@ -14,8 +20,13 @@ var ModulesTableRenderer = (function() {
             var status = Utilities.IconByModuleStatus(module.state);
 
             var infoBtn = Template.CollapseButton('Info', 'icon-folder-open', '#' + module.moduleId, 'collapseExample');
-            var updateBtn = Template.ActionButton('Update', 'icon-redo2', 'onUpdate(\'' + name + '\',\'' + path + '\')', "btn-secondary");
-            var removeBtn = Template.ActionButton('Remove', 'icon-bin', 'onRemove(\'' + name + '\',\'' + path + '\')', "btn-danger");
+
+            var enabled = true;
+            if (notUpdatableOrRemovableModules.includes(name)) {
+            	enabled = false;
+			}
+            var updateBtn = Template.ActionButton('Update', 'icon-redo2', 'onUpdate(\'' + name + '\',\'' + path + '\')', "btn-secondary", enabled);
+            var removeBtn = Template.ActionButton('Remove', 'icon-bin', 'onRemove(\'' + name + '\',\'' + path + '\')', "btn-danger", enabled);
 
             var allColumns = 
                 Template.Column(status, 'align-center') +

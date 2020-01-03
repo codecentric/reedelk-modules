@@ -23,8 +23,8 @@ var Template = (function() {
         	<div class="col-sm-11 module-details-row-item-content">${content}</div>
     	</div>`;
 
-	const ActionButton = ({ text, icon, action, type }) => 
-		`<button type="button" class="btn btn-sm btn-labeled ${type}" onclick=${action}>
+	const ActionButton = ({ text, icon, action, type, enabled }) =>
+		`<button type="button" class="btn btn-sm btn-labeled ${type}" onclick=${action} ${enabled}>
 			<span class="btn-label"><i class="${icon}"></i></span>
 			${text}
 		</button>`;
@@ -56,26 +56,32 @@ var Template = (function() {
 			if (id) realAdditionalAttributes += ' id=' + id;
 			if (classes) realAdditionalAttributes += ' class=' + classes;
 			if (additionalAttributes) realAdditionalAttributes += ' ' + additionalAttributes;
+			// noinspection JSConstructorReturnsPrimitive
 			return [{ content:content, additionalAttributes:realAdditionalAttributes }].map(Div).join('');
   		},
 
 		DetailsContainer: function(content) {
+			// noinspection JSConstructorReturnsPrimitive
 			return [{ content:content }].map(DetailsContainer).join('');
 		},
 
 		DetailsRowItem: function(title, content) {
+			// noinspection JSConstructorReturnsPrimitive
 			return [{ title: title, content:content }].map(DetailsRowItem).join('');
 		},
 
-    	ActionButton: function(text, icon, action, type) {
-        	return [{ text:text, icon:icon, action:action, type:type }].map(ActionButton).join('');
+    	ActionButton: function(text, icon, action, type, enabled) {
+        	// noinspection JSConstructorReturnsPrimitive
+			return [{ text:text, icon:icon, action:action, type:type, enabled:enabled ? '' : 'disabled' }].map(ActionButton).join('');
     	},
 
 		CollapseButton: function(text, icon, dataTarget, ariaControl) {
+			// noinspection JSConstructorReturnsPrimitive
         	return [{ text:text, icon:icon, dataTarget:dataTarget, ariaControl:ariaControl }].map(CollapseButton).join('');
     	},
 
 		Bold: function(text) {
+			// noinspection JSConstructorReturnsPrimitive
   			return [{text:text}].map(Bold).join('');
 		}
 	}
