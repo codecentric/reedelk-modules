@@ -15,10 +15,6 @@
     <version>1.0.0-SNAPSHOT</version>
     <artifactId>module-admin</artifactId> <!-- NAME_CONVENTION -->
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.reedelk</groupId>
@@ -78,7 +74,7 @@
 
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>

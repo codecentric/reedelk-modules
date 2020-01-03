@@ -11,9 +11,9 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>module-rest</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>module-rest</artifactId> <!-- NAME_CONVENTION -->
 
     <properties>
         <junit.version>RELEASE</junit.version>
@@ -22,6 +22,7 @@
         <reactor.netty.version>0.8.13.RELEASE</reactor.netty.version>
         <http.async.client.version>4.1.4</http.async.client.version>
         <http.mime.version>4.5.10</http.mime.version>
+        <wiremock.version>2.24.1</wiremock.version>
     </properties>
 
     <dependencies>
@@ -70,14 +71,14 @@
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock-jre8</artifactId>
-            <version>2.24.1</version>
+            <version>${wiremock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>

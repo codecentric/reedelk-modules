@@ -10,13 +10,13 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>module-core</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>module-core</artifactId> <!-- NAME_CONVENTION -->
 
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>

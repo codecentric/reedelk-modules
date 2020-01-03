@@ -9,9 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>module-rabbitmq</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>module-rabbitmq</artifactId>
 
     <properties>
         <rabbitmq.version>5.8.0</rabbitmq.version>
