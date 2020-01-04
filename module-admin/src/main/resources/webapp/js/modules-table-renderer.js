@@ -2,7 +2,6 @@ var ModulesTableRenderer = (function() {
 
 	var notUpdatableOrRemovableModules = [
 		'module-admin',  // NAME_CONVENTION
-		'module-core', 	 // NAME_CONVENTION
 		'module-rest'	 // NAME_CONVENTION
 	];
 

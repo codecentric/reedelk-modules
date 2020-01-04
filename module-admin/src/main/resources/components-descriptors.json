@@ -44,6 +44,26 @@
     },
     {
       "hidden": false,
+      "displayName": "Read From Resources",
+      "fullyQualifiedName": "com.reedelk.admin.console.ReadFromResources",
+      "componentType": "PROCESSOR",
+      "componentPropertyDescriptors": [
+        {
+          "displayName": "Resource file",
+          "propertyName": "resourceFile",
+          "defaultValue": "###USE_DEFAULT_VALUE###",
+          "propertyType": {
+            "classname": "com.reedelk.module.descriptor.model.TypeDynamicValueDescriptor",
+            "instance": {
+              "type": "com.reedelk.runtime.api.resource.DynamicResource"
+            }
+          },
+          "whenDescriptors": []
+        }
+      ]
+    },
+    {
+      "hidden": false,
       "displayName": "System health",
       "fullyQualifiedName": "com.reedelk.admin.console.SystemHealth",
       "componentType": "PROCESSOR",

@@ -101,7 +101,8 @@
                             reactor.core.scheduler,
                             reactor.util,
                             reactor.util.context,
-                            reactor.util.concurrent
+                            reactor.util.concurrent,
+                            org.apache.http.*
                         </Import-Package>
                     </instructions>
                 </configuration>

@@ -3,9 +3,8 @@
   "title": "Read Local File",
   "description": "Read Local File Subflow",
   "subflow": [{
-    "implementor": "com.reedelk.core.component.resource.ResourceReadDynamic",
+    "implementor": "com.reedelk.admin.console.ReadFromResources",
     "description": "Read file from webapp folder",
-    "autoMimeType": true,
     "resourceFile": "#['/webapp/' + message.attributes().get('pathParams').getOrDefault('page','index.html')]"
   }]
 }

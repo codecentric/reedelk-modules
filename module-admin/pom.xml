@@ -28,12 +28,6 @@
             <version>0.9.0</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.reedelk</groupId>
-            <artifactId>module-core</artifactId>
-            <version>0.9.0</version>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- internal-rest-api depends on org.json -->
         <dependency>
