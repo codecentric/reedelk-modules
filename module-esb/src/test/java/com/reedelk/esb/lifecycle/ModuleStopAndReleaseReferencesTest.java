@@ -27,7 +27,7 @@ class ModuleStopAndReleaseReferencesTest {
 
     private final long moduleId = 33L;
     private final String testModuleName = "StopTestModule";
-    private final String testVersion = "1.0.0-SNAPSHOT";
+    private final String testVersion = "0.9.0";
     private final String testLocation = "file://location/test";
 
     private final Collection<String> unresolvedComponents = asList("com.reedelk.esb.UnresolvedComponent1", "com.reedelk.esb.UnresolvedComponent1");

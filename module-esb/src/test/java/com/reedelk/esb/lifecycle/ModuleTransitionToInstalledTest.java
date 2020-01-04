@@ -35,7 +35,7 @@ class ModuleTransitionToInstalledTest {
         Module inputModule = spy(Module.builder()
                 .moduleId(33L)
                 .name("StopTestModule")
-                .version("1.0.0-SNAPSHOT")
+                .version("0.9.0")
                 .deserializer(deserializer)
                 .moduleFilePath("file://location/test")
                 .build());
@@ -58,7 +58,7 @@ class ModuleTransitionToInstalledTest {
         Module inputModule = spy(Module.builder()
                 .moduleId(33L)
                 .name("StopTestModule")
-                .version("1.0.0-SNAPSHOT")
+                .version("0.9.0")
                 .deserializer(deserializer)
                 .moduleFilePath("file://location/test")
                 .build());

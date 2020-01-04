@@ -34,7 +34,7 @@ class ModuleRemoveTest {
         // Given
         doReturn(modulesManager).when(step).modulesManager();
 
-        String testVersion = "1.0.0-SNAPSHOT";
+        String testVersion = "0.9.0";
         String testLocation = "file://location/test";
         Module module = Module.builder()
                 .moduleId(14L)
@@ -55,7 +55,7 @@ class ModuleRemoveTest {
     @Test
     void shouldRemoveModuleFormModulesManagerThrowExceptionWhenModuleStillStarted() {
         // Given
-        String testVersion = "1.0.0-SNAPSHOT";
+        String testVersion = "0.9.0";
         String testLocation = "file://location/test";
         Module module = Module.builder()
                 .moduleId(14L)

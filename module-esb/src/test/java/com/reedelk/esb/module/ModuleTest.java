@@ -26,7 +26,7 @@ class ModuleTest {
 
     private final long TEST_MODULE_ID = 12;
     private final String TEST_MODULE_NAME = "ModuleNameTest";
-    private final String TEST_VERSION = "1.0.0-SNAPSHOT";
+    private final String TEST_VERSION = "0.9.0";
     private final String TEST_LOCATION = "file://location/test";
 
     private final Collection<String> unresolvedComponents = asList("com.reedelk.esb.Unresolved1", "com.reedelk.esb.Unresolved2");

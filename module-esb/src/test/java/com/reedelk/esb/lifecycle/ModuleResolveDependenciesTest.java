@@ -48,7 +48,7 @@ class ModuleResolveDependenciesTest {
         aModule = Module.builder()
                 .name("test")
                 .moduleId(23L)
-                .version("1.0.0-SNAPSHOT")
+                .version("0.9.0")
                 .moduleFilePath("file:/module/path")
                 .deserializer(deserializer)
                 .build();

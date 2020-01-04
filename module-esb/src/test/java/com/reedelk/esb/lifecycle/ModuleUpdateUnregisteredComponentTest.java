@@ -22,7 +22,7 @@ class ModuleUpdateUnregisteredComponentTest {
 
     private final long moduleId = 232L;
     private final String testModuleName = "TestModule";
-    private final String testVersion = "1.0.0-SNAPSHOT";
+    private final String testVersion = "0.9.0";
     private final String testLocation = "file://location/test";
 
     private final String component1 = "com.reedelk.esb.AwesomeComponent1";
