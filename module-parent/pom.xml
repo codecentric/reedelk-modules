@@ -6,8 +6,16 @@
 
     <groupId>com.reedelk</groupId>
     <artifactId>module-parent</artifactId>
-    <version>0.9.0</version>
     <packaging>pom</packaging>
+    <version>0.9.0</version>
+
+    <distributionManagement>
+        <repository>
+            <id>reedelk.repo</id>
+            <name>Reedelk Repository</name>
+            <url>http://localhost:8081/repository/reedelk/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <api.version>0.9.0</api.version>
@@ -111,13 +119,13 @@
             <!-- Reedelk Plugin -->
             <plugin>
                 <groupId>com.reedelk</groupId>
-                <artifactId>reedelk-maven-plugin</artifactId>
+                <artifactId>module-maven-plugin</artifactId>
                 <version>0.9.0</version>
                 <executions>
                     <execution>
                         <phase>process-classes</phase>
                         <goals>
-                            <goal>generateModuleDescriptor</goal>
+                            <goal>generate-module-descriptor</goal>
                         </goals>
                     </execution>
                 </executions>
