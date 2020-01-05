@@ -7,20 +7,12 @@
     <parent>
         <groupId>com.reedelk</groupId>
         <artifactId>module-parent</artifactId>
-        <version>0.9.0</version>
+        <version>0.6.0</version>
         <relativePath>../module-parent</relativePath>
     </parent>
 
     <artifactId>modules</artifactId>
     <packaging>pom</packaging>
-
-    <distributionManagement>
-        <repository>
-            <id>reedelk.repo</id>
-            <name>Reedelk Repository</name>
-            <url>http://localhost:8081/repository/reedelk/</url>
-        </repository>
-    </distributionManagement>
 
     <properties>
         <json.version>20190722</json.version>
@@ -30,8 +22,7 @@
         <assertj.version>3.11.1</assertj.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <surefire.plugin.version>2.19.1</surefire.plugin.version>
-        <runtime.commons.version>0.9.0</runtime.commons.version>
-        <runtime.system.api.version>0.9.0</runtime.system.api.version>
+        <runtime.commons.version>0.6.0</runtime.commons.version>
     </properties>
 
     <modules>
