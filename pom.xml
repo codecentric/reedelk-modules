@@ -35,7 +35,6 @@
     </properties>
 
     <modules>
-        <module>../module-parent</module>
         <module>../module-rest</module>
         <module>../module-core</module>
         <module>../module-scheduler</module>
