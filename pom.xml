@@ -15,6 +15,9 @@
     <packaging>pom</packaging>
 
     <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.release>8</maven.compiler.release>
         <json.version>20190722</json.version>
         <junit.version>5.5.2</junit.version>
         <jacoco.version>0.8.2</jacoco.version>
