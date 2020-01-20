@@ -4,30 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.reedelk</groupId>
-        <artifactId>module-parent</artifactId>
-        <version>0.6.1</version>
-    </parent>
-
     <packaging>pom</packaging>
+    <groupId>com.reedelk</groupId>
     <artifactId>modules</artifactId>
-    <version>${revision}</version>
-
-    <properties>
-        <!-- This pom is only a convenient file needed for building the projects all together,
-        this version (1.0.0) is fixed since it does not affect any build -->
-        <revision>1.0.0</revision>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.release>8</maven.compiler.release>
-        <junit.version>5.5.2</junit.version>
-        <jacoco.version>0.8.2</jacoco.version>
-        <mockito.version>2.23.0</mockito.version>
-        <assertj.version>3.11.1</assertj.version>
-        <jsonassert.version>1.5.0</jsonassert.version>
-        <surefire.plugin.version>2.19.1</surefire.plugin.version>
-    </properties>
+    <!-- This pom is only a convenient file needed for building the projects all together,
+        this version (1.0.0-SNAPSHOT) is fixed since it does not affect any build -->
+    <version>1.0.0-SNAPSHOT</version>
 
     <modules>
         <module>../module-rest</module>
@@ -36,124 +18,6 @@
         <module>../module-file</module>
         <module>../module-xml</module>
         <module>../module-rabbitmq</module>
+        <module>../module-database</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- Test dependencies -->
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-params</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>${assertj.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.skyscreamer</groupId>
-                <artifactId>jsonassert</artifactId>
-                <version>${jsonassert.version}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <build>
-        <plugins>
-            <!-- Surefire -->
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.plugin.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.0.3</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-engine</artifactId>
-                        <version>5.0.3</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-            <!-- JaCoCo -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>generate-code-coverage-report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.1.0</version>
-                <configuration>
-                    <updatePomFile>true</updatePomFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- This pom is just an aggregator, we don't want to release it -->
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
