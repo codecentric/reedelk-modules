@@ -12,13 +12,14 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <modules>
+        <module>../module-xml</module>
         <module>../module-rest</module>
         <module>../module-core</module>
-        <module>../module-scheduler</module>
         <module>../module-file</module>
-        <module>../module-xml</module>
+        <module>../module-json</module>
         <module>../module-rabbitmq</module>
         <module>../module-database</module>
+        <module>../module-scheduler</module>
     </modules>
 
     <build>
