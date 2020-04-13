@@ -13,6 +13,7 @@
 
     <modules>
         <module>../module-xml</module>
+        <module>../module-csv</module>
         <module>../module-rest</module>
         <module>../module-core</module>
         <module>../module-file</module>
