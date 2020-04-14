@@ -19,6 +19,7 @@
         <module>../module-file</module>
         <module>../module-json</module>
         <module>../module-mail</module>
+        <module>../module-mongodb</module>
         <module>../module-rabbitmq</module>
         <module>../module-database</module>
         <module>../module-scheduler</module>
