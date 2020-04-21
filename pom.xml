@@ -24,6 +24,7 @@
         <module>../module-rabbitmq</module>
         <module>../module-database</module>
         <module>../module-scheduler</module>
+        <module>../module-google-doc</module>
     </modules>
 
     <build>
