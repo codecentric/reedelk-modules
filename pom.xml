@@ -8,8 +8,8 @@
     <groupId>com.reedelk</groupId>
     <artifactId>modules</artifactId>
     <!-- This pom is only a convenient file needed for building the projects all together,
-        this version (1.0.0-SNAPSHOT) is fixed since it does not affect any build -->
-    <version>1.0.0-SNAPSHOT</version>
+        this version (1.0.0) is fixed since it does not affect any build -->
+    <version>1.0.0</version>
 
     <modules>
         <module>../module-xml</module>
