@@ -12,8 +12,6 @@
     <version>1.0.0</version>
 
     <modules>
-        <module>../reedelk-openapi</module>
-        <module>../runtime</module>
         <module>../module-xml</module>
         <module>../module-csv</module>
         <module>../module-ftp</module>
