@@ -12,19 +12,24 @@
     <version>1.0.0</version>
 
     <modules>
-        <module>../module-xml</module>
-        <module>../module-csv</module>
-        <module>../module-ftp</module>
-        <module>../module-rest</module>
+        <module>../module-aws-s3</module>
+        <module>../module-azure-storage</module>
         <module>../module-core</module>
+        <module>../module-csv</module>
+        <module>../module-database</module>
         <module>../module-file</module>
+        <module>../module-ftp</module>
+        <module>../module-google-drive-v3</module>
         <module>../module-json</module>
+        <module>../module-jwt</module>
+        <module>../module-kafka</module>
         <module>../module-mail</module>
         <module>../module-mongodb</module>
         <module>../module-rabbitmq</module>
-        <module>../module-database</module>
+        <module>../module-rest</module>
+        <module>../module-salesforce</module>
         <module>../module-scheduler</module>
-        <module>../module-google-drive-v3</module>
+        <module>../module-xml</module>
     </modules>
 
     <build>
