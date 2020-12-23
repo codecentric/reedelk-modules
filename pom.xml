@@ -12,24 +12,24 @@
     <version>1.0.0</version>
 
     <modules>
-        <module>../module-aws-s3</module>
-        <module>../module-azure-storage</module>
+        <module>../reedeelk-module-aws-s3</module>
+        <module>../reedeelk-module-azure-storage</module>
         <module>../module-core</module>
-        <module>../module-csv</module>
-        <module>../module-database</module>
-        <module>../module-file</module>
-        <module>../module-ftp</module>
-        <module>../module-google-drive-v3</module>
-        <module>../module-json</module>
-        <module>../module-jwt</module>
-        <module>../module-kafka</module>
-        <module>../module-mail</module>
-        <module>../module-mongodb</module>
-        <module>../module-rabbitmq</module>
-        <module>../module-rest</module>
-        <module>../module-salesforce</module>
-        <module>../module-scheduler</module>
-        <module>../module-xml</module>
+        <module>../reedeelk-module-csv</module>
+        <module>../reedeelk-module-database</module>
+        <module>../reedeelk-module-file</module>
+        <module>../reedeelk-module-ftp</module>
+        <module>../reedeelk-module-google-drive-v3</module>
+        <module>../reedeelk-module-json</module>
+        <module>../reedeelk-module-jwt</module>
+        <module>../reedeelk-module-kafka</module>
+        <module>../reedeelk-module-mail</module>
+        <module>../reedeelk-module-mongodb</module>
+        <module>../reedeelk-module-rabbitmq</module>
+        <module>../reedeelk-module-rest</module>
+        <module>../reedeelk-module-salesforce</module>
+        <module>../reedeelk-module-scheduler</module>
+        <module>../reedeelk-module-xml</module>
     </modules>
 
     <build>
