@@ -5,31 +5,31 @@
     <modelVersion>4.0.0</modelVersion>
 
     <packaging>pom</packaging>
-    <groupId>com.reedelk</groupId>
+    <groupId>de.codecentric.reedelk</groupId>
     <artifactId>modules</artifactId>
     <!-- This pom is only a convenient file needed for building the projects all together,
         this version (1.0.0) is fixed since it does not affect any build -->
     <version>1.0.0</version>
 
     <modules>
-        <module>../reedeelk-module-aws-s3</module>
-        <module>../reedeelk-module-azure-storage</module>
-        <module>../module-core</module>
-        <module>../reedeelk-module-csv</module>
-        <module>../reedeelk-module-database</module>
-        <module>../reedeelk-module-file</module>
-        <module>../reedeelk-module-ftp</module>
-        <module>../reedeelk-module-google-drive-v3</module>
-        <module>../reedeelk-module-json</module>
-        <module>../reedeelk-module-jwt</module>
-        <module>../reedeelk-module-kafka</module>
-        <module>../reedeelk-module-mail</module>
-        <module>../reedeelk-module-mongodb</module>
-        <module>../reedeelk-module-rabbitmq</module>
-        <module>../reedeelk-module-rest</module>
-        <module>../reedeelk-module-salesforce</module>
-        <module>../reedeelk-module-scheduler</module>
-        <module>../reedeelk-module-xml</module>
+        <module>../reedelk-module-aws-s3</module>
+        <module>../reedelk-module-azure-storage</module>
+        <module>../reedelk-module-core</module>
+        <module>../reedelk-module-csv</module>
+        <module>../reedelk-module-database</module>
+        <module>../reedelk-module-file</module>
+        <module>../reedelk-module-ftp</module>
+        <module>../reedelk-module-google-drive-v3</module>
+        <module>../reedelk-module-json</module>
+        <module>../reedelk-module-jwt</module>
+        <module>../reedelk-module-kafka</module>
+        <module>../reedelk-module-mail</module>
+        <module>../reedelk-module-mongodb</module>
+        <module>../reedelk-module-rabbitmq</module>
+        <module>../reedelk-module-rest</module>
+        <module>../reedelk-module-salesforce</module>
+        <module>../reedelk-module-scheduler</module>
+        <module>../reedelk-module-xml</module>
     </modules>
 
     <build>
